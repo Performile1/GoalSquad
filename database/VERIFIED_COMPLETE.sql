@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS profiles (
   role VARCHAR(50) DEFAULT 'user', -- 'user', 'seller', 'admin', 'merchant', 'guardian'
   
   -- Guardian relationship (används i sellers/register)
-  guardian_id UUID REFERENCES profiles(id),
+  -- Note: Self-referencing FK added after table creation
+  guardian_id UUID,
   
   -- Status
   is_active BOOLEAN DEFAULT true,
@@ -80,6 +81,19 @@ CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
 CREATE INDEX IF NOT EXISTS idx_profiles_active ON profiles(is_active) WHERE is_active = true;
 CREATE INDEX IF NOT EXISTS idx_profiles_guardian ON profiles(guardian_id);
+
+-- Add self-referencing foreign key constraint after table creation
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints 
+    WHERE constraint_name = 'profiles_guardian_id_fkey'
+  ) THEN
+    ALTER TABLE profiles 
+    ADD CONSTRAINT profiles_guardian_id_fkey 
+    FOREIGN KEY (guardian_id) REFERENCES profiles(id);
+  END IF;
+END $$;
 
 -- ============================================
 -- 2. MERCHANTS (från merchant-branding.sql)
