@@ -364,45 +364,96 @@ ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: Users can read all, update own
-CREATE POLICY IF NOT EXISTS "Profiles are viewable by everyone" ON profiles FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+DO $$ BEGIN
+  CREATE POLICY "Profiles are viewable by everyone" ON profiles FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Merchants: Public read, merchants can update own
-CREATE POLICY IF NOT EXISTS "Merchants are viewable by everyone" ON merchants FOR SELECT USING (is_active = true);
-CREATE POLICY IF NOT EXISTS "Merchants can update own data" ON merchants FOR UPDATE USING (user_id = auth.uid());
+DO $$ BEGIN
+  CREATE POLICY "Merchants are viewable by everyone" ON merchants FOR SELECT USING (is_active = true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Merchants can update own data" ON merchants FOR UPDATE USING (user_id = auth.uid());
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Products: Public read active products
-CREATE POLICY IF NOT EXISTS "Active products are viewable by everyone" ON products FOR SELECT USING (is_active = true AND is_available = true);
-CREATE POLICY IF NOT EXISTS "Merchants can manage own products" ON products FOR ALL USING (
-  merchant_id IN (SELECT id FROM merchants WHERE user_id = auth.uid())
-);
+DO $$ BEGIN
+  CREATE POLICY "Active products are viewable by everyone" ON products FOR SELECT USING (is_active = true AND is_available = true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Merchants can manage own products" ON products FOR ALL USING (
+    merchant_id IN (SELECT id FROM merchants WHERE user_id = auth.uid())
+  );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Communities: Public read, members can update
-CREATE POLICY IF NOT EXISTS "Communities are viewable by everyone" ON communities FOR SELECT USING (is_active = true);
-CREATE POLICY IF NOT EXISTS "Community admins can update" ON communities FOR UPDATE USING (
-  id IN (SELECT community_id FROM community_members WHERE user_id = auth.uid() AND role = 'admin')
-);
+DO $$ BEGIN
+  CREATE POLICY "Communities are viewable by everyone" ON communities FOR SELECT USING (is_active = true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Community admins can update" ON communities FOR UPDATE USING (
+    id IN (SELECT community_id FROM community_members WHERE user_id = auth.uid() AND role = 'admin')
+  );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Orders: Users can see own orders
-CREATE POLICY IF NOT EXISTS "Users can view own orders" ON orders FOR SELECT USING (user_id = auth.uid());
-CREATE POLICY IF NOT EXISTS "Users can create orders" ON orders FOR INSERT WITH CHECK (user_id = auth.uid());
+DO $$ BEGIN
+  CREATE POLICY "Users can view own orders" ON orders FOR SELECT USING (user_id = auth.uid());
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Users can create orders" ON orders FOR INSERT WITH CHECK (user_id = auth.uid());
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Order Items: Users can see items from own orders
-CREATE POLICY IF NOT EXISTS "Users can view own order items" ON order_items FOR SELECT USING (
-  order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
-);
+DO $$ BEGIN
+  CREATE POLICY "Users can view own order items" ON order_items FOR SELECT USING (
+    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+  );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Warehouses: Public read
-CREATE POLICY IF NOT EXISTS "Warehouses are viewable by everyone" ON consolidation_warehouses FOR SELECT USING (is_active = true);
+DO $$ BEGIN
+  CREATE POLICY "Warehouses are viewable by everyone" ON consolidation_warehouses FOR SELECT USING (is_active = true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Warehouse Inventory: Public read
-CREATE POLICY IF NOT EXISTS "Warehouse inventory is viewable by everyone" ON warehouse_inventory FOR SELECT USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Warehouse inventory is viewable by everyone" ON warehouse_inventory FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Messages: Users can see own conversations
-CREATE POLICY IF NOT EXISTS "Users can view own conversations" ON conversations FOR SELECT USING (user_id = auth.uid());
-CREATE POLICY IF NOT EXISTS "Users can view messages in own conversations" ON messages FOR SELECT USING (
-  conversation_id IN (SELECT id FROM conversations WHERE user_id = auth.uid())
-);
+DO $$ BEGIN
+  CREATE POLICY "Users can view own conversations" ON conversations FOR SELECT USING (user_id = auth.uid());
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "Users can view messages in own conversations" ON messages FOR SELECT USING (
+    conversation_id IN (SELECT id FROM conversations WHERE user_id = auth.uid())
+  );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================
 -- 11. FUNCTIONS
