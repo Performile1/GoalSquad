@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         break;
       case 'community':
         recipientQuery = supabaseAdmin
-          .from('seller_profiles')
+          .from('community_members')
           .select('user_id')
           .eq('community_id', targetId);
         break;
