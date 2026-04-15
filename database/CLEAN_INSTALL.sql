@@ -840,33 +840,17 @@ BEGIN
 END $$;
 
 -- ============================================
--- VERIFICATION
--- ============================================
-
-SELECT 
-  table_name,
-  (SELECT COUNT(*) FROM information_schema.columns WHERE table_name = t.table_name) as columns
-FROM information_schema.tables t
-WHERE table_schema = 'public' 
-  AND table_type = 'BASE TABLE'
-ORDER BY table_name;
-
-SELECT 'Merchants' as table_name, COUNT(*) as count FROM merchants
-UNION ALL SELECT 'Products', COUNT(*) FROM products
-UNION ALL SELECT 'Warehouses', COUNT(*) FROM consolidation_warehouses;
-
-SELECT 
-  m.name as merchant,
-  p.name as product,
-  p.price,
-  p.cost_price,
-  (p.price - p.cost_price) as profit,
-  ROUND((p.price - p.cost_price) / p.price * 100, 1) as profit_pct,
-  p.minimum_order_quantity as moq
-FROM products p
-JOIN merchants m ON m.id = p.merchant_id
-ORDER BY m.name, p.name;
-
--- ============================================
 -- SETUP COMPLETE! ✅
+-- ============================================
+-- 
+-- 20 tables created
+-- RLS enabled
+-- Policies created
+-- Functions created
+-- Sample data inserted
+-- 
+-- Next steps:
+-- 1. Get Supabase keys (Settings → API)
+-- 2. Set Vercel environment variables
+-- 3. Redeploy
 -- ============================================
