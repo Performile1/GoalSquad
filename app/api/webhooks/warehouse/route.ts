@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify signature
-    const expectedSignature = createHash('sha256')
+    const expectedSignature = crypto.createHash('sha256')
       .update(JSON.stringify(body) + partner.webhook_secret)
       .digest('hex');
 
