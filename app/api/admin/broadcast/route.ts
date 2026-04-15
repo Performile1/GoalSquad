@@ -63,33 +63,37 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine recipients
-    let recipientQuery = supabaseAdmin.from('profiles').select('id');
+    let recipients: { id: string }[] = [];
 
     switch (targetType) {
       case 'all_users':
-        // No filter - all users
+        const { data: allUsers } = await supabaseAdmin
+          .from('profiles')
+          .select('id');
+        recipients = allUsers || [];
         break;
       case 'community':
-        recipientQuery = supabaseAdmin
+        const { data: communityMembers } = await supabaseAdmin
           .from('community_members')
           .select('user_id')
           .eq('community_id', targetId);
+        // Map user_id to id for consistency
+        recipients = (communityMembers || []).map(m => ({ id: m.user_id }));
         break;
       case 'role':
-        recipientQuery = supabaseAdmin
+        const { data: roleUsers } = await supabaseAdmin
           .from('profiles')
           .select('id')
           .eq('role', targetRole);
+        recipients = roleUsers || [];
         break;
     }
 
-    const { data: recipients } = await recipientQuery;
-
     if (recipients && recipients.length > 0) {
       // Create recipient records
-      const recipientRecords = recipients.map((r: any) => ({
+      const recipientRecords = recipients.map((r) => ({
         broadcast_id: broadcast.id,
-        user_id: targetType === 'community' ? r.user_id : r.id,
+        user_id: r.id,
       }));
 
       await supabaseAdmin
