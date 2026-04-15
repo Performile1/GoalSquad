@@ -61,16 +61,20 @@ export async function GET(
       .eq('status', 'active')
       .gt('stock_quantity', 0);
 
+    // Extract user data (Supabase returns it as array)
+    const userData = Array.isArray(seller.user) ? seller.user[0] : seller.user;
+    const communityData = Array.isArray(seller.community) ? seller.community[0] : seller.community;
+
     return NextResponse.json({
       seller: {
         shopUrl: seller.shop_url,
-        fullName: seller.user?.full_name,
-        avatarUrl: seller.user?.avatar_url,
+        fullName: userData?.full_name,
+        avatarUrl: userData?.avatar_url,
         avatarData: seller.avatar_data,
         level: seller.current_level,
-        totalSales: parseFloat(seller.total_sales),
+        totalSales: seller.total_sales,
         totalOrders: seller.total_orders,
-        community: seller.community,
+        community: communityData,
       },
       products: products || [],
     });
