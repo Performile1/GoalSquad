@@ -603,7 +603,7 @@ export function Step5Images({
       {/* Image Previews */}
       {imagePreviews.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {imagePreviews.map((preview, index) => (
+          {imagePreviews.map((preview: string, index: number) => (
             <div key={index} className="relative group">
               <img
                 src={preview}
