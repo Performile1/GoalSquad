@@ -8,6 +8,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import FormData from 'form-data';
 
+// Next.js 14 Route Segment Config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -147,9 +151,3 @@ async function removeBackgroundLocal(image: File) {
     note: 'Background removed using local processing'
   });
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
