@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS profiles (
   -- Role
   role TEXT DEFAULT 'user' CHECK (role IN ('user', 'seller', 'guardian', 'merchant', 'admin')),
   
+  -- Guardian relationship (for sellers under 18)
+  guardian_id UUID REFERENCES profiles(id),
+  
   -- Status
   is_active BOOLEAN DEFAULT true,
   is_verified BOOLEAN DEFAULT false,
@@ -75,6 +78,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
 CREATE INDEX IF NOT EXISTS idx_profiles_active ON profiles(is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_profiles_guardian ON profiles(guardian_id);
 
 -- ============================================
 -- 2. MERCHANTS
