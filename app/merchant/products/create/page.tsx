@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Step1BasicInfo,
+  Step2Identifiers,
+  Step3Dimensions,
+  Step4Details,
+  Step5Images
+} from './steps';
 
 interface SimilarProduct {
   id: string;
