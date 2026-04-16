@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     // Upload to Supabase Storage
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(
-      process.env.SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error;
 
-    const imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
 
     return NextResponse.json({ imageUrl });
   } catch (error) {

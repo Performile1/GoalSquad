@@ -73,7 +73,7 @@ async function removeBackgroundWithRemoveBg(image: File) {
   const fileName = `processed-${Date.now()}.png`;
   const { createClient } = await import('@supabase/supabase-js');
   const supabase = createClient(
-    process.env.SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
@@ -86,7 +86,7 @@ async function removeBackgroundWithRemoveBg(image: File) {
 
   if (error) throw error;
 
-  const imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+  const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
 
   return NextResponse.json({ imageUrl });
 }
@@ -129,7 +129,7 @@ async function removeBackgroundLocal(image: File) {
   
   const { createClient } = await import('@supabase/supabase-js');
   const supabase = createClient(
-    process.env.SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
@@ -143,7 +143,7 @@ async function removeBackgroundLocal(image: File) {
 
   if (error) throw error;
 
-  const imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+  const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
 
   return NextResponse.json({ 
     imageUrl,
