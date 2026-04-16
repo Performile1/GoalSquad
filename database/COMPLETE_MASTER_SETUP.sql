@@ -264,28 +264,55 @@ CREATE TABLE IF NOT EXISTS products (
   UNIQUE(merchant_id, sku)
 );
 
--- Communities
-CREATE TABLE IF NOT EXISTS communities (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organization_id UUID,
-  name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  description TEXT,
-  type TEXT CHECK (type IN ('sports', 'school', 'nonprofit', 'other')),
-  logo_url TEXT,
-  contact_email TEXT,
-  contact_phone TEXT,
-  address TEXT,
-  city TEXT,
-  postal_code TEXT,
-  country TEXT DEFAULT 'SE',
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create communities table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'communities') THEN
+    CREATE TABLE communities (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      organization_id UUID,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      description TEXT,
+      type TEXT CHECK (type IN ('sports', 'school', 'nonprofit', 'other')),
+      logo_url TEXT,
+      contact_email TEXT,
+      contact_phone TEXT,
+      address TEXT,
+      city TEXT,
+      postal_code TEXT,
+      country TEXT DEFAULT 'SE',
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
 
--- Add organization_id column if it doesn't exist
-ALTER TABLE communities ADD COLUMN IF NOT EXISTS organization_id UUID;
+-- Add columns if they don't exist
+ALTER TABLE communities
+ADD COLUMN IF NOT EXISTS organization_id UUID,
+ADD COLUMN IF NOT EXISTS name TEXT,
+ADD COLUMN IF NOT EXISTS slug TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS type TEXT,
+ADD COLUMN IF NOT EXISTS logo_url TEXT,
+ADD COLUMN IF NOT EXISTS contact_email TEXT,
+ADD COLUMN IF NOT EXISTS contact_phone TEXT,
+ADD COLUMN IF NOT EXISTS address TEXT,
+ADD COLUMN IF NOT EXISTS city TEXT,
+ADD COLUMN IF NOT EXISTS postal_code TEXT,
+ADD COLUMN IF NOT EXISTS country TEXT,
+ADD COLUMN IF NOT EXISTS is_active BOOLEAN,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+
+-- Add unique constraint on slug if it doesn't exist
+DO $$
+BEGIN
+  ALTER TABLE communities ADD CONSTRAINT communities_slug_key UNIQUE (slug);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Add foreign key constraint if organizations table has id column
 DO $$
