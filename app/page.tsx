@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { SplitEngineIcon, LogisticsIcon, AuditIcon } from '@/app/components/BrandIcons'
 
 export default function Home() {
   return (
@@ -75,17 +76,17 @@ export default function Home() {
               {
                 title: 'The Split Engine',
                 description: 'Triple-dip margins: Sales, Handling, and Shipping spreads calculated in real-time.',
-                icon: '💰',
+                icon: <SplitEngineIcon size={52} />,
               },
               {
                 title: 'Distributed Logistics',
                 description: 'Multi-origin shipping with hub consolidation for optimal delivery.',
-                icon: '🚚',
+                icon: <LogisticsIcon size={52} />,
               },
               {
                 title: 'Audit Trail',
                 description: 'Immutable signatures for every transaction. Trust built-in.',
-                icon: '🔒',
+                icon: <AuditIcon size={52} />,
               },
             ].map((feature, index) => (
               <motion.div
@@ -96,7 +97,7 @@ export default function Home() {
                 transition={{ delay: 1 + index * 0.2 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="text-5xl mb-4">{feature.icon}</div>
+                <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-bold mb-2 text-gray-900">
                   {feature.title}
                 </h3>

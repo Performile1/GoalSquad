@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ShopIcon, OrdersIcon } from '@/app/components/BrandIcons';
 
 interface Category {
   id: string;
@@ -80,8 +81,9 @@ export default function ProductsPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-16">
         <div className="container mx-auto px-4">
+          <div className="flex justify-center mb-4"><ShopIcon size={56} className="opacity-90" /></div>
           <h1 className="text-5xl font-bold text-center mb-4">
-            🛍️ Produktkatalog
+            Produktkatalog
           </h1>
           <p className="text-xl text-center text-primary-100">
             Handla och stöd lokala föreningar samtidigt!
@@ -95,7 +97,7 @@ export default function ProductsPage() {
           <div className="lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-4">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                🔍 Filtrera
+                Filtrera
               </h2>
 
               {/* Search */}
@@ -214,12 +216,12 @@ export default function ProductsPage() {
 
             {loading ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4 animate-bounce">🛍️</div>
+                <div className="mb-4 flex justify-center animate-bounce"><ShopIcon size={64} /></div>
                 <p className="text-xl text-gray-600">Laddar produkter...</p>
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">📦</div>
+                <div className="mb-4 flex justify-center"><OrdersIcon size={64} /></div>
                 <p className="text-2xl font-bold text-gray-900 mb-2">
                   Inga produkter hittades
                 </p>

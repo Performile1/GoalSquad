@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { OrdersIcon } from '@/app/components/BrandIcons';
 
 interface Order {
   id: string;
@@ -62,7 +63,7 @@ export default function OrdersPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-5xl mb-4 animate-pulse">📦</div>
+          <div className="mb-4 flex justify-center animate-pulse"><OrdersIcon size={52} /></div>
           <p className="text-gray-500">Laddar ordrar...</p>
         </div>
       </div>
@@ -73,7 +74,7 @@ export default function OrdersPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">📦 Mina ordrar</h1>
+          <h1 className="text-4xl font-bold text-gray-900 flex items-center gap-3"><OrdersIcon size={40} /> Mina ordrar</h1>
           <Link
             href="/products"
             className="px-5 py-2.5 bg-primary-900 text-white text-sm font-semibold rounded-xl hover:bg-primary-600 transition"
@@ -84,7 +85,7 @@ export default function OrdersPage() {
 
         {orders.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
-            <div className="text-7xl mb-4">📭</div>
+            <div className="mb-4 flex justify-center"><OrdersIcon size={72} className="opacity-40" /></div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Inga ordrar än</h2>
             <p className="text-gray-500 mb-8">
               Dina ordrar visas här när du har handlat.

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { ShopIcon, OrdersIcon, CommunityIcon, MessageIcon, LeaderboardIcon, MerchantIcon } from '@/app/components/BrandIcons';
 
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth();
@@ -19,7 +20,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-5xl mb-4 animate-pulse">⚽</div>
+          <div className="mb-4 animate-pulse flex justify-center"><ShopIcon size={52} /></div>
           <p className="text-gray-500">Laddar...</p>
         </div>
       </div>
@@ -29,12 +30,12 @@ export default function DashboardPage() {
   if (!user) return null;
 
   const quickLinks = [
-    { href: '/products', label: 'Handla', icon: '🛍️', desc: 'Bläddra produkter' },
-    { href: '/orders', label: 'Mina ordrar', icon: '📦', desc: 'Se orderhistorik' },
-    { href: '/communities', label: 'Communities', icon: '👥', desc: 'Dina föreningar' },
-    { href: '/messages', label: 'Meddelanden', icon: '💬', desc: 'Inkorgen' },
-    { href: '/leaderboard', label: 'Leaderboard', icon: '🏆', desc: 'Topplistor' },
-    { href: '/merchants/onboard', label: 'Bli Merchant', icon: '🏪', desc: 'Sälj via GoalSquad' },
+    { href: '/products', label: 'Handla', icon: <ShopIcon size={36} />, desc: 'Bläddra produkter' },
+    { href: '/orders', label: 'Mina ordrar', icon: <OrdersIcon size={36} />, desc: 'Se orderhistorik' },
+    { href: '/communities', label: 'Communities', icon: <CommunityIcon size={36} />, desc: 'Dina föreningar' },
+    { href: '/messages', label: 'Meddelanden', icon: <MessageIcon size={36} />, desc: 'Inkorgen' },
+    { href: '/leaderboard', label: 'Leaderboard', icon: <LeaderboardIcon size={36} />, desc: 'Topplistor' },
+    { href: '/merchants/onboard', label: 'Bli Merchant', icon: <MerchantIcon size={36} />, desc: 'Sälj via GoalSquad' },
   ];
 
   return (
@@ -59,7 +60,7 @@ export default function DashboardPage() {
               href={link.href}
               className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition group flex flex-col gap-2"
             >
-              <span className="text-4xl">{link.icon}</span>
+              <div className="mb-1">{link.icon}</div>
               <span className="font-bold text-gray-900 group-hover:text-primary-900 transition">
                 {link.label}
               </span>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { CommunityIcon, FlagIcon } from '@/app/components/BrandIcons';
 
 interface Community {
   id: string;
@@ -48,7 +49,8 @@ export default function CommunitiesPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-4">👥 Communities</h1>
+          <div className="flex justify-center mb-4"><CommunityIcon size={56} className="opacity-90" /></div>
+          <h1 className="text-5xl font-bold mb-4">Communities</h1>
           <p className="text-xl text-primary-100 mb-8">
             Föreningar och grupper som säljer via GoalSquad
           </p>
@@ -67,12 +69,12 @@ export default function CommunitiesPage() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {loading ? (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4 animate-pulse">👥</div>
+            <div className="mb-4 flex justify-center animate-pulse"><CommunityIcon size={64} /></div>
             <p className="text-gray-500 text-xl">Laddar communities...</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
+            <div className="mb-4 flex justify-center"><FlagIcon size={64} /></div>
             <p className="text-2xl font-bold text-gray-900 mb-2">Inga communities hittades</p>
             <p className="text-gray-500">Försök med ett annat sökord</p>
           </div>
@@ -98,7 +100,7 @@ export default function CommunitiesPage() {
                         className="h-20 w-20 object-contain rounded-xl"
                       />
                     ) : (
-                      <span className="text-5xl">⚽</span>
+                      <FlagIcon size={48} />
                     )}
                   </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { CartIcon } from '@/app/components/BrandIcons';
 
 interface CartItem {
   id: string;
@@ -30,7 +31,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-        <div className="text-8xl mb-6">🛒</div>
+        <div className="mb-6 flex justify-center"><CartIcon size={80} /></div>
         <h1 className="text-3xl font-bold text-gray-900 mb-3">Din varukorg är tom</h1>
         <p className="text-gray-500 mb-8 text-center">
           Lägg till produkter från shoppen för att komma igång.
@@ -48,7 +49,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">🛒 Din varukorg</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 flex items-center gap-3"><CartIcon size={40} /> Din varukorg</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Items */}

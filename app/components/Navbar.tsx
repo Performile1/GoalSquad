@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { ShopIcon, CommunityIcon, LeaderboardIcon, SearchIcon } from '@/app/components/BrandIcons';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -11,10 +12,10 @@ export default function Navbar() {
   const { user, signOut } = useAuth();
 
   const navLinks = [
-    { href: '/products', label: 'Shop' },
-    { href: '/communities', label: 'Communities' },
-    { href: '/leaderboard', label: 'Leaderboard' },
-    { href: '/search', label: 'Sök' },
+    { href: '/products', label: 'Shop', icon: <ShopIcon size={16} /> },
+    { href: '/communities', label: 'Communities', icon: <CommunityIcon size={16} /> },
+    { href: '/leaderboard', label: 'Leaderboard', icon: <LeaderboardIcon size={16} /> },
+    { href: '/search', label: 'Sök', icon: <SearchIcon size={16} /> },
   ];
 
   const isActive = (href: string) =>
@@ -44,12 +45,13 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                   isActive(link.href)
                     ? 'bg-primary-50 text-primary-900 font-semibold'
                     : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
                 }`}
               >
+                {link.icon}
                 {link.label}
               </Link>
             ))}
@@ -127,12 +129,13 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-3 rounded-lg text-sm font-medium transition ${
+                className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition ${
                   isActive(link.href)
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-primary-50 text-primary-900 font-semibold'
+                    : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
                 }`}
               >
+                {link.icon}
                 {link.label}
               </Link>
             ))}
@@ -140,9 +143,10 @@ export default function Navbar() {
               <Link
                 href="/cart"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
+                className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-primary-50 hover:text-primary-900 transition"
               >
-                🛒 Varukorg
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                Varukorg
               </Link>
               <Link
                 href="/merchants/onboard"
