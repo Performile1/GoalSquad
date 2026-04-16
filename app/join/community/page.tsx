@@ -32,9 +32,51 @@ export default function CommunityRegisterPage() {
     contactEmail: '',
     contactPhone: '',
     website: '',
+    schoolName: '',
+    grade: '',
   })
 
   const set = (key: string, val: string) => setForm((f) => ({ ...f, [key]: val }))
+
+  const getHeaderForType = () => {
+    const type = COMMUNITY_TYPES.find(ct => ct.value === form.communityType)
+    if (!type) return 'Om er organisation'
+    
+    switch (type.value) {
+      case 'school_class':
+        return 'Om er klass'
+      case 'sports_team':
+        return 'Om er förening'
+      case 'youth_club':
+        return 'Om ert lag'
+      case 'scout_troop':
+        return 'Om er förening'
+      case 'other':
+        return 'Om er organisation'
+      default:
+        return 'Om er organisation'
+    }
+  }
+
+  const getPlaceholderForType = () => {
+    const type = COMMUNITY_TYPES.find(ct => ct.value === form.communityType)
+    if (!type) return 'Berätta lite om er organisation...'
+    
+    switch (type.value) {
+      case 'school_class':
+        return 'Berätta lite om er klass...'
+      case 'sports_team':
+        return 'Berätta lite om er förening...'
+      case 'youth_club':
+        return 'Berätta lite om ert lag...'
+      case 'scout_troop':
+        return 'Berätta lite om er förening...'
+      case 'other':
+        return 'Berätta lite om er organisation...'
+      default:
+        return 'Berätta lite om er organisation...'
+    }
+  }
 
   const handleNext = () => {
     setError('')
@@ -42,9 +84,15 @@ export default function CommunityRegisterPage() {
       setError('Välj en typ för din grupp')
       return
     }
-    if (step === 1 && (!form.name || !form.city)) {
-      setError('Fyll i namn och stad')
-      return
+    if (step === 1) {
+      if (!form.name || !form.city) {
+        setError('Fyll i namn och stad')
+        return
+      }
+      if (form.communityType === 'school_class' && (!form.schoolName || !form.grade)) {
+        setError('Fyll i skolans namn och årskurs')
+        return
+      }
     }
     if (step === 2 && (!form.contactName || !form.contactEmail)) {
       setError('Fyll i kontaktnamn och e-post')
@@ -67,6 +115,8 @@ export default function CommunityRegisterPage() {
           communityType: form.communityType,
           country: form.country,
           city: form.city,
+          schoolName: form.schoolName,
+          grade: form.grade,
           treasurerId: '00000000-0000-0000-0000-000000000000', // TODO: Get from auth
           adminId: '00000000-0000-0000-0000-000000000000', // TODO: Get from auth
         }),
@@ -169,23 +219,62 @@ export default function CommunityRegisterPage() {
             <>
               <div className="flex items-center gap-3 mb-2">
                 <FlagIcon size={36} />
-                <h1 className="text-2xl font-extrabold text-gray-900">Om er förening</h1>
+                <h1 className="text-2xl font-extrabold text-gray-900">{getHeaderForType()}</h1>
               </div>
               <p className="text-gray-500 mb-8">Berätta lite om er grupp.</p>
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Föreningens namn *
+                    {form.communityType === 'school_class' ? 'Klassens namn *' : 'Namn *'}
                   </label>
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => set('name', e.target.value)}
-                    placeholder="t.ex. IFK Göteborg Junior"
+                    placeholder={form.communityType === 'school_class' ? 't.ex. 9B' : 't.ex. IFK Göteborg Junior'}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
                     required
                   />
                 </div>
+                {form.communityType === 'school_class' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Skolans namn *
+                      </label>
+                      <input
+                        type="text"
+                        value={form.schoolName}
+                        onChange={(e) => set('schoolName', e.target.value)}
+                        placeholder="t.ex. Lundaskolan"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Årskurs *
+                      </label>
+                      <select
+                        value={form.grade}
+                        onChange={(e) => set('grade', e.target.value)}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                        required
+                      >
+                        <option value="">Välj årskurs</option>
+                        <option value="1">Årskurs 1</option>
+                        <option value="2">Årskurs 2</option>
+                        <option value="3">Årskurs 3</option>
+                        <option value="4">Årskurs 4</option>
+                        <option value="5">Årskurs 5</option>
+                        <option value="6">Årskurs 6</option>
+                        <option value="7">Årskurs 7</option>
+                        <option value="8">Årskurs 8</option>
+                        <option value="9">Årskurs 9</option>
+                      </select>
+                    </div>
+                  </>
+                )}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Kort beskrivning
@@ -193,7 +282,7 @@ export default function CommunityRegisterPage() {
                   <textarea
                     value={form.description}
                     onChange={(e) => set('description', e.target.value)}
-                    placeholder="Berätta lite om er förening..."
+                    placeholder={getPlaceholderForType()}
                     rows={3}
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition resize-none"
                   />
