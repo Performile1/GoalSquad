@@ -79,14 +79,10 @@ export default function WarehousesPage() {
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null);
   const [hoveredWarehouse, setHoveredWarehouse] = useState<string | null>(null);
 
-  // Simple map visualization using SVG
-  const mapWidth = 800;
-  const mapHeight = 600;
-  const padding = 50;
-
-  // Normalize coordinates to map
-  const normalizeLat = (lat: number) => padding + ((60 - lat) / (60 - 54)) * (mapHeight - 2 * padding);
-  const normalizeLng = (lng: number) => padding + ((lng - 9) / (20 - 9)) * (mapWidth - 2 * padding);
+  // World map coordinates (focus on Europe/Nordic region)
+  // Lat range: 70°N to 45°N, Lng range: 0° to 25°E
+  const normalizeLat = (lat: number) => ((70 - lat) / (70 - 45)) * 100;
+  const normalizeLng = (lng: number) => ((lng - 0) / (25 - 0)) * 100;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -115,72 +111,63 @@ export default function WarehousesPage() {
               className="bg-white rounded-2xl shadow-lg p-6"
             >
               <h2 className="text-2xl font-bold text-primary-900 mb-6">Karta över lager</h2>
-              <div className="relative bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl overflow-hidden" style={{ height: '500px' }}>
-                <svg viewBox={`0 0 ${mapWidth} ${mapHeight}`} className="w-full h-full">
-                  {/* Background */}
-                  <rect width={mapWidth} height={mapHeight} fill="#f0fdf4" />
-                  
-                  {/* Simple Sweden/Norway/Denmark outline approximation */}
-                  <path
-                    d="M 200 100 Q 250 80 300 100 Q 350 120 400 100 Q 450 80 500 100 Q 550 120 600 100 L 600 400 Q 550 420 500 400 Q 450 380 400 400 Q 350 420 300 400 Q 250 380 200 400 Z"
-                    fill="none"
-                    stroke="#004040"
-                    strokeWidth="2"
-                    opacity="0.3"
-                  />
+              <div className="relative rounded-xl overflow-hidden" style={{ height: '500px' }}>
+                {/* World Map Image */}
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
+                  alt="Världskarta"
+                  className="w-full h-full object-cover"
+                  style={{ filter: 'grayscale(20%) contrast(90%)' }}
+                />
 
-                  {/* Warehouse pins */}
-                  {MOCK_WAREHOUSES.map((warehouse) => {
-                    const x = normalizeLng(warehouse.lng);
-                    const y = normalizeLat(warehouse.lat);
-                    const isSelected = selectedWarehouse?.id === warehouse.id;
-                    const isHovered = hoveredWarehouse === warehouse.id;
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
-                    return (
-                      <g key={warehouse.id}>
-                        {/* Pin */}
-                        <circle
-                          cx={x}
-                          cy={y}
-                          r={isSelected ? 20 : isHovered ? 16 : 12}
-                          fill={isSelected ? '#004040' : isHovered ? '#006666' : '#004040'}
-                          opacity={isSelected ? 1 : isHovered ? 0.8 : 0.6}
-                          className="cursor-pointer transition-all duration-200"
-                          onClick={() => setSelectedWarehouse(warehouse)}
-                          onMouseEnter={() => setHoveredWarehouse(warehouse.id)}
-                          onMouseLeave={() => setHoveredWarehouse(null)}
-                        />
-                        {/* Pin icon */}
-                        <text
-                          x={x}
-                          y={y + 5}
-                          textAnchor="middle"
-                          fill="white"
-                          fontSize={isSelected ? 16 : 12}
-                          fontWeight="bold"
-                          className="pointer-events-none"
-                        >
-                          📦
-                        </text>
-                        {/* Label */}
-                        <text
-                          x={x}
-                          y={y - (isSelected ? 25 : isHovered ? 21 : 17)}
-                          textAnchor="middle"
-                          fill="#004040"
-                          fontSize={isSelected ? 14 : 12}
-                          fontWeight="bold"
-                          className="pointer-events-none"
-                        >
-                          {warehouse.city}
-                        </text>
-                      </g>
-                    );
-                  })}
-                </svg>
+                {/* Warehouse pins */}
+                {MOCK_WAREHOUSES.map((warehouse) => {
+                  const x = normalizeLng(warehouse.lng);
+                  const y = normalizeLat(warehouse.lat);
+                  const isSelected = selectedWarehouse?.id === warehouse.id;
+                  const isHovered = hoveredWarehouse === warehouse.id;
+
+                  return (
+                    <div
+                      key={warehouse.id}
+                      className="absolute cursor-pointer transition-all duration-200"
+                      style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
+                      onClick={() => setSelectedWarehouse(warehouse)}
+                      onMouseEnter={() => setHoveredWarehouse(warehouse.id)}
+                      onMouseLeave={() => setHoveredWarehouse(null)}
+                    >
+                      {/* Pin */}
+                      <div
+                        className="rounded-full flex items-center justify-center transition-all duration-200"
+                        style={{
+                          width: isSelected ? '40px' : isHovered ? '32px' : '24px',
+                          height: isSelected ? '40px' : isHovered ? '32px' : '24px',
+                          backgroundColor: isSelected ? '#004040' : isHovered ? '#006666' : '#004040',
+                          opacity: isSelected ? 1 : isHovered ? 0.9 : 0.7,
+                        }}
+                      >
+                        <span className="text-white text-sm">📦</span>
+                      </div>
+                      {/* Label */}
+                      <div
+                        className="absolute whitespace-nowrap text-sm font-bold text-primary-900 bg-white/90 backdrop-blur px-2 py-1 rounded shadow-sm"
+                        style={{
+                          top: isSelected ? '-30px' : isHovered ? '-26px' : '-22px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                        }}
+                      >
+                        {warehouse.city}
+                      </div>
+                    </div>
+                  );
+                })}
 
                 {/* Legend */}
-                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg p-3">
+                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur rounded-lg p-3 shadow-lg">
                   <div className="flex items-center gap-2 text-sm text-gray-700">
                     <div className="w-3 h-3 rounded-full bg-primary-900" />
                     <span>Aktivt lager</span>
