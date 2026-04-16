@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 function GoogleLogo() {
@@ -31,6 +31,8 @@ export default function LoginPage() {
 
   const { signIn, signInWithOAuth } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +45,7 @@ export default function LoginPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push('/dashboard');
+        router.push(redirect);
       }
     } catch (err: any) {
       setError(err.message);
@@ -140,7 +142,7 @@ export default function LoginPage() {
         <div className="space-y-3">
           <button
             type="button"
-            onClick={() => signInWithOAuth('google')}
+            onClick={() => signInWithOAuth('google', redirect)}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary-900 text-white rounded-xl hover:bg-primary-700 transition font-semibold"
           >
             <GoogleLogo />
@@ -148,7 +150,7 @@ export default function LoginPage() {
           </button>
           <button
             type="button"
-            onClick={() => signInWithOAuth('facebook')}
+            onClick={() => signInWithOAuth('facebook', redirect)}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary-900 text-white rounded-xl hover:bg-primary-700 transition font-semibold"
           >
             <FacebookLogo />
