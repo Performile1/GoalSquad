@@ -64,7 +64,7 @@ export default function MarketplacePage() {
             <h1 className="text-5xl font-extrabold mb-4">Köp direkt från föreningar</h1>
             <p className="text-xl text-white/75 max-w-2xl mx-auto mb-8">
               Här säljer föreningar, klasser och säljare sina egna produkter — matchställ, hantverk, 
-              utrustning och mycket mer. GoalSquad förmedlar betalningen och tar {PLATFORM_FEE}% förmedlingsavgift.
+              utrustning och mycket mer.
             </p>
             <Link
               href="/marketplace/new"
@@ -83,8 +83,7 @@ export default function MarketplacePage() {
             {[
               { icon: CameraIcon, text: 'Lägg upp produkten gratis' },
               { icon: MoneyIcon, text: 'Kunden betalar säkert via GoalSquad' },
-              { icon: `${PLATFORM_FEE}%`, text: 'GoalSquad tar förmedlingsavgift', isText: true },
-              { icon: MoneyIcon, text: `Du får ${100 - PLATFORM_FEE}% av priset` },
+              { icon: MoneyIcon, text: 'Du får betalt direkt' },
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
                 <span className={`${s.isText ? 'text-2xl font-extrabold text-primary-900 bg-primary-200 rounded-full w-12 h-12 flex items-center justify-center text-sm' : ''}`}>
