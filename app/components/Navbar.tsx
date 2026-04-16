@@ -70,12 +70,12 @@ export default function Navbar() {
               </svg>
             </Link>
 
-            {/* Bli Merchant CTA */}
+            {/* Join CTA */}
             <Link
-              href="/merchants/onboard"
-              className="px-4 py-2 bg-primary-900 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition shadow-sm border border-primary-600"
+              href="/join"
+              className="px-4 py-2 bg-primary-900 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition shadow-sm"
             >
-              Bli Merchant →
+              Registrera dig →
             </Link>
 
             {/* Auth */}

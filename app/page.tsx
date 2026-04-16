@@ -179,10 +179,10 @@ export default function Home() {
                 Handla nu →
               </Link>
               <Link
-                href="/merchants/onboard"
+                href="/join"
                 className="px-8 py-4 border-2 border-white/40 text-white rounded-xl font-bold hover:bg-white/10 transition text-lg"
               >
-                Bli Merchant
+                Registrera dig
               </Link>
             </div>
           </motion.div>
@@ -332,10 +332,10 @@ export default function Home() {
               Se alla föreningar
             </Link>
             <Link
-              href="/merchants/onboard"
+              href="/join"
               className="px-8 py-4 border-2 border-white/40 text-white rounded-xl font-bold hover:bg-white/10 transition"
             >
-              Bli Merchant →
+              Registrera dig →
             </Link>
           </div>
         </div>

@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { MerchantIcon, ShopIcon } from '@/app/components/BrandIcons'
 
 export default function MerchantOnboarding() {
   const router = useRouter()
@@ -107,24 +109,33 @@ export default function MerchantOnboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 py-12 px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
+        <Link
+          href="/join"
+          className="inline-flex items-center gap-2 text-primary-900 font-semibold hover:text-primary-600 mb-8 transition"
+        >
+          ← Tillbaka
+        </Link>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-2xl p-8"
+          className="bg-white rounded-3xl shadow-xl p-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Become a Merchant
-          </h1>
-          <p className="text-gray-600 mb-8">
-            Join GoalSquad and start selling to communities worldwide
+          <div className="flex items-center gap-3 mb-2">
+            <MerchantIcon size={40} />
+            <h1 className="text-3xl font-extrabold text-gray-900">
+              Registrera ditt företag
+            </h1>
+          </div>
+          <p className="text-gray-500 mb-8">
+            Bli Merchant på GoalSquad och nå tusentals föreningssäljare i Norden.
           </p>
 
           {/* Progress indicator */}
-          <div className="flex items-center mb-8">
-            <div className={`flex-1 h-2 rounded-full ${step === 'info' ? 'bg-blue-600' : 'bg-green-500'}`} />
-            <div className={`flex-1 h-2 rounded-full ml-2 ${step === 'verify' ? 'bg-blue-600' : 'bg-gray-200'}`} />
+          <div className="flex items-center gap-2 mb-8">
+            <div className={`flex-1 h-2 rounded-full transition ${step === 'info' ? 'bg-primary-900' : 'bg-primary-900'}`} />
+            <div className={`flex-1 h-2 rounded-full transition ${step === 'verify' ? 'bg-primary-900' : 'bg-gray-200'}`} />
           </div>
 
           {error && (
@@ -141,21 +152,21 @@ export default function MerchantOnboarding() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Merchant Name *
+                  Företagets namn *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.merchantName}
                   onChange={(e) => setFormData({ ...formData, merchantName: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your Store Name"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                  placeholder="T.ex. Sport &amp; Fritid AB"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Store URL Slug *
+                  Butiks-URL *
                 </label>
                 <div className="flex items-center">
                   <span className="text-gray-500 mr-2">goalsquad.shop/</span>
@@ -164,50 +175,50 @@ export default function MerchantOnboarding() {
                     required
                     value={formData.slug}
                     onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="your-store"
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                    placeholder="ditt-foretag"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email *
+                  E-post *
                 </label>
                 <input
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="merchant@example.com"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                  placeholder="info@dittforetag.se"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone
+                  Telefon
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="+47 123 45 678"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                  placeholder="+46 70 123 45 67"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address *
+                  Adress *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.addressLine1}
                   onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-3"
-                  placeholder="Street address"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition mb-3"
+                  placeholder="Gatuadress"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <input
@@ -215,47 +226,48 @@ export default function MerchantOnboarding() {
                     required
                     value={formData.postalCode}
                     onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
-                    className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Postal code"
+                    className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                    placeholder="Postnummer"
                   />
                   <input
                     type="text"
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="City"
+                    className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                    placeholder="Stad"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Verification Method *
+                  Verifieringsmetod *
                 </label>
                 <select
                   value={formData.verificationMethod}
                   onChange={(e) => setFormData({ ...formData, verificationMethod: e.target.value as 'otp_email' | 'otp_sms' })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
                 >
-                  <option value="otp_email">Email OTP</option>
-                  <option value="otp_sms">SMS OTP</option>
+                  <option value="otp_email">Via e-post</option>
+                  <option value="otp_sms">Via SMS</option>
                 </select>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold hover:bg-primary-600 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
-                {loading ? 'Processing...' : 'Continue to Verification'}
+                {loading ? 'Behandlar...' : 'Fortsätt till verifiering →'}
               </button>
             </form>
           ) : (
             <form onSubmit={handleVerify} className="space-y-6">
               <div className="text-center mb-6">
+                <div className="flex justify-center mb-4"><ShopIcon size={48} /></div>
                 <p className="text-gray-700">
-                  We've sent a verification code to{' '}
+                  Vi har skickat en verifieringskod till{' '}
                   <strong>
                     {formData.verificationMethod === 'otp_email' ? formData.email : formData.phone}
                   </strong>
@@ -264,7 +276,7 @@ export default function MerchantOnboarding() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Verification Code
+                  Verifieringskod
                 </label>
                 <input
                   type="text"
@@ -272,7 +284,7 @@ export default function MerchantOnboarding() {
                   maxLength={6}
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl tracking-widest"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition text-center text-2xl tracking-widest font-mono"
                   placeholder="000000"
                 />
               </div>
@@ -280,17 +292,17 @@ export default function MerchantOnboarding() {
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold hover:bg-primary-600 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
-                {loading ? 'Verifying...' : 'Verify & Complete'}
+                {loading ? 'Verifierar...' : 'Verifiera &amp; slutför →'}
               </button>
 
               <button
                 type="button"
                 onClick={() => setStep('info')}
-                className="w-full text-gray-600 hover:text-gray-800 transition-colors"
+                className="w-full text-gray-500 hover:text-primary-900 transition font-medium"
               >
-                ← Back to form
+                ← Tillbaka till formuläret
               </button>
             </form>
           )}
