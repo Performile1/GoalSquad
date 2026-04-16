@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,17 +22,27 @@ const SELLER_TYPES = [
   { id: 'individual', label: 'Privatperson / Säljare', icon: UserIcon },
 ];
 
+const PRICE_TYPES = [
+  { id: 'fixed', label: 'Fast pris', icon: DashboardIcon },
+  { id: 'auction', label: 'Auktion', icon: TrophyIcon },
+];
+
 export default function NewMarketplaceListingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [step, setStep] = useState(1);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   const [form, setForm] = useState({
     title: '',
     description: '',
     price: '',
+    priceType: 'fixed',
+    auctionStartPrice: '',
+    auctionEndDate: '',
     category: 'jersey',
     sellerType: 'community',
     sellerName: '',
@@ -42,6 +52,50 @@ export default function NewMarketplaceListingPage() {
     shippingInfo: '',
     contactEmail: '',
   });
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        if (res.ok) {
+          const data = await res.json();
+          setIsAuthenticated(!!data.user);
+          // Pre-fill email if available
+          if (data.user?.email) {
+            setForm(prev => ({ ...prev, contactEmail: data.user.email }));
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setAuthChecked(true);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (authChecked && !isAuthenticated) {
+      router.push('/login?redirect=/marketplace/new');
+    }
+  }, [authChecked, isAuthenticated, router]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Kontrollerar inloggning...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const price = parseFloat(form.price) || 0;
   const feeAmount = price * (PLATFORM_FEE / 100);
@@ -62,15 +116,18 @@ export default function NewMarketplaceListingPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      const payload = {
+        ...form,
+        price: form.priceType === 'fixed' ? parseFloat(form.price) : null,
+        auctionStartPrice: form.priceType === 'auction' ? parseFloat(form.auctionStartPrice) : null,
+        auctionEndDate: form.priceType === 'auction' ? form.auctionEndDate : null,
+        stock: form.priceType === 'fixed' ? parseInt(form.stock) : 1,
+        platformFeePercent: PLATFORM_FEE,
+      };
       const res = await fetch('/api/community-products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          price: parseFloat(form.price),
-          stock: parseInt(form.stock),
-          platformFeePercent: PLATFORM_FEE,
-        }),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setSuccess(true);
@@ -108,7 +165,7 @@ export default function NewMarketplaceListingPage() {
               Se Marketplace →
             </Link>
             <button
-              onClick={() => { setSuccess(false); setForm({ title: '', description: '', price: '', category: 'jersey', sellerType: 'community', sellerName: '', communityName: '', location: '', stock: '1', shippingInfo: '', contactEmail: '' }); setImagePreviews([]); setStep(1); }}
+              onClick={() => { setSuccess(false); setForm({ title: '', description: '', price: '', priceType: 'fixed', auctionStartPrice: '', auctionEndDate: '', category: 'jersey', sellerType: 'community', sellerName: '', communityName: '', location: '', stock: '1', shippingInfo: '', contactEmail: '' }); setImagePreviews([]); setStep(1); }}
               className="px-6 py-3 border-2 border-primary-200 text-primary-900 rounded-xl font-semibold hover:bg-primary-50 transition"
             >
               Lägg upp ytterligare en produkt
@@ -261,21 +318,65 @@ export default function NewMarketplaceListingPage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Pris (kr) *</label>
-                  <input required type="number" min="10" step="1" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" placeholder="299" />
-                  {price > 0 && (
-                    <p className="text-xs text-primary-700 mt-1 font-semibold">
-                      Du får: {sellerReceives.toFixed(0)} kr per försäljning
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Antal tillgängliga *</label>
-                  <input required type="number" min="1" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" placeholder="10" />
+              {/* Price Type Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Prissättning *</label>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {PRICE_TYPES.map((type) => (
+                    <button
+                      key={type.id}
+                      type="button"
+                      onClick={() => setForm({ ...form, priceType: type.id })}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition ${
+                        form.priceType === type.id
+                          ? 'border-primary-900 bg-primary-50'
+                          : 'border-gray-200 hover:border-primary-300'
+                      }`}
+                    >
+                      <type.icon size={24} />
+                      <span className="text-sm font-semibold text-primary-900 text-center">{type.label}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
+
+              {/* Fixed Price Fields */}
+              {form.priceType === 'fixed' && (
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Pris (kr) *</label>
+                    <input required type="number" min="10" step="1" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" placeholder="299" />
+                    {price > 0 && (
+                      <p className="text-xs text-primary-700 mt-1 font-semibold">
+                        Du får: {sellerReceives.toFixed(0)} kr per försäljning
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Antal tillgängliga *</label>
+                    <input required type="number" min="1" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" placeholder="10" />
+                  </div>
+                </div>
+              )}
+
+              {/* Auction Fields */}
+              {form.priceType === 'auction' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Startbud (kr) *</label>
+                    <input required type="number" min="10" step="1" value={form.auctionStartPrice} onChange={(e) => setForm({ ...form, auctionStartPrice: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" placeholder="99" />
+                    <p className="text-xs text-gray-500 mt-1">Minimipris som buden måste börja på</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Auktionens slutdatum *</label>
+                    <input required type="datetime-local" value={form.auctionEndDate} onChange={(e) => setForm({ ...form, auctionEndDate: e.target.value })} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                    <p className="text-xs text-gray-500 mt-1">Auktionen stängs automatiskt vid detta datum</p>
+                  </div>
+                  <div className="bg-primary-50 rounded-xl p-4 text-sm text-primary-900">
+                    <strong>Auktionsinfo:</strong> Högstbjudande vinner vid auktionens slut. GoalSquad tar {PLATFORM_FEE}% avgift av slutpriset.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
