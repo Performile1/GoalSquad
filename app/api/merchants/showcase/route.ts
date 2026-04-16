@@ -18,10 +18,7 @@ export async function GET(req: NextRequest) {
         name,
         description,
         logo_url,
-        metadata,
-        organization:organizations (
-          name
-        )
+        metadata
       `);
 
     if (error) {

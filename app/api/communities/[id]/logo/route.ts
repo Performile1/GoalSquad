@@ -154,11 +154,10 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { brandColors, showOnHomepage } = await req.json();
+    const { brandColors } = await req.json();
 
     const updates: any = {};
     if (brandColors) updates.brand_colors = brandColors;
-    if (typeof showOnHomepage === 'boolean') updates.show_on_homepage = showOnHomepage;
 
     const { error } = await supabaseAdmin
       .from('communities')

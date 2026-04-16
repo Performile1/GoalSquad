@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
     const { data: communities, error } = await supabaseAdmin
       .from('communities')
       .select('*')
-      .eq('show_on_homepage', true)
       .not('logo_url', 'is', null)
       .order('total_sales', { ascending: false })
       .limit(50);

@@ -16,7 +16,7 @@ const supabase = createClient(
 export async function GET(req: NextRequest) {
   try {
     const { data, error } = await supabase
-      .from('warehouse_capacity')
+      .from('warehouse_inventory')
       .select('*')
       .order('city');
 
