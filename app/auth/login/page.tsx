@@ -142,7 +142,7 @@ export default function LoginPage() {
         <div className="space-y-3">
           <button
             type="button"
-            onClick={() => signInWithOAuth('google', redirect)}
+            onClick={() => signInWithOAuth('google')}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary-900 text-white rounded-xl hover:bg-primary-700 transition font-semibold"
           >
             <GoogleLogo />
@@ -150,7 +150,7 @@ export default function LoginPage() {
           </button>
           <button
             type="button"
-            onClick={() => signInWithOAuth('facebook', redirect)}
+            onClick={() => signInWithOAuth('facebook')}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary-900 text-white rounded-xl hover:bg-primary-700 transition font-semibold"
           >
             <FacebookLogo />
