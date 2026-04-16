@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { TrophyIcon, HandshakeIcon, RocketIcon, LeafIcon, CommunityIcon, LaptopIcon, MerchantIcon, TargetIcon } from '@/app/components/BrandIcons';
+import { TrophyIcon, HandshakeIcon, RocketIcon, LeafIcon, CommunityIcon, LaptopIcon, MerchantIcon, TargetIcon, ShopIcon } from '@/app/components/BrandIcons';
 
 const values = [
   {
