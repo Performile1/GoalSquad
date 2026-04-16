@@ -72,15 +72,21 @@ CREATE INDEX IF NOT EXISTS idx_organizations_status    ON organizations(status);
 -- RLS
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read active organizations"
-  ON organizations FOR SELECT
-  USING (status = 'active');
+DO $$ BEGIN
+  CREATE POLICY "Public read active organizations"
+    ON organizations FOR SELECT
+    USING (status = 'active');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "Service role full access"
-  ON organizations FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "Service role full access"
+    ON organizations FOR ALL
+    TO service_role
+    USING (true)
+    WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================
 -- 3. CORE TABLES
@@ -691,19 +697,28 @@ CREATE INDEX IF NOT EXISTS idx_community_products_created  ON community_products
 -- RLS
 ALTER TABLE community_products ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read approved"
-  ON community_products FOR SELECT
-  USING (status = 'approved');
+DO $$ BEGIN
+  CREATE POLICY "Public read approved"
+    ON community_products FOR SELECT
+    USING (status = 'approved');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "Authenticated users can create"
-  ON community_products FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "Authenticated users can create"
+    ON community_products FOR INSERT
+    TO authenticated
+    WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "Sellers update own"
-  ON community_products FOR UPDATE
-  TO authenticated
-  USING (contact_email = (SELECT email FROM profiles WHERE id = auth.uid()));
+DO $$ BEGIN
+  CREATE POLICY "Sellers update own"
+    ON community_products FOR UPDATE
+    TO authenticated
+    USING (contact_email = (SELECT email FROM profiles WHERE id = auth.uid()));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================
 -- 8. COMMUNITY MEMBERS & INVITATIONS
