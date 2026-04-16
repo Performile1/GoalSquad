@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
+import { TrophyIcon, UserIcon, DashboardIcon } from '@/app/components/BrandIcons';
 
 interface SellerStats {
   fullName: string;
@@ -77,7 +78,7 @@ export default function SellerDashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">😕</div>
+          <UserIcon size={64} className="text-gray-300 mx-auto mb-4" />
           <p className="text-2xl font-bold text-gray-900">Säljaren hittades inte</p>
         </div>
       </div>
@@ -100,7 +101,7 @@ export default function SellerDashboard() {
           className="mb-8"
         >
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Välkommen tillbaka, {stats.fullName}! 👋
+            Välkommen tillbaka, {stats.fullName}!
           </h1>
           <p className="text-gray-600">Din butik: goalsquad.shop/{stats.shopUrl}</p>
         </motion.div>
@@ -116,7 +117,7 @@ export default function SellerDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Nivå</h3>
-              <div className="text-4xl">⭐</div>
+              <TrophyIcon size={36} className="text-primary-900" />
             </div>
             <div className="text-5xl font-bold text-primary-900 mb-2">
               {stats.currentLevel}

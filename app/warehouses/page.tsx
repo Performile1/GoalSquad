@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { LogisticsIcon, ShopIcon } from '@/app/components/BrandIcons';
+import { LogisticsIcon, ShopIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
 
 interface Warehouse {
   id: string;
@@ -149,7 +149,7 @@ export default function WarehousesPage() {
                           opacity: isSelected ? 1 : isHovered ? 0.9 : 0.7,
                         }}
                       >
-                        <span className="text-white text-sm">📦</span>
+                        <ShoppingBagIcon size={16} className="text-white" />
                       </div>
                       {/* Label */}
                       <div

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { LogisticsIcon, ShopIcon, DashboardIcon } from '@/app/components/BrandIcons';
+import { LogisticsIcon, ShopIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 export default function WarehouseOnboardPage() {
   const [step, setStep] = useState(0);
@@ -117,7 +117,7 @@ export default function WarehouseOnboardPage() {
                       : 'bg-gray-200 text-gray-400'
                   }`}
                 >
-                  {i < step ? '✓' : i + 1}
+                  {i < step ? <TrophyIcon size={16} className="text-white" /> : i + 1}
                 </div>
                 <span className="text-xs font-semibold text-gray-600">{label}</span>
               </div>
