@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { SplitEngineIcon, LogisticsIcon, AuditIcon, NoImagePlaceholder, CommunityIcon, TrophyIcon, LaptopIcon, MerchantIcon, ShopIcon, UserIcon } from '@/app/components/BrandIcons'
+import { SplitEngineIcon, LogisticsIcon, AuditIcon, NoImagePlaceholder, CommunityIcon, TrophyIcon, LaptopIcon, MerchantIcon, ShopIcon, UserIcon, DashboardIcon } from '@/app/components/BrandIcons'
 
 // ─── Hero Slider ──────────────────────────────────────────────────────────────
 
