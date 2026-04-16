@@ -78,13 +78,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <img
-                src="/logos/goalsquad-logo.png"
-                alt="GoalSquad"
-                className="h-8 w-auto"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+            <Link href="/" className="inline-block mb-4">
               <span className="text-xl font-bold text-white">GoalSquad</span>
             </Link>
             <p className="text-white/60 text-sm leading-relaxed">

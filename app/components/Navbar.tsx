@@ -28,15 +28,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition"
+            className="font-bold text-xl hover:opacity-80 transition"
+            style={{ color: '#004040' }}
           >
-            <img
-              src="/logos/goalsquad-logo.png"
-              alt="GoalSquad"
-              className="h-9 w-auto"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-            <span style={{ color: '#004040' }}>GoalSquad</span>
+            GoalSquad
           </Link>
 
           {/* Desktop Nav */}
