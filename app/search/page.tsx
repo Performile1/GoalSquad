@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { SearchIcon, UserIcon, CommunityIcon, ShopIcon, OrdersIcon, NoImagePlaceholder } from '@/app/components/BrandIcons';
 import { useSearchParams } from 'next/navigation';
 import debounce from 'lodash/debounce';
 
@@ -68,11 +69,10 @@ function SearchContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold text-center mb-6">
-            🔍 Sök på GoalSquad
-          </h1>
+          <div className="flex justify-center mb-4"><SearchIcon size={48} /></div>
+          <h1 className="text-4xl font-bold text-center mb-6">Sök på GoalSquad</h1>
 
           {/* Search Bar */}
           <div className="max-w-3xl mx-auto">
@@ -82,32 +82,32 @@ function SearchContent() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Sök efter säljare, föreningar eller produkter..."
-                className="w-full px-6 py-4 pr-12 rounded-2xl text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-xl"
+                className="w-full px-6 py-4 pr-14 rounded-2xl text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-xl"
                 autoFocus
               />
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-3xl">
-                🔍
+              <span className="absolute right-4 top-1/2 -translate-y-1/2">
+                <SearchIcon size={24} />
               </span>
             </div>
 
             {/* Type Filters */}
-            <div className="flex justify-center gap-3 mt-6">
+            <div className="flex flex-wrap justify-center gap-3 mt-6">
               {[
-                { value: 'all', label: 'Allt', emoji: '🌐' },
-                { value: 'sellers', label: 'Säljare', emoji: '👤' },
-                { value: 'communities', label: 'Föreningar', emoji: '👥' },
-                { value: 'products', label: 'Produkter', emoji: '📦' },
+                { value: 'all', label: 'Allt', icon: <ShopIcon size={16} /> },
+                { value: 'sellers', label: 'Säljare', icon: <UserIcon size={16} /> },
+                { value: 'communities', label: 'Föreningar', icon: <CommunityIcon size={16} /> },
+                { value: 'products', label: 'Produkter', icon: <OrdersIcon size={16} /> },
               ].map((type) => (
                 <button
                   key={type.value}
                   onClick={() => setSearchType(type.value as SearchType)}
-                  className={`px-6 py-3 rounded-xl font-semibold transition ${
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition ${
                     searchType === type.value
-                      ? 'bg-white text-blue-600 shadow-lg'
-                      : 'bg-blue-500 text-white hover:bg-blue-400'
+                      ? 'bg-white text-primary-900 shadow-lg'
+                      : 'bg-white/20 text-white hover:bg-white/30'
                   }`}
                 >
-                  {type.emoji} {type.label}
+                  {type.icon} {type.label}
                 </button>
               ))}
             </div>
@@ -119,19 +119,19 @@ function SearchContent() {
       <div className="container mx-auto px-4 py-12">
         {loading ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4 animate-bounce">🔍</div>
+            <div className="mb-4 flex justify-center animate-bounce"><SearchIcon size={64} /></div>
             <p className="text-xl text-gray-600">Söker...</p>
           </div>
         ) : !hasSearched ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">💡</div>
+            <div className="mb-4 flex justify-center"><SearchIcon size={64} /></div>
             <p className="text-xl text-gray-600">
               Skriv minst 2 tecken för att söka
             </p>
           </div>
         ) : results.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">😕</div>
+            <div className="mb-4 flex justify-center opacity-40"><SearchIcon size={64} /></div>
             <p className="text-2xl font-bold text-gray-900 mb-2">
               Inga resultat hittades
             </p>
@@ -191,8 +191,8 @@ function ResultSection({
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <span className="text-3xl">{emoji}</span>
-        {title} ({results.length})
+        <span className="text-primary-900">{emoji}</span>
+        {title} <span className="text-gray-400 font-normal">({results.length})</span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((result, index) => renderResult(result, index))}
@@ -212,7 +212,7 @@ function renderSellerResult(result: SearchResult, index: number) {
       className="bg-white rounded-xl shadow-lg hover:shadow-xl transition p-6 block"
     >
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold flex-shrink-0">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-900 flex items-center justify-center text-white font-bold flex-shrink-0">
           {result.imageUrl ? (
             <img
               src={result.imageUrl}
@@ -232,7 +232,7 @@ function renderSellerResult(result: SearchResult, index: number) {
             {result.metadata.communityName}
           </p>
           <div className="mt-3 flex items-center gap-3 text-sm">
-            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-semibold">
+            <span className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full font-semibold">
               {parseFloat(result.metadata.totalSales).toLocaleString()} kr
             </span>
           </div>
@@ -253,7 +253,7 @@ function renderCommunityResult(result: SearchResult, index: number) {
       className="bg-white rounded-xl shadow-lg hover:shadow-xl transition p-6 block"
     >
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center flex-shrink-0">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-900 flex items-center justify-center flex-shrink-0 text-white">
           {result.imageUrl ? (
             <img
               src={result.imageUrl}
@@ -261,7 +261,7 @@ function renderCommunityResult(result: SearchResult, index: number) {
               className="w-full h-full rounded-full object-cover"
             />
           ) : (
-            <span className="text-3xl">👥</span>
+            <CommunityIcon size={32} />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -290,7 +290,7 @@ function renderProductResult(result: SearchResult, index: number) {
       transition={{ delay: index * 0.05 }}
       className="bg-white rounded-xl shadow-lg hover:shadow-xl transition overflow-hidden block"
     >
-      <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+      <div className="h-48 overflow-hidden">
         {result.imageUrl ? (
           <img
             src={result.imageUrl}
@@ -298,7 +298,7 @@ function renderProductResult(result: SearchResult, index: number) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <span className="text-6xl">📦</span>
+          <NoImagePlaceholder width={400} height={192} className="w-full h-full" />
         )}
       </div>
       <div className="p-4">
@@ -309,7 +309,7 @@ function renderProductResult(result: SearchResult, index: number) {
           {result.description}
         </p>
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold text-blue-600">
+          <span className="text-2xl font-bold text-primary-900">
             {parseFloat(result.metadata.price).toLocaleString()} kr
           </span>
           <span className="text-xs text-gray-500">
@@ -317,7 +317,7 @@ function renderProductResult(result: SearchResult, index: number) {
           </span>
         </div>
         {result.metadata.stock > 0 ? (
-          <div className="mt-3 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold inline-block">
+          <div className="mt-3 bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold inline-block">
             ✓ I lager
           </div>
         ) : (
@@ -333,9 +333,9 @@ function renderProductResult(result: SearchResult, index: number) {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-900 mx-auto"></div>
           <p className="mt-4 text-gray-600">Laddar sökning...</p>
         </div>
       </div>

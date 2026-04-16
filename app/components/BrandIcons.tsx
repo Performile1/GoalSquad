@@ -192,6 +192,23 @@ export function MessageIcon({ size = 48, className = '' }: IconProps) {
   );
 }
 
+export function NoImagePlaceholder({ width = 300, height = 300, className = '' }: { width?: number; height?: number; className?: string }) {
+  return (
+    <svg width={width} height={height} viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect width="300" height="300" fill={A} />
+      <rect x="1" y="1" width="298" height="298" fill={A} rx="0" />
+      {/* Mountains */}
+      <path d="M0 220L80 120L140 180L200 100L300 220V300H0V220Z" fill={P} opacity="0.6" />
+      <path d="M0 260L60 180L120 230L200 160L300 260V300H0V260Z" fill={P} opacity="0.8" />
+      {/* Sun */}
+      <circle cx="230" cy="70" r="30" fill="white" opacity="0.2" />
+      {/* GS Logo area */}
+      <rect x="110" y="120" width="80" height="60" rx="8" fill="white" opacity="0.12" />
+      <text x="150" y="159" fontSize="28" fontWeight="800" fill="white" textAnchor="middle" fontFamily="system-ui" opacity="0.7">GS</text>
+    </svg>
+  );
+}
+
 export function UserIcon({ size = 48, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>

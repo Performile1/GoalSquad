@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { TrophyIcon, UserIcon, CommunityIcon } from '@/app/components/BrandIcons';
 
 interface LeaderboardEntry {
   rank: number;
@@ -57,14 +58,13 @@ export default function PublicLeaderboardPage() {
   const leaderboardData = activeTab === 'sellers' ? sellers : communities;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-5xl font-bold text-center mb-4">
-            🏆 GoalSquad Leaderboard
-          </h1>
-          <p className="text-xl text-center text-blue-100">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-16">
+        <div className="container mx-auto px-4 text-center">
+          <div className="flex justify-center mb-4"><TrophyIcon size={56} /></div>
+          <h1 className="text-5xl font-bold mb-4">GoalSquad Leaderboard</h1>
+          <p className="text-xl text-white/70">
             Se vem som leder försäljningen!
           </p>
         </div>
@@ -75,23 +75,23 @@ export default function PublicLeaderboardPage() {
         <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={() => setActiveTab('sellers')}
-            className={`px-8 py-3 rounded-xl font-semibold transition ${
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition ${
               activeTab === 'sellers'
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+                ? 'bg-primary-900 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-primary-50 hover:text-primary-900'
             }`}
           >
-            👤 Säljare
+            <UserIcon size={18} /> Säljare
           </button>
           <button
             onClick={() => setActiveTab('communities')}
-            className={`px-8 py-3 rounded-xl font-semibold transition ${
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition ${
               activeTab === 'communities'
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+                ? 'bg-primary-900 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-primary-50 hover:text-primary-900'
             }`}
           >
-            👥 Föreningar
+            <CommunityIcon size={18} /> Föreningar
           </button>
         </div>
 
@@ -107,8 +107,8 @@ export default function PublicLeaderboardPage() {
               onClick={() => setPeriod(p.value as Period)}
               className={`px-6 py-2 rounded-lg font-medium transition ${
                 period === p.value
-                  ? 'bg-cyan-500 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-white text-gray-600 hover:bg-primary-50 hover:text-primary-900'
               }`}
             >
               {p.label}
@@ -134,7 +134,7 @@ export default function PublicLeaderboardPage() {
                     className="w-full h-full rounded-full"
                   />
                 ) : (
-                  <span className="text-4xl">🥈</span>
+                  <span className="text-3xl font-extrabold text-gray-400">2</span>
                 )}
               </div>
               <h3 className="font-bold text-lg mb-1">{leaderboardData[1].name}</h3>
@@ -157,8 +157,8 @@ export default function PublicLeaderboardPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center"
             >
-              <div className="text-4xl mb-2">👑</div>
-              <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center shadow-xl border-4 border-yellow-300">
+              <div className="flex justify-center mb-2"><TrophyIcon size={36} /></div>
+              <div className="bg-gradient-to-br from-primary-900 to-primary-600 w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center shadow-xl border-4 border-primary-300 text-white">
                 {leaderboardData[0].avatarUrl ? (
                   <img
                     src={leaderboardData[0].avatarUrl}
@@ -166,18 +166,18 @@ export default function PublicLeaderboardPage() {
                     className="w-full h-full rounded-full"
                   />
                 ) : (
-                  <span className="text-5xl">🥇</span>
+                  <span className="text-4xl font-extrabold">1</span>
                 )}
               </div>
               <h3 className="font-bold text-xl mb-1">{leaderboardData[0].name}</h3>
               <p className="text-sm text-gray-600 mb-2">
                 {leaderboardData[0].communityName}
               </p>
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 shadow-lg border-2 border-yellow-300">
-                <div className="text-3xl font-bold text-yellow-700">
+              <div className="bg-primary-50 rounded-lg p-4 shadow-lg border-2 border-primary-200">
+                <div className="text-3xl font-bold text-primary-900">
                   {leaderboardData[0].totalSales.toLocaleString()} kr
                 </div>
-                <div className="text-sm text-yellow-600">
+                <div className="text-sm text-primary-600">
                   {leaderboardData[0].totalOrders} ordrar
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function PublicLeaderboardPage() {
               transition={{ delay: 0.2 }}
               className="text-center pt-8"
             >
-              <div className="bg-gradient-to-br from-orange-300 to-orange-500 w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <div className="bg-gradient-to-br from-primary-600 to-primary-900 w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg text-white">
                 {leaderboardData[2].avatarUrl ? (
                   <img
                     src={leaderboardData[2].avatarUrl}
@@ -198,7 +198,7 @@ export default function PublicLeaderboardPage() {
                     className="w-full h-full rounded-full"
                   />
                 ) : (
-                  <span className="text-4xl">🥉</span>
+                  <span className="text-3xl font-extrabold">3</span>
                 )}
               </div>
               <h3 className="font-bold text-lg mb-1">{leaderboardData[2].name}</h3>
@@ -206,7 +206,7 @@ export default function PublicLeaderboardPage() {
                 {leaderboardData[2].communityName}
               </p>
               <div className="bg-white rounded-lg p-4 shadow">
-                <div className="text-2xl font-bold text-orange-600">
+                <div className="text-2xl font-bold text-primary-900">
                   {leaderboardData[2].totalSales.toLocaleString()} kr
                 </div>
                 <div className="text-sm text-gray-500">
@@ -236,7 +236,7 @@ export default function PublicLeaderboardPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-6 hover:bg-gray-50 transition flex items-center gap-4"
+                    className="p-6 hover:bg-primary-50 transition flex items-center gap-4"
                   >
                     {/* Rank */}
                     <div className="text-2xl font-bold text-gray-400 w-16 text-center">
@@ -244,7 +244,7 @@ export default function PublicLeaderboardPage() {
                     </div>
 
                     {/* Avatar */}
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-900 flex items-center justify-center text-white font-bold flex-shrink-0">
                       {entry.avatarUrl ? (
                         <img
                           src={entry.avatarUrl}
@@ -273,7 +273,7 @@ export default function PublicLeaderboardPage() {
 
                     {/* Stats */}
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-600">
+                      <div className="text-2xl font-bold text-primary-900">
                         {entry.totalSales.toLocaleString()} kr
                       </div>
                       <div className="text-sm text-gray-500">
