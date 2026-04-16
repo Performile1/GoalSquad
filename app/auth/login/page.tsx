@@ -37,7 +37,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-900 to-primary-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -70,7 +70,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="din@email.com"
               required
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -84,7 +84,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -92,13 +92,13 @@ export default function LoginPage() {
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                className="w-4 h-4 text-blue-600 rounded"
+                className="w-4 h-4 accent-primary-900 rounded"
               />
               <span className="text-sm text-gray-600">Kom ihåg mig</span>
             </label>
             <Link
               href="/auth/forgot-password"
-              className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+              className="text-sm text-primary-900 hover:text-primary-600 font-semibold"
             >
               Glömt lösenord?
             </Link>
@@ -107,7 +107,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-600 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
             {loading ? 'Loggar in...' : '🔐 Logga in'}
           </button>
@@ -138,7 +138,7 @@ export default function LoginPage() {
             Har du inget konto?{' '}
             <Link
               href="/auth/register"
-              className="text-blue-600 hover:text-blue-700 font-bold"
+              className="text-primary-900 hover:text-primary-600 font-bold"
             >
               Registrera dig här
             </Link>

@@ -56,17 +56,17 @@ export default function CheckoutPage() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                   i <= stepIndex
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary-900 text-white'
                     : 'bg-gray-200 text-gray-500'
                 }`}
               >
                 {i < stepIndex ? '✓' : i + 1}
               </div>
-              <span className={`text-sm font-medium ${i <= stepIndex ? 'text-blue-600' : 'text-gray-400'}`}>
+              <span className={`text-sm font-medium ${i <= stepIndex ? 'text-primary-900' : 'text-gray-400'}`}>
                 {s.label}
               </span>
               {i < steps.length - 1 && (
-                <div className={`flex-1 h-0.5 ml-2 ${i < stepIndex ? 'bg-blue-600' : 'bg-gray-200'}`} />
+                <div className={`flex-1 h-0.5 ml-2 ${i < stepIndex ? 'bg-primary-900' : 'bg-gray-200'}`} />
               )}
             </div>
           ))}
@@ -85,7 +85,7 @@ export default function CheckoutPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Anna Andersson"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -95,7 +95,7 @@ export default function CheckoutPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="070-123 45 67"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                   />
                 </div>
               </div>
@@ -106,7 +106,7 @@ export default function CheckoutPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="din@email.com"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
               <div>
@@ -116,7 +116,7 @@ export default function CheckoutPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Storgatan 1"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -130,7 +130,7 @@ export default function CheckoutPage() {
                       onBlur={findWarehouse}
                       placeholder="123 45"
                       maxLength={6}
-                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -141,7 +141,7 @@ export default function CheckoutPage() {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Stockholm"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                   />
                 </div>
               </div>
@@ -172,7 +172,7 @@ export default function CheckoutPage() {
             <button
               onClick={() => setStep('payment')}
               disabled={!name || !email || !address || !postalCode || !city}
-              className="mt-8 w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              className="mt-8 w-full bg-primary-900 text-white font-semibold py-4 rounded-xl hover:bg-primary-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Fortsätt till betalning →
             </button>
@@ -191,9 +191,9 @@ export default function CheckoutPage() {
               ].map((method) => (
                 <label
                   key={method.id}
-                  className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 transition"
+                  className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-primary-600 transition"
                 >
-                  <input type="radio" name="payment" value={method.id} className="accent-blue-600" />
+                  <input type="radio" name="payment" value={method.id} className="accent-primary-900" />
                   <span className="text-2xl">{method.icon}</span>
                   <span className="font-medium text-gray-800">{method.label}</span>
                 </label>
@@ -208,7 +208,7 @@ export default function CheckoutPage() {
               </button>
               <button
                 onClick={() => setStep('confirm')}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition"
+                className="flex-1 bg-primary-900 text-white font-semibold py-4 rounded-xl hover:bg-primary-600 transition"
               >
                 Granska order →
               </button>
@@ -227,7 +227,7 @@ export default function CheckoutPage() {
             <div className="flex gap-4 justify-center">
               <Link
                 href="/orders"
-                className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition"
+                className="px-6 py-3 bg-primary-900 text-white font-semibold rounded-xl hover:bg-primary-600 transition"
               >
                 Mina ordrar
               </Link>

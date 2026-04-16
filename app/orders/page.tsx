@@ -76,7 +76,7 @@ export default function OrdersPage() {
           <h1 className="text-4xl font-bold text-gray-900">📦 Mina ordrar</h1>
           <Link
             href="/products"
-            className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition"
+            className="px-5 py-2.5 bg-primary-900 text-white text-sm font-semibold rounded-xl hover:bg-primary-600 transition"
           >
             Handla mer →
           </Link>
@@ -91,7 +91,7 @@ export default function OrdersPage() {
             </p>
             <Link
               href="/products"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-700 transition"
+              className="inline-block px-8 py-4 bg-primary-900 text-white font-semibold rounded-xl hover:bg-primary-600 transition"
             >
               Gå till shoppen
             </Link>

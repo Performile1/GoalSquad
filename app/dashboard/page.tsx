@@ -40,12 +40,12 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-12">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-12">
         <div className="max-w-6xl mx-auto px-4">
           <h1 className="text-4xl font-bold mb-2">
             Hej, {profile?.full_name || user.email?.split('@')[0]}! 👋
           </h1>
-          <p className="text-blue-100">Välkommen till din sida</p>
+          <p className="text-primary-100">Välkommen till din sida</p>
         </div>
       </div>
 
@@ -60,7 +60,7 @@ export default function DashboardPage() {
               className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition group flex flex-col gap-2"
             >
               <span className="text-4xl">{link.icon}</span>
-              <span className="font-bold text-gray-900 group-hover:text-blue-600 transition">
+              <span className="font-bold text-gray-900 group-hover:text-primary-900 transition">
                 {link.label}
               </span>
               <span className="text-sm text-gray-500">{link.desc}</span>
@@ -88,7 +88,7 @@ export default function DashboardPage() {
               <label className="block text-sm font-semibold text-gray-500 mb-1">Status</label>
               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                 profile?.is_verified
-                  ? 'bg-green-100 text-green-700'
+                  ? 'bg-primary-50 text-primary-900'
                   : 'bg-yellow-100 text-yellow-700'
               }`}>
                 {profile?.is_verified ? '✓ Verifierad' : 'Ej verifierad'}

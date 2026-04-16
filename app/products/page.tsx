@@ -78,12 +78,12 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-16">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-16">
         <div className="container mx-auto px-4">
           <h1 className="text-5xl font-bold text-center mb-4">
             🛍️ Produktkatalog
           </h1>
-          <p className="text-xl text-center text-green-100">
+          <p className="text-xl text-center text-primary-100">
             Handla och stöd lokala föreningar samtidigt!
           </p>
         </div>
@@ -122,8 +122,8 @@ export default function ProductsPage() {
                     onClick={() => setSelectedCategory(null)}
                     className={`w-full text-left px-4 py-3 rounded-lg transition ${
                       selectedCategory === null
-                        ? 'bg-green-100 text-green-700 font-semibold'
-                        : 'hover:bg-gray-100 text-gray-700'
+                        ? 'bg-primary-50 text-primary-900 font-semibold'
+                        : 'hover:bg-primary-50 text-gray-700'
                     }`}
                   >
                     <span className="mr-2">🌐</span>
@@ -138,8 +138,8 @@ export default function ProductsPage() {
                       onClick={() => setSelectedCategory(category.slug)}
                       className={`w-full text-left px-4 py-3 rounded-lg transition ${
                         selectedCategory === category.slug
-                          ? 'bg-green-100 text-green-700 font-semibold'
-                          : 'hover:bg-gray-100 text-gray-700'
+                          ? 'bg-primary-50 text-primary-900 font-semibold'
+                          : 'hover:bg-primary-50 text-gray-700'
                       }`}
                     >
                       <span className="mr-2">{category.iconEmoji}</span>
@@ -169,7 +169,7 @@ export default function ProductsPage() {
                   />
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>0 kr</span>
-                    <span className="font-semibold text-green-600">
+                    <span className="font-semibold text-primary-600">
                       {priceRange[1]} kr
                     </span>
                   </div>
@@ -184,7 +184,7 @@ export default function ProductsPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 >
                   <option value="popular">Populärast</option>
                   <option value="name">Namn (A-Ö)</option>
@@ -205,7 +205,7 @@ export default function ProductsPage() {
               {selectedCategory && (
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className="text-green-600 hover:text-green-700 font-semibold"
+                  className="text-primary-900 hover:text-primary-600 font-semibold"
                 >
                   ✕ Rensa filter
                 </button>
@@ -268,7 +268,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       <div className="p-6">
         {/* Category Badge */}
         <div className="mb-3">
-          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+          <span className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold">
             {product.categoryName}
           </span>
         </div>
@@ -301,11 +301,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
         {/* Price & Stock */}
         <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-          <div className="text-3xl font-bold text-green-600">
+          <div className="text-3xl font-bold text-primary-900">
             {product.price.toLocaleString()} kr
           </div>
           {product.stock > 0 ? (
-            <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+            <div className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold">
               ✓ I lager
             </div>
           ) : (
@@ -316,7 +316,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         </div>
 
         {/* CTA */}
-        <button className="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition">
+        <button className="w-full mt-4 bg-primary-900 text-white py-3 rounded-xl font-semibold hover:bg-primary-600 transition">
           Köp nu →
         </button>
       </div>

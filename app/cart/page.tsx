@@ -37,7 +37,7 @@ export default function CartPage() {
         </p>
         <Link
           href="/products"
-          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-cyan-700 transition shadow-lg"
+          className="px-8 py-4 bg-primary-900 text-white font-semibold rounded-xl hover:bg-primary-600 transition shadow-lg"
         >
           Gå till shoppen
         </Link>
@@ -68,7 +68,7 @@ export default function CartPage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
                   <p className="text-sm text-gray-500">{item.merchantName}</p>
-                  <p className="text-lg font-bold text-blue-600 mt-1">
+                  <p className="text-lg font-bold text-primary-900 mt-1">
                     {item.price.toLocaleString()} kr
                   </p>
                 </div>
@@ -101,7 +101,7 @@ export default function CartPage() {
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Frakt</span>
-                <span className="text-green-600">Beräknas i kassan</span>
+                <span className="text-primary-600">Beräknas i kassan</span>
               </div>
               <div className="border-t pt-3 flex justify-between font-bold text-lg text-gray-900">
                 <span>Totalt</span>
@@ -110,13 +110,13 @@ export default function CartPage() {
             </div>
             <Link
               href="/checkout"
-              className="block w-full text-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition shadow"
+              className="block w-full text-center bg-primary-900 text-white font-semibold py-4 rounded-xl hover:bg-primary-600 transition shadow"
             >
               Till kassan →
             </Link>
             <Link
               href="/products"
-              className="block w-full text-center mt-3 text-sm text-gray-500 hover:text-gray-700 transition"
+              className="block w-full text-center mt-3 text-sm text-primary-900 hover:text-primary-600 transition"
             >
               ← Fortsätt handla
             </Link>

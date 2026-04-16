@@ -27,10 +27,15 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/products"
-            className="flex items-center gap-2 font-bold text-xl text-blue-600 hover:text-blue-700 transition"
+            className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition"
           >
-            <span className="text-2xl">⚽</span>
-            <span>GoalSquad</span>
+            <img
+              src="/logos/goalsquad-logo.png"
+              alt="GoalSquad"
+              className="h-9 w-auto"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+            <span style={{ color: '#004040' }}>GoalSquad</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -41,8 +46,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   isActive(link.href)
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    ? 'bg-primary-50 text-primary-900 font-semibold'
+                    : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
                 }`}
               >
                 {link.label}
@@ -55,7 +60,7 @@ export default function Navbar() {
             {/* Cart */}
             <Link
               href="/cart"
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition"
+              className="p-2 text-gray-600 hover:text-primary-900 hover:bg-primary-50 rounded-lg transition"
               title="Varukorg"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +71,7 @@ export default function Navbar() {
             {/* Bli Merchant CTA */}
             <Link
               href="/merchants/onboard"
-              className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition shadow-sm"
+              className="px-4 py-2 bg-primary-900 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition shadow-sm border border-primary-600"
             >
               Bli Merchant →
             </Link>
@@ -76,7 +81,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/dashboard"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary-900 hover:bg-primary-50 rounded-lg transition"
                 >
                   Min sida
                 </Link>
@@ -90,7 +95,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/auth/login"
-                className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                className="px-4 py-2 text-sm font-medium text-primary-900 border border-primary-900 rounded-lg hover:bg-primary-50 transition"
               >
                 Logga in
               </Link>
@@ -142,7 +147,7 @@ export default function Navbar() {
               <Link
                 href="/merchants/onboard"
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 rounded-lg text-sm font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center"
+                className="block px-4 py-3 rounded-lg text-sm font-semibold bg-primary-900 text-white text-center hover:bg-primary-600 transition"
               >
                 Bli Merchant →
               </Link>
@@ -166,7 +171,7 @@ export default function Navbar() {
                 <Link
                   href="/auth/login"
                   onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-700 border border-gray-200 text-center hover:bg-gray-50"
+                  className="block px-4 py-3 rounded-lg text-sm font-medium text-primary-900 border border-primary-900 text-center hover:bg-primary-50 transition"
                 >
                   Logga in
                 </Link>

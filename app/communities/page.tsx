@@ -46,10 +46,10 @@ export default function CommunitiesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-16">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-4">👥 Communities</h1>
-          <p className="text-xl text-purple-100 mb-8">
+          <p className="text-xl text-primary-100 mb-8">
             Föreningar och grupper som säljer via GoalSquad
           </p>
           <div className="max-w-lg mx-auto">
@@ -90,7 +90,7 @@ export default function CommunitiesPage() {
                   className="block bg-white rounded-2xl shadow-sm hover:shadow-lg transition overflow-hidden group"
                 >
                   {/* Logo / banner area */}
-                  <div className="h-32 bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+                  <div className="h-32 bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
                     {community.logoUrl ? (
                       <img
                         src={community.logoUrl}
@@ -103,7 +103,7 @@ export default function CommunitiesPage() {
                   </div>
 
                   <div className="p-5">
-                    <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-purple-600 transition truncate">
+                    <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-primary-900 transition truncate">
                       {community.name}
                     </h3>
                     {community.city && (
@@ -116,7 +116,7 @@ export default function CommunitiesPage() {
                         👥 {community.totalMembers} medlemmar
                       </span>
                       {community.communityType && (
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium capitalize">
+                        <span className="text-xs bg-primary-50 text-primary-900 px-2 py-1 rounded-full font-medium capitalize">
                           {community.communityType}
                         </span>
                       )}

@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <main className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -16,7 +16,7 @@ export default function Home() {
             className="text-center"
           >
             <motion.h1
-              className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 mb-6"
+              className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-900 to-primary-600 mb-6"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5 }}
@@ -51,13 +51,13 @@ export default function Home() {
             >
               <Link
                 href="/merchants/onboard"
-                className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+                className="px-8 py-4 bg-primary-900 text-white rounded-lg font-semibold hover:bg-primary-600 transition-colors shadow-lg hover:shadow-xl"
               >
                 Become a Merchant
               </Link>
               <Link
                 href="/products"
-                className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl border-2 border-blue-600"
+                className="px-8 py-4 bg-white text-primary-900 rounded-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg hover:shadow-xl border-2 border-primary-900"
               >
                 Handla nu
               </Link>
@@ -109,7 +109,7 @@ export default function Home() {
         {/* Animated background elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <motion.div
-            className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
+            className="absolute top-20 left-10 w-72 h-72 bg-primary-100 rounded-full mix-blend-multiply filter blur-xl opacity-70"
             animate={{
               x: [0, 100, 0],
               y: [0, 50, 0],
@@ -121,7 +121,7 @@ export default function Home() {
             }}
           />
           <motion.div
-            className="absolute top-40 right-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
+            className="absolute top-40 right-10 w-72 h-72 bg-primary-200 rounded-full mix-blend-multiply filter blur-xl opacity-70"
             animate={{
               x: [0, -100, 0],
               y: [0, 100, 0],
