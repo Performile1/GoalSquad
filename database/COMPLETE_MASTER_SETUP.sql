@@ -482,26 +482,60 @@ CREATE INDEX IF NOT EXISTS idx_products_gs1 ON products(gs1_gtin) WHERE gs1_gtin
 CREATE INDEX IF NOT EXISTS idx_products_sku ON products(sku, merchant_id);
 CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand);
 
--- Product Categories
-CREATE TABLE IF NOT EXISTS product_categories (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  description TEXT,
-  parent_id UUID REFERENCES product_categories(id),
-  icon_emoji TEXT,
-  display_order INTEGER DEFAULT 0,
-  is_active BOOLEAN DEFAULT true,
-  metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create product_categories table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'product_categories') THEN
+    CREATE TABLE product_categories (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      description TEXT,
+      parent_id UUID REFERENCES product_categories(id),
+      icon_emoji TEXT,
+      display_order INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT true,
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
+
+-- Add columns if they don't exist
+ALTER TABLE product_categories
+ADD COLUMN IF NOT EXISTS name TEXT,
+ADD COLUMN IF NOT EXISTS slug TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS parent_id UUID,
+ADD COLUMN IF NOT EXISTS icon_emoji TEXT,
+ADD COLUMN IF NOT EXISTS display_order INTEGER,
+ADD COLUMN IF NOT EXISTS is_active BOOLEAN,
+ADD COLUMN IF NOT EXISTS metadata JSONB,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+
+-- Add unique constraint on slug if it doesn't exist
+DO $$
+BEGIN
+  ALTER TABLE product_categories ADD CONSTRAINT product_categories_slug_key UNIQUE (slug);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Add category to products
 ALTER TABLE products
-ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES product_categories(id),
+ADD COLUMN IF NOT EXISTS category_id UUID,
 ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}',
 ADD COLUMN IF NOT EXISTS search_vector tsvector;
+
+-- Add foreign key constraint if product_categories table has id column
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'product_categories' AND column_name = 'id') THEN
+    ALTER TABLE products ADD CONSTRAINT products_category_id_fkey FOREIGN KEY (category_id) REFERENCES product_categories(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Create indexes for search
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
