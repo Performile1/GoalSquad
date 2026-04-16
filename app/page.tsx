@@ -350,9 +350,9 @@ export default function Home() {
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">Varför GoalSquad?</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { title: 'The Split Engine', description: 'Triple-dip margins: Sales, Handling och Shipping spreads beräknas i realtid.', icon: <SplitEngineIcon size={48} /> },
-            { title: 'Distribuerad Logistik', description: 'Multi-origin shipping med hub-konsolidering för optimal leverans.', icon: <LogisticsIcon size={48} /> },
-            { title: 'Audit Trail', description: 'Oföränderliga signaturer för varje transaktion. Förtroende inbyggt.', icon: <AuditIcon size={48} /> },
+            { title: 'Gratis att komma igång', description: 'Inga förskottskostnader. Registrera din förening eller klass och börja sälja direkt.', icon: <TrophyIcon size={48} /> },
+            { title: 'Automatisk intäktsdelning', description: 'Transparent redovisning i realtid. Ni ser exakt hur mycket ni tjänar på varje försäljning.', icon: <DashboardIcon size={48} /> },
+            { title: 'Distribuerad Logistik', description: 'Vi hanterar leverans direkt till kunden. Inga lager, ingen frakt, ingen hantering.', icon: <LogisticsIcon size={48} /> },
             { title: 'MOQ Fördelning', description: 'MOQ fördelas automatiskt över flera klubbar, föreningar och slutkonsumenter. Ingen låsning.', icon: <ShopIcon size={48} /> },
           ].map((feature, index) => (
             <motion.div key={feature.title} className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-lg transition" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
