@@ -45,24 +45,59 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm"; -- För similarity search
 -- 2. ORGANIZATIONS (NEW)
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS organizations (
-  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name                 VARCHAR(255) NOT NULL,
-  org_type             VARCHAR(50) NOT NULL DEFAULT 'hub'
-                       CHECK (org_type IN ('hub', 'merchant', 'warehouse')),
-  country              VARCHAR(2) NOT NULL,
-  city                 VARCHAR(255),
-  postal_code          VARCHAR(20),
-  address              TEXT,
-  phone                VARCHAR(50),
-  email                VARCHAR(255),
-  logo_url             TEXT,
-  status               VARCHAR(30) NOT NULL DEFAULT 'active'
-                       CHECK (status IN ('active', 'inactive', 'suspended')),
-  metadata             JSONB DEFAULT '{}',
-  created_at           TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at           TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create organizations table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'organizations') THEN
+    CREATE TABLE organizations (
+      id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      name                 VARCHAR(255) NOT NULL,
+      org_type             VARCHAR(50) NOT NULL DEFAULT 'hub'
+                           CHECK (org_type IN ('hub', 'merchant', 'warehouse')),
+      country              VARCHAR(2) NOT NULL,
+      city                 VARCHAR(255),
+      postal_code          VARCHAR(20),
+      address              TEXT,
+      phone                VARCHAR(50),
+      email                VARCHAR(255),
+      logo_url             TEXT,
+      status               VARCHAR(30) NOT NULL DEFAULT 'active'
+                           CHECK (status IN ('active', 'inactive', 'suspended')),
+      metadata             JSONB DEFAULT '{}',
+      created_at           TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at           TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
+
+-- Add columns if they don't exist
+ALTER TABLE organizations
+ADD COLUMN IF NOT EXISTS name VARCHAR(255),
+ADD COLUMN IF NOT EXISTS org_type VARCHAR(50),
+ADD COLUMN IF NOT EXISTS country VARCHAR(2),
+ADD COLUMN IF NOT EXISTS city VARCHAR(255),
+ADD COLUMN IF NOT EXISTS postal_code VARCHAR(20),
+ADD COLUMN IF NOT EXISTS address TEXT,
+ADD COLUMN IF NOT EXISTS phone VARCHAR(50),
+ADD COLUMN IF NOT EXISTS email VARCHAR(255),
+ADD COLUMN IF NOT EXISTS logo_url TEXT,
+ADD COLUMN IF NOT EXISTS status VARCHAR(30),
+ADD COLUMN IF NOT EXISTS metadata JSONB,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+
+-- Add constraints if they don't exist
+DO $$
+BEGIN
+  ALTER TABLE organizations ADD CONSTRAINT organizations_org_type_check CHECK (org_type IN ('hub', 'merchant', 'warehouse'));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  ALTER TABLE organizations ADD CONSTRAINT organizations_status_check CHECK (status IN ('active', 'inactive', 'suspended'));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_organizations_org_type ON organizations(org_type);
@@ -134,7 +169,7 @@ CREATE INDEX IF NOT EXISTS idx_profiles_active ON profiles(is_active) WHERE is_a
 -- Merchants
 CREATE TABLE IF NOT EXISTS merchants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id UUID,
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   merchant_name VARCHAR(255) NOT NULL,
   slug VARCHAR(255) UNIQUE NOT NULL,
@@ -165,6 +200,18 @@ CREATE TABLE IF NOT EXISTS merchants (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add organization_id column if it doesn't exist
+ALTER TABLE merchants ADD COLUMN IF NOT EXISTS organization_id UUID;
+
+-- Add foreign key constraint if organizations table has id column
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'organizations' AND column_name = 'id') THEN
+    ALTER TABLE merchants ADD CONSTRAINT merchants_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_merchants_org ON merchants(organization_id);
@@ -220,7 +267,7 @@ CREATE TABLE IF NOT EXISTS products (
 -- Communities
 CREATE TABLE IF NOT EXISTS communities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  organization_id UUID,
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
@@ -236,6 +283,18 @@ CREATE TABLE IF NOT EXISTS communities (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add organization_id column if it doesn't exist
+ALTER TABLE communities ADD COLUMN IF NOT EXISTS organization_id UUID;
+
+-- Add foreign key constraint if organizations table has id column
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'organizations' AND column_name = 'id') THEN
+    ALTER TABLE communities ADD CONSTRAINT communities_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Community Members
 CREATE TABLE IF NOT EXISTS community_members (
