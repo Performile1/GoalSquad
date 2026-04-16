@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { LaptopIcon, DashboardIcon, SearchIcon } from '@/app/components/BrandIcons';
+import { LaptopIcon, DashboardIcon, SearchIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 export default function TechTeamPage() {
   return (
