@@ -56,10 +56,10 @@ export default function Home() {
                 Become a Merchant
               </Link>
               <Link
-                href="/shop"
+                href="/products"
                 className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl border-2 border-blue-600"
               >
-                Start Shopping
+                Handla nu
               </Link>
             </motion.div>
           </motion.div>
