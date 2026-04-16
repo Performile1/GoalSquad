@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DashboardIcon, MoneyIcon, ShoppingBagIcon, SearchIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 interface Product {
   id: string;
@@ -95,7 +96,9 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
   if (loading) {
     return (
       <div className="bg-gray-100 rounded-2xl p-12 text-center">
-        <div className="text-6xl mb-4 animate-bounce">🧮</div>
+        <div className="flex justify-center mb-4 animate-bounce">
+          <DashboardIcon size={64} />
+        </div>
         <p className="text-xl text-gray-600">Laddar kalkylator...</p>
       </div>
     );
@@ -104,9 +107,12 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
   return (
     <div className="bg-primary-50 rounded-2xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white p-8">
-        <h2 className="text-4xl font-bold mb-2">💰 Försäljningskalkylator</h2>
-        <p className="text-white/80 text-lg">
+      <div className="bg-primary-900 text-white p-8">
+        <div className="flex items-center gap-3 mb-2">
+          <MoneyIcon size={40} />
+          <h2 className="text-4xl font-bold">Försäljningskalkylator</h2>
+        </div>
+        <p className="text-white/80 text-lg ml-14">
           Räkna ut hur mycket din förening kan tjäna
         </p>
       </div>
@@ -143,7 +149,7 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
             {activeTab === 'all' ? (
               Object.entries(groupedProducts).map(([merchantName, merchantProducts]) => (
                 <div key={merchantName} className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white p-4">
+                  <div className="bg-primary-900 text-white p-4">
                     <h3 className="text-xl font-bold">{merchantName}</h3>
                     <p className="text-sm text-white/70">{merchantProducts.length} produkter</p>
                   </div>
@@ -163,7 +169,9 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
               <div className="bg-white rounded-xl shadow-lg p-6">
                 {selectedProducts.size === 0 ? (
                   <div className="text-center py-12">
-                    <div className="text-6xl mb-4">🛒</div>
+                    <div className="flex justify-center mb-4">
+                      <ShoppingBagIcon size={64} />
+                    </div>
                     <p className="text-xl font-bold text-gray-900 mb-2">
                       Inga produkter valda
                     </p>
@@ -200,9 +208,12 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
             animate={{ scale: 1, opacity: 1 }}
             className="bg-white rounded-xl shadow-lg p-6 sticky top-6"
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              📊 Sammanfattning
-            </h3>
+            <div className="flex items-center gap-2 mb-6">
+              <DashboardIcon size={28} />
+              <h3 className="text-2xl font-bold text-gray-900">
+                Sammanfattning
+              </h3>
+            </div>
 
             <div className="space-y-4">
               {/* Total Items */}
@@ -230,12 +241,12 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
               </div>
 
               {/* Profit */}
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white">
+              <div className="bg-gradient-to-r from-primary-900 to-primary-600 rounded-xl p-6 text-white">
                 <div className="text-sm font-semibold mb-2">Er vinst</div>
                 <div className="text-4xl font-bold mb-2">
                   {totals.profit.toLocaleString('sv-SE')} kr
                 </div>
-                <div className="text-green-100 text-sm">
+                <div className="text-primary-100 text-sm">
                   {totals.profitPercentage.toFixed(1)}% marginal
                 </div>
               </div>
@@ -248,13 +259,13 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
                   </div>
                   <div className="h-8 rounded-full overflow-hidden flex">
                     <div
-                      className="bg-green-500 flex items-center justify-center text-white text-xs font-bold"
+                      className="bg-primary-900 flex items-center justify-center text-white text-xs font-bold"
                       style={{ width: `${totals.profitPercentage}%` }}
                     >
                       {totals.profitPercentage > 15 && `${totals.profitPercentage.toFixed(0)}%`}
                     </div>
                     <div
-                      className="bg-gray-300 flex items-center justify-center text-gray-700 text-xs font-bold"
+                      className="bg-primary-200 flex items-center justify-center text-primary-900 text-xs font-bold"
                       style={{ width: `${100 - totals.profitPercentage}%` }}
                     >
                       {(100 - totals.profitPercentage) > 15 && `${(100 - totals.profitPercentage).toFixed(0)}%`}
@@ -270,30 +281,33 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
 
             {/* CTA */}
             {selectedProducts.size > 0 && (
-              <button className="w-full mt-6 bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-700 transition">
-                🚀 Starta försäljning
+              <button className="w-full mt-6 bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-700 transition flex items-center justify-center gap-2">
+                <TrophyIcon size={20} /> Starta försäljning
               </button>
             )}
           </motion.div>
 
           {/* Info Card */}
           <div className="bg-primary-50 rounded-xl p-6 border-2 border-primary-200">
-            <h4 className="font-bold text-primary-900 mb-3">💡 Så fungerar det</h4>
+            <div className="flex items-center gap-2 mb-3">
+              <SearchIcon size={20} />
+              <h4 className="font-bold text-primary-900">Så fungerar det</h4>
+            </div>
             <ul className="space-y-2 text-sm text-primary-800">
               <li className="flex items-start gap-2">
-                <span>1️⃣</span>
+                <div className="w-6 h-6 rounded-full bg-primary-900 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
                 <span>Välj produkter från olika företag</span>
               </li>
               <li className="flex items-start gap-2">
-                <span>2️⃣</span>
+                <div className="w-6 h-6 rounded-full bg-primary-900 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
                 <span>Se direkt hur mycket ni tjänar</span>
               </li>
               <li className="flex items-start gap-2">
-                <span>3️⃣</span>
+                <div className="w-6 h-6 rounded-full bg-primary-900 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
                 <span>Kombinera för maximal vinst</span>
               </li>
               <li className="flex items-start gap-2">
-                <span>4️⃣</span>
+                <div className="w-6 h-6 rounded-full bg-primary-900 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</div>
                 <span>Starta försäljning när ni är redo</span>
               </li>
             </ul>
@@ -330,12 +344,12 @@ function ProductCard({
             <span className="text-sm text-gray-600">
               Pris: <strong className="text-primary-900">{product.price} kr</strong>
             </span>
-            <span className="text-sm text-green-600 font-semibold">
+            <span className="text-sm text-primary-900 font-semibold">
               +{product.profit} kr vinst
             </span>
           </div>
           {product.moq && (
-            <div className="text-xs text-orange-600 mt-1">
+            <div className="text-xs text-primary-900 mt-1">
               MOQ: {product.moq} st
             </div>
           )}
@@ -383,7 +397,7 @@ function ProductCard({
             </div>
             <div className="flex justify-between text-sm font-bold">
               <span className="text-gray-900">Er vinst:</span>
-              <span className="text-green-600">
+              <span className="text-primary-900">
                 {(product.profit * quantity).toLocaleString('sv-SE')} kr
               </span>
             </div>

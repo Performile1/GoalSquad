@@ -2,42 +2,43 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { TrophyIcon, HandshakeIcon, RocketIcon, LeafIcon, CommunityIcon, LaptopIcon, MerchantIcon, TargetIcon } from '@/app/components/BrandIcons';
 
 const values = [
   {
-    icon: '🏆',
+    icon: TrophyIcon,
     title: 'Föreningar i centrum',
     desc: 'Vi bygger plattformen för att föreningar, klubbar och klasser ska kunna finansiera sin verksamhet utan krångel.',
   },
   {
-    icon: '🤝',
+    icon: HandshakeIcon,
     title: 'Rättvis fördelning',
     desc: 'Varje krona som tjänas in delas transparent. Säljaren vet exakt vad de får och föreningen ser allt i realtid.',
   },
   {
-    icon: '🚀',
+    icon: RocketIcon,
     title: 'Enkelt att sälja',
     desc: 'Inga lager, ingen frakt, ingen hantering. Vi sköter allt logistik så att du kan fokusera på det viktiga.',
   },
   {
-    icon: '🌱',
+    icon: LeafIcon,
     title: 'Hållbart',
     desc: 'Vi väljer partners med omsorg. Kvalitetsprodukter från ansvarsfulla företag som delar våra värderingar.',
   },
 ];
 
 const team = [
-  { name: 'GoalSquad Team', role: 'Community & Tillväxt', emoji: '👥' },
-  { name: 'Tech & Produkt', role: 'Plattformsutveckling', emoji: '💻' },
-  { name: 'Merchant Relations', role: 'Leverantörspartners', emoji: '🏢' },
-  { name: 'Support & Onboarding', role: 'Föreningssupport', emoji: '🎯' },
+  { name: 'GoalSquad Team', role: 'Community & Tillväxt', icon: CommunityIcon },
+  { name: 'Tech & Produkt', role: 'Plattformsutveckling', icon: LaptopIcon },
+  { name: 'Merchant Relations', role: 'Leverantörspartners', icon: MerchantIcon },
+  { name: 'Support & Onboarding', role: 'Föreningssupport', icon: TargetIcon },
 ];
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-primary-900 to-primary-600 text-white py-24 px-4">
+      <div className="bg-primary-900 text-white py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <h1 className="text-5xl font-bold mb-6">Om GoalSquad</h1>
@@ -80,7 +81,7 @@ export default function AboutPage() {
               transition={{ delay: 0.1 + i * 0.05 }}
               className="bg-primary-50 rounded-2xl p-8 border border-primary-100"
             >
-              <div className="text-4xl mb-4">{v.icon}</div>
+              <v.icon size={40} />
               <h3 className="text-xl font-bold text-primary-900 mb-2">{v.title}</h3>
               <p className="text-gray-600">{v.desc}</p>
             </motion.div>
@@ -92,7 +93,7 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-primary-900 to-primary-600 rounded-2xl p-12 text-white text-center mb-20"
+          className="bg-primary-900 rounded-2xl p-12 text-white text-center mb-20"
         >
           <h2 className="text-3xl font-bold mb-4">Hur det fungerar</h2>
           <div className="grid md:grid-cols-3 gap-8 mt-8">
@@ -123,7 +124,9 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {team.map((member) => (
               <div key={member.name} className="bg-white border-2 border-primary-100 rounded-2xl p-6 hover:border-primary-600 transition">
-                <div className="text-5xl mb-3">{member.emoji}</div>
+                <div className="flex justify-center mb-3">
+                  <member.icon size={40} />
+                </div>
                 <h3 className="font-bold text-primary-900 text-sm">{member.name}</h3>
                 <p className="text-gray-500 text-xs mt-1">{member.role}</p>
               </div>

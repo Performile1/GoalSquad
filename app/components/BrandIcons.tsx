@@ -299,3 +299,56 @@ export function ShoppingBagIcon({ size = 48, className = '' }: IconProps) {
     </svg>
   );
 }
+
+export function LeafIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 6c-8 0-14 6-14 14 0 6 4 12 10 16 6-4 10-10 10-16 0-8-6-14-14-14z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 6v24" stroke={P} strokeWidth="2" />
+      <path d="M24 14c-2 2-4 4-4 8" stroke={P} strokeWidth="2" strokeLinecap="round" />
+      <path d="M24 18c2 2 4 4 4 8" stroke={P} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function HandshakeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M8 24l8-8h12l8 8-8 8H16l-8-8z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M16 16l-4 8 4 8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M32 16l4 8-4 8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="4" fill={P} />
+    </svg>
+  );
+}
+
+export function RocketIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 4c0 0-8 8-8 20 0 8 4 16 8 20 4-4 8-12 8-20 0-12-8-20-8-20z" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="16" r="4" fill={P} />
+      <path d="M16 36l-4 8M32 36l4 8M16 12l-6-4M32 12l6-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function LaptopIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="6" y="8" width="36" height="24" rx="2" fill={A} stroke={P} strokeWidth="2.5" />
+      <rect x="2" y="32" width="44" height="6" rx="2" fill={P} />
+      <rect x="8" y="12" width="32" height="16" fill={P} opacity="0.3" />
+    </svg>
+  );
+}
+
+export function TargetIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="18" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="24" r="12" fill={P} />
+      <circle cx="24" cy="24" r="6" fill={A} />
+      <circle cx="24" cy="24" r="2" fill="white" />
+    </svg>
+  );
+}
