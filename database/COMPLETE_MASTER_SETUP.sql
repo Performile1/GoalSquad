@@ -166,43 +166,76 @@ CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
 CREATE INDEX IF NOT EXISTS idx_profiles_active ON profiles(is_active) WHERE is_active = true;
 
--- Merchants
-CREATE TABLE IF NOT EXISTS merchants (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organization_id UUID,
-  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  merchant_name VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) UNIQUE NOT NULL,
-  description TEXT,
-  logo_url TEXT,
-  banner_url TEXT,
-  
-  -- Contact
-  email VARCHAR(255) NOT NULL,
-  phone VARCHAR(50),
-  
-  -- Address
-  address_line1 VARCHAR(255),
-  address_line2 VARCHAR(255),
-  city VARCHAR(100),
-  postal_code VARCHAR(20),
-  country VARCHAR(2) NOT NULL,
-  
-  -- Business
-  stripe_account_id VARCHAR(255), -- Stripe Connect account
-  onboarding_completed BOOLEAN DEFAULT FALSE,
-  verification_status VARCHAR(50) DEFAULT 'pending' CHECK (verification_status IN ('pending', 'verified', 'rejected')),
-  
-  -- Settings
-  settings JSONB DEFAULT '{}',
-  metadata JSONB DEFAULT '{}',
-  
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create merchants table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'merchants') THEN
+    CREATE TABLE merchants (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      organization_id UUID,
+      user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+      merchant_name VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE NOT NULL,
+      description TEXT,
+      logo_url TEXT,
+      banner_url TEXT,
+      
+      -- Contact
+      email VARCHAR(255) NOT NULL,
+      phone VARCHAR(50),
+      
+      -- Address
+      address_line1 VARCHAR(255),
+      address_line2 VARCHAR(255),
+      city VARCHAR(100),
+      postal_code VARCHAR(20),
+      country VARCHAR(2) NOT NULL,
+      
+      -- Business
+      stripe_account_id VARCHAR(255),
+      onboarding_completed BOOLEAN DEFAULT FALSE,
+      verification_status VARCHAR(50) DEFAULT 'pending' CHECK (verification_status IN ('pending', 'verified', 'rejected')),
+      
+      -- Settings
+      settings JSONB DEFAULT '{}',
+      metadata JSONB DEFAULT '{}',
+      
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
 
--- Add organization_id column if it doesn't exist
-ALTER TABLE merchants ADD COLUMN IF NOT EXISTS organization_id UUID;
+-- Add columns if they don't exist
+ALTER TABLE merchants
+ADD COLUMN IF NOT EXISTS organization_id UUID,
+ADD COLUMN IF NOT EXISTS user_id UUID,
+ADD COLUMN IF NOT EXISTS merchant_name VARCHAR(255),
+ADD COLUMN IF NOT EXISTS slug VARCHAR(255),
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS logo_url TEXT,
+ADD COLUMN IF NOT EXISTS banner_url TEXT,
+ADD COLUMN IF NOT EXISTS email VARCHAR(255),
+ADD COLUMN IF NOT EXISTS phone VARCHAR(50),
+ADD COLUMN IF NOT EXISTS address_line1 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS address_line2 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS city VARCHAR(100),
+ADD COLUMN IF NOT EXISTS postal_code VARCHAR(20),
+ADD COLUMN IF NOT EXISTS country VARCHAR(2),
+ADD COLUMN IF NOT EXISTS stripe_account_id VARCHAR(255),
+ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN,
+ADD COLUMN IF NOT EXISTS verification_status VARCHAR(50),
+ADD COLUMN IF NOT EXISTS settings JSONB,
+ADD COLUMN IF NOT EXISTS metadata JSONB,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+
+-- Add unique constraint on slug if it doesn't exist
+DO $$
+BEGIN
+  ALTER TABLE merchants ADD CONSTRAINT merchants_slug_key UNIQUE (slug);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Add foreign key constraint if organizations table has id column
 DO $$
