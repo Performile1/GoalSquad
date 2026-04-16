@@ -16,7 +16,7 @@ export default function TechTeamPage() {
             </div>
             <h1 className="text-4xl font-bold mb-4">Tech & Produkt</h1>
             <p className="text-xl text-white/80">
-              Vi bygger plattformen som driver community commerce
+              Hur GoalSquad fungerar tekniskt
             </p>
           </motion.div>
         </div>
@@ -37,10 +37,24 @@ export default function TechTeamPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-primary-50 rounded-2xl p-8 mb-12"
         >
-          <h2 className="text-2xl font-bold text-primary-900 mb-4">Vårt uppdrag</h2>
-          <p className="text-gray-700 leading-relaxed">
-            Vi utvecklar och underhåller GoalSquad-plattformen med fokus på stabilitet, skalbarhet och användarvänlighet. Med moderna tekniker bygger vi en plattform som gör det enkelt för föreningar att sälja produkter och för kunder att köpa.
+          <h2 className="text-2xl font-bold text-primary-900 mb-4">Hur GoalSquad fungerar</h2>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            GoalSquad är en modern community commerce-plattform som kopplar ihop tre huvudaktörer:
           </p>
+          <ul className="space-y-2 text-gray-700">
+            <li className="flex items-start gap-2">
+              <TrophyIcon size={16} />
+              <span><strong>Föreningar och säljare</strong> registrerar produkter och delar säljlänkar</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <DashboardIcon size={16} />
+              <span><strong>Leverantörer</strong> tillhandahåller produkter och hanterar logistik</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <SearchIcon size={16} />
+              <span><strong>Kunder</strong> köper produkter via säkra betalningar</span>
+            </li>
+          </ul>
         </motion.div>
 
         {/* Tech stack */}
@@ -50,35 +64,31 @@ export default function TechTeamPage() {
           transition={{ delay: 0.1 }}
           className="mb-12"
         >
-          <h2 className="text-2xl font-bold text-primary-900 mb-6">Vad vi gör</h2>
+          <h2 className="text-2xl font-bold text-primary-900 mb-6">Teknisk arkitektur</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="border-2 border-primary-200 rounded-xl p-6">
               <DashboardIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">Plattformsutveckling</h3>
-              <p className="text-gray-600 text-sm">
-                Bygger och förbättrar kärnplattformen med Next.js, React och TypeScript
-              </p>
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Frontend</h3>
+              <p className="text-gray-600 text-sm mb-2">Next.js 14 med App Router för optimal prestanda och SEO</p>
+              <p className="text-gray-500 text-xs">React, TypeScript, Tailwind CSS, Framer Motion</p>
             </div>
             <div className="border-2 border-primary-200 rounded-xl p-6">
               <SearchIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">Backend & API</h3>
-              <p className="text-gray-600 text-sm">
-                Utvecklar säkra och skalbara API:er med Supabase och serverless functions
-              </p>
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Backend</h3>
+              <p className="text-gray-600 text-sm mb-2">Supabase (PostgreSQL) för databas och autentisering</p>
+              <p className="text-gray-500 text-xs">Serverless functions på Vercel för API endpoints</p>
             </div>
             <div className="border-2 border-primary-200 rounded-xl p-6">
               <LaptopIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">UI/UX Design</h3>
-              <p className="text-gray-600 text-sm">
-                Skapar intuitiva och tillgängliga gränssnitt som följer varumärkesriktlinjerna
-              </p>
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Betalningar</h3>
+              <p className="text-gray-600 text-sm mb-2">Stripe för säkra betalningar och automatiserade utbetalningar</p>
+              <p className="text-gray-500 text-xs">Kort, Swish, Klarna och andra betalmetoder</p>
             </div>
             <div className="border-2 border-primary-200 rounded-xl p-6">
               <DashboardIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">DevOps & Infrastruktur</h3>
-              <p className="text-gray-600 text-sm">
-                Hanterar deployment, övervakning och optimering av plattformen
-              </p>
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Logistik</h3>
+              <p className="text-gray-600 text-sm mb-2">Integration med DHL, Instabox, Budbee och andra logistikpartners</p>
+              <p className="text-gray-500 text-xs">Automatisk ordergenerering och spårning</p>
             </div>
           </div>
         </motion.div>

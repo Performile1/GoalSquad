@@ -28,10 +28,11 @@ const values = [
 ];
 
 const team = [
-  { name: 'GoalSquad Team', role: 'Community & Tillväxt', icon: CommunityIcon, link: '/about/team/community' },
-  { name: 'Tech & Produkt', role: 'Plattformsutveckling', icon: LaptopIcon, link: '/about/team/tech' },
-  { name: 'Merchant Relations', role: 'Leverantörspartners', icon: MerchantIcon, link: '/about/team/merchant' },
-  { name: 'Support & Onboarding', role: 'Föreningssupport', icon: TargetIcon, link: '/about/team/support' },
+  { name: 'Rickard Andersson', role: 'VD & Grundare', icon: TrophyIcon, link: '/about/team/vd' },
+  { name: 'Erik Lindberg', role: 'Försäljningsansvarig', icon: ShopIcon, link: '/about/team/sales' },
+  { name: 'Lisa Svensson', role: 'Support', icon: TargetIcon, link: '/about/team/support' },
+  { name: 'Johan Karlsson', role: 'Föreningsansvarig', icon: CommunityIcon, link: '/about/team/community' },
+  { name: 'Maria Nilsson', role: 'Företagsförsäljning', icon: MerchantIcon, link: '/about/team/merchant' },
 ];
 
 export default function AboutPage() {
@@ -121,7 +122,7 @@ export default function AboutPage() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl font-bold text-primary-900 mb-10">Teamet bakom GoalSquad</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {team.map((member) => (
               <Link key={member.name} href={member.link} className="bg-white border-2 border-primary-100 rounded-2xl p-6 hover:border-primary-600 transition block">
                 <div className="flex justify-center mb-3">

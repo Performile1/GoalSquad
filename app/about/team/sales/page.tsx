@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { TargetIcon, MessageIcon, UserIcon } from '@/app/components/BrandIcons';
+import { ShopIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
-export default function SupportTeamPage() {
+export default function SalesTeamPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -12,10 +12,10 @@ export default function SupportTeamPage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="flex justify-center mb-4">
-              <TargetIcon size={64} />
+              <ShopIcon size={64} />
             </div>
-            <h1 className="text-4xl font-bold mb-2">Lisa Svensson</h1>
-            <p className="text-xl text-white/80">Support</p>
+            <h1 className="text-4xl font-bold mb-2">Erik Lindberg</h1>
+            <p className="text-xl text-white/80">Försäljningsansvarig</p>
           </motion.div>
         </div>
       </div>
@@ -35,16 +35,16 @@ export default function SupportTeamPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-primary-50 rounded-2xl p-8 mb-12"
         >
-          <h2 className="text-2xl font-bold text-primary-900 mb-4">Om Lisa</h2>
+          <h2 className="text-2xl font-bold text-primary-900 mb-4">Om Erik</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            Lisa är ansiktet utåt för all support på GoalSquad. Med ett fokus på användarvänlighet och snabb hjälp säkerställer hon att alla användare får den assistans de behöver för att lyckas på plattformen.
+            Erik ansvarar för alla försäljningsaktiviteter på GoalSquad. Med lång erfarenhet från B2B-försäljning och partnerskapsbyggande hjälper han både nya och befintliga partners att maximera sin potential på plattformen.
           </p>
           <p className="text-gray-700 leading-relaxed">
-            Hon arbetar nära med både nya och befintliga föreningar för att säkerställa en smidig onboarding och löpande support.
+            Hans fokus ligger på att bygga långsiktiga relationer med leverantörer och säkerställa att GoalSquad alltid har ett attraktivt produktutbud för föreningar.
           </p>
         </motion.div>
 
-        {/* What she does */}
+        {/* Responsibilities */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,31 +54,31 @@ export default function SupportTeamPage() {
           <h2 className="text-2xl font-bold text-primary-900 mb-6">Ansvarsområden</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="border-2 border-primary-200 rounded-xl p-6">
-              <UserIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">Onboarding</h3>
+              <ShopIcon size={32} />
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Leverantörsrekrytering</h3>
               <p className="text-gray-600 text-sm">
-                Guidar nya föreningar genom hela registreringsprocessen
+                Identifierar och rekryterar nya kvalitetsleverantörer till plattformen
               </p>
             </div>
             <div className="border-2 border-primary-200 rounded-xl p-6">
-              <MessageIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">Support</h3>
+              <TrophyIcon size={32} />
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Partnerskapsutveckling</h3>
               <p className="text-gray-600 text-sm">
-                Snabb och hjälpsam support via chat, mail och telefon
+                Utvecklar och underhåller relationer med befintliga partners
               </p>
             </div>
             <div className="border-2 border-primary-200 rounded-xl p-6">
-              <TargetIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">Utbildning</h3>
+              <ShopIcon size={32} />
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Företagsförsäljning</h3>
               <p className="text-gray-600 text-sm">
-                Skapar resurser och guider för att maximera försäljningsresultat
+                Hjälper företag att nå nya marknader genom föreningar
               </p>
             </div>
             <div className="border-2 border-primary-200 rounded-xl p-6">
-              <UserIcon size={32} />
-              <h3 className="font-bold text-primary-900 mt-3 mb-2">Framgångscoachning</h3>
+              <TrophyIcon size={32} />
+              <h3 className="font-bold text-primary-900 mt-3 mb-2">Intäktsstrategi</h3>
               <p className="text-gray-600 text-sm">
-                Tips och råd för att optimera försäljningsstrategier
+                Utvecklar strategier för att maximera intäkter för alla parter
               </p>
             </div>
           </div>
@@ -91,24 +91,16 @@ export default function SupportTeamPage() {
           transition={{ delay: 0.2 }}
           className="bg-primary-900 rounded-2xl p-8 text-white text-center"
         >
-          <h2 className="text-2xl font-bold mb-4">Behöver du hjälp?</h2>
+          <h2 className="text-2xl font-bold mb-4">Bli partner</h2>
           <p className="text-white/80 mb-6">
-            Kontakta Lisa och supportteamet för alla frågor om GoalSquad
+            Är ditt företag intresserat av att sälja via GoalSquad?
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="inline-block px-8 py-3 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition"
-            >
-              Kontakta Support
-            </Link>
-            <Link
-              href="/join/community"
-              className="inline-block px-8 py-3 border-2 border-white text-white rounded-xl font-bold hover:bg-white hover:text-primary-900 transition"
-            >
-              Registrera förening
-            </Link>
-          </div>
+          <Link
+            href="/merchants/onboard"
+            className="inline-block px-8 py-3 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition"
+          >
+            Ansök som leverantör
+          </Link>
         </motion.div>
       </div>
     </div>

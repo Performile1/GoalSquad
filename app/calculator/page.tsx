@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import SalesCalculator from '@/app/components/SalesCalculator';
 import { motion } from 'framer-motion';
 import { TrophyIcon, CommunityIcon, UserIcon, SearchIcon, DashboardIcon } from '@/app/components/BrandIcons';
@@ -362,31 +363,38 @@ export default function CalculatorPage() {
           </div>
         </motion.div>
 
-        {/* CTA Section */}
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
+          className="bg-primary-900 rounded-2xl p-8 text-white text-center"
         >
-          <div className="bg-primary-900 rounded-2xl shadow-2xl p-12 text-white">
-            <h2 className="text-4xl font-bold mb-4">
-              Redo att Starta?
-            </h2>
-            <p className="text-xl text-white/80 mb-8">
-              Skapa ett konto och börja sälja idag - helt gratis!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-primary-900 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-lg transition">
-                Kom Igång Gratis →
-              </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-primary-900 transition">
-                Kontakta Oss
-              </button>
-            </div>
+          <h2 className="text-2xl font-bold mb-4">Redo att komma igång?</h2>
+          <p className="text-white/80 mb-6">
+            Registrera din förening idag — det är helt gratis att komma igång.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+            <Link
+              href="/join/community"
+              className="px-8 py-4 bg-white text-primary-900 rounded-xl font-bold text-lg hover:bg-primary-50 transition"
+            >
+              Registrera förening
+            </Link>
+            <Link
+              href="/merchants/onboard"
+              className="px-8 py-4 border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white hover:text-primary-900 transition"
+            >
+              Bli leverantör
+            </Link>
           </div>
+          <Link
+            href="/calculator/merchant"
+            className="text-white/70 hover:text-white text-sm underline transition"
+          >
+            Beräkna intäkter för företag →
+          </Link>
         </motion.div>
       </div>
     </div>
   );
-}
