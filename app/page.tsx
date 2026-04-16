@@ -5,6 +5,165 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { SplitEngineIcon, LogisticsIcon, AuditIcon, NoImagePlaceholder, TrophyIcon, CommunityIcon } from '@/app/components/BrandIcons'
 
+const HERO_SLIDES = [
+  {
+    id: 'sports',
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80&auto=format&fit=crop',
+    badge: 'För idrottsföreningar',
+    title: ['Låt laget', 'finansieras'],
+    subtitle: 'Registrera din idrottsförening. Era spelare säljer produkter, föreningen får sin del — automatiskt.',
+    cta: { label: 'Registrera förening', href: '/join/community' },
+    ctaAlt: { label: 'Se hur det funkar', href: '/communities' },
+  },
+  {
+    id: 'class',
+    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&q=80&auto=format&fit=crop',
+    badge: 'För klasser & skolgrupper',
+    title: ['Fyll på', 'klasskassan'],
+    subtitle: 'Klasser och skolgrupper samlar enkelt in pengar till resor, utrustning och aktiviteter.',
+    cta: { label: 'Registrera din klass', href: '/join/community' },
+    ctaAlt: { label: 'Läs mer', href: '/join' },
+  },
+  {
+    id: 'merchant',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80&auto=format&fit=crop',
+    badge: 'För företag & varumärken',
+    title: ['Nå tusentals', 'föreningssäljare'],
+    subtitle: 'Registrera ditt företag, ladda upp produkter och låt föreningar sälja åt dig. Vi hanterar logistik och betalning.',
+    cta: { label: 'Registrera ditt företag', href: '/merchants/onboard' },
+    ctaAlt: { label: 'Se produkter', href: '/products' },
+  },
+]
+
+function HeroSlider() {
+  const [current, setCurrent] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  const next = useCallback(() => setCurrent((c) => (c + 1) % HERO_SLIDES.length), [])
+  const prev = () => setCurrent((c) => (c - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
+
+  useEffect(() => {
+    if (paused) return
+    const id = setInterval(next, 6000)
+    return () => clearInterval(id)
+  }, [paused, next])
+
+  const slide = HERO_SLIDES[current]
+
+  return (
+    <section
+      className="relative h-screen min-h-[600px] max-h-[900px] overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Background images — crossfade */}
+      {HERO_SLIDES.map((s, i) => (
+        <div
+          key={s.id}
+          className="absolute inset-0 transition-opacity duration-1000"
+          style={{ opacity: i === current ? 1 : 0 }}
+        >
+          <img
+            src={s.image}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ))}
+
+      {/* Petroleum gradient overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(135deg, rgba(0,40,40,0.82) 0%, rgba(0,64,64,0.68) 50%, rgba(0,102,102,0.55) 100%)',
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative h-full flex flex-col justify-center max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id}
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.55 }}
+            className="max-w-3xl"
+          >
+            <span className="inline-block bg-white/15 backdrop-blur text-white text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6 border border-white/20">
+              {slide.badge}
+            </span>
+            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-white leading-tight mb-6 drop-shadow-xl">
+              {slide.title[0]}<br />
+              <span className="text-white/80">{slide.title[1]}</span>
+            </h1>
+            <p className="text-lg sm:text-xl text-white/75 mb-10 max-w-xl leading-relaxed">
+              {slide.subtitle}
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href={slide.cta.href}
+                className="px-8 py-4 bg-white text-primary-900 rounded-xl font-bold text-lg hover:bg-primary-50 transition shadow-xl"
+              >
+                {slide.cta.label} →
+              </Link>
+              <Link
+                href={slide.ctaAlt.href}
+                className="px-8 py-4 border-2 border-white/40 text-white rounded-xl font-bold text-lg hover:bg-white/10 transition backdrop-blur"
+              >
+                {slide.ctaAlt.label}
+              </Link>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Arrows */}
+      <button
+        onClick={prev}
+        className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 border border-white/30 text-white flex items-center justify-center hover:bg-white/20 transition backdrop-blur text-xl font-bold"
+        aria-label="Föregående"
+      >
+        ‹
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 border border-white/30 text-white flex items-center justify-center hover:bg-white/20 transition backdrop-blur text-xl font-bold"
+        aria-label="Nästa"
+      >
+        ›
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 items-center">
+        {HERO_SLIDES.map((s, i) => (
+          <button
+            key={s.id}
+            onClick={() => setCurrent(i)}
+            className={`rounded-full transition-all duration-300 ${
+              i === current
+                ? 'w-8 h-2.5 bg-white'
+                : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/70'
+            }`}
+            aria-label={`Slide ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
+        <motion.div
+          key={`${current}-progress`}
+          className="h-full bg-white/60"
+          initial={{ width: '0%' }}
+          animate={{ width: '100%' }}
+          transition={{ duration: 6, ease: 'linear' }}
+        />
+      </div>
+    </section>
+  )
+}
+
 interface Product {
   id: string
   name: string
@@ -148,69 +307,8 @@ export default function Home() {
 
   return (
     <main className="bg-white">
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-600 text-white">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-white/5 blur-3xl" />
-          <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-white/5 blur-3xl" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex flex-col md:flex-row items-center gap-12">
-          <motion.div
-            className="flex-1 text-center md:text-left"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="inline-block bg-white/10 text-white/80 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-6">
-              Community Commerce Platform
-            </span>
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-              Handla &amp; stöd din<br />
-              <span className="text-white/70">förening</span>
-            </h1>
-            <p className="text-lg text-white/70 mb-10 max-w-lg">
-              Varje köp stödjer en lokal förening. GoalSquad delar intäkterna rättvist med säljare, föreningar och logistikpartners.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-              <Link
-                href="/products"
-                className="px-8 py-4 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition shadow-xl text-lg"
-              >
-                Handla nu →
-              </Link>
-              <Link
-                href="/join"
-                className="px-8 py-4 border-2 border-white/40 text-white rounded-xl font-bold hover:bg-white/10 transition text-lg"
-              >
-                Registrera dig
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            className="flex-shrink-0 grid grid-cols-2 gap-4"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            {[
-              { value: '500+', label: 'Föreningar' },
-              { value: '10K+', label: 'Produkter' },
-              { value: '3x', label: 'Mer intäkt' },
-              { value: '100%', label: 'Säkert' },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-white/10 backdrop-blur rounded-2xl p-6 text-center min-w-[120px]"
-              >
-                <div className="text-3xl font-extrabold text-white mb-1">{stat.value}</div>
-                <div className="text-white/60 text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      {/* ── Hero Slider ── */}
+      <HeroSlider />
 
       {/* ── Featured Products Carousel ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
