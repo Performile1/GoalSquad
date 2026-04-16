@@ -7,10 +7,10 @@ import Link from 'next/link'
 import { CommunityIcon, FlagIcon, TrophyIcon, RunnerIcon, UserIcon } from '@/app/components/BrandIcons'
 
 const COMMUNITY_TYPES = [
-  { value: 'sports_club', label: 'Idrottsförening', icon: RunnerIcon },
+  { value: 'sports_team', label: 'Idrottsförening', icon: RunnerIcon },
   { value: 'school_class', label: 'Skolklass', icon: UserIcon },
-  { value: 'youth_team', label: 'Ungdomslag', icon: TrophyIcon },
-  { value: 'cultural', label: 'Kulturförening', icon: CommunityIcon },
+  { value: 'youth_club', label: 'Ungdomslag', icon: TrophyIcon },
+  { value: 'scout_troop', label: 'Kulturförening', icon: CommunityIcon },
   { value: 'other', label: 'Annan', icon: FlagIcon },
 ]
 
@@ -57,10 +57,19 @@ export default function CommunityRegisterPage() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/communities/register', {
+      const res = await fetch('/api/communities/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: form.name,
+          slug: form.name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+          description: form.description,
+          communityType: form.communityType,
+          country: form.country,
+          city: form.city,
+          treasurerId: '00000000-0000-0000-0000-000000000000', // TODO: Get from auth
+          adminId: '00000000-0000-0000-0000-000000000000', // TODO: Get from auth
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Registrering misslyckades')

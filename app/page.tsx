@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { SplitEngineIcon, LogisticsIcon, AuditIcon, NoImagePlaceholder, CommunityIcon } from '@/app/components/BrandIcons'
+import { SplitEngineIcon, LogisticsIcon, AuditIcon, NoImagePlaceholder, CommunityIcon, TrophyIcon, LaptopIcon, MerchantIcon, ShopIcon, UserIcon } from '@/app/components/BrandIcons'
 
 // ─── Hero Slider ──────────────────────────────────────────────────────────────
 
@@ -252,7 +252,7 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-8">
           {[
             {
-              emoji: '🏆',
+              icon: TrophyIcon,
               title: 'Förening & Klubb',
               desc: 'Fotbollsklubbar, idrottsföreningar, scout-grupper. Låt era spelare och medlemmar sälja produkter och dela intäkterna rättvist.',
               features: ['Automatisk intäktsdelning', 'Sälj egna produkter (t.ex. matchställ)', 'Inga förskottskostnader'],
@@ -260,7 +260,7 @@ export default function Home() {
               cta: 'Registrera förening',
             },
             {
-              emoji: '📚',
+              icon: LaptopIcon,
               title: 'Klass & Skolgrupp',
               desc: 'Fyll på klasskassan inför resor, aktiviteter och utrustning. Enkelt för lärare och elever att komma igång.',
               features: ['Klassvis försäljning', 'Sälj saker klassen har gjort', 'Transparent redovisning'],
@@ -268,7 +268,7 @@ export default function Home() {
               cta: 'Registrera din klass',
             },
             {
-              emoji: '🏢',
+              icon: MerchantIcon,
               title: 'Företag & Varumärke',
               desc: 'Nå tusentals aktiva föreningssäljare i Norden. Ladda upp produkter, sätt marginaler och vi sköter resten.',
               features: ['Distribuerad försäljning', 'Vi hanterar logistik', 'Månadsvis utbetalning'],
@@ -277,13 +277,15 @@ export default function Home() {
             },
           ].map((seg, i) => (
             <motion.div key={seg.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="bg-white border-2 border-primary-100 rounded-2xl p-8 hover:border-primary-600 hover:shadow-xl transition flex flex-col">
-              <div className="text-5xl mb-4">{seg.emoji}</div>
+              <div className="flex justify-center mb-4"><seg.icon size={48} /></div>
               <h3 className="text-2xl font-bold text-primary-900 mb-3">{seg.title}</h3>
               <p className="text-gray-600 mb-5 flex-1">{seg.desc}</p>
               <ul className="space-y-2 mb-6">
                 {seg.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
-                    <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center text-xs font-bold flex-shrink-0">✓</span>
+                    <svg className="w-5 h-5 text-primary-900 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
                     {f}
                   </li>
                 ))}
@@ -307,12 +309,12 @@ export default function Home() {
         </motion.div>
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { step: '01', title: 'Registrera', desc: 'Skapa ett gratis konto för din förening eller klass på bara några minuter. Inga förskottskostnader.', icon: '✍️' },
-            { step: '02', title: 'Välj & sälj', desc: 'Välj produkter från våra leverantörspartners och dela din unika länk med laget, familj och vänner.', icon: '🛒' },
-            { step: '03', title: 'Inkassera', desc: 'Vi levererar direkt till kunden. Ni ser varje försäljning i realtid och pengarna betalas ut månadsvis.', icon: '💰' },
+            { step: '01', title: 'Registrera', desc: 'Skapa ett gratis konto för din förening eller klass på bara några minuter. Inga förskottskostnader.', icon: <UserIcon size={32} /> },
+            { step: '02', title: 'Välj & sälj', desc: 'Välj produkter från våra leverantörspartners och dela din unika länk med laget, familj och vänner.', icon: <ShopIcon size={32} /> },
+            { step: '03', title: 'Inkassera', desc: 'Vi levererar direkt till kunden. Ni ser varje försäljning i realtid och pengarna betalas ut månadsvis.', icon: <TrophyIcon size={32} /> },
           ].map((s, i) => (
             <motion.div key={s.step} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
-              <div className="w-20 h-20 rounded-2xl bg-primary-900 text-white flex items-center justify-center text-3xl mx-auto mb-5 shadow-lg">{s.icon}</div>
+              <div className="w-20 h-20 rounded-2xl bg-primary-900 text-white flex items-center justify-center mx-auto mb-5 shadow-lg">{s.icon}</div>
               <div className="text-xs font-bold text-primary-600 uppercase tracking-widest mb-2">{s.step}</div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">{s.title}</h3>
               <p className="text-gray-500">{s.desc}</p>
@@ -346,18 +348,43 @@ export default function Home() {
       {/* ── Why GoalSquad ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">Varför GoalSquad?</h2>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { title: 'The Split Engine', description: 'Triple-dip margins: Sales, Handling och Shipping spreads beräknas i realtid.', icon: <SplitEngineIcon size={52} /> },
-            { title: 'Distribuerad Logistik', description: 'Multi-origin shipping med hub-konsolidering för optimal leverans.', icon: <LogisticsIcon size={52} /> },
-            { title: 'Audit Trail', description: 'Oföränderliga signaturer för varje transaktion. Förtroende inbyggt.', icon: <AuditIcon size={52} /> },
+            { title: 'The Split Engine', description: 'Triple-dip margins: Sales, Handling och Shipping spreads beräknas i realtid.', icon: <SplitEngineIcon size={48} /> },
+            { title: 'Distribuerad Logistik', description: 'Multi-origin shipping med hub-konsolidering för optimal leverans.', icon: <LogisticsIcon size={48} /> },
+            { title: 'Audit Trail', description: 'Oföränderliga signaturer för varje transaktion. Förtroende inbyggt.', icon: <AuditIcon size={48} /> },
+            { title: 'MOQ Fördelning', description: 'MOQ fördelas automatiskt över flera klubbar, föreningar och slutkonsumenter. Ingen låsning.', icon: <ShopIcon size={48} /> },
           ].map((feature, index) => (
-            <motion.div key={feature.title} className="bg-white border border-gray-100 p-8 rounded-2xl shadow-sm hover:shadow-lg transition" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.15 }}>
-              <div className="mb-5">{feature.icon}</div>
-              <h3 className="text-xl font-bold mb-2 text-gray-900">{feature.title}</h3>
-              <p className="text-gray-500">{feature.description}</p>
+            <motion.div key={feature.title} className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-lg transition" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
+              <div className="mb-4">{feature.icon}</div>
+              <h3 className="text-lg font-bold mb-2 text-gray-900">{feature.title}</h3>
+              <p className="text-gray-500 text-sm">{feature.description}</p>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Key Differentiator ── */}
+      <section className="bg-primary-50 py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-extrabold text-primary-900 mb-6">Det som skiljer oss från andra</h2>
+          <p className="text-gray-600 mb-8 text-lg">
+            Till skillnad från traditionell klubb- och klassförsäljning där du är låst till en produkt, låter GoalSquad både säljare och slutkonsumenter välja fritt från flera olika produkter och leverantörer.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6 text-left">
+            <div className="bg-white p-6 rounded-xl border-2 border-primary-200">
+              <h3 className="font-bold text-primary-900 mb-3">Flera produkter, inga begränsningar</h3>
+              <p className="text-gray-600 text-sm">
+                Säljare och kunder kan välja från hundratals produkter från olika leverantörer. Ingen låsning till en specifik produkt eller kategori.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl border-2 border-primary-200">
+              <h3 className="font-bold text-primary-900 mb-3">MOQ fördelas automatiskt</h3>
+              <p className="text-gray-600 text-sm">
+                Minimum Order Quantity fördelas över flera klubbar, föreningar, klasser och slutkonsumenter. Ni behöver inte nå MOQ själva.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

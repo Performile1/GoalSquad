@@ -55,7 +55,9 @@ export default function JoinPage() {
                 'Ingen teknisk kunskap krävs',
               ].map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
+                  <svg className="w-5 h-5 text-primary-900 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
                   {f}
                 </li>
               ))}
@@ -91,7 +93,9 @@ export default function JoinPage() {
                 'Org.nummer & momsregistrering',
               ].map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="w-5 h-5 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
+                  <svg className="w-5 h-5 text-primary-900 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
                   {f}
                 </li>
               ))}
