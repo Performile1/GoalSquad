@@ -17,8 +17,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data, error } = await supabase
       .from('warehouse_inventory')
-      .select('*')
-      .order('city');
+      .select('*');
 
     if (error) throw error;
 

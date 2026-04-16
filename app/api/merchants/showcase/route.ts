@@ -17,8 +17,7 @@ export async function GET(req: NextRequest) {
         id,
         name,
         description,
-        logo_url,
-        metadata
+        logo_url
       `);
 
     if (error) {
@@ -51,9 +50,6 @@ export async function GET(req: NextRequest) {
           0
         ) || 0;
 
-        // Extract categories from metadata
-        const categories = merchant.metadata?.categories || ['Övrigt'];
-
         return {
           id: merchant.id,
           name: merchant.name,
@@ -62,8 +58,8 @@ export async function GET(req: NextRequest) {
           totalProducts: productCount || 0,
           totalSold,
           totalRevenue,
-          categories,
-          featured: merchant.metadata?.featured || false,
+          categories: ['Övrigt'],
+          featured: false,
         };
       })
     );

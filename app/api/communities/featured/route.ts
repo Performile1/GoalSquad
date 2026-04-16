@@ -15,7 +15,6 @@ export async function GET(req: NextRequest) {
       .from('communities')
       .select('*')
       .not('logo_url', 'is', null)
-      .order('total_sales', { ascending: false })
       .limit(50);
 
     if (error) {
