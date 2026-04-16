@@ -114,10 +114,10 @@ export default function WarehousesPage() {
               <div className="relative rounded-xl overflow-hidden" style={{ height: '500px' }}>
                 {/* Europe-focused Map Image */}
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Europe_relief_map.jpg"
+                  src="https://upload.wikimedia.org/wikipedia/commons/8/84/Europe_blank_map.png"
                   alt="Europakarta"
-                  className="w-full h-full object-cover"
-                  style={{ filter: 'grayscale(10%) contrast(95%)' }}
+                  className="w-full h-full object-contain bg-gray-100"
+                  style={{ filter: 'grayscale(20%)' }}
                 />
 
                 {/* Overlay gradient */}
