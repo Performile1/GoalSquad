@@ -168,11 +168,12 @@ export default function ProductsPage() {
                     step="50"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                    className="w-full"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                    style={{ accentColor: '#004040' }}
                   />
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>0 kr</span>
-                    <span className="font-semibold text-primary-600">
+                    <span className="font-semibold text-primary-900">
                       {priceRange[1]} kr
                     </span>
                   </div>

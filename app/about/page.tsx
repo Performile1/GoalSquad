@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { TrophyIcon, HandshakeIcon, RocketIcon, LeafIcon, CommunityIcon, LaptopIcon, MerchantIcon, TargetIcon, ShopIcon } from '@/app/components/BrandIcons';
+import { TrophyIcon, HandshakeIcon, RocketIcon, LeafIcon, CommunityIcon, LaptopIcon, MerchantIcon, TargetIcon, ShopIcon, LogisticsIcon } from '@/app/components/BrandIcons';
 
 const values = [
   {
@@ -33,6 +33,7 @@ const team = [
   { name: 'Lisa Svensson', role: 'Support', icon: TargetIcon, link: '/about/team/support' },
   { name: 'Johan Karlsson', role: 'Föreningsansvarig', icon: CommunityIcon, link: '/about/team/community' },
   { name: 'Maria Nilsson', role: 'Företagsförsäljning', icon: MerchantIcon, link: '/about/team/merchant' },
+  { name: 'Kenneth Lundgren', role: 'Lagerpartneransvarig', icon: LogisticsIcon, link: '/about/team/warehouse' },
 ];
 
 export default function AboutPage() {
@@ -122,11 +123,16 @@ export default function AboutPage() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl font-bold text-primary-900 mb-10">Teamet bakom GoalSquad</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {team.map((member) => (
               <Link key={member.name} href={member.link} className="bg-white border-2 border-primary-100 rounded-2xl p-6 hover:border-primary-600 transition block">
                 <div className="flex justify-center mb-3">
-                  <member.icon size={40} />
+                  <div
+                    className="w-16 h-16 rounded-full flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #004040 0%, #006666 100%)' }}
+                  >
+                    <member.icon size={32} />
+                  </div>
                 </div>
                 <h3 className="font-bold text-primary-900 text-sm">{member.name}</h3>
                 <p className="text-gray-500 text-xs mt-1">{member.role}</p>

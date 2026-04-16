@@ -75,7 +75,7 @@ export default function Footer() {
     <footer style={{ backgroundColor: P }} className="text-white">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-block mb-4">
@@ -143,6 +143,26 @@ export default function Footer() {
                 { href: '/calculator', label: 'Beräkna potential' },
                 { href: '/dashboard', label: 'Min sida' },
                 { href: '/auth/login', label: 'Logga in' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Lagerpartners */}
+          <div>
+            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              Lagerpartners
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/warehouses/onboard', label: 'Bli lagerpartner' },
+                { href: '/warehouses', label: 'Alla lager' },
+                { href: '/about/team/warehouse', label: 'Lageransvarig' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
