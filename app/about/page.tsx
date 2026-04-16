@@ -28,10 +28,10 @@ const values = [
 ];
 
 const team = [
-  { name: 'GoalSquad Team', role: 'Community & Tillväxt', icon: CommunityIcon },
-  { name: 'Tech & Produkt', role: 'Plattformsutveckling', icon: LaptopIcon },
-  { name: 'Merchant Relations', role: 'Leverantörspartners', icon: MerchantIcon },
-  { name: 'Support & Onboarding', role: 'Föreningssupport', icon: TargetIcon },
+  { name: 'GoalSquad Team', role: 'Community & Tillväxt', icon: CommunityIcon, link: '/about/team/community' },
+  { name: 'Tech & Produkt', role: 'Plattformsutveckling', icon: LaptopIcon, link: '/about/team/tech' },
+  { name: 'Merchant Relations', role: 'Leverantörspartners', icon: MerchantIcon, link: '/about/team/merchant' },
+  { name: 'Support & Onboarding', role: 'Föreningssupport', icon: TargetIcon, link: '/about/team/support' },
 ];
 
 export default function AboutPage() {
@@ -123,13 +123,13 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-primary-900 mb-10">Teamet bakom GoalSquad</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {team.map((member) => (
-              <div key={member.name} className="bg-white border-2 border-primary-100 rounded-2xl p-6 hover:border-primary-600 transition">
+              <Link key={member.name} href={member.link} className="bg-white border-2 border-primary-100 rounded-2xl p-6 hover:border-primary-600 transition block">
                 <div className="flex justify-center mb-3">
                   <member.icon size={40} />
                 </div>
                 <h3 className="font-bold text-primary-900 text-sm">{member.name}</h3>
                 <p className="text-gray-500 text-xs mt-1">{member.role}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </motion.div>
