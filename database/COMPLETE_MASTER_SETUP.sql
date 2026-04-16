@@ -366,52 +366,103 @@ CREATE TABLE IF NOT EXISTS community_members (
   UNIQUE(community_id, user_id)
 );
 
--- Orders
-CREATE TABLE IF NOT EXISTS orders (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_number VARCHAR(50) UNIQUE NOT NULL,
-  
-  -- Customer
-  customer_id UUID REFERENCES auth.users(id),
-  customer_email VARCHAR(255) NOT NULL,
-  customer_phone VARCHAR(50),
-  
-  -- Shipping address
-  shipping_name VARCHAR(255) NOT NULL,
-  shipping_address_line1 VARCHAR(255) NOT NULL,
-  shipping_address_line2 VARCHAR(255),
-  shipping_city VARCHAR(100) NOT NULL,
-  shipping_postal_code VARCHAR(20) NOT NULL,
-  shipping_country VARCHAR(2) NOT NULL,
-  
-  -- Billing address
-  billing_name VARCHAR(255),
-  billing_address_line1 VARCHAR(255),
-  billing_address_line2 VARCHAR(255),
-  billing_city VARCHAR(100),
-  billing_postal_code VARCHAR(20),
-  billing_country VARCHAR(2),
-  
-  -- Financials
-  subtotal DECIMAL(10, 2) NOT NULL,
-  shipping_total DECIMAL(10, 2) NOT NULL,
-  tax_total DECIMAL(10, 2) NOT NULL,
-  total DECIMAL(10, 2) NOT NULL,
-  currency VARCHAR(3) DEFAULT 'NOK',
-  
-  -- Payment
-  stripe_payment_intent_id VARCHAR(255),
-  payment_status VARCHAR(50) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'processing', 'paid', 'failed', 'refunded')),
-  paid_at TIMESTAMP WITH TIME ZONE,
-  
-  -- Order status
-  status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')),
-  
-  -- Metadata
-  metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create orders table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'orders') THEN
+    CREATE TABLE orders (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      order_number VARCHAR(50) UNIQUE NOT NULL,
+      
+      -- Customer
+      customer_id UUID REFERENCES auth.users(id),
+      customer_email VARCHAR(255) NOT NULL,
+      customer_phone VARCHAR(50),
+      
+      -- Shipping address
+      shipping_name VARCHAR(255) NOT NULL,
+      shipping_address_line1 VARCHAR(255) NOT NULL,
+      shipping_address_line2 VARCHAR(255),
+      shipping_city VARCHAR(100) NOT NULL,
+      shipping_postal_code VARCHAR(20) NOT NULL,
+      shipping_country VARCHAR(2) NOT NULL,
+      
+      -- Billing address
+      billing_name VARCHAR(255),
+      billing_address_line1 VARCHAR(255),
+      billing_address_line2 VARCHAR(255),
+      billing_city VARCHAR(100),
+      billing_postal_code VARCHAR(20),
+      billing_country VARCHAR(2),
+      
+      -- Financials
+      subtotal DECIMAL(10, 2) NOT NULL,
+      shipping_total DECIMAL(10, 2) NOT NULL,
+      tax_total DECIMAL(10, 2) NOT NULL,
+      total DECIMAL(10, 2) NOT NULL,
+      currency VARCHAR(3) DEFAULT 'NOK',
+      
+      -- Payment
+      stripe_payment_intent_id VARCHAR(255),
+      payment_status VARCHAR(50) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'processing', 'paid', 'failed', 'refunded')),
+      paid_at TIMESTAMP WITH TIME ZONE,
+      
+      -- Order status
+      status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')),
+      
+      -- Metadata
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
+
+-- Add columns if they don't exist
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS customer_id UUID,
+ADD COLUMN IF NOT EXISTS customer_email VARCHAR(255),
+ADD COLUMN IF NOT EXISTS customer_phone VARCHAR(50),
+ADD COLUMN IF NOT EXISTS shipping_name VARCHAR(255),
+ADD COLUMN IF NOT EXISTS shipping_address_line1 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS shipping_address_line2 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS shipping_city VARCHAR(100),
+ADD COLUMN IF NOT EXISTS shipping_postal_code VARCHAR(20),
+ADD COLUMN IF NOT EXISTS shipping_country VARCHAR(2),
+ADD COLUMN IF NOT EXISTS billing_name VARCHAR(255),
+ADD COLUMN IF NOT EXISTS billing_address_line1 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS billing_address_line2 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS billing_city VARCHAR(100),
+ADD COLUMN IF NOT EXISTS billing_postal_code VARCHAR(20),
+ADD COLUMN IF NOT EXISTS billing_country VARCHAR(2),
+ADD COLUMN IF NOT EXISTS subtotal DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS shipping_total DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS tax_total DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS total DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS currency VARCHAR(3),
+ADD COLUMN IF NOT EXISTS stripe_payment_intent_id VARCHAR(255),
+ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50),
+ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS status VARCHAR(50),
+ADD COLUMN IF NOT EXISTS metadata JSONB,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+
+-- Add unique constraint on order_number if it doesn't exist
+DO $$
+BEGIN
+  ALTER TABLE orders ADD CONSTRAINT orders_order_number_key UNIQUE (order_number);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+-- Add foreign key constraint if auth.users table has id column
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_schema = 'auth' AND table_name = 'users' AND column_name = 'id') THEN
+    ALTER TABLE orders ADD CONSTRAINT orders_customer_id_fkey FOREIGN KEY (customer_id) REFERENCES auth.users(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Order Items
 CREATE TABLE IF NOT EXISTS order_items (
