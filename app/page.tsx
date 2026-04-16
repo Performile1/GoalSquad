@@ -15,7 +15,7 @@ const HERO_SLIDES = [
     title: ['Låt laget', 'finansieras'],
     subtitle: 'Registrera din idrottsförening. Era spelare säljer produkter, föreningen får sin del — automatiskt.',
     cta: { label: 'Registrera förening', href: '/join/community' },
-    ctaAlt: { label: 'Se hur det funkar', href: '/about' },
+    ctaAlt: { label: 'Se hur det funkar', href: '/how-it-works' },
   },
   {
     id: 'class',
