@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShopIcon, OrdersIcon } from '@/app/components/BrandIcons';
+import { ShopIcon, OrdersIcon, SearchIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 interface Category {
   id: string;
@@ -129,7 +129,7 @@ export default function ProductsPage() {
                         : 'hover:bg-primary-50 text-gray-700'
                     }`}
                   >
-                    <span className="mr-2">🌐</span>
+                    <SearchIcon size={16} className="mr-2" />
                     Alla kategorier
                     <span className="float-right text-sm">
                       ({products.length})
@@ -262,8 +262,8 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl">
-            📦
+          <div className="w-full h-full flex items-center justify-center">
+            <DashboardIcon size={64} className="text-gray-300" />
           </div>
         )}
       </div>
@@ -276,8 +276,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             {product.categoryName}
           </span>
           {product.source === 'community' && (
-            <span className="bg-primary-900 text-white px-3 py-1 rounded-full text-xs font-bold">
-              🏆 Community
+            <span className="bg-primary-900 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+              <TrophyIcon size={12} />
+              Community
             </span>
           )}
         </div>
@@ -314,12 +315,13 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             {product.price.toLocaleString()} kr
           </div>
           {product.stock > 0 ? (
-            <div className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold">
-              ✓ I lager
+            <div className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+              <TrophyIcon size={12} />
+              I lager
             </div>
           ) : (
             <div className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
-              ✗ Slut
+              Slut
             </div>
           )}
         </div>
