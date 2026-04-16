@@ -372,15 +372,63 @@ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
--- Community Members
-CREATE TABLE IF NOT EXISTS community_members (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  role TEXT DEFAULT 'member' CHECK (role IN ('admin', 'guardian', 'seller', 'member')),
-  joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(community_id, user_id)
-);
+-- Create community_members table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'community_members') THEN
+    CREATE TABLE community_members (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+      role TEXT DEFAULT 'member' CHECK (role IN ('admin', 'guardian', 'seller', 'member')),
+      joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      UNIQUE(community_id, user_id)
+    );
+  END IF;
+END $$;
+
+-- Add columns if they don't exist
+ALTER TABLE community_members
+ADD COLUMN IF NOT EXISTS community_id UUID,
+ADD COLUMN IF NOT EXISTS user_id UUID,
+ADD COLUMN IF NOT EXISTS role TEXT,
+ADD COLUMN IF NOT EXISTS joined_at TIMESTAMP WITH TIME ZONE;
+
+-- Add unique constraint if columns exist
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'community_members' AND column_name = 'community_id'
+  ) AND EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'community_members' AND column_name = 'user_id'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM pg_constraint 
+    WHERE conname = 'community_members_community_id_user_id_key'
+    AND conrelid = 'community_members'::regclass
+  ) THEN
+    ALTER TABLE community_members ADD CONSTRAINT community_members_community_id_user_id_key UNIQUE (community_id, user_id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+-- Add foreign key constraints conditionally
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'communities' AND column_name = 'id') THEN
+    ALTER TABLE community_members ADD CONSTRAINT community_members_community_id_fkey FOREIGN KEY (community_id) REFERENCES communities(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'profiles' AND column_name = 'id') THEN
+    ALTER TABLE community_members ADD CONSTRAINT community_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Create orders table if it doesn't exist
 DO $$
@@ -488,39 +536,90 @@ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
--- Order Items
-CREATE TABLE IF NOT EXISTS order_items (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
-  product_id UUID REFERENCES products(id),
-  merchant_id UUID REFERENCES merchants(id),
-  
-  -- Product snapshot (at time of order)
-  sku VARCHAR(100) NOT NULL,
-  name VARCHAR(500) NOT NULL,
-  
-  -- Pricing
-  quantity INTEGER NOT NULL CHECK (quantity > 0),
-  unit_price DECIMAL(10, 2) NOT NULL,
-  merchant_base_price DECIMAL(10, 2) NOT NULL,
-  subtotal DECIMAL(10, 2) NOT NULL,
-  
-  -- Margins
-  sales_margin DECIMAL(10, 2) DEFAULT 0,
-  handling_fee DECIMAL(10, 2) DEFAULT 0,
-  
-  -- Physical attributes
-  weight_grams INTEGER,
-  length_mm INTEGER,
-  width_mm INTEGER,
-  height_mm INTEGER,
-  
-  -- Fulfillment
-  fulfillment_status VARCHAR(50) DEFAULT 'pending' CHECK (fulfillment_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
-  
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Create order_items table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'order_items') THEN
+    CREATE TABLE order_items (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+      product_id UUID REFERENCES products(id),
+      merchant_id UUID REFERENCES merchants(id),
+      
+      -- Product snapshot (at time of order)
+      sku VARCHAR(100) NOT NULL,
+      name VARCHAR(500) NOT NULL,
+      
+      -- Pricing
+      quantity INTEGER NOT NULL CHECK (quantity > 0),
+      unit_price DECIMAL(10, 2) NOT NULL,
+      merchant_base_price DECIMAL(10, 2) NOT NULL,
+      subtotal DECIMAL(10, 2) NOT NULL,
+      
+      -- Margins
+      sales_margin DECIMAL(10, 2) DEFAULT 0,
+      handling_fee DECIMAL(10, 2) DEFAULT 0,
+      
+      -- Physical attributes
+      weight_grams INTEGER,
+      length_mm INTEGER,
+      width_mm INTEGER,
+      height_mm INTEGER,
+      
+      -- Fulfillment
+      fulfillment_status VARCHAR(50) DEFAULT 'pending' CHECK (fulfillment_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
+      
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
+
+-- Add columns if they don't exist
+ALTER TABLE order_items
+ADD COLUMN IF NOT EXISTS order_id UUID,
+ADD COLUMN IF NOT EXISTS product_id UUID,
+ADD COLUMN IF NOT EXISTS merchant_id UUID,
+ADD COLUMN IF NOT EXISTS sku VARCHAR(100),
+ADD COLUMN IF NOT EXISTS name VARCHAR(500),
+ADD COLUMN IF NOT EXISTS quantity INTEGER,
+ADD COLUMN IF NOT EXISTS unit_price DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS merchant_base_price DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS subtotal DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS sales_margin DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS handling_fee DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS weight_grams INTEGER,
+ADD COLUMN IF NOT EXISTS length_mm INTEGER,
+ADD COLUMN IF NOT EXISTS width_mm INTEGER,
+ADD COLUMN IF NOT EXISTS height_mm INTEGER,
+ADD COLUMN IF NOT EXISTS fulfillment_status VARCHAR(50),
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+
+-- Add foreign key constraints conditionally
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'id') THEN
+    ALTER TABLE order_items ADD CONSTRAINT order_items_order_id_fkey FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'id') THEN
+    ALTER TABLE order_items ADD CONSTRAINT order_items_product_id_fkey FOREIGN KEY (product_id) REFERENCES products(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'merchants' AND column_name = 'id') THEN
+    ALTER TABLE order_items ADD CONSTRAINT order_items_merchant_id_fkey FOREIGN KEY (merchant_id) REFERENCES merchants(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================
 -- 4. PRODUCT ATTRIBUTES & CATEGORIES
