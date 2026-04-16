@@ -233,8 +233,13 @@ ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 -- Add unique constraint on slug if it doesn't exist
 DO $$
 BEGIN
-  ALTER TABLE merchants ADD CONSTRAINT merchants_slug_key UNIQUE (slug);
-EXCEPTION WHEN duplicate_object THEN NULL;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint 
+    WHERE conname = 'merchants_slug_key'
+    AND conrelid = 'merchants'::regclass
+  ) THEN
+    ALTER TABLE merchants ADD CONSTRAINT merchants_slug_key UNIQUE (slug);
+  END IF;
 END $$;
 
 -- Add foreign key constraint if organizations table has id column
@@ -343,8 +348,13 @@ ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 -- Add unique constraint on slug if it doesn't exist
 DO $$
 BEGIN
-  ALTER TABLE communities ADD CONSTRAINT communities_slug_key UNIQUE (slug);
-EXCEPTION WHEN duplicate_object THEN NULL;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint 
+    WHERE conname = 'communities_slug_key'
+    AND conrelid = 'communities'::regclass
+  ) THEN
+    ALTER TABLE communities ADD CONSTRAINT communities_slug_key UNIQUE (slug);
+  END IF;
 END $$;
 
 -- Add foreign key constraint if organizations table has id column
@@ -451,8 +461,13 @@ ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 -- Add unique constraint on order_number if it doesn't exist
 DO $$
 BEGIN
-  ALTER TABLE orders ADD CONSTRAINT orders_order_number_key UNIQUE (order_number);
-EXCEPTION WHEN duplicate_object THEN NULL;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint 
+    WHERE conname = 'orders_order_number_key'
+    AND conrelid = 'orders'::regclass
+  ) THEN
+    ALTER TABLE orders ADD CONSTRAINT orders_order_number_key UNIQUE (order_number);
+  END IF;
 END $$;
 
 -- Add foreign key constraint if auth.users table has id column
@@ -569,8 +584,13 @@ ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 -- Add unique constraint on slug if it doesn't exist
 DO $$
 BEGIN
-  ALTER TABLE product_categories ADD CONSTRAINT product_categories_slug_key UNIQUE (slug);
-EXCEPTION WHEN duplicate_object THEN NULL;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint 
+    WHERE conname = 'product_categories_slug_key'
+    AND conrelid = 'product_categories'::regclass
+  ) THEN
+    ALTER TABLE product_categories ADD CONSTRAINT product_categories_slug_key UNIQUE (slug);
+  END IF;
 END $$;
 
 -- Add category to products
