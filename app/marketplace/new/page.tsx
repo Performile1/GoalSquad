@@ -321,6 +321,8 @@ export default function NewMarketplaceListingPage() {
             <div className="bg-primary-50 rounded-xl p-4 mb-4 text-sm text-primary-900">
               <strong>Viktigt:</strong> För egna produkter sköter du som säljare leveransen direkt till kunden. 
               GoalSquad hanterar betalningen och förmedlar sedan pengarna till dig minus {PLATFORM_FEE}% avgift.
+              <br /><br />
+              Du kan även skicka in till vår lagerpartner om kunden har köpt andra saker - då hanterar vi leveransen.
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
