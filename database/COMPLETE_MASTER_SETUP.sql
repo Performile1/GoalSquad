@@ -230,10 +230,13 @@ ADD COLUMN IF NOT EXISTS metadata JSONB,
 ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
 ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 
--- Add unique constraint on slug if it doesn't exist
+-- Add unique constraint on slug if column exists and constraint doesn't exist
 DO $$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'merchants' AND column_name = 'slug'
+  ) AND NOT EXISTS (
     SELECT 1 FROM pg_constraint 
     WHERE conname = 'merchants_slug_key'
     AND conrelid = 'merchants'::regclass
@@ -345,10 +348,13 @@ ADD COLUMN IF NOT EXISTS is_active BOOLEAN,
 ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
 ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 
--- Add unique constraint on slug if it doesn't exist
+-- Add unique constraint on slug if column exists and constraint doesn't exist
 DO $$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'communities' AND column_name = 'slug'
+  ) AND NOT EXISTS (
     SELECT 1 FROM pg_constraint 
     WHERE conname = 'communities_slug_key'
     AND conrelid = 'communities'::regclass
@@ -458,10 +464,13 @@ ADD COLUMN IF NOT EXISTS metadata JSONB,
 ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
 ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 
--- Add unique constraint on order_number if it doesn't exist
+-- Add unique constraint on order_number if column exists and constraint doesn't exist
 DO $$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'orders' AND column_name = 'order_number'
+  ) AND NOT EXISTS (
     SELECT 1 FROM pg_constraint 
     WHERE conname = 'orders_order_number_key'
     AND conrelid = 'orders'::regclass
@@ -581,10 +590,13 @@ ADD COLUMN IF NOT EXISTS metadata JSONB,
 ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
 ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 
--- Add unique constraint on slug if it doesn't exist
+-- Add unique constraint on slug if column exists and constraint doesn't exist
 DO $$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'product_categories' AND column_name = 'slug'
+  ) AND NOT EXISTS (
     SELECT 1 FROM pg_constraint 
     WHERE conname = 'product_categories_slug_key'
     AND conrelid = 'product_categories'::regclass
