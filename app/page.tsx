@@ -55,7 +55,7 @@ function HeroSlider() {
           <img src={s.image} alt="" className="w-full h-full object-cover" />
         </div>
       ))}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0,40,40,0.85) 0%, rgba(0,64,64,0.70) 50%, rgba(0,102,102,0.55) 100%)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0,40,40,0.90) 0%, rgba(0,64,64,0.75) 50%, rgba(0,102,102,0.60) 100%)' }} />
       <div className="relative h-full flex flex-col justify-center max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
         <AnimatePresence mode="wait">
           <motion.div key={slide.id} initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.55 }} className="max-w-3xl">
