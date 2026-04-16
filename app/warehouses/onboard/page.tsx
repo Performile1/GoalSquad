@@ -19,6 +19,7 @@ export default function WarehouseOnboardPage() {
     city: '',
     country: 'SE',
     capacity: '',
+    packagesPerDay: '',
     services: [] as string[],
   });
 
@@ -42,8 +43,8 @@ export default function WarehouseOnboardPage() {
 
   const handleNext = () => {
     setError('');
-    if (step === 0 && (!form.companyName || !form.orgNumber)) {
-      setError('Fyll i företagsnamn och organisationsnummer');
+    if (step === 0 && (!form.companyName || !form.orgNumber || !form.packagesPerDay)) {
+      setError('Fyll i företagsnamn, organisationsnummer och paket per dag');
       return;
     }
     if (step === 1 && form.services.length === 0) {
@@ -177,6 +178,19 @@ export default function WarehouseOnboardPage() {
                   onChange={(e) => setForm({ ...form, capacity: e.target.value })}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                   placeholder="T.ex. 10 000 pallplatser"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Paket per dag *
+                </label>
+                <input
+                  type="number"
+                  value={form.packagesPerDay}
+                  onChange={(e) => setForm({ ...form, packagesPerDay: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                  placeholder="T.ex. 5000"
+                  min="0"
                 />
               </div>
             </div>

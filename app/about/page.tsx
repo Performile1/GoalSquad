@@ -28,12 +28,12 @@ const values = [
 ];
 
 const team = [
-  { name: 'Rickard Andersson', role: 'VD & Grundare', icon: TrophyIcon, link: '/about/team/vd' },
-  { name: 'Erik Lindberg', role: 'Försäljningsansvarig', icon: ShopIcon, link: '/about/team/sales' },
-  { name: 'Lisa Svensson', role: 'Support', icon: TargetIcon, link: '/about/team/support' },
-  { name: 'Johan Karlsson', role: 'Föreningsansvarig', icon: CommunityIcon, link: '/about/team/community' },
-  { name: 'Maria Nilsson', role: 'Företagsförsäljning', icon: MerchantIcon, link: '/about/team/merchant' },
-  { name: 'Kenneth Lundgren', role: 'Lagerpartneransvarig', icon: LogisticsIcon, link: '/about/team/warehouse' },
+  { name: 'Rickard Andersson', role: 'VD & Grundare', icon: TrophyIcon, link: '/about/team/vd', image: 'bild 1' },
+  { name: 'Erik Lindberg', role: 'Försäljningsansvarig', icon: ShopIcon, link: '/about/team/sales', image: 'bild 1' },
+  { name: 'Lisa Svensson', role: 'Support', icon: TargetIcon, link: '/about/team/support', image: 'bild 2' },
+  { name: 'Johan Karlsson', role: 'Föreningsansvarig', icon: CommunityIcon, link: '/about/team/community', image: 'bild 1' },
+  { name: 'Maria Nilsson', role: 'Företagsförsäljning', icon: MerchantIcon, link: '/about/team/merchant', image: 'bild 2' },
+  { name: 'Kenneth Lundgren', role: 'Lagerpartneransvarig', icon: LogisticsIcon, link: '/about/team/warehouse', image: 'bild 1' },
 ];
 
 export default function AboutPage() {
@@ -127,15 +127,18 @@ export default function AboutPage() {
             {team.map((member) => (
               <Link key={member.name} href={member.link} className="bg-white border-2 border-primary-100 rounded-2xl p-6 hover:border-primary-600 transition block">
                 <div className="flex justify-center mb-3">
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #004040 0%, #006666 100%)' }}
-                  >
-                    <member.icon size={32} />
+                  <div className="relative">
+                    <div
+                      className="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden"
+                      style={{ background: 'linear-gradient(135deg, #004040 0%, #006666 100%)' }}
+                    >
+                      <div className="absolute inset-0 bg-black/30 rounded-full" />
+                      <member.icon size={32} />
+                    </div>
                   </div>
                 </div>
-                <h3 className="font-bold text-primary-900 text-sm">{member.name}</h3>
-                <p className="text-gray-500 text-xs mt-1">{member.role}</p>
+                <h3 className="font-bold text-primary-900 text-sm text-center">{member.name}</h3>
+                <p className="text-gray-500 text-xs mt-1 text-center">{member.role}</p>
               </Link>
             ))}
           </div>
