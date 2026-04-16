@@ -79,10 +79,10 @@ export default function WarehousesPage() {
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null);
   const [hoveredWarehouse, setHoveredWarehouse] = useState<string | null>(null);
 
-  // World map coordinates (focus on Europe/Nordic region)
-  // Lat range: 70°N to 45°N, Lng range: 0° to 25°E
-  const normalizeLat = (lat: number) => ((70 - lat) / (70 - 45)) * 100;
-  const normalizeLng = (lng: number) => ((lng - 0) / (25 - 0)) * 100;
+  // Europe-focused map coordinates
+  // Lat range: 72°N to 45°N, Lng range: -5°W to 35°E
+  const normalizeLat = (lat: number) => ((72 - lat) / (72 - 45)) * 100;
+  const normalizeLng = (lng: number) => ((lng - (-5)) / (35 - (-5))) * 100;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -112,12 +112,12 @@ export default function WarehousesPage() {
             >
               <h2 className="text-2xl font-bold text-primary-900 mb-6">Karta över lager</h2>
               <div className="relative rounded-xl overflow-hidden" style={{ height: '500px' }}>
-                {/* World Map Image */}
+                {/* Europe-focused Map Image */}
                 <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
-                  alt="Världskarta"
+                  src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Europe_relief_map.jpg"
+                  alt="Europakarta"
                   className="w-full h-full object-cover"
-                  style={{ filter: 'grayscale(20%) contrast(90%)' }}
+                  style={{ filter: 'grayscale(10%) contrast(95%)' }}
                 />
 
                 {/* Overlay gradient */}
