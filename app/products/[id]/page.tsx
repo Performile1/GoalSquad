@@ -88,7 +88,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     onClick={() => setSelectedImage(index)}
                     className={`bg-white rounded-lg p-2 border-2 transition ${
                       selectedImage === index
-                        ? 'border-blue-500'
+                        ? 'border-primary-600'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -125,7 +125,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 {product.name}
               </h1>
               
-              <div className="text-5xl font-bold text-blue-600 mb-6">
+              <div className="text-5xl font-bold text-primary-900 mb-6">
                 {product.price.toLocaleString()} kr
               </div>
 
@@ -146,7 +146,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </p>
 
               {/* Add to Cart */}
-              <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-lg">
+              <button className="w-full bg-gradient-to-r from-primary-900 to-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-700 transition shadow-lg">
                 🛒 Lägg i varukorg
               </button>
             </div>

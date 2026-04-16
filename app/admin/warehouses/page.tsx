@@ -35,7 +35,7 @@ export default function WarehousesAdminPage() {
 
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="text-4xl mb-2">📦</div>
-            <div className="text-3xl font-bold text-blue-600">247</div>
+            <div className="text-3xl font-bold text-primary-900">247</div>
             <div className="text-sm text-gray-600">Väntande order</div>
           </div>
 
@@ -47,7 +47,7 @@ export default function WarehousesAdminPage() {
 
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="text-4xl mb-2">⚡</div>
-            <div className="text-3xl font-bold text-purple-600">2</div>
+            <div className="text-3xl font-bold text-primary-900">2</div>
             <div className="text-sm text-gray-600">Dagar bearbetning</div>
           </div>
         </div>

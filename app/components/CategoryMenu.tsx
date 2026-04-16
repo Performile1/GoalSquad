@@ -61,9 +61,9 @@ export default function CategoryMenu() {
               exit={{ opacity: 0, y: -10 }}
               className="absolute top-full left-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden"
             >
-              <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+              <div className="p-4 bg-gradient-to-r from-primary-900 to-primary-600 text-white">
                 <h3 className="font-bold text-lg">Produktkategorier</h3>
-                <p className="text-sm text-blue-100">
+                <p className="text-sm text-primary-100">
                   Bläddra bland {categories.reduce((sum, c) => sum + c.productCount, 0)} produkter
                 </p>
               </div>
@@ -114,7 +114,7 @@ export default function CategoryMenu() {
                 <Link
                   href="/products"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center text-blue-600 hover:text-blue-700 font-semibold"
+                  className="block text-center text-primary-900 hover:text-primary-900 font-semibold"
                 >
                   Se alla produkter →
                 </Link>
@@ -155,7 +155,7 @@ export function CategoryBar() {
             href="/products"
             className="flex-shrink-0 flex flex-col items-center gap-2 px-4 py-3 rounded-xl hover:bg-gray-50 transition group"
           >
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-3xl group-hover:scale-110 transition">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-3xl group-hover:scale-110 transition">
               🌐
             </div>
             <span className="text-sm font-semibold text-gray-900">Alla</span>

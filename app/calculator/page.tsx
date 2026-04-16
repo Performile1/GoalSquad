@@ -161,7 +161,7 @@ export default function CalculatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 py-12">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Hero Section */}
         <motion.div
@@ -180,7 +180,7 @@ export default function CalculatorPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="text-4xl mb-2">🏆</div>
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-3xl font-bold text-primary-900">
                 {stats.totalCommunities || '500+'}
               </div>
               <div className="text-sm text-gray-600">Föreningar använder oss</div>
@@ -194,7 +194,7 @@ export default function CalculatorPage() {
             </div>
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="text-4xl mb-2">📈</div>
-              <div className="text-3xl font-bold text-purple-600">
+              <div className="text-3xl font-bold text-primary-900">
                 {stats.averageProfit || '35-45'}%
               </div>
               <div className="text-sm text-gray-600">Genomsnittlig vinst</div>
@@ -218,12 +218,12 @@ export default function CalculatorPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Example 1 */}
-            <div className="border-2 border-blue-200 rounded-xl p-6 bg-blue-50">
+            <div className="border-2 border-primary-200 rounded-xl p-6 bg-primary-50">
               <div className="text-4xl mb-3">⚽</div>
-              <h3 className="text-xl font-bold text-blue-900 mb-2">
+              <h3 className="text-xl font-bold text-primary-900 mb-2">
                 Vikings Fotboll
               </h3>
-              <div className="text-sm text-blue-800 mb-4">
+              <div className="text-sm text-primary-800 mb-4">
                 Stockholm • 45 säljare
               </div>
               
@@ -242,9 +242,9 @@ export default function CalculatorPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t-2 border-blue-300">
+              <div className="pt-4 border-t-2 border-primary-300">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-blue-900">Total vinst:</span>
+                  <span className="font-bold text-primary-900">Total vinst:</span>
                   <span className="text-2xl font-bold text-green-600">
                     8,650 kr
                   </span>
@@ -253,12 +253,12 @@ export default function CalculatorPage() {
             </div>
 
             {/* Example 2 */}
-            <div className="border-2 border-purple-200 rounded-xl p-6 bg-purple-50">
+            <div className="border-2 border-primary-200 rounded-xl p-6 bg-primary-50">
               <div className="text-4xl mb-3">🏀</div>
-              <h3 className="text-xl font-bold text-purple-900 mb-2">
+              <h3 className="text-xl font-bold text-primary-900 mb-2">
                 Eagles Basket
               </h3>
-              <div className="text-sm text-purple-800 mb-4">
+              <div className="text-sm text-primary-800 mb-4">
                 Göteborg • 32 säljare
               </div>
               
@@ -277,9 +277,9 @@ export default function CalculatorPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t-2 border-purple-300">
+              <div className="pt-4 border-t-2 border-primary-300">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-purple-900">Total vinst:</span>
+                  <span className="font-bold text-primary-900">Total vinst:</span>
                   <span className="text-2xl font-bold text-green-600">
                     7,240 kr
                   </span>
@@ -323,7 +323,7 @@ export default function CalculatorPage() {
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl">
+          <div className="mt-8 p-6 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl">
             <h4 className="font-bold text-gray-900 mb-3 text-lg">
               💡 Tips för Maximal Vinst
             </h4>
@@ -355,7 +355,7 @@ export default function CalculatorPage() {
           transition={{ delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl shadow-2xl p-12 text-white">
+          <div className="bg-gradient-to-r from-primary-900 to-primary-600 rounded-2xl shadow-2xl p-12 text-white">
             <h2 className="text-4xl font-bold mb-4">
               Redo att Starta?
             </h2>

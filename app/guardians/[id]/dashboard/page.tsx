@@ -59,22 +59,22 @@ export default function GuardianDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="text-2xl font-bold text-indigo-600">Loading...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-2xl font-bold text-primary-900">Laddar...</div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-2xl font-bold text-red-600">Guardian not found</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -101,17 +101,17 @@ export default function GuardianDashboard() {
               {/* Child Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-3xl">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-3xl">
                     👤
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900">{child.fullName}</h2>
                     <p className="text-gray-600">Age: {child.age} • Level {child.currentLevel}</p>
-                    <p className="text-sm text-blue-600">goalsquad.shop/{child.shopUrl}</p>
+                    <p className="text-sm text-primary-900">goalsquad.shop/{child.shopUrl}</p>
                   </div>
                 </div>
-                <button className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
-                  View Full Dashboard
+                <button className="bg-primary-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-600 transition">
+                  Visa dashboard
                 </button>
               </div>
 
@@ -125,9 +125,9 @@ export default function GuardianDashboard() {
                   <div className="text-xs text-gray-500">{child.totalOrders} orders</div>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4">
+                <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4">
                   <div className="text-sm text-gray-600 mb-1">Available</div>
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold text-primary-900">
                     {child.treasuryBalance.available.toLocaleString()} NOK
                   </div>
                   <div className="text-xs text-gray-500">Ready for payout</div>
@@ -141,9 +141,9 @@ export default function GuardianDashboard() {
                   <div className="text-xs text-gray-500">30-day hold</div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4">
+                <div className="bg-primary-50 rounded-xl p-4">
                   <div className="text-sm text-gray-600 mb-1">Total Balance</div>
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-2xl font-bold text-primary-900">
                     {child.treasuryBalance.total.toLocaleString()} NOK
                   </div>
                   <div className="text-xs text-gray-500">All funds</div>
@@ -212,8 +212,8 @@ export default function GuardianDashboard() {
               <p className="text-gray-600 mb-6">
                 Register your child as a seller to get started
               </p>
-              <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">
-                Register Child
+              <button className="bg-primary-900 text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-600 transition">
+                Registrera barn
               </button>
             </div>
           )}

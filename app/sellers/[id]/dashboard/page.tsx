@@ -64,16 +64,22 @@ export default function SellerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
-        <div className="text-2xl font-bold text-blue-600">Loading...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full border-4 border-primary-900 border-t-transparent animate-spin mx-auto mb-4" />
+          <p className="text-primary-900 font-semibold">Laddar...</p>
+        </div>
       </div>
     );
   }
 
   if (!stats) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
-        <div className="text-2xl font-bold text-red-600">Seller not found</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">😕</div>
+          <p className="text-2xl font-bold text-gray-900">Säljaren hittades inte</p>
+        </div>
       </div>
     );
   }
@@ -85,7 +91,7 @@ export default function SellerDashboard() {
   const progressPercent = (xpProgress / xpNeeded) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -94,9 +100,9 @@ export default function SellerDashboard() {
           className="mb-8"
         >
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome back, {stats.fullName}! 👋
+            Välkommen tillbaka, {stats.fullName}! 👋
           </h1>
-          <p className="text-gray-600">Your personal shop: goalsquad.shop/{stats.shopUrl}</p>
+          <p className="text-gray-600">Din butik: goalsquad.shop/{stats.shopUrl}</p>
         </motion.div>
 
         {/* Stats Grid */}
@@ -106,23 +112,23 @@ export default function SellerDashboard() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-lg p-6 border-2 border-blue-200"
+            className="bg-white rounded-2xl shadow-lg p-6 border-2 border-primary-200"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Level</h3>
+              <h3 className="text-lg font-semibold text-gray-700">Nivå</h3>
               <div className="text-4xl">⭐</div>
             </div>
-            <div className="text-5xl font-bold text-blue-600 mb-2">
+            <div className="text-5xl font-bold text-primary-900 mb-2">
               {stats.currentLevel}
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
               <div
-                className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-primary-900 to-primary-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
             <p className="text-sm text-gray-600">
-              {xpProgress} / {xpNeeded} XP to Level {stats.currentLevel + 1}
+              {xpProgress} / {xpNeeded} XP till nivå {stats.currentLevel + 1}
             </p>
           </motion.div>
 
@@ -134,14 +140,14 @@ export default function SellerDashboard() {
             className="bg-white rounded-2xl shadow-lg p-6 border-2 border-orange-200"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Streak</h3>
+              <h3 className="text-lg font-semibold text-gray-700">Streak 🔥</h3>
               <div className="text-4xl">🔥</div>
             </div>
             <div className="text-5xl font-bold text-orange-600 mb-2">
               {stats.streakDays}
             </div>
             <p className="text-sm text-gray-600">
-              {stats.streakDays > 0 ? 'Keep it going!' : 'Start your streak today!'}
+              {stats.streakDays > 0 ? 'Fortsätt så!' : 'Starta din streak idag!'}
             </p>
           </motion.div>
 
@@ -150,16 +156,16 @@ export default function SellerDashboard() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl shadow-lg p-6 border-2 border-green-200"
+            className="bg-white rounded-2xl shadow-lg p-6 border-2 border-primary-100"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Total Sales</h3>
+              <h3 className="text-lg font-semibold text-gray-700">Total försäljning</h3>
               <div className="text-4xl">💰</div>
             </div>
-            <div className="text-3xl font-bold text-green-600 mb-2">
-              {stats.totalSales.toLocaleString()} NOK
+            <div className="text-3xl font-bold text-primary-900 mb-2">
+              {stats.totalSales.toLocaleString()} kr
             </div>
-            <p className="text-sm text-gray-600">{stats.totalOrders} orders</p>
+            <p className="text-sm text-gray-600">{stats.totalOrders} ordrar</p>
           </motion.div>
 
           {/* Rank Card */}
@@ -167,16 +173,16 @@ export default function SellerDashboard() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
-            className="bg-white rounded-2xl shadow-lg p-6 border-2 border-purple-200"
+            className="bg-white rounded-2xl shadow-lg p-6 border-2 border-primary-200"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Team Rank</h3>
+              <h3 className="text-lg font-semibold text-gray-700">Lagets ranking</h3>
               <div className="text-4xl">🏆</div>
             </div>
-            <div className="text-5xl font-bold text-purple-600 mb-2">
+            <div className="text-5xl font-bold text-primary-900 mb-2">
               #{stats.rank || '-'}
             </div>
-            <p className="text-sm text-gray-600">In your community</p>
+            <p className="text-sm text-gray-600">I din förening</p>
           </motion.div>
         </div>
 
@@ -191,37 +197,36 @@ export default function SellerDashboard() {
           >
             {/* Avatar Card */}
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Your Avatar</h3>
-              <div className="relative w-full aspect-square bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Din avatar</h3>
+              <div className="relative w-full aspect-square bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center mb-4">
                 <div className="text-8xl">👤</div>
-                {/* TODO: Render actual avatar based on avatarData */}
               </div>
-              <button className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
-                Customize Avatar
+              <button className="w-full bg-primary-900 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition">
+                Anpassa avatar
               </button>
             </div>
 
             {/* Treasury Card */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">The Vault 💎</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Mitt kassavalv 💎</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Available</span>
-                  <span className="text-2xl font-bold text-green-600">
-                    {stats.treasuryBalance.available.toLocaleString()} NOK
+                  <span className="text-gray-600">Tillgängligt</span>
+                  <span className="text-2xl font-bold text-primary-900">
+                    {stats.treasuryBalance.available.toLocaleString()} kr
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Pending (30 days)</span>
-                  <span className="text-xl font-semibold text-orange-600">
-                    {stats.treasuryBalance.held.toLocaleString()} NOK
+                  <span className="text-gray-600">Reserverat (30 dagar)</span>
+                  <span className="text-xl font-semibold text-amber-600">
+                    {stats.treasuryBalance.held.toLocaleString()} kr
                   </span>
                 </div>
-                <div className="border-t pt-3">
+                <div className="border-t border-primary-100 pt-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-900 font-semibold">Total</span>
-                    <span className="text-3xl font-bold text-blue-600">
-                      {stats.treasuryBalance.total.toLocaleString()} NOK
+                    <span className="text-gray-900 font-semibold">Totalt</span>
+                    <span className="text-3xl font-bold text-primary-900">
+                      {stats.treasuryBalance.total.toLocaleString()} kr
                     </span>
                   </div>
                 </div>
@@ -239,7 +244,7 @@ export default function SellerDashboard() {
             {/* Achievements */}
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Achievements ({stats.achievements.length})
+                Prestationer ({stats.achievements.length})
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {stats.achievements.map((achievement) => (
@@ -258,19 +263,19 @@ export default function SellerDashboard() {
 
             {/* Quick Actions */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Snabbåtgärder</h3>
               <div className="grid grid-cols-2 gap-4">
-                <button className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition">
-                  📦 My Products
+                <button className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition">
+                  📦 Mina produkter
                 </button>
-                <button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition">
-                  📊 View Orders
+                <button className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition">
+                  📊 Se ordrar
                 </button>
-                <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition">
+                <button className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition">
                   🎯 Leaderboard
                 </button>
-                <button className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition">
-                  ⚙️ Settings
+                <button className="border-2 border-primary-900 text-primary-900 py-4 rounded-xl font-semibold hover:bg-primary-50 transition">
+                  ⚙️ Inställningar
                 </button>
               </div>
             </div>
@@ -290,9 +295,9 @@ function getRarityColor(rarity: string): string {
     case 'legendary':
       return 'border-yellow-400 bg-yellow-50';
     case 'epic':
-      return 'border-purple-400 bg-purple-50';
+      return 'border-primary-400 bg-primary-50';
     case 'rare':
-      return 'border-blue-400 bg-blue-50';
+      return 'border-primary-200 bg-primary-50';
     default:
       return 'border-gray-300 bg-gray-50';
   }

@@ -27,7 +27,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
-            href="/products"
+            href="/"
             className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition"
           >
             <img

@@ -45,7 +45,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
           </p>
           <button
             onClick={() => router.back()}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
+            className="bg-primary-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-800"
           >
             ← Tillbaka
           </button>
@@ -138,7 +138,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
               onClick={() => setBulkMode(false)}
               className={`flex-1 py-3 rounded-xl font-semibold transition ${
                 !bulkMode
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary-900 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -148,7 +148,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
               onClick={() => setBulkMode(true)}
               className={`flex-1 py-3 rounded-xl font-semibold transition ${
                 bulkMode
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary-900 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -188,7 +188,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="anna@example.com"
                 required
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -201,7 +201,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Anna Andersson"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -212,7 +212,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               >
                 <option value="member">Medlem</option>
                 <option value="seller">Säljare</option>
@@ -234,14 +234,14 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Hej! Jag vill bjuda in dig till vår förening..."
                 rows={4}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={sending}
-              className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {sending ? 'Skickar...' : '📧 Skicka inbjudan'}
             </button>
@@ -259,7 +259,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                 placeholder={'anna@example.com\nerik@example.com\nmaria@example.com'}
                 rows={10}
                 required
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none font-mono text-sm"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none font-mono text-sm"
               />
               <p className="text-xs text-gray-500 mt-2">
                 {bulkEmails.split('\n').filter((l) => l.trim()).length} e-postadresser
@@ -273,7 +273,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               >
                 <option value="member">Medlem</option>
                 <option value="seller">Säljare</option>
@@ -292,14 +292,14 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Välkommen till vår förening!"
                 rows={4}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={sending}
-              className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {sending ? 'Skickar...' : '📧 Skicka alla inbjudningar'}
             </button>
@@ -307,11 +307,11 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
         )}
 
         {/* Info Box */}
-        <div className="mt-8 bg-blue-50 rounded-xl p-6">
-          <h3 className="font-bold text-blue-900 mb-2">
+        <div className="mt-8 bg-primary-50 rounded-xl p-6">
+          <h3 className="font-bold text-primary-900 mb-2">
             💡 Så fungerar inbjudningar
           </h3>
-          <ul className="text-sm text-blue-800 space-y-2">
+          <ul className="text-sm text-primary-800 space-y-2">
             <li>• Inbjudningar skickas via e-post</li>
             <li>• Mottagaren får en länk som är giltig i 7 dagar</li>
             <li>• Om mottagaren inte har konto skapas ett automatiskt</li>

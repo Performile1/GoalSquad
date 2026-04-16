@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/lib/auth-context'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
+import ChatWidget from '@/app/components/ChatWidget'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -41,6 +42,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <ChatWidget />
         </AuthProvider>
       </body>
     </html>

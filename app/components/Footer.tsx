@@ -75,9 +75,9 @@ export default function Footer() {
     <footer style={{ backgroundColor: P }} className="text-white">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
               <img
                 src="/logos/goalsquad-logo.png"
@@ -100,16 +100,13 @@ export default function Footer() {
             <ul className="space-y-2">
               {[
                 { href: '/products', label: 'Alla produkter' },
+                { href: '/marketplace', label: 'Community Marketplace' },
                 { href: '/communities', label: 'Communities' },
-                { href: '/leaderboard', label: 'Leaderboard' },
                 { href: '/cart', label: 'Varukorg' },
                 { href: '/orders', label: 'Mina ordrar' },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-white/60 hover:text-white text-sm transition"
-                  >
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
                     {link.label}
                   </Link>
                 </li>
@@ -117,24 +114,22 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Merchant */}
+          {/* Förening / Klass */}
           <div>
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
-              Merchant
+              Förening / Klass
             </h3>
             <ul className="space-y-2">
               {[
-                { href: '/merchants/onboard', label: 'Bli Merchant' },
-                { href: '/dashboard', label: 'Min sida' },
-                { href: '/merchants', label: 'Alla merchants' },
-                { href: '/auth/register', label: 'Skapa konto' },
-                { href: '/auth/login', label: 'Logga in' },
+                { href: '/join', label: 'Kom igång' },
+                { href: '/join/community', label: 'Registrera förening' },
+                { href: '/communities', label: 'Se alla communities' },
+                { href: '/marketplace/new', label: 'Sälj egna produkter' },
+                { href: '/calculator', label: 'Beräkna intäkter' },
+                { href: '/leaderboard', label: 'Leaderboard' },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-white/60 hover:text-white text-sm transition"
-                  >
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
                     {link.label}
                   </Link>
                 </li>
@@ -142,7 +137,29 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Info */}
+          {/* Företag */}
+          <div>
+            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              Företag
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/merchants/onboard', label: 'Bli leverantör' },
+                { href: '/merchants', label: 'Alla leverantörer' },
+                { href: '/calculator', label: 'Beräkna potential' },
+                { href: '/dashboard', label: 'Min sida' },
+                { href: '/auth/login', label: 'Logga in' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Om oss */}
           <div>
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
               Om oss
@@ -155,10 +172,7 @@ export default function Footer() {
                 { href: '/contact', label: 'Kontakt' },
               ].map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-white/60 hover:text-white text-sm transition"
-                  >
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
                     {link.label}
                   </Link>
                 </li>

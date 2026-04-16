@@ -54,12 +54,12 @@ export default function Leaderboard() {
       case 1: return 'from-yellow-400 to-yellow-600';
       case 2: return 'from-gray-300 to-gray-500';
       case 3: return 'from-orange-400 to-orange-600';
-      default: return 'from-blue-400 to-blue-600';
+      default: return 'from-primary-600 to-primary-900';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -83,7 +83,7 @@ export default function Leaderboard() {
               onClick={() => setPeriod(p)}
               className={`px-6 py-3 rounded-xl font-semibold transition ${
                 period === p
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-primary-900 to-primary-600 text-white shadow-lg'
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
@@ -95,7 +95,7 @@ export default function Leaderboard() {
         {/* Leaderboard */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="text-2xl font-bold text-purple-600">Loading...</div>
+            <div className="text-2xl font-bold text-primary-900">Loading...</div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -116,7 +116,7 @@ export default function Leaderboard() {
                   </div>
 
                   {/* Avatar */}
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-3xl">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-3xl">
                     {entry.avatarUrl ? (
                       <img src={entry.avatarUrl} alt={entry.fullName} className="w-full h-full rounded-full" />
                     ) : (

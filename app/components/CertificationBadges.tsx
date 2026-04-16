@@ -371,7 +371,7 @@ export function CertificationSelector({
                     onClick={() => toggleCertification(cert.id)}
                     className={`p-4 rounded-xl border-2 transition ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-primary-600 bg-primary-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -388,7 +388,7 @@ export function CertificationSelector({
                       {cert.name}
                     </div>
                     {isSelected && (
-                      <div className="text-blue-600 text-center mt-1">✓</div>
+                      <div className="text-primary-900 text-center mt-1">✓</div>
                     )}
                   </button>
                 );

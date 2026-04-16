@@ -276,7 +276,7 @@ export default function CreateProductPage() {
                   onClick={() => setCurrentStep(step.number)}
                   className={`flex flex-col items-center gap-2 ${
                     currentStep === step.number
-                      ? 'text-blue-600'
+                      ? 'text-primary-900'
                       : currentStep > step.number
                       ? 'text-green-600'
                       : 'text-gray-400'
@@ -285,7 +285,7 @@ export default function CreateProductPage() {
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
                       currentStep === step.number
-                        ? 'bg-blue-100'
+                        ? 'bg-primary-100'
                         : currentStep > step.number
                         ? 'bg-green-100'
                         : 'bg-gray-100'
@@ -339,7 +339,7 @@ export default function CreateProductPage() {
                       {product.ean && (
                         <p className="text-xs text-gray-500">EAN: {product.ean}</p>
                       )}
-                      <p className="text-xs text-blue-600 mt-1">
+                      <p className="text-xs text-primary-900 mt-1">
                         Likhet: {(product.similarityScore * 100).toFixed(0)}%
                       </p>
                     </div>
@@ -348,7 +348,7 @@ export default function CreateProductPage() {
                         setSelectedExistingProduct(product.id);
                         setShowDuplicateWarning(false);
                       }}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700"
+                      className="bg-primary-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-800"
                     >
                       Använd denna
                     </button>
@@ -465,7 +465,7 @@ export default function CreateProductPage() {
             {currentStep < 5 ? (
               <button
                 onClick={() => setCurrentStep(currentStep + 1)}
-                className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700"
+                className="bg-primary-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-800"
               >
                 Nästa →
               </button>
@@ -473,7 +473,7 @@ export default function CreateProductPage() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50"
+                className="bg-primary-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50"
               >
                 {loading ? 'Skapar...' : '✓ Skapa Produkt'}
               </button>

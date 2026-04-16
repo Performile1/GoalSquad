@@ -143,23 +143,23 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-blue-50 rounded-lg p-3"
+                  className="bg-primary-50 rounded-lg p-3"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <div className="font-semibold text-blue-900">
+                      <div className="font-semibold text-primary-900">
                         Till: {shipment.warehouse_name}
                       </div>
-                      <div className="text-xs text-blue-700">
+                      <div className="text-xs text-primary-900">
                         Status: {shipment.status}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-blue-900">{shipment.quantity} st</div>
+                      <div className="font-bold text-primary-900">{shipment.quantity} st</div>
                     </div>
                   </div>
                   {shipment.estimated_arrival && (
-                    <div className="text-xs text-blue-600">
+                    <div className="text-xs text-primary-900">
                       📅 Beräknad ankomst: {shipment.estimated_arrival}
                     </div>
                   )}
@@ -212,7 +212,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
                     </div>
                     <div className="bg-white rounded p-2">
                       <div className="text-gray-600">Allokerat</div>
-                      <div className="font-bold text-blue-700">{wh.quantity_allocated} st</div>
+                      <div className="font-bold text-primary-900">{wh.quantity_allocated} st</div>
                     </div>
                     <div className="bg-white rounded p-2">
                       <div className="text-gray-600">Skickat</div>
@@ -244,13 +244,13 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Totalt allokerat:</span>
-                <span className="font-bold text-2xl text-purple-600">
+                <span className="font-bold text-2xl text-primary-900">
                   {allocated_to_customers.total_quantity} st
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Antal allokeringar:</span>
-                <span className="font-semibold text-purple-600">
+                <span className="font-semibold text-primary-900">
                   {allocated_to_customers.allocation_count} st
                 </span>
               </div>
@@ -265,11 +265,11 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
                     {allocated_to_customers.by_warehouse.map((wh: any) => (
                       <div
                         key={wh.warehouse_id}
-                        className="bg-purple-50 rounded-lg p-2"
+                        className="bg-primary-50 rounded-lg p-2"
                       >
                         <div className="flex justify-between items-center mb-2">
                           <div className="font-semibold text-sm">{wh.warehouse_name}</div>
-                          <div className="font-bold text-purple-700">{wh.quantity} st</div>
+                          <div className="font-bold text-primary-900">{wh.quantity} st</div>
                         </div>
                         {wh.status_breakdown && (
                           <div className="flex gap-2 text-xs">
@@ -324,16 +324,16 @@ function FlowStep({
 }) {
   const colorClasses = {
     yellow: 'bg-yellow-50 border-yellow-500',
-    blue: 'bg-blue-50 border-blue-500',
+    blue: 'bg-primary-50 border-primary-600',
     green: 'bg-green-50 border-green-500',
-    purple: 'bg-purple-50 border-purple-500',
+    purple: 'bg-primary-50 border-primary-600',
   };
 
   const badgeColors = {
     yellow: 'bg-yellow-500',
-    blue: 'bg-blue-500',
+    blue: 'bg-primary-900',
     green: 'bg-green-500',
-    purple: 'bg-purple-500',
+    purple: 'bg-primary-600',
   };
 
   return (
@@ -375,7 +375,7 @@ export function ProductFlowBadge({ productId }: { productId: string }) {
   if (total === 0) return null;
 
   return (
-    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-100 text-primary-900 rounded-full text-xs font-semibold">
       <span>📊</span>
       <span>{total} st i flöde</span>
     </div>

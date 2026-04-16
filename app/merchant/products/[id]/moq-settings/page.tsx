@@ -89,7 +89,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
         <div className="mb-8">
           <button
             onClick={() => router.back()}
-            className="text-blue-600 hover:text-blue-700 font-semibold mb-4"
+            className="text-primary-900 hover:text-primary-900 font-semibold mb-4"
           >
             ← Tillbaka
           </button>
@@ -106,7 +106,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
               type="checkbox"
               checked={moqEnabled}
               onChange={(e) => setMoqEnabled(e.target.checked)}
-              className="w-6 h-6 text-blue-600 rounded mt-1"
+              className="w-6 h-6 text-primary-900 rounded mt-1"
             />
             <div className="flex-1">
               <div className="font-bold text-lg text-gray-900 mb-2">
@@ -139,7 +139,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                     value={minimumOrderQuantity}
                     onChange={(e) => setMinimumOrderQuantity(parseInt(e.target.value))}
                     min="1"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                   />
                 </div>
 
@@ -150,7 +150,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                   <select
                     value={moqUnit}
                     onChange={(e) => setMoqUnit(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                   >
                     <option value="pieces">Stycken</option>
                     <option value="boxes">Lådor</option>
@@ -161,8 +161,8 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800">
+              <div className="mt-6 p-4 bg-primary-50 rounded-lg">
+                <p className="text-sm text-primary-800">
                   💡 Produkten skickas först när <strong>{minimumOrderQuantity} {moqUnit}</strong> har beställts
                   till samma konsolideringslager (baserat på postnummer).
                 </p>
@@ -186,7 +186,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                   min="0"
                   max="50"
                   step="0.5"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   Ge kunder rabatt som incitament att nå MOQ
@@ -214,7 +214,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                     type="checkbox"
                     checked={allowPartialOrders}
                     onChange={(e) => setAllowPartialOrders(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 rounded mt-1"
+                    className="w-5 h-5 text-primary-900 rounded mt-1"
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
@@ -231,7 +231,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                     type="checkbox"
                     checked={consolidationRequired}
                     onChange={(e) => setConsolidationRequired(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 rounded mt-1"
+                    className="w-5 h-5 text-primary-900 rounded mt-1"
                   />
                   <div>
                     <div className="font-semibold text-gray-900">
@@ -246,7 +246,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
             </div>
 
             {/* Example Calculation */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 mb-8">
+            <div className="bg-primary-50 rounded-2xl p-8 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
                 📊 Exempel
               </h3>
@@ -263,7 +263,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
                   <span className="text-gray-700">Partiella beställningar:</span>
                   <span className="font-bold">{allowPartialOrders ? 'Ja' : 'Nej'}</span>
                 </div>
-                <div className="pt-3 border-t border-purple-200">
+                <div className="pt-3 border-t border-primary-200">
                   <p className="text-gray-700">
                     När <strong>{minimumOrderQuantity}</strong> enheter beställts till samma område
                     skickas alla beställningar med <strong>{moqDiscountPercentage}%</strong> rabatt.
@@ -285,7 +285,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-50 shadow-lg"
+            className="bg-primary-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-800 transition disabled:opacity-50 shadow-lg"
           >
             {saving ? 'Sparar...' : '💾 Spara inställningar'}
           </button>

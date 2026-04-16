@@ -138,8 +138,8 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
             />
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-6 p-4 bg-primary-50 rounded-lg">
+            <p className="text-sm text-primary-800">
               💡 <strong>Tips:</strong> Använd PNG eller SVG för bästa kvalitet. Max 5MB per fil.
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
                   onChange={(e) =>
                     setBrandColors((prev) => ({ ...prev, primary: e.target.value }))
                   }
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
                   onChange={(e) =>
                     setBrandColors((prev) => ({ ...prev, secondary: e.target.value }))
                   }
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
               type="checkbox"
               checked={showOnHomepage}
               onChange={(e) => setShowOnHomepage(e.target.checked)}
-              className="w-6 h-6 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              className="w-6 h-6 text-primary-900 rounded focus:ring-2 focus:ring-primary-600"
             />
             <div>
               <div className="font-semibold text-gray-900">
@@ -247,7 +247,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
         <div className="flex justify-end">
           <button
             onClick={updateBranding}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-lg"
+            className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-700 transition shadow-lg"
           >
             💾 Spara Inställningar
           </button>
@@ -271,7 +271,7 @@ function LogoUploadBox({
   uploading: boolean;
 }) {
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition">
+    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-primary-600 transition">
       <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
       <p className="text-sm text-gray-600 mb-4">{description}</p>
 
@@ -292,7 +292,7 @@ function LogoUploadBox({
       <button
         onClick={onUpload}
         disabled={uploading}
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-primary-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {uploading ? 'Laddar upp...' : currentLogo ? 'Byt Logga' : 'Ladda upp'}
       </button>

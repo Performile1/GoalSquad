@@ -7,13 +7,13 @@ import { useParams } from 'next/navigation';
 interface Campaign {
   id: string;
   name: string;
-  description: string;
+  Beskrivning: string;
   startDate: string;
   endDate: string;
   salesGoal: number;
-  unitsGoal: number;
+  enheterGoal: number;
   totalSales: number;
-  totalUnitsSold: number;
+  totalenheterSold: number;
   status: string;
   communityCommissionPercent: number;
   sellerCommissionPercent: number;
@@ -75,28 +75,28 @@ export default function CampaignManagement() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
-        <div className="text-2xl font-bold text-blue-600">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br bg-gray-50 flex items-center justify-center">
+        <div className="text-2xl font-bold text-primary-900">Laddar...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Campaign Management
+              Kampanjhantering
             </h1>
-            <p className="text-gray-600">Create and manage sales campaigns for your community</p>
+            <p className="text-gray-600">Skapa och hantera f\u00f6rs\u00e4ljningskampanjer f\u00f6r din f\u00f6rening</p>
           </div>
           <button
             onClick={() => setShowCreateForm(true)}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition"
+            className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition"
           >
-            + New Campaign
+            + Ny kampanj
           </button>
         </div>
 
@@ -114,8 +114,8 @@ export default function CampaignManagement() {
             const salesProgress = campaign.salesGoal > 0 
               ? (campaign.totalSales / campaign.salesGoal) * 100 
               : 0;
-            const unitsProgress = campaign.unitsGoal > 0 
-              ? (campaign.totalUnitsSold / campaign.unitsGoal) * 100 
+            const enheterProgress = campaign.enheterGoal > 0 
+              ? (campaign.totalenheterSold / campaign.enheterGoal) * 100 
               : 0;
 
             return (
@@ -130,18 +130,18 @@ export default function CampaignManagement() {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900">{campaign.name}</h3>
-                    <p className="text-gray-600 mt-1">{campaign.description}</p>
+                    <p className="text-gray-600 mt-1">{campaign.Beskrivning}</p>
                     <div className="flex gap-4 mt-2 text-sm text-gray-500">
                       <span>📅 {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}</span>
-                      <span>💰 Community: {campaign.communityCommissionPercent}%</span>
-                      <span>👤 Seller: {campaign.sellerCommissionPercent}%</span>
+                      <span>💰 F\u00f6rening: {campaign.communityCommissionPercent}%</span>
+                      <span>👤 S\u00e4ljare: {campaign.sellerCommissionPercent}%</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <span className={`px-4 py-2 rounded-xl font-semibold ${
                       campaign.status === 'active' ? 'bg-green-100 text-green-700' :
                       campaign.status === 'draft' ? 'bg-gray-100 text-gray-700' :
-                      campaign.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                      campaign.status === 'completed' ? 'bg-primary-100 text-primary-900' :
                       'bg-red-100 text-red-700'
                     }`}>
                       {campaign.status}
@@ -167,12 +167,12 @@ export default function CampaignManagement() {
 
                 {/* Progress Bars */}
                 <div className="space-y-4">
-                  {/* Sales Goal */}
+                  {/* F\u00f6rs\u00e4ljningsm\u00e5l */}
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Sales Goal</span>
+                      <span className="text-gray-600">F\u00f6rs\u00e4ljningsm\u00e5l</span>
                       <span className="font-semibold">
-                        {campaign.totalSales.toLocaleString()} / {campaign.salesGoal.toLocaleString()} NOK
+                        {campaign.totalSales.toLocaleString()} / {campaign.salesGoal.toLocaleString()} kr
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-4">
@@ -189,23 +189,23 @@ export default function CampaignManagement() {
                     </div>
                   </div>
 
-                  {/* Units Goal */}
-                  {campaign.unitsGoal > 0 && (
+                  {/* Enhetsm\u00e5l */}
+                  {campaign.enheterGoal > 0 && (
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-600">Units Goal</span>
+                        <span className="text-gray-600">Enhetsm\u00e5l</span>
                         <span className="font-semibold">
-                          {campaign.totalUnitsSold} / {campaign.unitsGoal} units
+                          {campaign.totalenheterSold} / {campaign.enheterGoal} enheter
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-4">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-cyan-500 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
-                          style={{ width: `${Math.min(unitsProgress, 100)}%` }}
+                          className="bg-gradient-to-r from-primary-700 to-primary-500 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
+                          style={{ width: `${Math.min(enheterProgress, 100)}%` }}
                         >
-                          {unitsProgress >= 10 && (
+                          {enheterProgress >= 10 && (
                             <span className="text-xs font-bold text-white">
-                              {Math.round(unitsProgress)}%
+                              {Math.round(enheterProgress)}%
                             </span>
                           )}
                         </div>
@@ -221,14 +221,14 @@ export default function CampaignManagement() {
             <div className="text-center py-12 bg-white rounded-2xl shadow-lg">
               <div className="text-6xl mb-4">📊</div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                No campaigns yet
+                Inga kampanjer \u00e4n
               </h3>
               <p className="text-gray-600 mb-6">
-                Create your first campaign to start selling!
+                Skapa din f\u00f6rsta kampanj f\u00f6r att b\u00f6rja s\u00e4lja!
               </p>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition"
+                className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition"
               >
                 Create Campaign
               </button>
@@ -243,11 +243,11 @@ export default function CampaignManagement() {
 function CreateCampaignForm({ onSubmit, onCancel }: any) {
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
+    Beskrivning: '',
     startDate: '',
     endDate: '',
     salesGoal: '',
-    unitsGoal: '',
+    enheterGoal: '',
     communityCommissionPercent: '20',
     sellerCommissionPercent: '10',
   });
@@ -270,31 +270,31 @@ function CreateCampaignForm({ onSubmit, onCancel }: any) {
         className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Create New Campaign</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">Skapa ny kampanj</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Campaign Name *
+              Kampanjnamn \*
             </label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
               placeholder="Spring Fundraiser 2024"
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Description
+              Beskrivning
             </label>
             <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+              value={formData.Beskrivning}
+              onChange={(e) => setFormData({ ...formData, Beskrivning: e.target.value })}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
               rows={3}
               placeholder="Describe your campaign..."
             />
@@ -303,27 +303,27 @@ function CreateCampaignForm({ onSubmit, onCancel }: any) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Start Date *
+                Startdatum \*
               </label>
               <input
                 type="date"
                 required
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
               />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                End Date *
+                Slutdatum \*
               </label>
               <input
                 type="date"
                 required
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
               />
             </div>
           </div>
@@ -331,26 +331,26 @@ function CreateCampaignForm({ onSubmit, onCancel }: any) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Sales Goal (NOK)
+                F\u00f6rs\u00e4ljningsm\u00e5l \(kr\)
               </label>
               <input
                 type="number"
                 value={formData.salesGoal}
                 onChange={(e) => setFormData({ ...formData, salesGoal: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
                 placeholder="10000"
               />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Units Goal
+                Enhetsm\u00e5l
               </label>
               <input
                 type="number"
-                value={formData.unitsGoal}
-                onChange={(e) => setFormData({ ...formData, unitsGoal: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                value={formData.enheterGoal}
+                onChange={(e) => setFormData({ ...formData, enheterGoal: e.target.value })}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
                 placeholder="100"
               />
             </div>
@@ -359,26 +359,26 @@ function CreateCampaignForm({ onSubmit, onCancel }: any) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Community Commission (%)
+                F\u00f6reningens provision \(%\)
               </label>
               <input
                 type="number"
                 value={formData.communityCommissionPercent}
                 onChange={(e) => setFormData({ ...formData, communityCommissionPercent: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
                 placeholder="20"
               />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Seller Commission (%)
+                S\u00e4ljarens provision \(%\)
               </label>
               <input
                 type="number"
                 value={formData.sellerCommissionPercent}
                 onChange={(e) => setFormData({ ...formData, sellerCommissionPercent: e.target.value })}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
                 placeholder="10"
               />
             </div>
@@ -394,7 +394,7 @@ function CreateCampaignForm({ onSubmit, onCancel }: any) {
             </button>
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition"
+              className="flex-1 bg-gradient-to-r from-primary-900 to-primary-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition"
             >
               Create Campaign
             </button>

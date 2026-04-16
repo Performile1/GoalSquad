@@ -83,7 +83,7 @@ export default function WarehouseMap({
         </h2>
         <div className="flex gap-2 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-primary-900 rounded-full"></div>
             <span>Aktivt</span>
           </div>
           <div className="flex items-center gap-2">
@@ -96,13 +96,13 @@ export default function WarehouseMap({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map */}
         <div className="lg:col-span-2">
-          <div className="relative bg-gradient-to-br from-blue-50 to-green-50 rounded-xl overflow-hidden border-2 border-gray-200">
+          <div className="relative bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl overflow-hidden border-2 border-gray-200">
             <svg viewBox="0 0 800 1000" className="w-full h-[600px]">
               {/* Sweden outline (simplified) */}
               <path
                 d="M 400 50 L 450 100 L 480 200 L 500 350 L 490 500 L 470 650 L 450 750 L 420 850 L 400 950 L 380 850 L 350 750 L 330 650 L 310 500 L 320 350 L 340 200 L 370 100 Z"
-                fill="#e0f2fe"
-                stroke="#0284c7"
+                fill="#e6f0f0"
+                stroke="#004040"
                 strokeWidth="2"
               />
 
@@ -173,7 +173,7 @@ export default function WarehouseMap({
               <div className="font-bold mb-2">Täckningsområden</div>
               {warehouses.map((w) => (
                 <div key={w.id} className="flex items-center gap-2 mb-1">
-                  <div className={`w-2 h-2 rounded-full ${w.isActive ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+                  <div className={`w-2 h-2 rounded-full ${w.isActive ? 'bg-primary-900' : 'bg-gray-300'}`}></div>
                   <span>{w.city}: {w.postalCodeRanges.join(', ')}</span>
                 </div>
               ))}
@@ -194,7 +194,7 @@ export default function WarehouseMap({
               onMouseLeave={() => setHoveredWarehouse(null)}
               className={`p-4 rounded-xl border-2 cursor-pointer transition ${
                 warehouse.id === selectedWarehouse
-                  ? 'border-blue-500 bg-blue-50'
+                  ? 'border-primary-600 bg-primary-50'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
@@ -212,7 +212,7 @@ export default function WarehouseMap({
                 <div>📏 Radie: {warehouse.coverageRadiusKm} km</div>
                 {warehouse.pendingOrders !== undefined && (
                   <div className="mt-2 pt-2 border-t border-gray-200">
-                    <div className="font-semibold text-blue-600">
+                    <div className="font-semibold text-primary-900">
                       📦 {warehouse.pendingOrders} väntande order
                     </div>
                   </div>
@@ -265,12 +265,12 @@ export function WarehouseSelector({
   }
 
   return (
-    <div className="bg-blue-50 rounded-lg p-3 text-sm">
+    <div className="bg-primary-50 rounded-lg p-3 text-sm">
       <div className="flex items-center gap-2 mb-1">
         <span className="text-2xl">🏭</span>
-        <span className="font-bold text-blue-900">{warehouse.name}</span>
+        <span className="font-bold text-primary-900">{warehouse.name}</span>
       </div>
-      <div className="text-blue-700">
+      <div className="text-primary-900">
         {warehouse.city} • {warehouse.postalCode}
       </div>
     </div>

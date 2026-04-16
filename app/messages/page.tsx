@@ -119,12 +119,12 @@ export default function MessagesPage() {
                 whileHover={{ backgroundColor: '#f9fafb' }}
                 onClick={() => setSelectedConversation(conv.id)}
                 className={`p-4 border-b border-gray-100 cursor-pointer ${
-                  selectedConversation === conv.id ? 'bg-blue-50' : ''
+                  selectedConversation === conv.id ? 'bg-primary-50' : ''
                 }`}
               >
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-white font-bold flex-shrink-0">
                     {conv.avatarUrl ? (
                       <img src={conv.avatarUrl} alt="" className="w-full h-full rounded-full" />
                     ) : (
@@ -149,7 +149,7 @@ export default function MessagesPage() {
 
                   {/* Unread badge */}
                   {conv.unreadCount > 0 && (
-                    <div className="bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+                    <div className="bg-primary-900 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
                       {conv.unreadCount}
                     </div>
                   )}
@@ -167,7 +167,7 @@ export default function MessagesPage() {
             {/* Chat Header */}
             <div className="bg-white border-b border-gray-200 p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-white font-bold">
                   {selectedConv.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -195,12 +195,12 @@ export default function MessagesPage() {
                     <div
                       className={`rounded-2xl px-4 py-2 ${
                         msg.isOwn
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-primary-900 text-white'
                           : 'bg-gray-200 text-gray-900'
                       }`}
                     >
                       <p>{msg.content}</p>
-                      <p className={`text-xs mt-1 ${msg.isOwn ? 'text-blue-100' : 'text-gray-500'}`}>
+                      <p className={`text-xs mt-1 ${msg.isOwn ? 'text-primary-100' : 'text-gray-500'}`}>
                         {formatTime(msg.createdAt)}
                       </p>
                     </div>
@@ -219,12 +219,12 @@ export default function MessagesPage() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Skriv ett meddelande..."
-                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim()}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Skicka
                 </button>

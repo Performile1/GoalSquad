@@ -142,7 +142,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="info@example.com"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -155,7 +155,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+46 8 123 456 78"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -168,7 +168,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               placeholder="+46 70 123 45 67"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -181,7 +181,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
               placeholder="https://example.com"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={addressLine1}
               onChange={(e) => setAddressLine1(e.target.value)}
               placeholder="Storgatan 1"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -216,7 +216,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={addressLine2}
               onChange={(e) => setAddressLine2(e.target.value)}
               placeholder="Våning 3"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -230,7 +230,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
                 placeholder="123 45"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -243,7 +243,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="Stockholm"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -254,7 +254,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               <select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               >
                 <option value="SE">🇸🇪 Sverige</option>
                 <option value="NO">🇳🇴 Norge</option>
@@ -282,7 +282,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={facebookUrl}
               onChange={(e) => setFacebookUrl(e.target.value)}
               placeholder="https://facebook.com/..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -295,7 +295,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={instagramUrl}
               onChange={(e) => setInstagramUrl(e.target.value)}
               placeholder="https://instagram.com/..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -308,7 +308,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={twitterUrl}
               onChange={(e) => setTwitterUrl(e.target.value)}
               placeholder="https://twitter.com/..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -321,7 +321,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={linkedinUrl}
               onChange={(e) => setLinkedinUrl(e.target.value)}
               placeholder="https://linkedin.com/..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
         </div>
@@ -343,7 +343,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={contactPerson}
               onChange={(e) => setContactPerson(e.target.value)}
               placeholder="Anna Andersson"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
 
@@ -356,7 +356,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               value={contactRole}
               onChange={(e) => setContactRole(e.target.value)}
               placeholder="VD, Ordförande, etc"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             />
           </div>
         </div>
@@ -367,7 +367,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
               type="checkbox"
               checked={isPublic}
               onChange={(e) => setIsPublic(e.target.checked)}
-              className="w-5 h-5 text-blue-600 rounded"
+              className="w-5 h-5 text-primary-900 rounded"
             />
             <div>
               <span className="font-semibold text-gray-900">
@@ -386,7 +386,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+          className="bg-primary-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
           {saving ? 'Sparar...' : '💾 Spara Kontaktinformation'}
         </button>

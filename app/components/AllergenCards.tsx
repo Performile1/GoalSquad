@@ -126,8 +126,8 @@ function SelectMode({ allergens, onToggle }: { allergens: Allergen[]; onToggle?:
 
   return (
     <div>
-      <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-900 font-semibold mb-2">
+      <div className="mb-4 p-4 bg-primary-50 rounded-lg">
+        <p className="text-sm text-primary-900 font-semibold mb-2">
           💡 Klicka på allergener för att markera:
         </p>
         <div className="flex gap-4 text-sm">

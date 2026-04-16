@@ -139,7 +139,7 @@ export default function AvatarCreator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -158,17 +158,17 @@ export default function AvatarCreator() {
         {/* Progress Steps */}
         <div className="flex justify-center gap-4 mb-8">
           <div className={`px-6 py-3 rounded-xl font-semibold ${
-            step === 'camera' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+            step === 'camera' ? 'bg-primary-900 text-white' : 'bg-gray-200 text-gray-600'
           }`}>
             1. Ta Foto
           </div>
           <div className={`px-6 py-3 rounded-xl font-semibold ${
-            step === 'captured' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+            step === 'captured' ? 'bg-primary-900 text-white' : 'bg-gray-200 text-gray-600'
           }`}>
             2. Granska
           </div>
           <div className={`px-6 py-3 rounded-xl font-semibold ${
-            step === 'cartoonized' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+            step === 'cartoonized' ? 'bg-primary-900 text-white' : 'bg-gray-200 text-gray-600'
           }`}>
             3. Cartoonify!
           </div>
@@ -203,7 +203,7 @@ export default function AvatarCreator() {
                 </p>
                 <button
                   onClick={capturePhoto}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-lg transition transform hover:scale-105"
+                  className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-lg transition transform hover:scale-105"
                 >
                   📸 Ta Foto
                 </button>
@@ -236,7 +236,7 @@ export default function AvatarCreator() {
                 <button
                   onClick={cartoonizeImage}
                   disabled={isProcessing}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50"
+                  className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50"
                 >
                   {isProcessing ? '⏳ Skapar...' : '✨ Cartoonify!'}
                 </button>
@@ -274,7 +274,7 @@ export default function AvatarCreator() {
                 {/* Cartoonized */}
                 <div>
                   <p className="text-center font-semibold mb-2">Cartoon</p>
-                  <div className="aspect-square bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl overflow-hidden border-4 border-purple-400">
+                  <div className="aspect-square bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl overflow-hidden border-4 border-primary-400">
                     <img
                       src={cartoonizedImage}
                       alt="Cartoonized"

@@ -54,7 +54,7 @@ export default function MOQProgress({ productId, postalCode, onStatusChange }: M
   const isReady = moqStatus.moqReached;
 
   return (
-    <div className={`rounded-xl p-6 ${isReady ? 'bg-green-50 border-2 border-green-500' : 'bg-blue-50 border-2 border-blue-500'}`}>
+    <div className={`rounded-xl p-6 ${isReady ? 'bg-green-50 border-2 border-green-500' : 'bg-primary-50 border-2 border-primary-600'}`}>
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="font-bold text-lg mb-1">
@@ -80,7 +80,7 @@ export default function MOQProgress({ productId, postalCode, onStatusChange }: M
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(percentage, 100)}%` }}
           transition={{ duration: 0.5 }}
-          className={`h-full ${isReady ? 'bg-green-500' : 'bg-blue-500'}`}
+          className={`h-full ${isReady ? 'bg-green-500' : 'bg-primary-900'}`}
         />
         <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
           {percentage.toFixed(0)}%
@@ -128,7 +128,7 @@ export function MOQBadge({ current, target }: { current: number; target: number 
 
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
-      isReady ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+      isReady ? 'bg-green-100 text-green-700' : 'bg-primary-100 text-primary-900'
     }`}>
       <span>{isReady ? '✅' : '📦'}</span>
       <span>{current}/{target}</span>

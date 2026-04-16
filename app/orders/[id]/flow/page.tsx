@@ -100,7 +100,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
@@ -123,7 +123,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
             {/* Connection Lines */}
             <div className="absolute top-16 left-0 right-0 h-1 bg-gray-200 hidden md:block"></div>
             <div 
-              className="absolute top-16 left-0 h-1 bg-blue-500 transition-all duration-1000 hidden md:block"
+              className="absolute top-16 left-0 h-1 bg-primary-900 transition-all duration-1000 hidden md:block"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
             ></div>
 
@@ -144,7 +144,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
                         step.status === 'completed'
                           ? 'bg-green-500 text-white shadow-lg scale-110'
                           : step.status === 'active'
-                          ? 'bg-blue-500 text-white shadow-lg scale-110 animate-pulse'
+                          ? 'bg-primary-900 text-white shadow-lg scale-110 animate-pulse'
                           : 'bg-gray-200 text-gray-400'
                       }`}
                     >
@@ -153,7 +153,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
                         step.status === 'completed' || step.status === 'active'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-primary-900 text-white'
                           : 'bg-gray-300 text-gray-600'
                       }`}
                     >
@@ -175,23 +175,23 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-4 p-4 bg-blue-50 rounded-lg text-left"
+                        className="mt-4 p-4 bg-primary-50 rounded-lg text-left"
                       >
                         {step.details && (
                           <div className="space-y-2">
                             {step.details.map((detail: any, i: number) => (
                               <div key={i}>
-                                <div className="text-xs font-semibold text-blue-900 mb-1">
+                                <div className="text-xs font-semibold text-primary-900 mb-1">
                                   {detail.product}
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                                     <div
-                                      className="bg-blue-500 h-2 rounded-full transition-all"
+                                      className="bg-primary-900 h-2 rounded-full transition-all"
                                       style={{ width: `${detail.percentage}%` }}
                                     ></div>
                                   </div>
-                                  <span className="text-xs font-bold text-blue-700">
+                                  <span className="text-xs font-bold text-primary-900">
                                     {detail.current}/{detail.target}
                                   </span>
                                 </div>
@@ -208,10 +208,10 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
 
                         {step.tracking && (
                           <div className="text-sm">
-                            <div className="font-semibold text-blue-900 mb-1">
+                            <div className="font-semibold text-primary-900 mb-1">
                               Spårningsnummer:
                             </div>
-                            <div className="font-mono text-blue-700">
+                            <div className="font-mono text-primary-900">
                               {step.tracking}
                             </div>
                           </div>
@@ -351,28 +351,28 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-2xl border-2 border-blue-500 p-6">
-              <h4 className="font-bold text-blue-900 mb-3">
+            <div className="bg-primary-50 rounded-2xl border-2 border-primary-600 p-6">
+              <h4 className="font-bold text-primary-900 mb-3">
                 📊 Din beställning
               </h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-blue-800">Produkter:</span>
-                  <span className="font-bold text-blue-900">{order.items?.length || 0} st</span>
+                  <span className="text-primary-800">Produkter:</span>
+                  <span className="font-bold text-primary-900">{order.items?.length || 0} st</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-blue-800">Lagerpartner:</span>
-                  <span className="font-bold text-blue-900">{order.warehouse?.city || 'Tilldelar...'}</span>
+                  <span className="text-primary-800">Lagerpartner:</span>
+                  <span className="font-bold text-primary-900">{order.warehouse?.city || 'Tilldelar...'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-blue-800">Beräknad leverans:</span>
-                  <span className="font-bold text-blue-900">
+                  <span className="text-primary-800">Beräknad leverans:</span>
+                  <span className="font-bold text-primary-900">
                     {order.estimated_delivery_date || '5-10 dagar'}
                   </span>
                 </div>
                 {order.moq_discount && (
-                  <div className="flex justify-between pt-2 border-t border-blue-200">
-                    <span className="text-blue-800">MOQ-rabatt:</span>
+                  <div className="flex justify-between pt-2 border-t border-primary-200">
+                    <span className="text-primary-800">MOQ-rabatt:</span>
                     <span className="font-bold text-green-600">-{order.moq_discount}%</span>
                   </div>
                 )}

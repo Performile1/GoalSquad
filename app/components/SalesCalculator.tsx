@@ -102,11 +102,11 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
   }
 
   return (
-    <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="bg-primary-50 rounded-2xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-8">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white p-8">
         <h2 className="text-4xl font-bold mb-2">💰 Försäljningskalkylator</h2>
-        <p className="text-green-100 text-lg">
+        <p className="text-white/80 text-lg">
           Räkna ut hur mycket din förening kan tjäna
         </p>
       </div>
@@ -120,7 +120,7 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
               onClick={() => setActiveTab('all')}
               className={`flex-1 py-3 px-4 rounded-lg font-semibold transition ${
                 activeTab === 'all'
-                  ? 'bg-green-600 text-white'
+                  ? 'bg-primary-900 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -130,7 +130,7 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
               onClick={() => setActiveTab('selected')}
               className={`flex-1 py-3 px-4 rounded-lg font-semibold transition ${
                 activeTab === 'selected'
-                  ? 'bg-green-600 text-white'
+                  ? 'bg-primary-900 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -143,9 +143,9 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
             {activeTab === 'all' ? (
               Object.entries(groupedProducts).map(([merchantName, merchantProducts]) => (
                 <div key={merchantName} className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4">
+                  <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white p-4">
                     <h3 className="text-xl font-bold">{merchantName}</h3>
-                    <p className="text-sm text-blue-100">{merchantProducts.length} produkter</p>
+                    <p className="text-sm text-white/70">{merchantProducts.length} produkter</p>
                   </div>
                   <div className="p-4 space-y-3">
                     {merchantProducts.map((product) => (
@@ -168,7 +168,7 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
                       Inga produkter valda
                     </p>
                     <p className="text-gray-600">
-                      Välj produkter från "Alla Produkter" för att se din kalkyl
+                      Välj produkter från &quot;Alla Produkter&quot; för att se din kalkyl
                     </p>
                   </div>
                 ) : (
@@ -216,7 +216,7 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
               {/* Revenue */}
               <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                 <span className="text-gray-600">Försäljningsvärde:</span>
-                <span className="text-2xl font-bold text-blue-600">
+                <span className="text-2xl font-bold text-primary-900">
                   {totals.revenue.toLocaleString('sv-SE')} kr
                 </span>
               </div>
@@ -270,16 +270,16 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
 
             {/* CTA */}
             {selectedProducts.size > 0 && (
-              <button className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition">
-                🚀 Starta Försäljning
+              <button className="w-full mt-6 bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-700 transition">
+                🚀 Starta försäljning
               </button>
             )}
           </motion.div>
 
           {/* Info Card */}
-          <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
-            <h4 className="font-bold text-blue-900 mb-3">💡 Så fungerar det</h4>
-            <ul className="space-y-2 text-sm text-blue-800">
+          <div className="bg-primary-50 rounded-xl p-6 border-2 border-primary-200">
+            <h4 className="font-bold text-primary-900 mb-3">💡 Så fungerar det</h4>
+            <ul className="space-y-2 text-sm text-primary-800">
               <li className="flex items-start gap-2">
                 <span>1️⃣</span>
                 <span>Välj produkter från olika företag</span>
@@ -304,7 +304,6 @@ export default function SalesCalculator({ initialProducts }: SalesCalculatorProp
   );
 }
 
-// Product Card Component
 function ProductCard({
   product,
   quantity,
@@ -319,8 +318,8 @@ function ProductCard({
       layout
       className={`border-2 rounded-xl p-4 transition ${
         quantity > 0
-          ? 'border-green-500 bg-green-50'
-          : 'border-gray-200 bg-white hover:border-gray-300'
+          ? 'border-primary-600 bg-primary-50'
+          : 'border-gray-200 bg-white hover:border-primary-300'
       }`}
     >
       <div className="flex items-center gap-4">
@@ -329,7 +328,7 @@ function ProductCard({
           <h4 className="font-bold text-gray-900">{product.name}</h4>
           <div className="flex items-center gap-3 mt-1">
             <span className="text-sm text-gray-600">
-              Pris: <strong className="text-blue-600">{product.price} kr</strong>
+              Pris: <strong className="text-primary-900">{product.price} kr</strong>
             </span>
             <span className="text-sm text-green-600 font-semibold">
               +{product.profit} kr vinst
@@ -360,7 +359,7 @@ function ProductCard({
           />
           <button
             onClick={() => onQuantityChange(quantity + 1)}
-            className="w-8 h-8 rounded-full bg-green-600 hover:bg-green-700 text-white font-bold"
+            className="w-8 h-8 rounded-full bg-primary-900 hover:bg-primary-700 text-white font-bold"
           >
             +
           </button>
@@ -374,11 +373,11 @@ function ProductCard({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="mt-3 pt-3 border-t border-green-200"
+            className="mt-3 pt-3 border-t border-primary-200"
           >
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Försäljning:</span>
-              <span className="font-semibold text-blue-600">
+              <span className="font-semibold text-primary-900">
                 {(product.price * quantity).toLocaleString('sv-SE')} kr
               </span>
             </div>

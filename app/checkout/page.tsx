@@ -148,7 +148,7 @@ export default function CheckoutPage() {
 
               {/* Warehouse info */}
               {loadingWarehouse && (
-                <div className="p-4 bg-blue-50 rounded-lg text-blue-600 text-sm">
+                <div className="p-4 bg-primary-50 rounded-lg text-primary-900 text-sm">
                   Söker närmaste lager...
                 </div>
               )}

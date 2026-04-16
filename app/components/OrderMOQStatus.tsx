@@ -129,7 +129,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
                     {item.moq_status?.percentage || 0}% uppnått
                   </div>
                   {item.moq_status?.tracking_scope === 'global' && (
-                    <div className="text-xs text-blue-600 mt-1">
+                    <div className="text-xs text-primary-900 mt-1">
                       🌍 Global räkning
                     </div>
                   )}
@@ -159,8 +159,8 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
 
       {/* Split Shipment Option */}
       {showSplitOption && (
-        <div className="bg-white border-2 border-blue-500 rounded-xl p-6">
-          <h3 className="font-bold text-blue-900 text-lg mb-4">
+        <div className="bg-white border-2 border-primary-600 rounded-xl p-6">
+          <h3 className="font-bold text-primary-900 text-lg mb-4">
             💡 Vill du ha delleverans?
           </h3>
 
@@ -188,7 +188,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
             </div>
 
             {/* Option 2: Split */}
-            <div className="border-2 border-blue-500 rounded-lg p-4 bg-blue-50">
+            <div className="border-2 border-primary-600 rounded-lg p-4 bg-primary-50">
               <div className="flex items-center gap-2 mb-2">
                 <input
                   type="radio"
@@ -196,15 +196,15 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
                   value="split"
                   className="w-4 h-4"
                 />
-                <h4 className="font-bold text-blue-900">Delleverans</h4>
+                <h4 className="font-bold text-primary-900">Delleverans</h4>
               </div>
-              <div className="text-sm text-blue-800 space-y-1">
+              <div className="text-sm text-primary-800 space-y-1">
                 <p>✓ Få redo produkter nu</p>
                 <p>✓ Resten kommer senare</p>
                 <p className="text-red-700 font-semibold">
                   ⚠️ Extra kostnad: +49 kr
                 </p>
-                <div className="mt-2 pt-2 border-t border-blue-200">
+                <div className="mt-2 pt-2 border-t border-primary-200">
                   <p className="font-semibold">Leverans 1: 2-3 dagar</p>
                   <p className="text-xs">{readyItems.length} produkter</p>
                   <p className="font-semibold mt-1">Leverans 2: 5-10 dagar</p>
@@ -221,7 +221,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
             <button
               onClick={handleSplitShipment}
               disabled={processing}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+              className="bg-primary-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-800 transition disabled:opacity-50"
             >
               {processing ? 'Skapar...' : '📦 Välj delleverans'}
             </button>

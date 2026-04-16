@@ -89,14 +89,14 @@ export default function AvatarCustomizer() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-2xl font-bold text-purple-600">Loading...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-2xl font-bold text-primary-900">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -153,7 +153,7 @@ export default function AvatarCustomizer() {
               </div>
               
               <div className="mt-4 text-center">
-                <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition">
+                <button className="w-full bg-gradient-to-r from-primary-900 to-primary-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition">
                   Save Avatar
                 </button>
               </div>
@@ -175,7 +175,7 @@ export default function AvatarCustomizer() {
                     onClick={() => setSelectedCategory(category.id)}
                     className={`px-4 py-2 rounded-xl font-semibold whitespace-nowrap transition ${
                       selectedCategory === category.id
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-primary-900 to-primary-600 text-white shadow-lg'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -199,8 +199,8 @@ export default function AvatarCustomizer() {
                         item.isLocked
                           ? 'border-gray-300 bg-gray-100 opacity-60'
                           : isEquipped
-                          ? 'border-purple-500 bg-purple-50'
-                          : 'border-gray-200 bg-white hover:border-purple-300 cursor-pointer'
+                          ? 'border-primary-600 bg-primary-50'
+                          : 'border-gray-200 bg-white hover:border-primary-300 cursor-pointer'
                       }`}
                       onClick={() => !item.isLocked && equipItem(item.itemId, item.itemType)}
                     >
@@ -211,7 +211,7 @@ export default function AvatarCustomizer() {
 
                       {/* Equipped Badge */}
                       {isEquipped && !item.isLocked && (
-                        <div className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                        <div className="absolute top-2 right-2 bg-primary-900 text-white text-xs px-2 py-1 rounded-full font-semibold">
                           Equipped
                         </div>
                       )}
@@ -228,8 +228,8 @@ export default function AvatarCustomizer() {
                       {/* Rarity Badge */}
                       <div className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
                         item.rarity === 'legendary' ? 'bg-yellow-100 text-yellow-700' :
-                        item.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
-                        item.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
+                        item.rarity === 'epic' ? 'bg-primary-50 text-primary-900' :
+                        item.rarity === 'rare' ? 'bg-primary-100 text-primary-900' :
                         'bg-gray-100 text-gray-700'
                       }`}>
                         {item.rarity}

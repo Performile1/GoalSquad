@@ -35,7 +35,7 @@ export default function CommunityBanner() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 py-8">
+      <div className="bg-gradient-to-r from-primary-900 to-primary-600 py-8">
         <div className="container mx-auto px-4">
           <p className="text-white text-center">Laddar föreningar...</p>
         </div>
@@ -51,12 +51,12 @@ export default function CommunityBanner() {
   const duplicatedCommunities = [...communities, ...communities];
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-600 py-12 overflow-hidden">
+    <div className="bg-gradient-to-r from-primary-900 via-primary-600 to-primary-900 py-12 overflow-hidden">
       <div className="container mx-auto px-4 mb-6">
         <h2 className="text-3xl font-bold text-white text-center mb-2">
           Stöd Lokala Föreningar 🏆
         </h2>
-        <p className="text-blue-100 text-center">
+        <p className="text-primary-100 text-center">
           Över {communities.length} skolor och klubbar använder GoalSquad
         </p>
       </div>
@@ -93,7 +93,7 @@ export default function CommunityBanner() {
                       className="max-h-full max-w-full object-contain"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white text-3xl font-bold">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-white text-3xl font-bold">
                       {community.name.charAt(0)}
                     </div>
                   )}
@@ -109,7 +109,7 @@ export default function CommunityBanner() {
                   </p>
                   <div className="flex justify-center gap-3 text-xs">
                     <div>
-                      <span className="font-semibold text-blue-600">
+                      <span className="font-semibold text-primary-900">
                         {community.totalMembers}
                       </span>
                       <span className="text-gray-500 ml-1">medlemmar</span>
@@ -122,8 +122,8 @@ export default function CommunityBanner() {
         </div>
 
         {/* Gradient Overlays */}
-        <div className="absolute top-0 left-0 h-full w-32 bg-gradient-to-r from-blue-600 to-transparent pointer-events-none" />
-        <div className="absolute top-0 right-0 h-full w-32 bg-gradient-to-l from-blue-600 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 h-full w-32 bg-gradient-to-r from-primary-900 to-transparent pointer-events-none" />
+        <div className="absolute top-0 right-0 h-full w-32 bg-gradient-to-l from-primary-900 to-transparent pointer-events-none" />
       </div>
 
       {/* Stats */}
@@ -133,19 +133,19 @@ export default function CommunityBanner() {
             <div className="text-4xl font-bold mb-2">
               {communities.reduce((sum, c) => sum + c.totalMembers, 0).toLocaleString()}
             </div>
-            <div className="text-blue-100">Aktiva Säljare</div>
+            <div className="text-primary-100">Aktiva Säljare</div>
           </div>
           <div className="text-center text-white">
             <div className="text-4xl font-bold mb-2">
               {communities.length}+
             </div>
-            <div className="text-blue-100">Föreningar</div>
+            <div className="text-primary-100">Föreningar</div>
           </div>
           <div className="text-center text-white">
             <div className="text-4xl font-bold mb-2">
               {(communities.reduce((sum, c) => sum + c.totalSales, 0) / 1000).toFixed(0)}k kr
             </div>
-            <div className="text-blue-100">Insamlat Totalt</div>
+            <div className="text-primary-100">Insamlat Totalt</div>
           </div>
         </div>
       </div>

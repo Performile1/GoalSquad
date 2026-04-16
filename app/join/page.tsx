@@ -96,7 +96,7 @@ export default function JoinPage() {
                 </li>
               ))}
             </ul>
-            <div className="w-full border-2 border-primary-900 text-primary-900 text-center py-3 rounded-xl font-bold group-hover:bg-primary-900 group-hover:text-white transition">
+            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition">
               Registrera ditt företag →
             </div>
           </Link>

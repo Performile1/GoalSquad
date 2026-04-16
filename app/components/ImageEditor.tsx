@@ -136,7 +136,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
               onClick={() => setMode('crop')}
               className={`px-6 py-3 rounded-xl font-semibold transition ${
                 mode === 'crop'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary-900 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -146,7 +146,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
               onClick={() => setMode('remove-bg')}
               className={`px-6 py-3 rounded-xl font-semibold transition ${
                 mode === 'remove-bg'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary-900 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -197,7 +197,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
                   <button
                     onClick={removeBackground}
                     disabled={processing}
-                    className="bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transition disabled:opacity-50"
+                    className="bg-primary-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-primary-800 transition disabled:opacity-50"
                   >
                     {processing ? 'Bearbetar...' : '🎨 Ta bort bakgrund'}
                   </button>
@@ -321,7 +321,7 @@ export function SimpleImageCrop({ imageUrl, onSave, onCancel }: ImageEditorProps
                 onClick={() => setAspectRatio(ratio)}
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   aspectRatio === ratio
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary-900 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >

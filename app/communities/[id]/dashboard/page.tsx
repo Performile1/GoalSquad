@@ -100,7 +100,7 @@ export default function CommunityDashboard() {
             className="bg-white rounded-2xl shadow-lg p-6"
           >
             <div className="text-4xl mb-2">👥</div>
-            <div className="text-3xl font-bold text-blue-600">{stats.totalMembers}</div>
+            <div className="text-3xl font-bold text-primary-900">{stats.totalMembers}</div>
             <div className="text-sm text-gray-600">Active Members</div>
           </motion.div>
 
@@ -124,7 +124,7 @@ export default function CommunityDashboard() {
             className="bg-white rounded-2xl shadow-lg p-6"
           >
             <div className="text-4xl mb-2">🎯</div>
-            <div className="text-3xl font-bold text-purple-600">
+            <div className="text-3xl font-bold text-primary-900">
               {stats.totalCommission.toLocaleString()} NOK
             </div>
             <div className="text-sm text-gray-600">Total Commission</div>
@@ -169,7 +169,7 @@ export default function CommunityDashboard() {
               </div>
               <div className="border-t pt-4">
                 <div className="text-sm text-gray-600 mb-1">Total Balance</div>
-                <div className="text-4xl font-bold text-blue-600">
+                <div className="text-4xl font-bold text-primary-900">
                   {stats.treasuryBalance.total.toLocaleString()} NOK
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function CommunityDashboard() {
           >
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-900">Active Campaigns</h3>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+              <button className="bg-primary-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-800 transition">
                 + New Campaign
               </button>
             </div>

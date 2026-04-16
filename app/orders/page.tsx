@@ -17,8 +17,8 @@ interface Order {
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-700',
-  processing: 'bg-blue-100 text-blue-700',
-  shipped: 'bg-purple-100 text-purple-700',
+  processing: 'bg-primary-100 text-primary-900',
+  shipped: 'bg-primary-50 text-primary-900',
   delivered: 'bg-green-100 text-green-700',
   cancelled: 'bg-red-100 text-red-700',
 };

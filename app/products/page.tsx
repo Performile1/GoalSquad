@@ -22,6 +22,7 @@ interface Product {
   categoryName: string;
   stock: number;
   tags: string[];
+  source?: 'merchant' | 'community';
 }
 
 export default function ProductsPage() {
@@ -269,10 +270,15 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       {/* Content */}
       <div className="p-6">
         {/* Category Badge */}
-        <div className="mb-3">
+        <div className="mb-3 flex flex-wrap gap-2">
           <span className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold">
             {product.categoryName}
           </span>
+          {product.source === 'community' && (
+            <span className="bg-primary-900 text-white px-3 py-1 rounded-full text-xs font-bold">
+              🏆 Community
+            </span>
+          )}
         </div>
 
         <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1">
@@ -282,9 +288,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           {product.description}
         </p>
 
-        {/* Merchant */}
+        {/* Merchant / Seller */}
         <p className="text-xs text-gray-500 mb-4">
-          Från {product.merchantName}
+          {product.source === 'community' ? '🤝 Säljs av' : 'Från'} {product.merchantName}
         </p>
 
         {/* Tags */}

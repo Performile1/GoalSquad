@@ -99,7 +99,7 @@ export default function NewProduct() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -107,10 +107,10 @@ export default function NewProduct() {
           className="bg-white rounded-2xl shadow-2xl p-8"
         >
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Add New Product
+            Lägg till ny produkt
           </h1>
           <p className="text-gray-600 mb-8">
-            Upload a product with GS1 dimensions for accurate shipping calculations
+            Ladda upp en produkt med GS1-mått för korrekt fraktberäkning
           </p>
 
           {error && (
@@ -127,72 +127,72 @@ export default function NewProduct() {
             {/* Basic Information */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Basic Information
+                Grundläggande information
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Product Name *
+                    Produktnamn *
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="Nike Air Max 90"
                   />
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
+                    Beskrivning
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="Product description..."
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    SKU (leave empty for auto-generated GS-XXXXX)
+                    SKU (lämna tomt för automatiskt GS-XXXXX)
                   </label>
                   <input
                     type="text"
                     value={formData.sku}
                     onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="GS-ABC123"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    EAN-13 Barcode
+                    EAN-13 streckkod
                   </label>
                   <input
                     type="text"
                     maxLength={13}
                     value={formData.ean}
                     onChange={(e) => setFormData({ ...formData, ean: e.target.value.replace(/\D/g, '') })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="1234567890123"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category
+                    Kategori
                   </label>
                   <input
                     type="text"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="Footwear"
                   />
                 </div>
@@ -205,7 +205,7 @@ export default function NewProduct() {
                     type="text"
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="Nike"
                   />
                 </div>
@@ -215,12 +215,12 @@ export default function NewProduct() {
             {/* Pricing */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Pricing
+                Prissättning
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Base Price (NOK) *
+                    Ditt baspris (kr) *
                   </label>
                   <input
                     type="number"
@@ -228,17 +228,17 @@ export default function NewProduct() {
                     required
                     value={formData.basePrice}
                     onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="1000.00"
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    What you receive per sale
+                    Vad du får per försäljning
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Retail Price (NOK) *
+                    Försäljningspris (kr) *
                   </label>
                   <input
                     type="number"
@@ -246,19 +246,19 @@ export default function NewProduct() {
                     required
                     value={formData.retailPrice}
                     onChange={(e) => setFormData({ ...formData, retailPrice: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="1500.00"
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Customer pays this price
+                    Kunden betalar detta pris
                   </p>
                 </div>
 
                 {formData.basePrice && formData.retailPrice && (
-                  <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg">
+                  <div className="md:col-span-2 bg-primary-50 p-4 rounded-lg">
                     <p className="text-sm text-gray-700">
-                      <strong>Platform Margin:</strong>{' '}
-                      {(parseFloat(formData.retailPrice) - parseFloat(formData.basePrice)).toFixed(2)} NOK
+                      <strong>Plattformsmarginal:</strong>{' '}
+                      {(parseFloat(formData.retailPrice) - parseFloat(formData.basePrice)).toFixed(2)} kr
                       ({(((parseFloat(formData.retailPrice) - parseFloat(formData.basePrice)) / parseFloat(formData.retailPrice)) * 100).toFixed(1)}%)
                     </p>
                   </div>
@@ -269,12 +269,12 @@ export default function NewProduct() {
             {/* GS1 Dimensions (Shipping Matrix) */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                📦 GS1 Dimensions (for Shipping Matrix)
+                📦 GS1-mått (för fraktmatris)
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Weight (grams) *
+                    Vikt (gram) *
                   </label>
                   <input
                     type="number"
@@ -284,14 +284,14 @@ export default function NewProduct() {
                       setFormData({ ...formData, weightGrams: e.target.value })
                       setTimeout(calculateDimensions, 100)
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Length (mm) *
+                    Längd (mm) *
                   </label>
                   <input
                     type="number"
@@ -301,14 +301,14 @@ export default function NewProduct() {
                       setFormData({ ...formData, lengthMm: e.target.value })
                       setTimeout(calculateDimensions, 100)
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="300"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Width (mm) *
+                    Bredd (mm) *
                   </label>
                   <input
                     type="number"
@@ -318,14 +318,14 @@ export default function NewProduct() {
                       setFormData({ ...formData, widthMm: e.target.value })
                       setTimeout(calculateDimensions, 100)
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="200"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Height (mm) *
+                    Höjd (mm) *
                   </label>
                   <input
                     type="number"
@@ -335,7 +335,7 @@ export default function NewProduct() {
                       setFormData({ ...formData, heightMm: e.target.value })
                       setTimeout(calculateDimensions, 100)
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="100"
                   />
                 </div>
@@ -343,17 +343,17 @@ export default function NewProduct() {
                 {calculatedDimensions.volumetricWeight > 0 && (
                   <div className="md:col-span-2 bg-green-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-gray-900 mb-2">
-                      Calculated Shipping Dimensions
+                      Beräknade fraktmått
                     </h3>
                     <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-600">Volumetric Weight:</p>
+                        <p className="text-gray-600">Volymsväkt:</p>
                         <p className="text-lg font-bold text-gray-900">
                           {calculatedDimensions.volumetricWeight}g
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-600">Chargeable Weight:</p>
+                        <p className="text-gray-600">Debiterad vikt:</p>
                         <p className="text-lg font-bold text-gray-900">
                           {calculatedDimensions.chargeableWeight}g
                         </p>
@@ -370,31 +370,31 @@ export default function NewProduct() {
             {/* Inventory */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Inventory
+                Lagerhållning
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Stock Quantity
+                    Lagerantal
                   </label>
                   <input
                     type="number"
                     value={formData.stockQuantity}
                     onChange={(e) => setFormData({ ...formData, stockQuantity: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="100"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Stock Location
+                    Lagerplats
                   </label>
                   <input
                     type="text"
                     value={formData.stockLocation}
                     onChange={(e) => setFormData({ ...formData, stockLocation: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                     placeholder="Warehouse A, Oslo"
                   />
                 </div>
@@ -406,10 +406,10 @@ export default function NewProduct() {
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as 'draft' | 'active' })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600"
                   >
-                    <option value="draft">Draft</option>
-                    <option value="active">Active</option>
+                    <option value="draft">Utkast</option>
+                    <option value="active">Aktiv</option>
                   </select>
                 </div>
               </div>
@@ -420,16 +420,16 @@ export default function NewProduct() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-primary-900 text-white py-4 rounded-lg font-semibold hover:bg-primary-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating Product...' : 'Create Product'}
+                {loading ? 'Skapar produkt...' : 'Skapa produkt'}
               </button>
               <button
                 type="button"
                 onClick={() => router.back()}
                 className="px-8 py-4 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
               >
-                Cancel
+                Avbryt
               </button>
             </div>
           </form>

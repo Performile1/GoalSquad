@@ -245,8 +245,8 @@ export default function MerchantBrandingPage() {
             />
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-6 p-4 bg-primary-50 rounded-lg">
+            <p className="text-sm text-primary-800">
               💡 <strong>Tips:</strong> Loggor kan beskäras och bakgrund kan tas bort automatiskt efter uppladdning!
             </p>
           </div>
@@ -274,7 +274,7 @@ export default function MerchantBrandingPage() {
                   type="text"
                   value={primaryColor}
                   onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
             </div>
@@ -294,7 +294,7 @@ export default function MerchantBrandingPage() {
                   type="text"
                   value={secondaryColor}
                   onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
             </div>
@@ -326,7 +326,7 @@ export default function MerchantBrandingPage() {
                 onChange={(e) => setCompanyDescription(e.target.value)}
                 placeholder="Beskriv ert företag..."
                 rows={4}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -340,7 +340,7 @@ export default function MerchantBrandingPage() {
                   value={foundedYear}
                   onChange={(e) => setFoundedYear(e.target.value)}
                   placeholder="2020"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
 
@@ -351,7 +351,7 @@ export default function MerchantBrandingPage() {
                 <select
                   value={employeeCount}
                   onChange={(e) => setEmployeeCount(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 >
                   <option value="">Välj...</option>
                   <option value="1-10">1-10</option>
@@ -371,7 +371,7 @@ export default function MerchantBrandingPage() {
                   value={companyRegistration}
                   onChange={(e) => setCompanyRegistration(e.target.value)}
                   placeholder="556123-4567"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
 
@@ -384,7 +384,7 @@ export default function MerchantBrandingPage() {
                   value={vatNumber}
                   onChange={(e) => setVatNumber(e.target.value)}
                   placeholder="SE556123456701"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
                 />
               </div>
             </div>
@@ -407,7 +407,7 @@ export default function MerchantBrandingPage() {
                 value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="https://example.com"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -420,7 +420,7 @@ export default function MerchantBrandingPage() {
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
                 placeholder="https://linkedin.com/company/..."
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -433,7 +433,7 @@ export default function MerchantBrandingPage() {
                 value={facebookUrl}
                 onChange={(e) => setFacebookUrl(e.target.value)}
                 placeholder="https://facebook.com/..."
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
 
@@ -446,7 +446,7 @@ export default function MerchantBrandingPage() {
                 value={instagramUrl}
                 onChange={(e) => setInstagramUrl(e.target.value)}
                 placeholder="https://instagram.com/..."
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
               />
             </div>
           </div>
@@ -457,7 +457,7 @@ export default function MerchantBrandingPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition disabled:opacity-50 shadow-lg"
+            className="bg-primary-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 shadow-lg"
           >
             {saving ? 'Sparar...' : '💾 Spara Inställningar'}
           </button>
@@ -481,7 +481,7 @@ export default function MerchantBrandingPage() {
 
 function LogoUploadBox({ title, description, currentLogo, onUpload }: any) {
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition">
+    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-primary-600 transition">
       <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
       <p className="text-sm text-gray-600 mb-4">{description}</p>
 
@@ -501,7 +501,7 @@ function LogoUploadBox({ title, description, currentLogo, onUpload }: any) {
 
       <button
         onClick={onUpload}
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+        className="bg-primary-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-800 transition"
       >
         {currentLogo ? 'Byt Logga' : 'Ladda upp'}
       </button>

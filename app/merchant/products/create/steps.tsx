@@ -26,7 +26,7 @@ export function Step1BasicInfo({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="t.ex. Premium Chokladaskar 500g"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           required
         />
       </div>
@@ -41,7 +41,7 @@ export function Step1BasicInfo({
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Beskriv produkten i detalj..."
           rows={4}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           required
         />
       </div>
@@ -53,8 +53,8 @@ export function Step1BasicInfo({
         </label>
         
         {categorySuggestions.length > 0 && (
-          <div className="mb-3 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm font-semibold text-blue-900 mb-2">
+          <div className="mb-3 p-4 bg-primary-50 rounded-lg">
+            <p className="text-sm font-semibold text-primary-900 mb-2">
               💡 Föreslagna kategorier:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -64,8 +64,8 @@ export function Step1BasicInfo({
                   onClick={() => setCategoryId(suggestion.categoryId)}
                   className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
                     categoryId === suggestion.categoryId
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-blue-700 hover:bg-blue-100'
+                      ? 'bg-primary-900 text-white'
+                      : 'bg-white text-primary-900 hover:bg-primary-100'
                   }`}
                 >
                   {suggestion.categoryName} ({(suggestion.confidenceScore * 100).toFixed(0)}%)
@@ -78,7 +78,7 @@ export function Step1BasicInfo({
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           required
         >
           <option value="">Välj kategori...</option>
@@ -103,7 +103,7 @@ export function Step1BasicInfo({
             placeholder="150"
             min="0"
             step="0.01"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             required
           />
         </div>
@@ -117,7 +117,7 @@ export function Step1BasicInfo({
             onChange={(e) => setStock(e.target.value)}
             placeholder="100"
             min="0"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
             required
           />
         </div>
@@ -157,7 +157,7 @@ export function Step2Identifiers({
                 ? 'border-green-500 focus:border-green-500'
                 : eanValid === false
                 ? 'border-red-500 focus:border-red-500'
-                : 'border-gray-200 focus:border-blue-500'
+                : 'border-gray-200 focus:border-primary-600'
             }`}
           />
           {eanValid !== null && (
@@ -182,7 +182,7 @@ export function Step2Identifiers({
           onChange={(e) => setGs1Gtin(e.target.value.replace(/\D/g, '').slice(0, 14))}
           placeholder="01234567890128"
           maxLength={14}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
         <p className="text-xs text-gray-500 mt-1">
           14-siffrig GS1 Global Trade Item Number (valfritt)
@@ -199,7 +199,7 @@ export function Step2Identifiers({
           value={sku}
           onChange={(e) => setSku(e.target.value)}
           placeholder="CHOC-PREM-500"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
         <p className="text-xs text-gray-500 mt-1">
           Ditt interna artikelnummer
@@ -216,7 +216,7 @@ export function Step2Identifiers({
           value={brand}
           onChange={(e) => setBrand(e.target.value)}
           placeholder="Marabou"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
       </div>
 
@@ -230,7 +230,7 @@ export function Step2Identifiers({
           value={manufacturer}
           onChange={(e) => setManufacturer(e.target.value)}
           placeholder="Mondelez International"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
       </div>
     </div>
@@ -266,7 +266,7 @@ export function Step3Dimensions({
           onChange={(e) => setWeightGrams(e.target.value)}
           placeholder="500"
           min="0"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
         {weightGrams && (
           <p className="text-xs text-gray-500 mt-1">
@@ -287,7 +287,7 @@ export function Step3Dimensions({
             onChange={(e) => setLengthMm(e.target.value)}
             placeholder="200"
             min="0"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           />
         </div>
         <div>
@@ -300,7 +300,7 @@ export function Step3Dimensions({
             onChange={(e) => setWidthMm(e.target.value)}
             placeholder="150"
             min="0"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           />
         </div>
         <div>
@@ -313,14 +313,14 @@ export function Step3Dimensions({
             onChange={(e) => setHeightMm(e.target.value)}
             placeholder="50"
             min="0"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           />
         </div>
       </div>
 
       {lengthMm && widthMm && heightMm && (
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-900">
+        <div className="p-4 bg-primary-50 rounded-lg">
+          <p className="text-sm text-primary-900">
             📦 Förpackningsstorlek: {lengthMm} × {widthMm} × {heightMm} mm
             <br />
             = {(parseFloat(lengthMm) / 10).toFixed(1)} × {(parseFloat(widthMm) / 10).toFixed(1)} × {(parseFloat(heightMm) / 10).toFixed(1)} cm
@@ -339,7 +339,7 @@ export function Step3Dimensions({
           onChange={(e) => setVolumeMl(e.target.value)}
           placeholder="500"
           min="0"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
         <p className="text-xs text-gray-500 mt-1">
           För flytande produkter (valfritt)
@@ -408,7 +408,7 @@ export function Step4Details({
           onChange={(e) => setIngredients(e.target.value)}
           placeholder="Socker, kakaosmör, mjölkpulver, kakaomassa..."
           rows={3}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         />
       </div>
 
@@ -444,7 +444,7 @@ export function Step4Details({
         <select
           value={countryOfOrigin}
           onChange={(e) => setCountryOfOrigin(e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         >
           <option value="">Välj land...</option>
           <option value="SE">🇸🇪 Sverige</option>
@@ -469,7 +469,7 @@ export function Step4Details({
           <select
             value={packageType}
             onChange={(e) => setPackageType(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           >
             <option value="">Välj typ...</option>
             <option value="box">📦 Låda</option>
@@ -490,7 +490,7 @@ export function Step4Details({
             value={unitsPerPackage}
             onChange={(e) => setUnitsPerPackage(e.target.value)}
             min="1"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           />
         </div>
       </div>
@@ -553,7 +553,7 @@ export function Step4Details({
         <select
           value={ageRestriction}
           onChange={(e) => setAgeRestriction(e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
         >
           <option value="">Ingen åldersgräns</option>
           <option value="15">15+ år</option>
@@ -580,7 +580,7 @@ export function Step5Images({
       </p>
 
       {/* Upload Area */}
-      <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition">
+      <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-primary-600 transition">
         <input
           type="file"
           accept="image/*"
@@ -611,7 +611,7 @@ export function Step5Images({
                 className="w-full h-48 object-cover rounded-lg"
               />
               {index === 0 && (
-                <div className="absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                <div className="absolute top-2 left-2 bg-primary-900 text-white px-3 py-1 rounded-full text-xs font-semibold">
                   Huvudbild
                 </div>
               )}
