@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MessageIcon } from '@/app/components/BrandIcons';
 
 interface Message {
   id: string;
@@ -84,7 +85,9 @@ export default function ChatWidget() {
             {/* Header */}
             <div className="bg-primary-900 text-white px-4 py-3 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-lg">🤖</div>
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <MessageIcon size={16} />
+                </div>
                 <div>
                   <p className="font-bold text-sm">GoalSquad Support</p>
                   <p className="text-white/60 text-xs">Svarar direkt</p>

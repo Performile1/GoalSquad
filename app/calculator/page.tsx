@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import SalesCalculator from '@/app/components/SalesCalculator';
 import { motion } from 'framer-motion';
+import { TrophyIcon, CommunityIcon, UserIcon, SearchIcon, DashboardIcon } from '@/app/components/BrandIcons';
 
 // Sample real companies and products (will be replaced with DB data)
 const SAMPLE_PRODUCTS = [
@@ -161,7 +162,7 @@ export default function CalculatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 py-12">
+    <div className="min-h-screen bg-primary-50 py-12">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Hero Section */}
         <motion.div
@@ -169,8 +170,11 @@ export default function CalculatorPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
-            🧮 Försäljningskalkylator
+          <div className="flex justify-center mb-4">
+            <DashboardIcon size={56} />
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-primary-900 mb-4">
+            Försäljningskalkylator
           </h1>
           <p className="text-xl text-gray-600 mb-8">
             Räkna ut hur mycket din förening kan tjäna med produkter från flera företag
@@ -179,21 +183,21 @@ export default function CalculatorPage() {
           {/* Stats Bar */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="text-4xl mb-2">🏆</div>
+              <div className="flex justify-center mb-2"><TrophyIcon size={36} /></div>
               <div className="text-3xl font-bold text-primary-900">
                 {stats.totalCommunities || '500+'}
               </div>
               <div className="text-sm text-gray-600">Föreningar använder oss</div>
             </div>
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="text-4xl mb-2">💰</div>
-              <div className="text-3xl font-bold text-green-600">
+              <div className="flex justify-center mb-2"><CommunityIcon size={36} /></div>
+              <div className="text-3xl font-bold text-primary-900">
                 {stats.totalRevenue ? `${(stats.totalRevenue / 1000000).toFixed(1)}M` : '12M+'}
               </div>
               <div className="text-sm text-gray-600">SEK i försäljning</div>
             </div>
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="text-4xl mb-2">📈</div>
+              <div className="flex justify-center mb-2"><UserIcon size={36} /></div>
               <div className="text-3xl font-bold text-primary-900">
                 {stats.averageProfit || '35-45'}%
               </div>
@@ -212,14 +216,15 @@ export default function CalculatorPage() {
           transition={{ delay: 0.3 }}
           className="mt-12 bg-white rounded-2xl shadow-lg p-8"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            📊 Exempel från Riktiga Föreningar
-          </h2>
+          <div className="flex items-center gap-3 mb-6">
+            <CommunityIcon size={28} />
+            <h2 className="text-3xl font-bold text-primary-900">Exempel från Riktiga Föreningar</h2>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Example 1 */}
             <div className="border-2 border-primary-200 rounded-xl p-6 bg-primary-50">
-              <div className="text-4xl mb-3">⚽</div>
+              <div className="flex justify-center mb-3"><TrophyIcon size={32} /></div>
               <h3 className="text-xl font-bold text-primary-900 mb-2">
                 Vikings Fotboll
               </h3>
@@ -245,7 +250,7 @@ export default function CalculatorPage() {
               <div className="pt-4 border-t-2 border-primary-300">
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-primary-900">Total vinst:</span>
-                  <span className="text-2xl font-bold text-green-600">
+                  <span className="text-2xl font-bold text-primary-900">
                     8,650 kr
                   </span>
                 </div>
@@ -254,7 +259,7 @@ export default function CalculatorPage() {
 
             {/* Example 2 */}
             <div className="border-2 border-primary-200 rounded-xl p-6 bg-primary-50">
-              <div className="text-4xl mb-3">🏀</div>
+              <div className="flex justify-center mb-3"><TrophyIcon size={32} /></div>
               <h3 className="text-xl font-bold text-primary-900 mb-2">
                 Eagles Basket
               </h3>
@@ -280,7 +285,7 @@ export default function CalculatorPage() {
               <div className="pt-4 border-t-2 border-primary-300">
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-primary-900">Total vinst:</span>
-                  <span className="text-2xl font-bold text-green-600">
+                  <span className="text-2xl font-bold text-primary-900">
                     7,240 kr
                   </span>
                 </div>
@@ -288,12 +293,12 @@ export default function CalculatorPage() {
             </div>
 
             {/* Example 3 */}
-            <div className="border-2 border-green-200 rounded-xl p-6 bg-green-50">
-              <div className="text-4xl mb-3">🎓</div>
-              <h3 className="text-xl font-bold text-green-900 mb-2">
+            <div className="border-2 border-primary-200 rounded-xl p-6 bg-primary-50">
+              <div className="flex justify-center mb-3"><UserIcon size={32} /></div>
+              <h3 className="text-xl font-bold text-primary-900 mb-2">
                 Klass 9B
               </h3>
-              <div className="text-sm text-green-800 mb-4">
+              <div className="text-sm text-primary-800 mb-4">
                 Uppsala • 28 säljare
               </div>
               
@@ -312,10 +317,10 @@ export default function CalculatorPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t-2 border-green-300">
+              <div className="pt-4 border-t-2 border-primary-300">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-green-900">Total vinst:</span>
-                  <span className="text-2xl font-bold text-green-600">
+                  <span className="font-bold text-primary-900">Total vinst:</span>
+                  <span className="text-2xl font-bold text-primary-900">
                     5,870 kr
                   </span>
                 </div>
@@ -323,25 +328,26 @@ export default function CalculatorPage() {
             </div>
           </div>
 
-          <div className="mt-8 p-6 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl">
-            <h4 className="font-bold text-gray-900 mb-3 text-lg">
-              💡 Tips för Maximal Vinst
-            </h4>
+          <div className="mt-8 p-6 bg-primary-50 rounded-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <SearchIcon size={20} />
+              <h4 className="font-bold text-primary-900 text-lg">Tips för Maximal Vinst</h4>
+            </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">✓</span>
+                <span className="text-primary-900 font-bold">✓</span>
                 <span>Kombinera produkter från flera företag för bredare utbud</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">✓</span>
+                <span className="text-primary-900 font-bold">✓</span>
                 <span>Välj produkter med hög vinstmarginal (35-45%)</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">✓</span>
+                <span className="text-primary-900 font-bold">✓</span>
                 <span>Tänk på MOQ - samla beställningar för rabatt</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">✓</span>
+                <span className="text-primary-900 font-bold">✓</span>
                 <span>Blanda olika kategorier för att nå fler kunder</span>
               </li>
             </ul>
@@ -355,19 +361,19 @@ export default function CalculatorPage() {
           transition={{ delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <div className="bg-gradient-to-r from-primary-900 to-primary-600 rounded-2xl shadow-2xl p-12 text-white">
+          <div className="bg-primary-900 rounded-2xl shadow-2xl p-12 text-white">
             <h2 className="text-4xl font-bold mb-4">
               Redo att Starta?
             </h2>
-            <p className="text-xl text-green-100 mb-8">
+            <p className="text-xl text-white/80 mb-8">
               Skapa ett konto och börja sälja idag - helt gratis!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-green-600 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-lg transition">
-                🚀 Kom Igång Gratis
+              <button className="bg-white text-primary-900 px-8 py-4 rounded-xl font-bold text-lg hover:shadow-lg transition">
+                Kom Igång Gratis →
               </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-green-600 transition">
-                📞 Kontakta Oss
+              <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-primary-900 transition">
+                Kontakta Oss
               </button>
             </div>
           </div>

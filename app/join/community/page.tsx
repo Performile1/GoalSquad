@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { CommunityIcon, FlagIcon, TrophyIcon } from '@/app/components/BrandIcons'
+import { CommunityIcon, FlagIcon, TrophyIcon, RunnerIcon, UserIcon } from '@/app/components/BrandIcons'
 
 const COMMUNITY_TYPES = [
-  { value: 'sports_club', label: 'Idrottsförening', icon: '⚽' },
-  { value: 'school_class', label: 'Skolklass', icon: '🎒' },
-  { value: 'youth_team', label: 'Ungdomslag', icon: '🏆' },
-  { value: 'cultural', label: 'Kulturförening', icon: '🎭' },
-  { value: 'other', label: 'Annan', icon: '🌟' },
+  { value: 'sports_club', label: 'Idrottsförening', icon: RunnerIcon },
+  { value: 'school_class', label: 'Skolklass', icon: UserIcon },
+  { value: 'youth_team', label: 'Ungdomslag', icon: TrophyIcon },
+  { value: 'cultural', label: 'Kulturförening', icon: CommunityIcon },
+  { value: 'other', label: 'Annan', icon: FlagIcon },
 ]
 
 const STEPS = ['Välj typ', 'Uppgifter', 'Kontakt', 'Klart']
@@ -143,7 +143,7 @@ export default function CommunityRegisterPage() {
                         : 'border-gray-200 text-gray-700 hover:border-primary-300 hover:bg-primary-50'
                     }`}
                   >
-                    <span className="text-3xl">{ct.icon}</span>
+                    <ct.icon size={24} />
                     {ct.label}
                   </button>
                 ))}

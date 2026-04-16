@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { MerchantIcon, CommunityIcon, UserIcon, MessageIcon } from '@/app/components/BrandIcons';
 
 const contactOptions = [
-  { icon: '🏢', title: 'Företag & Leverantörer', desc: 'Vill du sälja dina produkter via GoalSquad?', email: 'merchant@goalsquad.se' },
-  { icon: '🏆', title: 'Föreningar & Klubbar', desc: 'Frågor om hur ni sätter igång med försäljning?', email: 'forening@goalsquad.se' },
-  { icon: '🛠️', title: 'Teknisk support', desc: 'Problem med plattformen eller ditt konto?', email: 'support@goalsquad.se' },
-  { icon: '📰', title: 'Press & Media', desc: 'Journalister och PR-förfrågningar', email: 'press@goalsquad.se' },
+  { icon: MerchantIcon, title: 'Företag & Leverantörer', desc: 'Vill du sälja dina produkter via GoalSquad?', email: 'merchant@goalsquad.se' },
+  { icon: CommunityIcon, title: 'Föreningar & Klubbar', desc: 'Frågor om hur ni sätter igång med försäljning?', email: 'forening@goalsquad.se' },
+  { icon: UserIcon, title: 'Teknisk support', desc: 'Problem med plattformen eller ditt konto?', email: 'support@goalsquad.se' },
+  { icon: MessageIcon, title: 'Press & Media', desc: 'Journalister och PR-förfrågningar', email: 'press@goalsquad.se' },
 ];
 
 export default function ContactPage() {
@@ -26,9 +27,12 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-primary-900 to-primary-600 text-white py-20 px-4">
+      <div className="bg-primary-900 text-white py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="flex justify-center mb-4">
+              <MessageIcon size={56} />
+            </div>
             <h1 className="text-5xl font-bold mb-4">Kontakta oss</h1>
             <p className="text-xl text-white/80">
               Vi svarar inom 24 timmar på vardagar.
@@ -53,7 +57,9 @@ export default function ContactPage() {
               transition={{ delay: 0.1 + i * 0.05 }}
               className="bg-primary-50 border-2 border-primary-100 hover:border-primary-600 rounded-2xl p-6 transition"
             >
-              <div className="text-3xl mb-3">{opt.icon}</div>
+              <div className="flex justify-center mb-3">
+                <opt.icon size={32} />
+              </div>
               <h3 className="font-bold text-primary-900 mb-1">{opt.title}</h3>
               <p className="text-gray-600 text-sm mb-3">{opt.desc}</p>
               <a
@@ -77,7 +83,9 @@ export default function ContactPage() {
 
           {sent ? (
             <div className="text-center py-16 bg-primary-50 rounded-2xl border-2 border-primary-200">
-              <div className="text-6xl mb-4">✅</div>
+              <div className="flex justify-center mb-4 bg-primary-900 rounded-full p-4">
+                <MessageIcon size={32} />
+              </div>
               <h3 className="text-2xl font-bold text-primary-900 mb-2">Meddelandet skickat!</h3>
               <p className="text-gray-600">Vi återkommer inom 24 timmar.</p>
             </div>

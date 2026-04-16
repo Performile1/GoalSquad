@@ -4,21 +4,22 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { TrophyIcon, UserIcon, CommunityIcon, SearchIcon, DashboardIcon, CartIcon } from '@/app/components/BrandIcons';
 
 const PLATFORM_FEE = 12;
 
 const CATEGORIES = [
-  { id: 'jersey', label: 'Tröjor & Kläder', emoji: '👕' },
-  { id: 'handmade', label: 'Eget hantverk', emoji: '🎨' },
-  { id: 'equipment', label: 'Utrustning', emoji: '⚽' },
-  { id: 'food', label: 'Mat & Dryck', emoji: '🍰' },
-  { id: 'other', label: 'Övrigt', emoji: '📦' },
+  { id: 'jersey', label: 'Tröjor & Kläder', icon: UserIcon },
+  { id: 'handmade', label: 'Eget hantverk', icon: CommunityIcon },
+  { id: 'equipment', label: 'Utrustning', icon: TrophyIcon },
+  { id: 'food', label: 'Mat & Dryck', icon: CartIcon },
+  { id: 'other', label: 'Övrigt', icon: DashboardIcon },
 ];
 
 const SELLER_TYPES = [
-  { id: 'community', label: 'Förening / Klubb', emoji: '🏆' },
-  { id: 'class', label: 'Klass / Skolgrupp', emoji: '📚' },
-  { id: 'individual', label: 'Privatperson / Säljare', emoji: '👤' },
+  { id: 'community', label: 'Förening / Klubb', icon: TrophyIcon },
+  { id: 'class', label: 'Klass / Skolgrupp', icon: CommunityIcon },
+  { id: 'individual', label: 'Privatperson / Säljare', icon: UserIcon },
 ];
 
 export default function NewMarketplaceListingPage() {
@@ -92,7 +93,9 @@ export default function NewMarketplaceListingPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-lg w-full text-center bg-white border-2 border-primary-100 rounded-2xl p-12"
         >
-          <div className="text-6xl mb-4">✅</div>
+          <div className="flex justify-center mb-4 bg-primary-50 rounded-full p-4">
+            <TrophyIcon size={48} />
+          </div>
           <h2 className="text-3xl font-bold text-primary-900 mb-3">Annons inskickad!</h2>
           <p className="text-gray-600 mb-2">
             Din produkt är nu under granskning av GoalSquad. Vi godkänner vanligtvis inom 1 arbetsdag.
@@ -119,7 +122,7 @@ export default function NewMarketplaceListingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-br from-primary-900 to-primary-600 text-white py-14 px-4">
+      <div className="bg-primary-900 text-white py-14 px-4">
         <div className="max-w-3xl mx-auto">
           <Link href="/marketplace" className="text-white/70 hover:text-white text-sm font-semibold mb-4 inline-block transition">
             ← Tillbaka till Marketplace
@@ -138,7 +141,10 @@ export default function NewMarketplaceListingPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white border-2 border-primary-200 rounded-2xl p-6 mb-8"
         >
-          <h3 className="font-bold text-primary-900 mb-4 text-lg">💡 Hur avgiften fungerar</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <SearchIcon size={20} />
+            <h3 className="font-bold text-primary-900 text-lg">Hur avgiften fungerar</h3>
+          </div>
           <div className="grid md:grid-cols-3 gap-4 text-center">
             <div className="bg-primary-50 rounded-xl p-4">
               <p className="text-3xl font-extrabold text-primary-900">
@@ -146,8 +152,8 @@ export default function NewMarketplaceListingPage() {
               </p>
               <p className="text-sm text-gray-600 mt-1">Kundens pris</p>
             </div>
-            <div className="bg-orange-50 rounded-xl p-4">
-              <p className="text-3xl font-extrabold text-orange-700">
+            <div className="bg-primary-100 rounded-xl p-4">
+              <p className="text-3xl font-extrabold text-primary-900">
                 {price > 0 ? `${feeAmount.toFixed(0)} kr` : `${PLATFORM_FEE}%`}
               </p>
               <p className="text-sm text-gray-600 mt-1">GoalSquad-avgift ({PLATFORM_FEE}%)</p>
@@ -189,7 +195,7 @@ export default function NewMarketplaceListingPage() {
                       : 'border-gray-200 hover:border-primary-300'
                   }`}
                 >
-                  <span className="text-2xl">{t.emoji}</span>
+                  <t.icon size={24} />
                   <span className="text-xs font-semibold text-primary-900 text-center">{t.label}</span>
                 </button>
               ))}
@@ -248,7 +254,7 @@ export default function NewMarketplaceListingPage() {
                           : 'border-gray-200 hover:border-primary-300'
                       }`}
                     >
-                      <span className="text-xl">{cat.emoji}</span>
+                      <cat.icon size={20} />
                       <span className="text-xs font-semibold text-primary-900 text-center">{cat.label}</span>
                     </button>
                   ))}
@@ -283,7 +289,9 @@ export default function NewMarketplaceListingPage() {
               onClick={() => document.getElementById('img-upload')?.click()}
             >
               <input id="img-upload" type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
-              <span className="text-4xl block mb-2">📸</span>
+              <div className="flex justify-center mb-2">
+                <DashboardIcon size={40} />
+              </div>
               <p className="font-semibold text-primary-900">Klicka för att ladda upp bilder</p>
               <p className="text-sm text-gray-500">Max 5 bilder, JPG/PNG/WEBP</p>
             </div>
