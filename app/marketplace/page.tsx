@@ -86,8 +86,8 @@ export default function MarketplacePage() {
               { icon: MoneyIcon, text: 'Du får betalt direkt' },
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <span className={`${s.isText ? 'text-2xl font-extrabold text-primary-900 bg-primary-200 rounded-full w-12 h-12 flex items-center justify-center text-sm' : ''}`}>
-                  {typeof s.icon === 'string' ? s.icon : <s.icon size={28} />}
+                <span className="w-12 h-12 flex items-center justify-center">
+                  <s.icon size={28} />
                 </span>
                 <p className="text-sm font-medium text-primary-900">{s.text}</p>
               </div>
