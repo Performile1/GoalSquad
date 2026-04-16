@@ -97,7 +97,11 @@ export default function CommunityRegisterPage() {
                       : 'bg-gray-200 text-gray-400'
                   }`}
                 >
-                  {i < step ? '✓' : i + 1}
+                  {i < step ? (
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : i + 1}
                 </div>
                 <span className={`text-xs font-medium hidden sm:block ${i === step ? 'text-primary-900' : 'text-gray-400'}`}>
                   {label}

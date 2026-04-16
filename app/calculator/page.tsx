@@ -335,19 +335,27 @@ export default function CalculatorPage() {
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
               <li className="flex items-start gap-2">
-                <span className="text-primary-900 font-bold">✓</span>
+                <svg className="w-4 h-4 text-primary-900 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
                 <span>Kombinera produkter från flera företag för bredare utbud</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-primary-900 font-bold">✓</span>
+                <svg className="w-4 h-4 text-primary-900 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
                 <span>Välj produkter med hög vinstmarginal (35-45%)</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-primary-900 font-bold">✓</span>
+                <svg className="w-4 h-4 text-primary-900 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
                 <span>Tänk på MOQ - samla beställningar för rabatt</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-primary-900 font-bold">✓</span>
+                <svg className="w-4 h-4 text-primary-900 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
                 <span>Blanda olika kategorier för att nå fler kunder</span>
               </li>
             </ul>

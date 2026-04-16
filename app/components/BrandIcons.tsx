@@ -217,3 +217,85 @@ export function UserIcon({ size = 48, className = '' }: IconProps) {
     </svg>
   );
 }
+
+export function JerseyIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 8L6 14v6l6 4 6-4 6 4 6-4 6 4 6-4v-6l-6-6H12z" fill={A} stroke={P} strokeWidth="2.5" />
+      <rect x="18" y="24" width="12" height="20" fill={P} />
+      <path d="M12 24l6-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M36 24l-6-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="34" r="4" fill="white" />
+    </svg>
+  );
+}
+
+export function HandmadeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M14 20c-3 0-6 3-6 7s3 7 6 7h20c3 0 6-3 6-7s-3-7-6-7H14z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M14 20v-8c0-2 2-4 4-4s4 2 4 4v8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M26 20v-8c0-2 2-4 4-4s4 2 4 4v8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="16" cy="34" r="3" fill={P} />
+      <circle cx="32" cy="34" r="3" fill={P} />
+    </svg>
+  );
+}
+
+export function EquipmentIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="16" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="24" r="8" fill={P} />
+      <circle cx="24" cy="24" r="3" fill={A} />
+      <path d="M24 8v6M24 34v6M40 24h-6M14 24H8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function FoodIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 12c0-4 4-8 12-8s12 4 12 8v8c0 4-4 8-12 8s-12-4-12-8v-8z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M16 20c0-2 2-4 8-4s8 2 8 4v4c0 2-2 4-8 4s-8-2-8-4v-4z" fill={P} />
+      <circle cx="20" cy="18" r="2" fill={A} />
+      <circle cx="28" cy="18" r="2" fill={A} />
+      <path d="M24 28v8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function CameraIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="6" y="12" width="36" height="28" rx="4" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M6 18h36" stroke={P} strokeWidth="2" />
+      <path d="M16 12l4-6h8l4 6" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="28" r="8" fill={P} />
+      <circle cx="24" cy="28" r="4" fill={A} />
+      <circle cx="24" cy="28" r="1.5" fill="white" />
+    </svg>
+  );
+}
+
+export function MoneyIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="4" y="16" width="40" height="20" rx="4" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="14" cy="26" r="4" fill={P} />
+      <circle cx="34" cy="26" r="4" fill={P} />
+      <path d="M20 22h4M24 26h4M20 30h4" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+    </svg>
+  );
+}
+
+export function ShoppingBagIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M10 16h28l-4 24H14L10 16z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M16 16v-8c0-4 3.582-8 8-8s8 4 8 8v8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="18" cy="30" r="2" fill={P} />
+      <circle cx="30" cy="30" r="2" fill={P} />
+    </svg>
+  );
+}

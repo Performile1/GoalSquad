@@ -3,17 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { NoImagePlaceholder } from '@/app/components/BrandIcons';
+import { NoImagePlaceholder, ShoppingBagIcon, JerseyIcon, HandmadeIcon, EquipmentIcon, FoodIcon, CameraIcon, MoneyIcon, SearchIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 const PLATFORM_FEE = 12;
 
 const CATEGORIES = [
-  { id: 'all', label: 'Alla kategorier', emoji: '🛒' },
-  { id: 'jersey', label: 'Tröjor & Kläder', emoji: '👕' },
-  { id: 'handmade', label: 'Eget hantverk', emoji: '🎨' },
-  { id: 'equipment', label: 'Utrustning', emoji: '⚽' },
-  { id: 'food', label: 'Mat & Dryck', emoji: '🍰' },
-  { id: 'other', label: 'Övrigt', emoji: '📦' },
+  { id: 'all', label: 'Alla kategorier', icon: ShoppingBagIcon },
+  { id: 'jersey', label: 'Tröjor & Kläder', icon: JerseyIcon },
+  { id: 'handmade', label: 'Eget hantverk', icon: HandmadeIcon },
+  { id: 'equipment', label: 'Utrustning', icon: EquipmentIcon },
+  { id: 'food', label: 'Mat & Dryck', icon: FoodIcon },
+  { id: 'other', label: 'Övrigt', icon: ShoppingBagIcon },
 ];
 
 interface CommunityProduct {
@@ -55,7 +55,7 @@ export default function MarketplacePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-primary-900 to-primary-600 text-white py-20 px-4">
+      <div className="bg-primary-900 text-white py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="inline-block bg-white/15 text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 border border-white/20">
@@ -81,14 +81,14 @@ export default function MarketplacePage() {
         <div className="max-w-5xl mx-auto px-4 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { icon: '📸', text: 'Lägg upp produkten gratis' },
-              { icon: '💳', text: 'Kunden betalar säkert via GoalSquad' },
+              { icon: CameraIcon, text: 'Lägg upp produkten gratis' },
+              { icon: MoneyIcon, text: 'Kunden betalar säkert via GoalSquad' },
               { icon: `${PLATFORM_FEE}%`, text: 'GoalSquad tar förmedlingsavgift', isText: true },
-              { icon: '💰', text: `Du får ${100 - PLATFORM_FEE}% av priset` },
+              { icon: MoneyIcon, text: `Du får ${100 - PLATFORM_FEE}% av priset` },
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <span className={`${s.isText ? 'text-2xl font-extrabold text-primary-900 bg-primary-200 rounded-full w-12 h-12 flex items-center justify-center text-sm' : 'text-3xl'}`}>
-                  {s.icon}
+                <span className={`${s.isText ? 'text-2xl font-extrabold text-primary-900 bg-primary-200 rounded-full w-12 h-12 flex items-center justify-center text-sm' : ''}`}>
+                  {typeof s.icon === 'string' ? s.icon : <s.icon size={28} />}
                 </span>
                 <p className="text-sm font-medium text-primary-900">{s.text}</p>
               </div>
@@ -101,7 +101,9 @@ export default function MarketplacePage() {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <SearchIcon size={20} />
+            </span>
             <input
               type="text"
               placeholder="Sök produkt eller säljare..."
@@ -124,7 +126,7 @@ export default function MarketplacePage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <span>{cat.emoji}</span> {cat.label}
+              <cat.icon size={18} /> {cat.label}
             </button>
           ))}
         </div>
@@ -142,7 +144,9 @@ export default function MarketplacePage() {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <div className="text-6xl mb-4">🛒</div>
+            <div className="flex justify-center mb-4">
+              <ShoppingBagIcon size={64} />
+            </div>
             <h3 className="text-2xl font-bold text-primary-900 mb-2">
               {products.length === 0 ? 'Inga produkter än' : 'Inga matchande produkter'}
             </h3>
@@ -168,7 +172,7 @@ export default function MarketplacePage() {
       </div>
 
       {/* Sell CTA */}
-      <div className="bg-gradient-to-br from-primary-900 to-primary-600 py-16 px-4 mt-16">
+      <div className="bg-primary-900 py-16 px-4 mt-16">
         <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-3xl font-bold mb-3">Har du något att sälja?</h2>
           <p className="text-white/70 mb-8">
@@ -234,7 +238,9 @@ function ProductCard({ product, index }: { product: CommunityProduct; index: num
         </h3>
         <p className="text-sm text-gray-500 mb-1">av {product.sellerName}</p>
         {product.communityName && (
-          <p className="text-xs text-primary-600 font-semibold mb-3">🏆 {product.communityName}</p>
+          <p className="text-xs text-primary-600 font-semibold mb-3 flex items-center gap-1">
+            <TrophyIcon size={14} /> {product.communityName}
+          </p>
         )}
         <p className="text-sm text-gray-600 line-clamp-2 mb-4">{product.description}</p>
 

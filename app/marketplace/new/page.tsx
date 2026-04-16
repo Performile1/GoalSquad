@@ -4,15 +4,15 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TrophyIcon, UserIcon, CommunityIcon, SearchIcon, DashboardIcon, CartIcon } from '@/app/components/BrandIcons';
+import { TrophyIcon, UserIcon, CommunityIcon, SearchIcon, DashboardIcon, JerseyIcon, HandmadeIcon, EquipmentIcon, FoodIcon } from '@/app/components/BrandIcons';
 
 const PLATFORM_FEE = 12;
 
 const CATEGORIES = [
-  { id: 'jersey', label: 'Tröjor & Kläder', icon: UserIcon },
-  { id: 'handmade', label: 'Eget hantverk', icon: CommunityIcon },
-  { id: 'equipment', label: 'Utrustning', icon: TrophyIcon },
-  { id: 'food', label: 'Mat & Dryck', icon: CartIcon },
+  { id: 'jersey', label: 'Tröjor & Kläder', icon: JerseyIcon },
+  { id: 'handmade', label: 'Eget hantverk', icon: HandmadeIcon },
+  { id: 'equipment', label: 'Utrustning', icon: EquipmentIcon },
+  { id: 'food', label: 'Mat & Dryck', icon: FoodIcon },
   { id: 'other', label: 'Övrigt', icon: DashboardIcon },
 ];
 
