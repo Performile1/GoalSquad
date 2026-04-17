@@ -136,6 +136,25 @@ CREATE INDEX IF NOT EXISTS idx_seller_profiles_user ON seller_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_seller_profiles_community ON seller_profiles(community_id);
 CREATE INDEX IF NOT EXISTS idx_seller_profiles_shop_url ON seller_profiles(shop_url) WHERE shop_url IS NOT NULL;
 
+-- Add foreign key constraint only if columns exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seller_profiles' AND column_name = 'user_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'profiles') THEN
+    ALTER TABLE seller_profiles ADD CONSTRAINT seller_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'seller_profiles' AND column_name = 'community_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'communities') THEN
+    ALTER TABLE seller_profiles ADD CONSTRAINT seller_profiles_community_id_fkey FOREIGN KEY (community_id) REFERENCES communities(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
 ALTER TABLE seller_profiles ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
@@ -195,6 +214,16 @@ END $$;
 CREATE INDEX IF NOT EXISTS idx_warehouse_partners_org ON warehouse_partners(organization_id);
 CREATE INDEX IF NOT EXISTS idx_warehouse_partners_code ON warehouse_partners(partner_code);
 CREATE INDEX IF NOT EXISTS idx_warehouse_partners_status ON warehouse_partners(status);
+
+-- Add foreign key constraint only if columns exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'warehouse_partners' AND column_name = 'organization_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'organizations') THEN
+    ALTER TABLE warehouse_partners ADD CONSTRAINT warehouse_partners_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 ALTER TABLE warehouse_partners ENABLE ROW LEVEL SECURITY;
 
@@ -297,8 +326,35 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_warehouse ON warehouse_inventory(warehouse_id);
 CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_product ON warehouse_inventory(product_id);
-CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_merchant ON warehouse_inventory(merchant_id);
 CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_status ON warehouse_inventory(status);
+
+-- Add foreign key constraints only if columns exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'warehouse_inventory' AND column_name = 'warehouse_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'consolidation_warehouses') THEN
+    ALTER TABLE warehouse_inventory ADD CONSTRAINT warehouse_inventory_warehouse_id_fkey FOREIGN KEY (warehouse_id) REFERENCES consolidation_warehouses(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'warehouse_inventory' AND column_name = 'product_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'products') THEN
+    ALTER TABLE warehouse_inventory ADD CONSTRAINT warehouse_inventory_product_id_fkey FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'warehouse_inventory' AND column_name = 'merchant_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'merchants') THEN
+    ALTER TABLE warehouse_inventory ADD CONSTRAINT warehouse_inventory_merchant_id_fkey FOREIGN KEY (merchant_id) REFERENCES merchants(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 ALTER TABLE warehouse_inventory ENABLE ROW LEVEL SECURITY;
 
@@ -433,7 +489,34 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product ON order_items(product_id);
-CREATE INDEX IF NOT EXISTS idx_order_items_merchant ON order_items(merchant_id);
+
+-- Add foreign key constraints only if columns exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'order_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'orders') THEN
+    ALTER TABLE order_items ADD CONSTRAINT order_items_order_id_fkey FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE;
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'product_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'products') THEN
+    ALTER TABLE order_items ADD CONSTRAINT order_items_product_id_fkey FOREIGN KEY (product_id) REFERENCES products(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'merchant_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'merchants') THEN
+    ALTER TABLE order_items ADD CONSTRAINT order_items_merchant_id_fkey FOREIGN KEY (merchant_id) REFERENCES merchants(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 
@@ -482,6 +565,25 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_merchant_messages_merchant ON merchant_community_messages(merchant_id);
 CREATE INDEX IF NOT EXISTS idx_merchant_messages_community ON merchant_community_messages(community_id);
+
+-- Add foreign key constraints only if columns exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'merchant_community_messages' AND column_name = 'merchant_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'merchants') THEN
+    ALTER TABLE merchant_community_messages ADD CONSTRAINT merchant_community_messages_merchant_id_fkey FOREIGN KEY (merchant_id) REFERENCES merchants(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'merchant_community_messages' AND column_name = 'community_id')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'communities') THEN
+    ALTER TABLE merchant_community_messages ADD CONSTRAINT merchant_community_messages_community_id_fkey FOREIGN KEY (community_id) REFERENCES communities(id);
+  END IF;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 ALTER TABLE merchant_community_messages ENABLE ROW LEVEL SECURITY;
 
