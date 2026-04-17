@@ -314,7 +314,7 @@ CREATE TABLE orders (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_orders_user ON orders(user_id);
+CREATE INDEX idx_orders_customer ON orders(customer_id);
 CREATE INDEX idx_orders_community ON orders(community_id);
 CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_created ON orders(created_at DESC);
@@ -657,12 +657,12 @@ CREATE POLICY "community_members_select_all" ON community_members FOR SELECT USI
 CREATE POLICY "community_members_service_role_all" ON community_members FOR ALL USING (auth.jwt() ->> 'role' = 'service_role');
 
 -- Orders
-CREATE POLICY "orders_select_own" ON orders FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY "orders_select_own" ON orders FOR SELECT USING (customer_id = auth.uid());
 CREATE POLICY "orders_service_role_all" ON orders FOR ALL USING (auth.jwt() ->> 'role' = 'service_role');
 
 -- Order Items
 CREATE POLICY "order_items_select_own" ON order_items FOR SELECT USING (
-  order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+  order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
 );
 CREATE POLICY "order_items_service_role_all" ON order_items FOR ALL USING (auth.jwt() ->> 'role' = 'service_role');
 
