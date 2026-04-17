@@ -73,6 +73,8 @@ export default function ApprovedProductsPage() {
     }
   };
 
+  const categories = [...new Set(products.map(p => p.category))];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -83,8 +85,6 @@ export default function ApprovedProductsPage() {
       </div>
     );
   }
-
-  const categories = [...new Set(products.map(p => p.category))];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
