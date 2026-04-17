@@ -73,7 +73,14 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_organizations_org_type ON organizations(org_type);
 CREATE INDEX IF NOT EXISTS idx_organizations_country ON organizations(country);
-CREATE INDEX IF NOT EXISTS idx_organizations_status ON organizations(status);
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'organizations' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_organizations_status ON organizations(status);
+  END IF;
+END $$;
 
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 
@@ -139,6 +146,14 @@ END $$;
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
 CREATE INDEX IF NOT EXISTS idx_profiles_active ON profiles(is_active) WHERE is_active = true;
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'profiles' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_profiles_status ON profiles(status);
+  END IF;
+END $$;
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
@@ -399,7 +414,14 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_products_merchant ON products(merchant_id);
 CREATE INDEX IF NOT EXISTS idx_products_sku ON products(sku);
-CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
+  END IF;
+END $$;
 
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 
@@ -484,12 +506,38 @@ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
-CREATE INDEX IF NOT EXISTS idx_community_products_status ON community_products(status);
+-- Create indexes on badge columns only if they exist
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'community_products' AND column_name = 'is_featured') THEN
+    CREATE INDEX IF NOT EXISTS idx_community_products_featured ON community_products(is_featured) WHERE is_featured = TRUE;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'community_products' AND column_name = 'is_discounted') THEN
+    CREATE INDEX IF NOT EXISTS idx_community_products_discounted ON community_products(is_discounted) WHERE is_discounted = TRUE;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'community_products' AND column_name = 'sells_fast') THEN
+    CREATE INDEX IF NOT EXISTS idx_community_products_sells_fast ON community_products(sells_fast) WHERE sells_fast = TRUE;
+  END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_community_products_category ON community_products(category);
 CREATE INDEX IF NOT EXISTS idx_community_products_created ON community_products(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_community_products_featured ON community_products(is_featured) WHERE is_featured = TRUE;
-CREATE INDEX IF NOT EXISTS idx_community_products_discounted ON community_products(is_discounted) WHERE is_discounted = TRUE;
-CREATE INDEX IF NOT EXISTS idx_community_products_sells_fast ON community_products(sells_fast) WHERE sells_fast = TRUE;
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'community_products' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_community_products_status ON community_products(status);
+  END IF;
+END $$;
 
 ALTER TABLE community_products ENABLE ROW LEVEL SECURITY;
 
