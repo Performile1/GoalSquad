@@ -34,7 +34,7 @@ export default function JoinPage() {
         <motion.div variants={card} initial="hidden" animate="show" transition={{ delay: 0.15 }}>
           <Link
             href="/join/community"
-            className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full"
+            className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full flex flex-col"
           >
             <div className="flex justify-center mb-6">
               <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition">
@@ -62,7 +62,7 @@ export default function JoinPage() {
                 </li>
               ))}
             </ul>
-            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition">
+            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition mt-auto">
               Registrera din förening →
             </div>
           </Link>
@@ -72,7 +72,7 @@ export default function JoinPage() {
         <motion.div variants={card} initial="hidden" animate="show" transition={{ delay: 0.3 }}>
           <Link
             href="/merchants/onboard"
-            className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full"
+            className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full flex flex-col"
           >
             <div className="flex justify-center mb-6">
               <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition">
@@ -100,7 +100,7 @@ export default function JoinPage() {
                 </li>
               ))}
             </ul>
-            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition">
+            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition mt-auto">
               Registrera ditt företag →
             </div>
           </Link>
@@ -110,7 +110,7 @@ export default function JoinPage() {
         <motion.div variants={card} initial="hidden" animate="show" transition={{ delay: 0.45 }}>
           <Link
             href="/sellers/register"
-            className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full"
+            className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full flex flex-col"
           >
             <div className="flex justify-center mb-6">
               <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition">
@@ -138,7 +138,7 @@ export default function JoinPage() {
                 </li>
               ))}
             </ul>
-            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition">
+            <div className="w-full bg-primary-900 text-white text-center py-3 rounded-xl font-bold group-hover:bg-primary-600 transition mt-auto">
               Registrera som säljare →
             </div>
           </Link>
