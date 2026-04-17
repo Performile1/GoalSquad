@@ -118,25 +118,50 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS communities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) UNIQUE NOT NULL,
   description TEXT,
   logo_url TEXT,
   banner_url TEXT,
   
-  community_type VARCHAR(50) DEFAULT 'club'
-                    CHECK (community_type IN ('club', 'class', 'association', 'school')),
+  community_type VARCHAR(50) DEFAULT 'club',
   
   organization_id UUID REFERENCES organizations(id) ON DELETE SET NULL,
   
   settings JSONB DEFAULT '{}',
   metadata JSONB DEFAULT '{}',
   
-  status VARCHAR(50) DEFAULT 'active'
-          CHECK (status IN ('active', 'inactive', 'suspended')),
+  status VARCHAR(50) DEFAULT 'active',
   
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add columns if they don't exist (for existing tables)
+ALTER TABLE communities
+ADD COLUMN IF NOT EXISTS slug VARCHAR(255),
+ADD COLUMN IF NOT EXISTS community_type VARCHAR(50),
+ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id) ON DELETE SET NULL,
+ADD COLUMN IF NOT EXISTS settings JSONB,
+ADD COLUMN IF NOT EXISTS metadata JSONB,
+ADD COLUMN IF NOT EXISTS status VARCHAR(50);
+
+-- Add constraints if they don't exist
+DO $$
+BEGIN
+  ALTER TABLE communities ADD CONSTRAINT communities_slug_unique UNIQUE (slug);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  ALTER TABLE communities ADD CONSTRAINT communities_community_type_check CHECK (community_type IN ('club', 'class', 'association', 'school'));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$
+BEGIN
+  ALTER TABLE communities ADD CONSTRAINT communities_status_check CHECK (status IN ('active', 'inactive', 'suspended'));
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_communities_slug ON communities(slug);
 CREATE INDEX IF NOT EXISTS idx_communities_type ON communities(community_type);
@@ -205,7 +230,6 @@ CREATE TABLE IF NOT EXISTS merchants (
   organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   merchant_name VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) UNIQUE NOT NULL,
   description TEXT,
   logo_url TEXT,
   banner_url TEXT,
@@ -229,6 +253,29 @@ CREATE TABLE IF NOT EXISTS merchants (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add columns if they don't exist (for existing tables)
+ALTER TABLE merchants
+ADD COLUMN IF NOT EXISTS slug VARCHAR(255),
+ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+ADD COLUMN IF NOT EXISTS address_line1 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS address_line2 VARCHAR(255),
+ADD COLUMN IF NOT EXISTS city VARCHAR(100),
+ADD COLUMN IF NOT EXISTS postal_code VARCHAR(20),
+ADD COLUMN IF NOT EXISTS country VARCHAR(2),
+ADD COLUMN IF NOT EXISTS stripe_account_id VARCHAR(255),
+ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN,
+ADD COLUMN IF NOT EXISTS verification_status VARCHAR(50),
+ADD COLUMN IF NOT EXISTS settings JSONB,
+ADD COLUMN IF NOT EXISTS metadata JSONB;
+
+-- Add constraint if it doesn't exist
+DO $$
+BEGIN
+  ALTER TABLE merchants ADD CONSTRAINT merchants_slug_unique UNIQUE (slug);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_merchants_slug ON merchants(slug);
 CREATE INDEX IF NOT EXISTS idx_merchants_org ON merchants(organization_id);
