@@ -167,10 +167,9 @@ export default function Footer() {
                 </Link>
               </li>
               {[
-                { href: '/sellers/dashboard', label: 'Dashboard & Backend' },
-                { href: '/sellers/products', label: 'Mina produkter' },
-                { href: '/sellers/orders', label: 'Mina ordrar' },
-                { href: '/sellers/analytics', label: 'Statistik' },
+                { href: '/sellers/register', label: 'Registrera dig' },
+                { href: '/sellers/get-started', label: 'Kom igång' },
+                { href: '/sellers/community', label: 'Community' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
