@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { CommunityIcon, FlagIcon } from '@/app/components/BrandIcons';
+import { CommunityIcon, FlagIcon, TierIcon, BadgeIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 interface Community {
   id: string;
@@ -15,6 +15,11 @@ interface Community {
   totalMembers: number;
   communityType?: string;
   brandColors?: any;
+  tier?: string;
+  tierLevel?: number;
+  totalBadges?: number;
+  totalMilestonesAchieved?: number;
+  totalRevenue?: number;
 }
 
 export default function CommunitiesPage() {
@@ -105,21 +110,46 @@ export default function CommunitiesPage() {
                   </div>
 
                   <div className="p-5">
-                    <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-primary-900 transition truncate">
-                      {community.name}
-                    </h3>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-bold text-gray-900 text-lg group-hover:text-primary-900 transition truncate">
+                        {community.name}
+                      </h3>
+                      {community.tier && (
+                        <div className="flex items-center gap-1 text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-full font-medium">
+                          <TierIcon size={12} /> {community.tier}
+                        </div>
+                      )}
+                    </div>
                     {community.city && (
                       <p className="text-sm text-gray-500 mb-3">
                         📍 {community.city}{community.country ? `, ${community.country}` : ''}
                       </p>
                     )}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <span className="text-sm text-gray-500">
                         👥 {community.totalMembers} medlemmar
                       </span>
                       {community.communityType && (
                         <span className="text-xs bg-primary-50 text-primary-900 px-2 py-1 rounded-full font-medium capitalize">
                           {community.communityType}
+                        </span>
+                      )}
+                    </div>
+                    {/* Gamification Stats */}
+                    <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                      {community.totalBadges !== undefined && community.totalBadges > 0 && (
+                        <span className="flex items-center gap-1 text-xs text-gray-600">
+                          <BadgeIcon size={12} /> {community.totalBadges}
+                        </span>
+                      )}
+                      {community.totalMilestonesAchieved !== undefined && community.totalMilestonesAchieved > 0 && (
+                        <span className="flex items-center gap-1 text-xs text-gray-600">
+                          <TrophyIcon size={12} /> {community.totalMilestonesAchieved}
+                        </span>
+                      )}
+                      {community.totalRevenue !== undefined && community.totalRevenue > 0 && (
+                        <span className="flex items-center gap-1 text-xs text-gray-600">
+                          💰 {community.totalRevenue.toLocaleString()} kr
                         </span>
                       )}
                     </div>
