@@ -127,4 +127,71 @@ UNION ALL
 SELECT 
   'blog_posts' as table_name,
   EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'blog_posts' AND table_schema = 'public')
+UNION ALL
+-- Phase 1 tables
+SELECT 
+  'seller_profiles' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'seller_profiles' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'warehouse_partners' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'warehouse_partners' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'consolidation_warehouses' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'consolidation_warehouses' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'warehouse_inventory' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'warehouse_inventory' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'product_flow_summary' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'product_flow_summary' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'orders' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'orders' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'order_items' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'order_items' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'conversations' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'conversations' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'merchant_community_messages' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'merchant_community_messages' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'invitations' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'invitations' AND table_schema = 'public') as exists
+UNION ALL
+-- Phase 2 tables
+SELECT 
+  'product_categories' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'product_categories' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'merchant_contacts' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'merchant_contacts' AND table_schema = 'public') as exists
+UNION ALL
+-- Phase 3 tables
+SELECT 
+  'merchant_shipments' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'merchant_shipments' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'merchant_shipment_items' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'merchant_shipment_items' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'shipping_restriction_categories' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'shipping_restriction_categories' AND table_schema = 'public') as exists
+UNION ALL
+SELECT 
+  'webhook_queue' as table_name,
+  EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'webhook_queue' AND table_schema = 'public') as exists
 ORDER BY table_name;
