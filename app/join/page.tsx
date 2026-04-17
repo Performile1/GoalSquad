@@ -24,7 +24,7 @@ export default function JoinPage() {
         </div>
         <h1 className="text-5xl font-extrabold mb-4">Kom igång med GoalSquad</h1>
         <p className="text-white/70 text-xl max-w-2xl mx-auto">
-          Välj vad som passar dig bäst. Du kan alltid lägga till fler roller senare.
+          Vad kan vi hjälpa dig med? Välj den profil som passar in på er.
         </p>
       </motion.div>
 
