@@ -512,6 +512,21 @@ ADD COLUMN IF NOT EXISTS metadata JSONB,
 ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE,
 ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
 
+-- Migration: If user_id exists but customer_id doesn't, rename user_id to customer_id
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'orders' AND column_name = 'user_id'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'orders' AND column_name = 'customer_id'
+  ) THEN
+    ALTER TABLE orders RENAME COLUMN user_id TO customer_id;
+  END IF;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
+
 -- Add unique constraint on order_number if column exists and constraint doesn't exist
 DO $$
 BEGIN
