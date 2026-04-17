@@ -116,6 +116,7 @@ export default function Footer() {
                 { href: '/communities', label: 'Communities' },
                 { href: '/cart', label: 'Varukorg' },
                 { href: '/orders', label: 'Mina ordrar' },
+                { href: '/returns', label: 'Returhantering' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">

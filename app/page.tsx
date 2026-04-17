@@ -345,6 +345,19 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Returns CTA ── */}
+      <section className="bg-white py-12">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="bg-gradient-to-r from-primary-900 to-primary-600 rounded-2xl p-8 shadow-xl">
+            <h2 className="text-2xl font-bold text-white mb-3">Behöver du returnera en produkt?</h2>
+            <p className="text-white/80 mb-6">Enkel och smidig returhantering med QR-kod för returfraktsedel</p>
+            <Link href="/returns" className="inline-block px-8 py-3 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition shadow-lg">
+              Skapa retur →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Why GoalSquad ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">Varför GoalSquad?</h2>
