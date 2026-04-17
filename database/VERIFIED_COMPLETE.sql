@@ -308,7 +308,7 @@ CREATE TABLE IF NOT EXISTS orders (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
 CREATE INDEX IF NOT EXISTS idx_orders_community ON orders(community_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at DESC);
@@ -668,7 +668,7 @@ DO $$ BEGIN CREATE POLICY "community_members_service_role_all" ON community_memb
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Orders
-DO $$ BEGIN CREATE POLICY "orders_select_own" ON orders FOR SELECT USING (user_id = auth.uid());
+DO $$ BEGIN CREATE POLICY "orders_select_own" ON orders FOR SELECT USING (customer_id = auth.uid());
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN CREATE POLICY "orders_service_role_all" ON orders FOR ALL USING (auth.jwt() ->> 'role' = 'service_role');
@@ -676,7 +676,7 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Order Items
 DO $$ BEGIN CREATE POLICY "order_items_select_own" ON order_items FOR SELECT USING (
-  order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+  order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
 );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 

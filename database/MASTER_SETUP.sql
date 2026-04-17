@@ -329,7 +329,7 @@ ALTER TABLE communities ADD COLUMN IF NOT EXISTS secondary_color TEXT DEFAULT '#
 CREATE INDEX IF NOT EXISTS idx_products_merchant ON products(merchant_id);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active, is_available);
-CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
 CREATE INDEX IF NOT EXISTS idx_orders_community ON orders(community_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
@@ -413,19 +413,19 @@ END $$;
 
 -- Orders: Users can see own orders
 DO $$ BEGIN
-  CREATE POLICY "Users can view own orders" ON orders FOR SELECT USING (user_id = auth.uid());
+  CREATE POLICY "Users can view own orders" ON orders FOR SELECT USING (customer_id = auth.uid());
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 DO $$ BEGIN
-  CREATE POLICY "Users can create orders" ON orders FOR INSERT WITH CHECK (user_id = auth.uid());
+  CREATE POLICY "Users can create orders" ON orders FOR INSERT WITH CHECK (customer_id = auth.uid());
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 -- Order Items: Users can see items from own orders
 DO $$ BEGIN
   CREATE POLICY "Users can view own order items" ON order_items FOR SELECT USING (
-    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+    order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
   );
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;

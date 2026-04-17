@@ -144,7 +144,7 @@ CREATE POLICY "community_members_insert_self" ON community_members
 -- Users can view own orders
 CREATE POLICY "orders_select_own" ON orders
   FOR SELECT
-  USING (user_id = auth.uid());
+  USING (customer_id = auth.uid());
 
 -- Service role can view all
 CREATE POLICY "orders_service_role_all" ON orders
@@ -154,12 +154,12 @@ CREATE POLICY "orders_service_role_all" ON orders
 -- Users can create orders
 CREATE POLICY "orders_insert_own" ON orders
   FOR INSERT
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (customer_id = auth.uid());
 
 -- Users can update own pending orders
 CREATE POLICY "orders_update_own" ON orders
   FOR UPDATE
-  USING (user_id = auth.uid() AND status = 'pending');
+  USING (customer_id = auth.uid() AND status = 'pending');
 
 -- ============================================
 -- ORDER ITEMS
@@ -169,7 +169,7 @@ CREATE POLICY "orders_update_own" ON orders
 CREATE POLICY "order_items_select_own" ON order_items
   FOR SELECT
   USING (
-    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+    order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
   );
 
 -- Service role can do everything
@@ -181,7 +181,7 @@ CREATE POLICY "order_items_service_role_all" ON order_items
 CREATE POLICY "order_items_insert_own" ON order_items
   FOR INSERT
   WITH CHECK (
-    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+    order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
   );
 
 -- ============================================
@@ -259,7 +259,7 @@ CREATE POLICY "merchant_shipment_items_service_role_all" ON merchant_shipment_it
 CREATE POLICY "warehouse_allocations_select_own" ON warehouse_allocations
   FOR SELECT
   USING (
-    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+    order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
   );
 
 -- Service role can do everything
@@ -289,7 +289,7 @@ CREATE POLICY "pending_moq_service_role_all" ON pending_moq_orders
 CREATE POLICY "shipments_select_own" ON shipments
   FOR SELECT
   USING (
-    order_id IN (SELECT id FROM orders WHERE user_id = auth.uid())
+    order_id IN (SELECT id FROM orders WHERE customer_id = auth.uid())
   );
 
 -- Service role can do everything
