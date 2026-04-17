@@ -75,40 +75,7 @@ export default function Footer() {
     <footer style={{ backgroundColor: P }} className="text-white">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-block mb-4">
-              <span className="text-xl font-bold text-white">GoalSquad</span>
-            </Link>
-            <p className="text-white/60 text-sm leading-relaxed">
-              Community Commerce Platform. Vi hjälper föreningar att sälja smart och dela intäkter rättvist.
-            </p>
-          </div>
-
-          {/* GoalSquad */}
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
-              GoalSquad
-            </h3>
-            <ul className="space-y-2">
-              {[
-                { href: '/about/community-commerce', label: 'Community Commerce' },
-                { href: '/about', label: 'Om oss' },
-                { href: '/about/goalsquad', label: 'Om GoalSquad' },
-                { href: '/privacy', label: 'Integritetspolicy' },
-                { href: '/terms', label: 'Användarvillkor' },
-                { href: '/contact', label: 'Kontakt' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
           {/* Shop */}
           <div>
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
@@ -209,27 +176,6 @@ export default function Footer() {
                 { href: '/warehouses/onboard', label: 'Bli lagerpartner' },
                 { href: '/warehouses', label: 'Alla lager' },
                 { href: '/about/team/warehouse', label: 'Lageransvarig' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Om oss */}
-          <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
-              Om oss
-            </h3>
-            <ul className="space-y-2">
-              {[
-                { href: '/about', label: 'Om GoalSquad' },
-                { href: '/privacy', label: 'Integritetspolicy' },
-                { href: '/terms', label: 'Användarvillkor' },
-                { href: '/contact', label: 'Kontakt' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
