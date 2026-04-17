@@ -421,12 +421,12 @@ BEGIN
     CREATE TABLE orders (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       order_number VARCHAR(50) UNIQUE NOT NULL,
-      
+
       -- Customer
       customer_id UUID REFERENCES auth.users(id),
       customer_email VARCHAR(255) NOT NULL,
       customer_phone VARCHAR(50),
-      
+
       -- Shipping address
       shipping_name VARCHAR(255) NOT NULL,
       shipping_address_line1 VARCHAR(255) NOT NULL,
@@ -434,7 +434,7 @@ BEGIN
       shipping_city VARCHAR(100) NOT NULL,
       shipping_postal_code VARCHAR(20) NOT NULL,
       shipping_country VARCHAR(2) NOT NULL,
-      
+
       -- Billing address
       billing_name VARCHAR(255),
       billing_address_line1 VARCHAR(255),
@@ -442,27 +442,139 @@ BEGIN
       billing_city VARCHAR(100),
       billing_postal_code VARCHAR(20),
       billing_country VARCHAR(2),
-      
+
       -- Financials
       subtotal DECIMAL(10, 2) NOT NULL,
       shipping_total DECIMAL(10, 2) NOT NULL,
       tax_total DECIMAL(10, 2) NOT NULL,
       total DECIMAL(10, 2) NOT NULL,
       currency VARCHAR(3) DEFAULT 'SEK',
-      
+
       -- Payment
       stripe_payment_intent_id VARCHAR(255),
       payment_status VARCHAR(50) DEFAULT 'pending',
       paid_at TIMESTAMP WITH TIME ZONE,
-      
+
       -- Order status
       status VARCHAR(50) DEFAULT 'pending',
-      
+
       -- Metadata
       metadata JSONB DEFAULT '{}',
       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     );
+  END IF;
+END $$;
+
+-- Add missing columns to existing orders table
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'customer_id') THEN
+    ALTER TABLE orders ADD COLUMN customer_id UUID REFERENCES auth.users(id);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'customer_email') THEN
+    ALTER TABLE orders ADD COLUMN customer_email VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'customer_phone') THEN
+    ALTER TABLE orders ADD COLUMN customer_phone VARCHAR(50);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_name') THEN
+    ALTER TABLE orders ADD COLUMN shipping_name VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_address_line1') THEN
+    ALTER TABLE orders ADD COLUMN shipping_address_line1 VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_address_line2') THEN
+    ALTER TABLE orders ADD COLUMN shipping_address_line2 VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_city') THEN
+    ALTER TABLE orders ADD COLUMN shipping_city VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_postal_code') THEN
+    ALTER TABLE orders ADD COLUMN shipping_postal_code VARCHAR(20);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_country') THEN
+    ALTER TABLE orders ADD COLUMN shipping_country VARCHAR(2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'billing_name') THEN
+    ALTER TABLE orders ADD COLUMN billing_name VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'billing_address_line1') THEN
+    ALTER TABLE orders ADD COLUMN billing_address_line1 VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'billing_address_line2') THEN
+    ALTER TABLE orders ADD COLUMN billing_address_line2 VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'billing_city') THEN
+    ALTER TABLE orders ADD COLUMN billing_city VARCHAR(100);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'billing_postal_code') THEN
+    ALTER TABLE orders ADD COLUMN billing_postal_code VARCHAR(20);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'billing_country') THEN
+    ALTER TABLE orders ADD COLUMN billing_country VARCHAR(2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'subtotal') THEN
+    ALTER TABLE orders ADD COLUMN subtotal DECIMAL(10, 2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_total') THEN
+    ALTER TABLE orders ADD COLUMN shipping_total DECIMAL(10, 2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'tax_total') THEN
+    ALTER TABLE orders ADD COLUMN tax_total DECIMAL(10, 2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'total') THEN
+    ALTER TABLE orders ADD COLUMN total DECIMAL(10, 2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'currency') THEN
+    ALTER TABLE orders ADD COLUMN currency VARCHAR(3) DEFAULT 'SEK';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'stripe_payment_intent_id') THEN
+    ALTER TABLE orders ADD COLUMN stripe_payment_intent_id VARCHAR(255);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'payment_status') THEN
+    ALTER TABLE orders ADD COLUMN payment_status VARCHAR(50) DEFAULT 'pending';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'paid_at') THEN
+    ALTER TABLE orders ADD COLUMN paid_at TIMESTAMP WITH TIME ZONE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'status') THEN
+    ALTER TABLE orders ADD COLUMN status VARCHAR(50) DEFAULT 'pending';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'metadata') THEN
+    ALTER TABLE orders ADD COLUMN metadata JSONB DEFAULT '{}';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'created_at') THEN
+    ALTER TABLE orders ADD COLUMN created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'updated_at') THEN
+    ALTER TABLE orders ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
   END IF;
 END $$;
 
