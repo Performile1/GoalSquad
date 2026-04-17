@@ -142,7 +142,7 @@ export default function Footer() {
                 { href: '/merchants', label: 'Alla leverantörer' },
                 { href: '/calculator/merchant', label: 'Beräkna potential' },
                 { href: '/dashboard', label: 'Min sida' },
-                { href: '/auth/login', label: 'Logga in' },
+                { href: '/login', label: 'Logga in' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
