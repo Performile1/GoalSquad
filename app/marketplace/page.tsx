@@ -29,6 +29,11 @@ interface CommunityProduct {
   stock: number;
   createdAt: string;
   status: string;
+  is_featured?: boolean;
+  is_discounted?: boolean;
+  discount_percent?: number;
+  sells_fast?: boolean;
+  low_stock_threshold?: number;
 }
 
 export default function MarketplacePage() {
@@ -221,13 +226,28 @@ function ProductCard({ product, index }: { product: CommunityProduct; index: num
       </div>
 
       <div className="p-5">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
           <span className="text-xs font-bold text-primary-600 uppercase tracking-wide">
             {CATEGORIES.find((c) => c.id === product.category)?.label || product.category}
           </span>
-          {product.stock <= 5 && product.stock > 0 && (
-            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">
+          {product.sells_fast && (
+            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold border border-red-200">
+              Säljer slut fort
+            </span>
+          )}
+          {product.is_discounted && product.discount_percent && (
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold border border-green-200">
+              Rabatt {product.discount_percent}%
+            </span>
+          )}
+          {product.stock <= (product.low_stock_threshold || 5) && product.stock > 0 && (
+            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold border border-orange-200">
               Bara {product.stock} kvar!
+            </span>
+          )}
+          {product.stock === 0 && (
+            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full font-semibold border border-gray-200">
+              Slut i lager
             </span>
           )}
         </div>

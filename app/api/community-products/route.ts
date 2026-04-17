@@ -53,7 +53,12 @@ export async function GET(req: NextRequest) {
         stock,
         platform_fee_percent,
         status,
-        created_at
+        created_at,
+        is_featured,
+        is_discounted,
+        discount_percent,
+        sells_fast,
+        low_stock_threshold
       `)
       .eq('status', status)
       .order('created_at', { ascending: false })
@@ -86,6 +91,11 @@ export async function GET(req: NextRequest) {
       platformFeePercent: p.platform_fee_percent,
       status: p.status,
       createdAt: p.created_at,
+      is_featured: p.is_featured,
+      is_discounted: p.is_discounted,
+      discount_percent: p.discount_percent,
+      sells_fast: p.sells_fast,
+      low_stock_threshold: p.low_stock_threshold,
     }));
 
     return NextResponse.json({ products });

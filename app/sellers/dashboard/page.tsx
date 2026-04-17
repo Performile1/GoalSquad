@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ShareIcon, MessageIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon } from '@/components/BrandIcons';
+import { ShareIcon, MessageIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, ShoppingBagIcon } from '@/components/BrandIcons';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +12,10 @@ export default function SellerDashboardPage() {
   const { user, loading } = useAuth();
   const [customText, setCustomText] = useState('');
   const [sellerLink, setSellerLink] = useState('');
+  const [productLink, setProductLink] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [products, setProducts] = useState<any[]>([]);
+  const [showProductShare, setShowProductShare] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -22,8 +26,25 @@ export default function SellerDashboardPage() {
   useEffect(() => {
     if (user) {
       setSellerLink(`https://goal-squad.vercel.app/seller/${user.id}`);
+      fetchProducts();
     }
   }, [user]);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      setProducts(data.products || []);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+    }
+  };
+
+  const handleProductSelect = (productId: string) => {
+    setSelectedProduct(productId);
+    setProductLink(`https://goal-squad.vercel.app/products/${productId}`);
+    setShowProductShare(true);
+  };
 
   if (loading) {
     return (
@@ -42,9 +63,21 @@ export default function SellerDashboardPage() {
     return customText ? `${customText}\n\n${defaultMessage}` : defaultMessage;
   };
 
+  const getProductShareMessage = () => {
+    const product = products.find(p => p.id === selectedProduct);
+    const defaultMessage = `Hej! Kolla in denna produkt: ${product?.title || ''}. Jag säljer den för att stödja min förening.`;
+    return customText ? `${customText}\n\n${defaultMessage}` : defaultMessage;
+  };
+
   const shareViaFacebook = () => {
     const message = getShareMessage();
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(sellerLink)}&quote=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareProductViaFacebook = () => {
+    const message = getProductShareMessage();
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productLink)}&quote=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
@@ -53,9 +86,20 @@ export default function SellerDashboardPage() {
     alert('Länk kopierad! Klistra in den i din Instagram Story eller post.');
   };
 
+  const shareProductViaInstagram = () => {
+    navigator.clipboard.writeText(`${getProductShareMessage()}\n\n${productLink}`);
+    alert('Länk kopierad! Klistra in den i din Instagram Story eller post.');
+  };
+
   const shareViaMessenger = () => {
     const message = getShareMessage();
     const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(sellerLink)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(sellerLink)}`;
+    window.open(url, '_blank');
+  };
+
+  const shareProductViaMessenger = () => {
+    const message = getProductShareMessage();
+    const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(productLink)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(productLink)}`;
     window.open(url, '_blank');
   };
 
@@ -66,15 +110,34 @@ export default function SellerDashboardPage() {
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
+  const shareProductViaEmail = () => {
+    const message = getProductShareMessage();
+    const product = products.find(p => p.id === selectedProduct);
+    const subject = `Kolla in ${product?.title || 'denna produkt'} hos GoalSquad`;
+    const body = `${message}\n\n${productLink}`;
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
   const shareViaSMS = () => {
     const message = getShareMessage();
     const body = `${message}\n\n${sellerLink}`;
     window.location.href = `sms:?body=${encodeURIComponent(body)}`;
   };
 
+  const shareProductViaSMS = () => {
+    const message = getProductShareMessage();
+    const body = `${message}\n\n${productLink}`;
+    window.location.href = `sms:?body=${encodeURIComponent(body)}`;
+  };
+
   const copyLink = () => {
     navigator.clipboard.writeText(sellerLink);
     alert('Länk kopierad!');
+  };
+
+  const copyProductLink = () => {
+    navigator.clipboard.writeText(productLink);
+    alert('Produktlänk kopierad!');
   };
 
   return (
@@ -153,6 +216,114 @@ export default function SellerDashboardPage() {
               <span className="text-sm font-semibold text-gray-700">SMS</span>
             </button>
           </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <ShoppingBagIcon size={28} className="text-primary-900" />
+            Dela en specifik produkt
+          </h2>
+          <p className="text-gray-600 mb-6">Välj en produkt att dela för att öka försäljningen.</p>
+
+          {!showProductShare ? (
+            <>
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Välj produkt</label>
+                <select
+                  value={selectedProduct}
+                  onChange={(e) => handleProductSelect(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                >
+                  <option value="">Välj en produkt...</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.title} - {product.price} kr
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Vald produkt</label>
+                <p className="text-gray-900 font-semibold mb-2">
+                  {products.find(p => p.id === selectedProduct)?.title}
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={productLink}
+                    readOnly
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-100 text-gray-700"
+                  />
+                  <button
+                    onClick={copyProductLink}
+                    className="px-6 py-3 bg-primary-900 text-white rounded-xl font-bold hover:bg-primary-600 transition flex items-center gap-2"
+                  >
+                    <ShareIcon size={20} />
+                    Kopiera
+                  </button>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Lägg till personligt meddelande (valfritt)</label>
+                <textarea
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value)}
+                  placeholder="Lägg till ett personligt meddelande..."
+                  rows={3}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <button
+                  onClick={shareProductViaFacebook}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-primary-300 transition"
+                >
+                  <FacebookIcon size={32} className="text-primary-900" />
+                  <span className="text-sm font-semibold text-gray-700">Facebook</span>
+                </button>
+                <button
+                  onClick={shareProductViaInstagram}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-primary-300 transition"
+                >
+                  <InstagramIcon size={32} className="text-primary-900" />
+                  <span className="text-sm font-semibold text-gray-700">Instagram</span>
+                </button>
+                <button
+                  onClick={shareProductViaMessenger}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-primary-300 transition"
+                >
+                  <MessageIcon size={32} className="text-primary-900" />
+                  <span className="text-sm font-semibold text-gray-700">Messenger</span>
+                </button>
+                <button
+                  onClick={shareProductViaEmail}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-primary-300 transition"
+                >
+                  <MailIcon size={32} className="text-primary-900" />
+                  <span className="text-sm font-semibold text-gray-700">E-post</span>
+                </button>
+                <button
+                  onClick={shareProductViaSMS}
+                  className="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl hover:border-primary-300 transition"
+                >
+                  <PhoneIcon size={32} className="text-primary-900" />
+                  <span className="text-sm font-semibold text-gray-700">SMS</span>
+                </button>
+              </div>
+
+              <button
+                onClick={() => setShowProductShare(false)}
+                className="border-2 border-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:border-primary-300 transition"
+              >
+                Välj annan produkt
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
