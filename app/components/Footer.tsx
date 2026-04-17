@@ -86,6 +86,29 @@ export default function Footer() {
             </p>
           </div>
 
+          {/* GoalSquad */}
+          <div>
+            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              GoalSquad
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/about/community-commerce', label: 'Community Commerce' },
+                { href: '/about', label: 'Om oss' },
+                { href: '/about/goalsquad', label: 'Om GoalSquad' },
+                { href: '/privacy', label: 'Integritetspolicy' },
+                { href: '/terms', label: 'Användarvillkor' },
+                { href: '/contact', label: 'Kontakt' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Shop */}
           <div>
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
