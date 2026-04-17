@@ -69,6 +69,36 @@ WHERE table_name = 'invitations'
 ORDER BY ordinal_position;
 
 -- ============================================
+-- CHECK STATUS COLUMNS
+-- ============================================
+
+-- Check if status column exists in each table
+SELECT 'warehouse_partners' as table_name, 
+       CASE WHEN column_name IS NOT NULL THEN 'EXISTS' ELSE 'MISSING' END as status_column_status
+FROM information_schema.columns
+WHERE table_name = 'warehouse_partners' AND column_name = 'status'
+UNION ALL
+SELECT 'warehouse_inventory' as table_name, 
+       CASE WHEN column_name IS NOT NULL THEN 'EXISTS' ELSE 'MISSING' END as status_column_status
+FROM information_schema.columns
+WHERE table_name = 'warehouse_inventory' AND column_name = 'status'
+UNION ALL
+SELECT 'consolidation_warehouses' as table_name, 
+       CASE WHEN column_name IS NOT NULL THEN 'EXISTS' ELSE 'MISSING' END as status_column_status
+FROM information_schema.columns
+WHERE table_name = 'consolidation_warehouses' AND column_name = 'status'
+UNION ALL
+SELECT 'orders' as table_name, 
+       CASE WHEN column_name IS NOT NULL THEN 'EXISTS' ELSE 'MISSING' END as status_column_status
+FROM information_schema.columns
+WHERE table_name = 'orders' AND column_name = 'status'
+UNION ALL
+SELECT 'order_items' as table_name, 
+       CASE WHEN column_name IS NOT NULL THEN 'EXISTS' ELSE 'MISSING' END as status_column_status
+FROM information_schema.columns
+WHERE table_name = 'order_items' AND column_name = 'status';
+
+-- ============================================
 -- CHECK INDEXES
 -- ============================================
 

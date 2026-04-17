@@ -217,7 +217,14 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_warehouse_partners_org ON warehouse_partners(organization_id);
 CREATE INDEX IF NOT EXISTS idx_warehouse_partners_code ON warehouse_partners(partner_code);
-CREATE INDEX IF NOT EXISTS idx_warehouse_partners_status ON warehouse_partners(status);
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'warehouse_partners' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_warehouse_partners_status ON warehouse_partners(status);
+  END IF;
+END $$;
 
 -- Add foreign key constraint only if columns exist
 DO $$
@@ -332,7 +339,14 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_warehouse ON warehouse_inventory(warehouse_id);
 CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_product ON warehouse_inventory(product_id);
-CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_status ON warehouse_inventory(status);
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'warehouse_inventory' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_warehouse_inventory_status ON warehouse_inventory(status);
+  END IF;
+END $$;
 
 -- Add foreign key constraints only if columns exist
 DO $$
@@ -453,7 +467,15 @@ BEGIN
 END $$;
 
 CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+
+-- Create index on status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'status') THEN
+    CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+  END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at DESC);
 
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
@@ -501,6 +523,14 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product ON order_items(product_id);
+
+-- Create index on fulfillment_status only if column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'fulfillment_status') THEN
+    CREATE INDEX IF NOT EXISTS idx_order_items_fulfillment_status ON order_items(fulfillment_status);
+  END IF;
+END $$;
 
 -- Add foreign key constraints only if columns exist
 DO $$
