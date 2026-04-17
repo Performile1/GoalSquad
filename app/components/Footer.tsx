@@ -75,6 +75,11 @@ export default function Footer() {
     <footer style={{ backgroundColor: P }} className="text-white">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="mb-12">
+          <Link href="/" className="inline-block">
+            <h2 className="text-3xl font-bold text-white">GoalSquad</h2>
+          </Link>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
           {/* Shop */}
           <div>
