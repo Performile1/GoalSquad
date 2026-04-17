@@ -26,6 +26,10 @@ function SellerJoinContent() {
     email: '',
     password: '',
     phone: '',
+    organizationType: '',
+    organizationName: '',
+    inviteCode: '',
+    shareCommission: false,
   })
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
@@ -45,7 +49,29 @@ function SellerJoinContent() {
     setLoading(true)
     setError('')
     try {
+      // First create the user account
       await signUp(form.email, form.password, form.fullName)
+      
+      // Then create seller profile with organization info
+      const sellerData = {
+        email: form.email,
+        organization_type: form.organizationType,
+        organization_name: form.organizationName,
+        invite_code: form.inviteCode,
+        share_commission: form.shareCommission,
+      }
+      
+      const res = await fetch('/api/sellers/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sellerData),
+      })
+      
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Kunde inte skapa säljarprofil')
+      }
+      
       setStep('done')
     } catch (err: any) {
       setError(err.message || 'Registrering misslyckades')
@@ -199,6 +225,64 @@ function SellerJoinContent() {
                     placeholder="Minst 8 tecken"
                     className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Typ av organisation *</label>
+                  <select
+                    required
+                    value={form.organizationType}
+                    onChange={(e) => set('organizationType', e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                  >
+                    <option value="">Välj typ</option>
+                    <option value="forening">Förening</option>
+                    <option value="klass">Klass / Skolgrupp</option>
+                    <option value="klubb">Klubb</option>
+                    <option value="annat">Annat</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Namn på organisation *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.organizationName}
+                    onChange={(e) => set('organizationName', e.target.value)}
+                    placeholder="IFK Göteborg, Klass 9B, etc."
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Inbjudningskod från organisation *</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.inviteCode}
+                    onChange={(e) => set('inviteCode', e.target.value)}
+                    placeholder="Kod du fått från din förening/klubb/klass"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none transition"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Om du är förälder eller vill hjälpa en organisation, kontakta dem för att få en kod
+                  </p>
+                </div>
+                <div className="bg-primary-50 rounded-xl p-4">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.shareCommission}
+                      onChange={(e) => setForm((f) => ({ ...f, shareCommission: e.target.checked }))}
+                      className="w-5 h-5 mt-0.5 accent-primary-900 rounded"
+                    />
+                    <div>
+                      <span className="text-sm font-semibold text-primary-900">
+                        Dela min provision med organisationen
+                      </span>
+                      <p className="text-xs text-primary-700 mt-1">
+                        Välj om du vill dela en del av din försäljningsprovision med din förening/klubb/klass
+                      </p>
+                    </div>
+                  </label>
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button

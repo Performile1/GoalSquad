@@ -1,35 +1,26 @@
 /**
- * Seller Registration API (with Guardian Consent)
+ * Seller Registration API (Organization-based)
  * POST /api/sellers/register
  * 
- * Registers a youth seller with guardian approval
+ * Registers a seller connected to an organization (forening/klass/klubb)
+ * with invite code verification and commission sharing option
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { AuditSignature } from '@/lib/audit-signature';
 import { z } from 'zod';
 
 const sellerSchema = z.object({
-  // Seller info
-  fullName: z.string().min(2).max(255),
+  // User info
   email: z.string().email(),
-  dateOfBirth: z.string(), // ISO date
   
-  // Guardian info
-  guardianName: z.string().min(2).max(255),
-  guardianEmail: z.string().email(),
-  guardianPhone: z.string(),
+  // Organization info
+  organization_type: z.enum(['forening', 'klass', 'klubb', 'annat']),
+  organization_name: z.string().min(2).max(255),
+  invite_code: z.string().min(4).max(20),
   
-  // Community
-  communityId: z.string().uuid(),
-  
-  // Shop customization
-  shopBio: z.string().max(500).optional(),
-  shopVideoUrl: z.string().url().optional(),
-  
-  // Verification
-  verificationMethod: z.enum(['otp_email', 'otp_sms']),
+  // Commission sharing
+  share_commission: z.boolean(),
   
   // Request metadata
   ipAddress: z.string().optional(),
@@ -41,195 +32,98 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = sellerSchema.parse(body);
 
-    // Check age (must be under 18 for guardian requirement)
-    const birthDate = new Date(validatedData.dateOfBirth);
-    const age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    // Get user by email
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.admin.getUserById(
+      (await supabaseAdmin.auth.admin.listUsers()).data.users.find(u => u.email === validatedData.email)?.id || ''
+    );
 
-    if (age >= 18) {
-      return NextResponse.json(
-        { error: 'Seller must be under 18 years old' },
-        { status: 400 }
-      );
+    if (authError || !user) {
+      // Try to get user by email from profiles table
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .eq('email', validatedData.email)
+        .single();
+
+      if (profileError || !profile) {
+        return NextResponse.json(
+          { error: 'Användare hittades inte' },
+          { status: 404 }
+        );
+      }
     }
 
-    // Verify community exists
-    const { data: community, error: communityError } = await supabaseAdmin
-      .from('communities')
-      .select('*')
-      .eq('id', validatedData.communityId)
-      .single();
+    // Get user ID from either auth or profile
+    const userId = user?.id || (await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('email', validatedData.email)
+      .single()
+    ).data?.id;
 
-    if (communityError || !community) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'Community not found' },
+        { error: 'Användare hittades inte' },
         { status: 404 }
       );
     }
 
-    // Create guardian profile first
-    const { data: guardianUser, error: guardianAuthError } = await supabaseAdmin.auth.admin.createUser({
-      email: validatedData.guardianEmail,
-      email_confirm: false,
-      user_metadata: {
-        full_name: validatedData.guardianName,
-        role: 'guardian',
-      },
-    });
-
-    if (guardianAuthError || !guardianUser) {
-      console.error('Failed to create guardian user:', guardianAuthError);
-      return NextResponse.json(
-        { error: 'Failed to create guardian account' },
-        { status: 500 }
-      );
-    }
-
-    // Create guardian profile
-    const { data: guardianProfile, error: guardianProfileError } = await supabaseAdmin
-      .from('profiles')
-      .insert({
-        id: guardianUser.user.id,
-        email: validatedData.guardianEmail,
-        full_name: validatedData.guardianName,
-        phone: validatedData.guardianPhone,
-        role: 'guardian',
-        community_id: validatedData.communityId,
-        is_verified: false,
-      })
-      .select()
+    // Verify invite code against organizations
+    const { data: organization, error: orgError } = await supabaseAdmin
+      .from('organizations')
+      .select('*')
+      .eq('invite_code', validatedData.invite_code)
+      .eq('type', validatedData.organization_type)
+      .ilike('name', `%${validatedData.organization_name}%`)
       .single();
 
-    if (guardianProfileError) {
-      console.error('Failed to create guardian profile:', guardianProfileError);
+    if (orgError || !organization) {
       return NextResponse.json(
-        { error: 'Failed to create guardian profile' },
-        { status: 500 }
+        { error: 'Ogiltig inbjudningskod eller organisation hittades inte' },
+        { status: 400 }
       );
     }
 
-    // Create seller user
-    const { data: sellerUser, error: sellerAuthError } = await supabaseAdmin.auth.admin.createUser({
-      email: validatedData.email,
-      email_confirm: false,
-      user_metadata: {
-        full_name: validatedData.fullName,
-        role: 'seller',
-        date_of_birth: validatedData.dateOfBirth,
-      },
-    });
-
-    if (sellerAuthError || !sellerUser) {
-      console.error('Failed to create seller user:', sellerAuthError);
-      return NextResponse.json(
-        { error: 'Failed to create seller account' },
-        { status: 500 }
-      );
-    }
-
-    // Create seller profile
-    const { data: sellerProfile, error: sellerProfileError } = await supabaseAdmin
+    // Update user profile with organization info
+    const { error: profileError } = await supabaseAdmin
       .from('profiles')
-      .insert({
-        id: sellerUser.user.id,
-        email: validatedData.email,
-        full_name: validatedData.fullName,
-        role: 'seller',
-        guardian_id: guardianProfile.id,
-        community_id: validatedData.communityId,
-        is_verified: false,
-        metadata: {
-          date_of_birth: validatedData.dateOfBirth,
-          age,
-        },
-      })
-      .select()
-      .single();
-
-    if (sellerProfileError) {
-      console.error('Failed to create seller profile:', sellerProfileError);
-      return NextResponse.json(
-        { error: 'Failed to create seller profile' },
-        { status: 500 }
-      );
-    }
-
-    // Create seller gamification profile
-    const shopUrl = `${community.slug}-${sellerProfile.id.substring(0, 8)}`;
-    
-    const { error: sellerGamificationError } = await supabaseAdmin
-      .from('seller_profiles')
-      .insert({
-        user_id: sellerProfile.id,
-        community_id: validatedData.communityId,
-        shop_url: shopUrl,
-        shop_bio: validatedData.shopBio,
-        shop_video_url: validatedData.shopVideoUrl,
-      });
-
-    if (sellerGamificationError) {
-      console.error('Failed to create seller gamification profile:', sellerGamificationError);
-    }
-
-    // Initiate guardian consent signature
-    const signatureResult = await AuditSignature.initiateSignature({
-      entityType: 'merchant', // Using merchant type for sellers
-      entityId: sellerProfile.id,
-      action: 'guardian_consent',
-      userId: guardianProfile.id,
-      email: validatedData.guardianEmail,
-      phone: validatedData.guardianPhone,
-      verificationMethod: validatedData.verificationMethod,
-      ipAddress: validatedData.ipAddress,
-      userAgent: validatedData.userAgent,
-      metadata: {
-        sellerName: validatedData.fullName,
-        sellerAge: age,
-        communityName: community.name,
-      },
-    });
-
-    if (!signatureResult.success) {
-      return NextResponse.json(
-        { error: signatureResult.error },
-        { status: 500 }
-      );
-    }
-
-    // Update community member count
-    await supabaseAdmin
-      .from('communities')
       .update({
-        total_members: community.total_members + 1,
+        role: 'seller',
+        organization_id: organization.id,
+        organization_type: validatedData.organization_type,
+        organization_name: validatedData.organization_name,
+        share_commission: validatedData.share_commission,
+        is_verified: true, // Auto-verified with valid invite code
       })
-      .eq('id', validatedData.communityId);
+      .eq('id', userId);
+
+    if (profileError) {
+      console.error('Failed to update seller profile:', profileError);
+      return NextResponse.json(
+        { error: 'Kunde inte uppdatera profil' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
       seller: {
-        id: sellerProfile.id,
-        fullName: sellerProfile.full_name,
-        shopUrl,
-        guardianId: guardianProfile.id,
-      },
-      verification: {
-        otpHash: signatureResult.otp,
-        method: validatedData.verificationMethod,
-        sentTo: validatedData.verificationMethod === 'otp_email' 
-          ? validatedData.guardianEmail 
-          : validatedData.guardianPhone,
+        id: userId,
+        organization: organization.name,
+        shareCommission: validatedData.share_commission,
       },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation failed', details: error.errors },
+        { error: 'Validering misslyckades', details: error.errors },
         { status: 400 }
       );
     }
 
     console.error('Seller registration error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internt serverfel' },
       { status: 500 }
     );
   }

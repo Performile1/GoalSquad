@@ -117,6 +117,7 @@ export default function Footer() {
               {[
                 { href: '/join', label: 'Kom igång' },
                 { href: '/join/community', label: 'Registrera förening' },
+                { href: '/sellers/join', label: 'Registrera säljare' },
                 { href: '/communities', label: 'Se alla communities' },
                 { href: '/marketplace/new', label: 'Sälj egna produkter' },
                 { href: '/calculator', label: 'Beräkna intäkter' },
