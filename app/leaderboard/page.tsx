@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrophyIcon, UserIcon, CommunityIcon } from '@/app/components/BrandIcons';
+import { TrophyIcon, UserIcon, CommunityIcon, XPIcon, BadgeIcon, FireModeIcon, StreakIcon } from '@/app/components/BrandIcons';
 
 interface LeaderboardEntry {
   rank: number;
@@ -13,6 +13,10 @@ interface LeaderboardEntry {
   totalSales: number;
   totalOrders: number;
   level: number;
+  xp: number;
+  badges: number;
+  fireModeActive: boolean;
+  dailyStreak: number;
 }
 
 type Period = 'all_time' | 'month' | 'week';
@@ -148,6 +152,19 @@ export default function PublicLeaderboardPage() {
                 <div className="text-sm text-gray-500">
                   {leaderboardData[1].totalOrders} ordrar
                 </div>
+                {activeTab === 'sellers' && (
+                  <div className="flex items-center justify-center gap-2 mt-2 text-xs text-gray-500">
+                    <span>Lvl {leaderboardData[1].level}</span>
+                    <span>·</span>
+                    <span>{leaderboardData[1].badges} badges</span>
+                    {leaderboardData[1].fireModeActive && (
+                      <>
+                        <span>·</span>
+                        <FireModeIcon size={14} className="text-orange-500" />
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
 
@@ -180,6 +197,25 @@ export default function PublicLeaderboardPage() {
                 <div className="text-sm text-primary-600">
                   {leaderboardData[0].totalOrders} ordrar
                 </div>
+                {activeTab === 'sellers' && (
+                  <div className="flex items-center justify-center gap-2 mt-2 text-xs text-primary-700">
+                    <span>Lvl {leaderboardData[0].level}</span>
+                    <span>·</span>
+                    <span>{leaderboardData[0].badges} badges</span>
+                    {leaderboardData[0].dailyStreak > 0 && (
+                      <>
+                        <span>·</span>
+                        <span>{leaderboardData[0].dailyStreak}d streak</span>
+                      </>
+                    )}
+                    {leaderboardData[0].fireModeActive && (
+                      <>
+                        <span>·</span>
+                        <FireModeIcon size={14} className="text-orange-500" />
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
 
@@ -212,6 +248,19 @@ export default function PublicLeaderboardPage() {
                 <div className="text-sm text-gray-500">
                   {leaderboardData[2].totalOrders} ordrar
                 </div>
+                {activeTab === 'sellers' && (
+                  <div className="flex items-center justify-center gap-2 mt-2 text-xs text-gray-500">
+                    <span>Lvl {leaderboardData[2].level}</span>
+                    <span>·</span>
+                    <span>{leaderboardData[2].badges} badges</span>
+                    {leaderboardData[2].fireModeActive && (
+                      <>
+                        <span>·</span>
+                        <FireModeIcon size={14} className="text-orange-500" />
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>
@@ -258,15 +307,30 @@ export default function PublicLeaderboardPage() {
 
                     {/* Info */}
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg text-gray-900">
-                        {entry.name}
-                      </h3>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-lg text-gray-900">
+                          {entry.name}
+                        </h3>
+                        {entry.fireModeActive && (
+                          <FireModeIcon size={20} className="text-orange-500" title="Fire Mode Active" />
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600">
                         {entry.communityName}
                       </p>
                       {activeTab === 'sellers' && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          Level {entry.level}
+                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <XPIcon size={12} /> Level {entry.level}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <BadgeIcon size={12} /> {entry.badges}
+                          </span>
+                          {entry.dailyStreak > 0 && (
+                            <span className="flex items-center gap-1">
+                              <StreakIcon size={12} /> {entry.dailyStreak}d
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
