@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default function LoginPage() {
+function LoginRedirect() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -23,5 +23,20 @@ export default function LoginPage() {
         <p className="text-white font-semibold">Laddar...</p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-primary-900 to-primary-600 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full border-4 border-white border-t-transparent animate-spin mx-auto mb-4" />
+          <p className="text-white font-semibold">Laddar...</p>
+        </div>
+      </div>
+    }>
+      <LoginRedirect />
+    </Suspense>
   );
 }
