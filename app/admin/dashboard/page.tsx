@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { DashboardIcon, UserIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon } from '@/app/components/BrandIcons';
+import { DashboardIcon, UserIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, XPIcon, LevelIcon, BadgeIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 interface AdminStats {
   totalCommunities: number;
@@ -17,6 +17,10 @@ interface AdminStats {
   activeUsers: number;
   pendingReports: number;
   inactiveEntities: number;
+  totalXP: number;
+  totalLevels: number;
+  totalBadges: number;
+  totalLootBoxes: number;
 }
 
 interface EntitySummary {
@@ -191,6 +195,30 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
                 <stat.icon size={36} className={stat.alert ? 'text-red-600' : 'text-blue-600'} />
+              </div>
+              <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Gamification Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {[
+            { label: 'Totalt XP', value: `${(stats?.totalXP || 0).toLocaleString()}`, icon: XPIcon, color: 'purple' },
+            { label: 'Genomsnittlig Level', value: stats?.totalLevels ? (stats.totalLevels / (stats.totalSellers || 1)).toFixed(1) : '0', icon: LevelIcon, color: 'purple' },
+            { label: 'Totala Märken', value: stats?.totalBadges || 0, icon: BadgeIcon, color: 'purple' },
+            { label: 'Loot Boxes', value: stats?.totalLootBoxes || 0, icon: TrophyIcon, color: 'purple' },
+          ].map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.1 + index * 0.1 }}
+              className="bg-white rounded-2xl shadow-lg p-6 border-2 border-purple-200"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
+                <stat.icon size={36} className="text-purple-600" />
               </div>
               <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
             </motion.div>
