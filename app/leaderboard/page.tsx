@@ -312,7 +312,7 @@ export default function PublicLeaderboardPage() {
                           {entry.name}
                         </h3>
                         {entry.fireModeActive && (
-                          <FireModeIcon size={20} className="text-orange-500" title="Fire Mode Active" />
+                          <FireModeIcon size={20} className="text-orange-500" />
                         )}
                       </div>
                       <p className="text-sm text-gray-600">
