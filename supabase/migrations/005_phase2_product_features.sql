@@ -16,7 +16,43 @@
  */
 
 -- ============================================
--- 1. PRODUCT CATEGORIES SEARCH FEATURES
+-- 1. PRODUCT CATEGORIES TABLE
+-- ============================================
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'product_categories') THEN
+    CREATE TABLE product_categories (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      parent_id UUID REFERENCES product_categories(id) ON DELETE CASCADE,
+      name VARCHAR(255) NOT NULL,
+      slug VARCHAR(255) UNIQUE NOT NULL,
+      description TEXT,
+      icon VARCHAR(100),
+      color VARCHAR(7),
+      sort_order INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT true,
+      metadata JSONB DEFAULT '{}',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+
+    CREATE INDEX idx_product_categories_parent ON product_categories(parent_id);
+    CREATE INDEX idx_product_categories_slug ON product_categories(slug);
+    CREATE INDEX idx_product_categories_active ON product_categories(is_active) WHERE is_active = true;
+
+    ALTER TABLE product_categories ENABLE ROW LEVEL SECURITY;
+
+    -- Add trigger for updated_at
+    CREATE TRIGGER update_product_categories_updated_at
+      BEFORE UPDATE ON product_categories
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
+
+-- ============================================
+-- 2. PRODUCT CATEGORIES SEARCH FEATURES
 -- ============================================
 
 -- Add category_id, tags, search_vector to products if they don't exist
