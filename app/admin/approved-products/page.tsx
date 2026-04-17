@@ -164,9 +164,9 @@ export default function ApprovedProductsPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
-                <stat.color === 'green' ? <CheckIcon size={36} className="text-green-600" /> :
+                {stat.color === 'green' ? <CheckIcon size={36} className="text-green-600" /> :
                  stat.color === 'yellow' ? <AlertIcon size={36} className="text-yellow-600" /> :
-                 <AlertIcon size={36} className="text-red-600" />
+                 <AlertIcon size={36} className="text-red-600" />}
               </div>
               <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
             </motion.div>
