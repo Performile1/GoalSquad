@@ -82,10 +82,15 @@ export default function Footer() {
               GoalSquad
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/login?redirect=/admin/blog" className="text-white font-semibold hover:text-white text-sm transition">
+                  Admin →
+                </Link>
+              </li>
               {[
                 { href: '/about/community-commerce', label: 'Community Commerce' },
                 { href: '/about', label: 'Om oss' },
-                { href: '/about/goalsquad', label: 'Om GoalSquad' },
+                { href: '/blog', label: 'Blog' },
                 { href: '/privacy', label: 'Integritetspolicy' },
                 { href: '/terms', label: 'Användarvillkor' },
                 { href: '/contact', label: 'Kontakt' },
