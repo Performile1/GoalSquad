@@ -132,6 +132,11 @@ export default function Footer() {
               Förening / Klass
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/login?redirect=/community/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                  Logga in →
+                </Link>
+              </li>
               {[
                 { href: '/join', label: 'Kom igång' },
                 { href: '/join/community', label: 'Registrera förening' },
@@ -156,9 +161,13 @@ export default function Footer() {
               Säljare
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/login?redirect=/sellers/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                  Logga in →
+                </Link>
+              </li>
               {[
-                { href: '/sellers/dashboard', label: 'Säljar-dashboard' },
-                { href: '/sellers/backend', label: 'Säljar-backend' },
+                { href: '/sellers/dashboard', label: 'Dashboard & Backend' },
                 { href: '/sellers/products', label: 'Mina produkter' },
                 { href: '/sellers/orders', label: 'Mina ordrar' },
                 { href: '/sellers/analytics', label: 'Statistik' },
@@ -178,12 +187,16 @@ export default function Footer() {
               Företag
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/login?redirect=/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                  Logga in →
+                </Link>
+              </li>
               {[
                 { href: '/merchants/onboard', label: 'Bli leverantör' },
                 { href: '/merchants', label: 'Alla leverantörer' },
                 { href: '/calculator/merchant', label: 'Beräkna potential' },
                 { href: '/dashboard', label: 'Min sida' },
-                { href: '/login', label: 'Logga in' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
@@ -200,6 +213,11 @@ export default function Footer() {
               Lagerpartners
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/login?redirect=/warehouses/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                  Logga in →
+                </Link>
+              </li>
               {[
                 { href: '/warehouses/onboard', label: 'Bli lagerpartner' },
                 { href: '/warehouses', label: 'Alla lager' },

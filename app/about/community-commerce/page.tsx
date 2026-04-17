@@ -54,8 +54,9 @@ export default function CommunityCommercePage() {
             När en försäljning görs via en säljares länk delas intäkterna på följande sätt:
           </p>
           <ul className="space-y-2 text-gray-600 mb-6">
-            <li>• Säljare får en del av försäljningsprovisionen</li>
-            <li>• Organisationen får en del av intäkterna (om säljaren väljer att dela)</li>
+            <li>• Organisationen (klubb/förening/klass) väljer om säljaren får provision</li>
+            <li>• Säljaren kan välja om de vill dela med sig av sin provision till förening/klass/klubb</li>
+            <li>• Säljaren kan vara en medlem/elev/förälder eller supporter</li>
             <li>• GoalSquad tar en del för plattformen och logistik</li>
           </ul>
         </div>
