@@ -495,3 +495,198 @@ export function StarIcon({ size = 20, className = '' }: IconProps) {
     </svg>
   );
 }
+
+// Gamification Icons
+
+export function XPIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 6L14 20h8l-2 14 12-16h-8l2-14z" fill={A} stroke={P} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function LevelIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="18" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 12v12l8 4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <text x="24" y="28" fontSize="14" fontWeight="bold" fill={P} textAnchor="middle" fontFamily="system-ui">LVL</text>
+    </svg>
+  );
+}
+
+export function AvatarIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="18" r="10" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M6 44c0-9.941 8.059-18 18-18s18 8.059 18 18" fill={A} stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="14" r="3" fill={P} />
+    </svg>
+  );
+}
+
+export function QuestIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="6" y="6" width="36" height="36" rx="4" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M14 20l6 6 14-14" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="24" cy="38" r="6" fill={P} />
+      <path d="M24 36v4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function LootBoxIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="8" y="16" width="32" height="24" rx="4" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M8 24h32" stroke={P} strokeWidth="2" />
+      <circle cx="24" cy="12" r="6" fill={P} />
+      <path d="M20 12l4-4 4 4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="16" cy="32" r="3" fill={P} />
+      <circle cx="32" cy="32" r="3" fill={P} />
+    </svg>
+  );
+}
+
+export function FireModeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 4c-4 0-8 4-8 12 0 4 2 8 6 12-2-4-2-8 0-12 2-4 6-8 8-8z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 16c-2 0-4 2-4 6 0 2 1 4 3 5-1-2-1-4 0-6 1-2 3-4 5-4z" fill={P} />
+      <path d="M24 22c-1 0-2 1-2 3 0 1 0.5 2 1.5 2.5-0.5-1-0.5-2 0-3 0.5-1 1.5-2 2.5-2z" fill="white" />
+    </svg>
+  );
+}
+
+export function StreakIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="12" cy="36" r="8" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="24" r="8" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="36" cy="12" r="8" fill={P} stroke={P} strokeWidth="2.5" />
+      <path d="M18 32l6-6" stroke={P} strokeWidth="2" strokeLinecap="round" />
+      <path d="M30 20l6-6" stroke={P} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function BadgeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="20" r="14" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 34v10M18 42l6-4 6 4" stroke={P} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18 18l2 2 4-4" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function MilestoneIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M4 40V24l16-16 16 16v16" stroke={P} strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="20" cy="8" r="6" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="36" cy="24" r="6" fill={P} stroke={P} strokeWidth="2.5" />
+      <circle cx="12" cy="40" r="6" fill={A} stroke={P} strokeWidth="2.5" />
+    </svg>
+  );
+}
+
+export function SquadIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="14" r="6" fill={P} stroke={P} strokeWidth="2" />
+      <circle cx="10" cy="18" r="5" fill={A} stroke={P} strokeWidth="2" />
+      <circle cx="38" cy="18" r="5" fill={A} stroke={P} strokeWidth="2" />
+      <path d="M14 38c0-5.523 4.477-10 10-10s10 4.477 10 10" fill={A} stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M2 40c0-4 3.134-7 7-7" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M46 40c0-4-3.134-7-7-7" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="8" fill={P} opacity="0.3" />
+    </svg>
+  );
+}
+
+export function SupportIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 6c-8 0-14 6-14 14 0 4 2 8 6 10v8l8-4 8 4v-8c4-2 6-6 6-10 0-8-6-14-14-14z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M18 18l2 2 4-4" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="24" cy="32" r="4" fill={P} />
+    </svg>
+  );
+}
+
+export function ImpactIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="18" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="24" r="12" fill={P} opacity="0.5" />
+      <circle cx="24" cy="24" r="6" fill={P} />
+      <path d="M24 6v6M24 36v6M42 24h-6M12 24H6" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function ReferralIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 8L14 18h6v12h8V18h6L24 8z" fill={A} stroke={P} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 32h20" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M18 36l-4-4 4-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M30 36l4-4-4-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function CheerIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 6c-8 0-14 6-14 14 0 6 4 12 10 16 6-4 10-10 10-16 0-8-6-14-14-14z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 12l2 6 6 0-5 4 2 6-5-4-5 4 2-6-5-4 6 0z" fill={P} />
+    </svg>
+  );
+}
+
+export function TierIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="4" y="28" width="10" height="14" rx="2" fill={A} stroke={P} strokeWidth="2" />
+      <rect x="18" y="18" width="12" height="24" rx="2" fill={P} stroke={P} strokeWidth="2" />
+      <rect x="34" y="22" width="10" height="20" rx="2" fill={A} stroke={P} strokeWidth="2" />
+      <circle cx="24" cy="12" r="6" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 18v0" stroke={P} strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function EquipmentSlotIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="6" y="6" width="36" height="36" rx="4" fill={A} stroke={P} strokeWidth="2.5" strokeDasharray="4 4" />
+      <path d="M24 16v16M16 24h16" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="6" fill={P} />
+    </svg>
+  );
+}
+
+export function SkinIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 6c-6 0-10 4-10 10 0 4 2 8 6 10v8l8-4 8 4v-8c4-2 6-6 6-10 0-6-4-10-10-10z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M20 18l2 2 4-4" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function GoldenHoodieIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 8L6 14v6l6 4 6-4 6 4 6-4 6 4 6-4v-6l-6-6H12z" fill="#FFD700" stroke={P} strokeWidth="2.5" />
+      <rect x="18" y="24" width="12" height="20" fill={P} />
+      <path d="M12 24l6-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M36 24l-6-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="34" r="4" fill="#FFD700" />
+    </svg>
+  );
+}
