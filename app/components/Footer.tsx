@@ -140,7 +140,7 @@ export default function Footer() {
               {[
                 { href: '/merchants/onboard', label: 'Bli leverantör' },
                 { href: '/merchants', label: 'Alla leverantörer' },
-                { href: '/calculator', label: 'Beräkna potential' },
+                { href: '/calculator/merchant', label: 'Beräkna potential' },
                 { href: '/dashboard', label: 'Min sida' },
                 { href: '/auth/login', label: 'Logga in' },
               ].map((link) => (

@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import SalesCalculator from '@/app/components/SalesCalculator';
 import { motion } from 'framer-motion';
 import { TrophyIcon, CommunityIcon, UserIcon, SearchIcon, DashboardIcon } from '@/app/components/BrandIcons';
+import { useAuth } from '@/lib/auth-context';
 
 // Sample real companies and products (will be replaced with DB data)
 const SAMPLE_PRODUCTS = [
@@ -141,6 +143,9 @@ const SAMPLE_PRODUCTS = [
 ];
 
 export default function CalculatorPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  
   const [stats, setStats] = useState({
     totalCommunities: 0,
     totalRevenue: 0,
@@ -148,9 +153,29 @@ export default function CalculatorPage() {
   });
 
   useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login?redirect=/calculator');
+    }
+  }, [user, loading, router]);
+
+  useEffect(() => {
     // Fetch real stats from DB
-    fetchStats();
-  }, []);
+    if (user) {
+      fetchStats();
+    }
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-primary-50 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full border-4 border-primary-900 border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const fetchStats = async () => {
     try {
