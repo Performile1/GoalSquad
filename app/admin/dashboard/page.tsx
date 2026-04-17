@@ -230,26 +230,29 @@ export default function AdminDashboard() {
                     Ingen nyligen aktivitet
                   </div>
                 ) : (
-                  activities.slice(0, 10).map((activity, index) => (
-                    <motion.div
-                      key={activity.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl"
-                    >
-                      <div className="bg-primary-100 rounded-lg p-3">
-                        <getActivityIcon(activity.type) size={24} className="text-primary-900" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{activity.entity}</p>
-                        <p className="text-sm text-gray-600">{activity.description}</p>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(activity.timestamp).toLocaleString('sv-SE')}
-                      </span>
-                    </motion.div>
-                  ))
+                  activities.slice(0, 10).map((activity, index) => {
+                    const ActivityIcon = getActivityIcon(activity.type);
+                    return (
+                      <motion.div
+                        key={activity.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl"
+                      >
+                        <div className="bg-primary-100 rounded-lg p-3">
+                          <ActivityIcon size={24} className="text-primary-900" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900">{activity.entity}</p>
+                          <p className="text-sm text-gray-600">{activity.description}</p>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {new Date(activity.timestamp).toLocaleString('sv-SE')}
+                        </span>
+                      </motion.div>
+                    );
+                  })
                 )}
               </div>
             </div>
