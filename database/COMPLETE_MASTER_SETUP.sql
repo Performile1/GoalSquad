@@ -382,6 +382,10 @@ BEGIN
       user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
       role TEXT DEFAULT 'member' CHECK (role IN ('admin', 'guardian', 'seller', 'member')),
       joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      guardian_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+      guardian_approved BOOLEAN DEFAULT false,
+      guardian_approved_at TIMESTAMP WITH TIME ZONE,
+      is_minor BOOLEAN DEFAULT false,
       UNIQUE(community_id, user_id)
     );
   END IF;
@@ -392,7 +396,11 @@ ALTER TABLE community_members
 ADD COLUMN IF NOT EXISTS community_id UUID,
 ADD COLUMN IF NOT EXISTS user_id UUID,
 ADD COLUMN IF NOT EXISTS role TEXT,
-ADD COLUMN IF NOT EXISTS joined_at TIMESTAMP WITH TIME ZONE;
+ADD COLUMN IF NOT EXISTS joined_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS guardian_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+ADD COLUMN IF NOT EXISTS guardian_approved BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS guardian_approved_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS is_minor BOOLEAN DEFAULT false;
 
 -- Add unique constraint if columns exist
 DO $$
@@ -428,6 +436,24 @@ BEGIN
     ALTER TABLE community_members ADD CONSTRAINT community_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE;
   END IF;
 EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+-- Create sop_sla_acceptances table for tracking SOP/SLA acceptance during registration
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE tablename = 'sop_sla_acceptances') THEN
+    CREATE TABLE sop_sla_acceptances (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+      entity_type VARCHAR(50) NOT NULL CHECK (entity_type IN ('company', 'community', 'club', 'class', 'warehouse')),
+      entity_id UUID,
+      sop_version VARCHAR(20) NOT NULL,
+      sla_version VARCHAR(20) NOT NULL,
+      accepted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      ip_address VARCHAR(45),
+      UNIQUE(user_id, entity_type, entity_id)
+    );
+  END IF;
 END $$;
 
 -- Create orders table if it doesn't exist
@@ -1150,8 +1176,11 @@ CREATE INDEX IF NOT EXISTS idx_seller_profiles_community ON seller_profiles(comm
 -- Conversations
 CREATE TABLE IF NOT EXISTS conversations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  conversation_type TEXT NOT NULL CHECK (conversation_type IN ('direct', 'community', 'broadcast')),
+  conversation_type TEXT NOT NULL CHECK (conversation_type IN ('direct', 'community', 'broadcast', 'entity')),
   community_id UUID REFERENCES communities(id),
+  merchant_id UUID REFERENCES merchants(id),
+  entity_type VARCHAR(50) CHECK (entity_type IN ('company', 'community', 'club', 'class', 'warehouse')),
+  entity_id UUID,
   name TEXT,
   created_by UUID REFERENCES profiles(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -1160,6 +1189,8 @@ CREATE TABLE IF NOT EXISTS conversations (
 
 CREATE INDEX idx_conversations_community ON conversations(community_id);
 CREATE INDEX idx_conversations_type ON conversations(conversation_type);
+CREATE INDEX idx_conversations_merchant ON conversations(merchant_id);
+CREATE INDEX idx_conversations_entity ON conversations(entity_type, entity_id);
 
 -- Conversation Participants
 CREATE TABLE IF NOT EXISTS conversation_participants (
