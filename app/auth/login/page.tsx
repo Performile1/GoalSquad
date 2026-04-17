@@ -34,6 +34,25 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/dashboard';
 
+  // Get contextual message based on redirect
+  const getContextualMessage = (redirectPath: string) => {
+    if (redirectPath.includes('marketplace/new')) {
+      return 'För att kunna lägga in egna produkter måste ni logga in';
+    }
+    if (redirectPath.includes('orders') || redirectPath.includes('dashboard')) {
+      return 'För att se era ordrar måste ni logga in';
+    }
+    if (redirectPath.includes('calculator/merchant')) {
+      return 'För att kunna räkna ut era intäkter som företag måste ni logga in';
+    }
+    if (redirectPath.includes('merchants') || redirectPath.includes('sellers')) {
+      return 'För att få tillgång till säljar-backend måste ni logga in';
+    }
+    return 'Logga in på ditt konto';
+  };
+
+  const contextualMessage = getContextualMessage(redirect);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -63,7 +82,7 @@ export default function LoginPage() {
             GoalSquad
           </h1>
           <p className="text-gray-600">
-            Logga in på ditt konto
+            {contextualMessage}
           </p>
         </div>
 

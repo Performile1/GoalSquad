@@ -131,6 +131,28 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Säljare */}
+          <div>
+            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+              Säljare
+            </h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/sellers/dashboard', label: 'Säljar-dashboard' },
+                { href: '/sellers/backend', label: 'Säljar-backend' },
+                { href: '/sellers/products', label: 'Mina produkter' },
+                { href: '/sellers/orders', label: 'Mina ordrar' },
+                { href: '/sellers/analytics', label: 'Statistik' },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-white/60 hover:text-white text-sm transition">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Företag */}
           <div>
             <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
