@@ -902,7 +902,15 @@ CREATE TABLE IF NOT EXISTS pending_moq_orders (
 );
 
 CREATE INDEX IF NOT EXISTS idx_pending_orders_product ON pending_moq_orders(product_id);
-CREATE INDEX IF NOT EXISTS idx_pending_orders_user ON pending_moq_orders(user_id);
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'pending_moq_orders' AND column_name = 'user_id'
+  ) THEN
+    CREATE INDEX IF NOT EXISTS idx_pending_orders_user ON pending_moq_orders(user_id);
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_pending_orders_warehouse ON pending_moq_orders(assigned_warehouse_id);
 CREATE INDEX IF NOT EXISTS idx_pending_orders_status ON pending_moq_orders(status);
 
