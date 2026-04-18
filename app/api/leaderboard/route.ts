@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const type = searchParams.get('type') || 'sellers'; // 'sellers' or 'communities'
+    const type = searchParams.get('type') || 'sellers'; // 'sellers', 'communities', or 'merchants'
     const period = searchParams.get('period') || 'month'; // 'week', 'month', 'all_time'
     const limit = parseInt(searchParams.get('limit') || '50');
 
@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
       }));
 
       return NextResponse.json({ leaderboard });
-    } else {
+    } else if (type === 'communities') {
       // Community leaderboard
       const { data: communities, error } = await supabaseAdmin
         .from('communities')
@@ -113,6 +113,42 @@ export async function GET(req: NextRequest) {
         totalSales: parseFloat(community.total_sales || 0),
         totalOrders: community.total_orders || 0,
         level: 0, // Communities don't have levels
+      }));
+
+      return NextResponse.json({ leaderboard });
+    } else if (type === 'merchants') {
+      // Merchants leaderboard
+      const { data: merchants, error } = await supabaseAdmin
+        .from('merchants')
+        .select(`
+          id,
+          business_name,
+          logo_url,
+          city,
+          country,
+          total_sales,
+          total_orders
+        `)
+        .order('total_sales', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error('Merchants leaderboard error:', error);
+        return NextResponse.json(
+          { error: 'Failed to fetch leaderboard' },
+          { status: 500 }
+        );
+      }
+
+      const leaderboard = (merchants || []).map((merchant: any, index: number) => ({
+        rank: index + 1,
+        id: merchant.id,
+        name: merchant.business_name,
+        avatarUrl: merchant.logo_url,
+        communityName: `${merchant.city}, ${merchant.country}`,
+        totalSales: parseFloat(merchant.total_sales || 0),
+        totalOrders: merchant.total_orders || 0,
+        level: 0, // Merchants don't have levels
       }));
 
       return NextResponse.json({ leaderboard });

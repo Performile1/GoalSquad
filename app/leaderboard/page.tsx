@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrophyIcon, UserIcon, CommunityIcon, XPIcon, BadgeIcon, FireModeIcon, StreakIcon } from '@/app/components/BrandIcons';
+import { TrophyIcon, UserIcon, CommunityIcon, XPIcon, BadgeIcon, FireModeIcon, StreakIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
 
 interface LeaderboardEntry {
   rank: number;
@@ -25,8 +25,9 @@ export default function PublicLeaderboardPage() {
   const [period, setPeriod] = useState<Period>('month');
   const [sellers, setSellers] = useState<LeaderboardEntry[]>([]);
   const [communities, setCommunities] = useState<LeaderboardEntry[]>([]);
+  const [merchants, setMerchants] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'sellers' | 'communities'>('sellers');
+  const [activeTab, setActiveTab] = useState<'sellers' | 'communities' | 'merchants'>('sellers');
 
   useEffect(() => {
     fetchLeaderboard();
@@ -42,8 +43,10 @@ export default function PublicLeaderboardPage() {
       
       if (activeTab === 'sellers') {
         setSellers(data.leaderboard || []);
-      } else {
+      } else if (activeTab === 'communities') {
         setCommunities(data.leaderboard || []);
+      } else if (activeTab === 'merchants') {
+        setMerchants(data.leaderboard || []);
       }
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error);
@@ -59,7 +62,7 @@ export default function PublicLeaderboardPage() {
     return `#${rank}`;
   };
 
-  const leaderboardData = activeTab === 'sellers' ? sellers : communities;
+  const leaderboardData = activeTab === 'sellers' ? sellers : activeTab === 'communities' ? communities : merchants;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -96,6 +99,16 @@ export default function PublicLeaderboardPage() {
             }`}
           >
             <CommunityIcon size={18} /> Föreningar
+          </button>
+          <button
+            onClick={() => setActiveTab('merchants')}
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition ${
+              activeTab === 'merchants'
+                ? 'bg-primary-900 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-primary-50 hover:text-primary-900'
+            }`}
+          >
+            <ShoppingBagIcon size={18} /> Företag
           </button>
         </div>
 
