@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import QRCode from 'qrcode';
 
@@ -23,9 +23,9 @@ export default function ReturnsPage() {
   const [qrCode, setQrCode] = useState('');
 
   // Load return reasons on mount
-  useState(() => {
+  useEffect(() => {
     loadReturnReasons();
-  });
+  }, []);
 
   const loadReturnReasons = async () => {
     const { data, error } = await supabase
