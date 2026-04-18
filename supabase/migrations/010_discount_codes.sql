@@ -48,11 +48,11 @@ CREATE INDEX IF NOT EXISTS idx_discount_codes_validity ON discount_codes(valid_f
 ALTER TABLE discount_codes ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
-CREATE POLICY "Allow authenticated to view active discount codes"
+CREATE POLICY IF NOT EXISTS "Allow authenticated to view active discount codes"
   ON discount_codes FOR SELECT
   USING (is_active = true);
 
-CREATE POLICY "Allow service role full access"
+CREATE POLICY IF NOT EXISTS "Allow service role full access"
   ON discount_codes FOR ALL
   USING (auth.role() = 'service_role');
 
@@ -120,11 +120,11 @@ CREATE INDEX IF NOT EXISTS idx_product_auctions_timeline ON product_auctions(auc
 ALTER TABLE product_auctions ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
-CREATE POLICY "Allow sellers to view their auctions"
+CREATE POLICY IF NOT EXISTS "Allow sellers to view their auctions"
   ON product_auctions FOR SELECT
   USING (seller_id = auth.uid());
 
-CREATE POLICY "Allow community members to view community auctions"
+CREATE POLICY IF NOT EXISTS "Allow community members to view community auctions"
   ON product_auctions FOR SELECT
   USING (
     EXISTS (
@@ -136,7 +136,7 @@ CREATE POLICY "Allow community members to view community auctions"
     )
   );
 
-CREATE POLICY "Allow service role full access"
+CREATE POLICY IF NOT EXISTS "Allow service role full access"
   ON product_auctions FOR ALL
   USING (auth.role() = 'service_role');
 
