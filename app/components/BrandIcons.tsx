@@ -558,6 +558,32 @@ export function LootBoxIcon({ size = 48, className = '' }: IconProps) {
   );
 }
 
+export function CouponIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M4 12h40v16H4z" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="4" cy="20" r="4" fill={P} />
+      <circle cx="44" cy="20" r="4" fill={P} />
+      <path d="M8 20h32" stroke="white" strokeWidth="2" strokeDasharray="4 4" />
+      <path d="M12 16l-4 4 4 4" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M36 16l4 4-4 4" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function GiftIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="8" y="16" width="32" height="24" rx="2" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 16v24" stroke={P} strokeWidth="2.5" />
+      <path d="M8 24h32" stroke={P} strokeWidth="2.5" />
+      <path d="M16 16v-8c0-4.418 3.582-8 8-8s8 3.582 8 8v8" stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="8" r="4" fill={P} />
+      <path d="M20 8h8" stroke="white" strokeWidth="2" />
+    </svg>
+  );
+}
+
 export function FireModeIcon({ size = 48, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
