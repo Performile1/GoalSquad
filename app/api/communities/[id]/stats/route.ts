@@ -61,13 +61,23 @@ export async function GET(
     // Get treasury balance
     const treasuryBalance = await Treasury.getTreasuryBalance('community', communityId);
 
+    // Get total XP from seller_xp table
+    const { data: xpData } = await supabaseAdmin
+      .from('seller_xp')
+      .select('total_xp_earned')
+      .eq('seller_profile_id', communityId);
+
+    const totalXP = xpData?.reduce((sum, row) => sum + (row.total_xp_earned || 0), 0) || 0;
+
     const stats = {
       name: community.name,
       slug: community.slug,
       communityType: community.community_type,
       totalMembers: community.total_members,
       totalSales: parseFloat(community.total_sales),
+      totalRevenue: parseFloat(community.total_sales),
       totalCommission: parseFloat(community.total_commission),
+      totalXP: totalXP,
       activeCampaigns: campaigns || [],
       topSellers: topSellersList,
       treasuryBalance,
