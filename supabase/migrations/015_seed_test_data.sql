@@ -340,11 +340,3 @@ BEGIN
   
   RAISE NOTICE 'Gamification data created';
 END $$;
-
-RAISE NOTICE '=== SEED DATA COMPLETED ===';
-RAISE NOTICE 'Test Users:';
-RAISE NOTICE '  Admin: admin@test.com / admin123';
-RAISE NOTICE '  Customer: customer@test.com / customer123';
-RAISE NOTICE '  Seller: seller@test.com / seller123';
-RAISE NOTICE '  Merchant: merchant@test.com / merchant123';
-RAISE NOTICE '  Community: community@test.com / community123';
