@@ -14,6 +14,75 @@ test.describe('Authentication Tests', () => {
     await expect(page.locator('h1')).toContainText('Logga in');
   });
 
+  test('Customer login with test credentials', async ({ page }) => {
+    await page.goto(`${BASE_URL}/auth/login`);
+    
+    // Fill in login form
+    await page.fill('input[type="email"]', 'customer@test.com');
+    await page.fill('input[type="password"]', 'customer123');
+    
+    // Click login button
+    await page.click('button[type="submit"]');
+    
+    // Wait for navigation to dashboard or home
+    await page.waitForURL(/\/(dashboard|account)?/, { timeout: 5000 });
+    
+    // Verify login was successful
+    const currentUrl = page.url();
+    expect(currentUrl).toMatch(/\/(dashboard|account)/);
+  });
+
+  test('Admin login with test credentials', async ({ page }) => {
+    await page.goto(`${BASE_URL}/auth/login`);
+    
+    // Fill in login form
+    await page.fill('input[type="email"]', 'admin@test.com');
+    await page.fill('input[type="password"]', 'admin123');
+    
+    // Click login button
+    await page.click('button[type="submit"]');
+    
+    // Wait for navigation to admin dashboard
+    await page.waitForURL(/\/admin\/dashboard/, { timeout: 5000 });
+    
+    // Verify login was successful
+    await expect(page).toHaveURL(/\/admin\/dashboard/);
+  });
+
+  test('Seller login with test credentials', async ({ page }) => {
+    await page.goto(`${BASE_URL}/auth/login`);
+    
+    // Fill in login form
+    await page.fill('input[type="email"]', 'seller@test.com');
+    await page.fill('input[type="password"]', 'seller123');
+    
+    // Click login button
+    await page.click('button[type="submit"]');
+    
+    // Wait for navigation to seller dashboard
+    await page.waitForURL(/\/sellers\/dashboard/, { timeout: 5000 });
+    
+    // Verify login was successful
+    await expect(page).toHaveURL(/\/sellers\/dashboard/);
+  });
+
+  test('Merchant login with test credentials', async ({ page }) => {
+    await page.goto(`${BASE_URL}/auth/login`);
+    
+    // Fill in login form
+    await page.fill('input[type="email"]', 'merchant@test.com');
+    await page.fill('input[type="password"]', 'merchant123');
+    
+    // Click login button
+    await page.click('button[type="submit"]');
+    
+    // Wait for navigation to merchant dashboard
+    await page.waitForURL(/\/merchants\/.*\/dashboard/, { timeout: 5000 });
+    
+    // Verify login was successful
+    await expect(page).toHaveURL(/\/merchants\/.*\/dashboard/);
+  });
+
   test('Customer registration page loads', async ({ page }) => {
     await page.goto(`${BASE_URL}/auth/register`);
     await expect(page).toHaveTitle(/GoalSquad/);
