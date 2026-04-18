@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { MessageIcon } from '@/app/components/BrandIcons';
 
 interface CommunityStats {
   name: string;
@@ -90,6 +92,24 @@ export default function CommunityDashboard() {
           </h1>
           <p className="text-gray-600">Community Type: {stats.communityType}</p>
         </motion.div>
+
+        {/* Community Messaging Card */}
+        <Link href="/messages" className="block mb-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-green-200 hover:border-green-500 transition cursor-pointer">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-100 rounded-xl">
+                <MessageIcon size={32} className="text-green-900" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Community Meddelanden</h2>
+                <p className="text-gray-600">Kommunicera med säljare och medlemmar</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </Link>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
