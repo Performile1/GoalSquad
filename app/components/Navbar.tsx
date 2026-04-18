@@ -4,15 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ShopIcon, CommunityIcon, LeaderboardIcon, SearchIcon } from '@/app/components/BrandIcons';
+import { ShopIcon, CommunityIcon, LeaderboardIcon, SearchIcon, ChevronDownIcon } from '@/app/components/BrandIcons';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { user, signOut } = useAuth();
 
   const navLinks = [
-    { href: '/products', label: 'Shop', icon: <ShopIcon size={16} /> },
+    { href: '/products', label: 'Shop', icon: <ShopIcon size={16} />, hasDropdown: true },
     { href: '/communities', label: 'Communities', icon: <CommunityIcon size={16} /> },
     { href: '/leaderboard', label: 'Leaderboard', icon: <LeaderboardIcon size={16} /> },
     { href: '/search', label: 'Sök', icon: <SearchIcon size={16} /> },
@@ -37,18 +38,80 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                  isActive(link.href)
-                    ? 'bg-primary-50 text-primary-900 font-semibold'
-                    : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
-                }`}
-              >
-                {link.icon}
-                {link.label}
-              </Link>
+              <div key={link.href} className="relative">
+                {link.hasDropdown ? (
+                  <>
+                    <button
+                      onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                        isActive(link.href)
+                          ? 'bg-primary-50 text-primary-900 font-semibold'
+                          : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                      }`}
+                    >
+                      {link.icon}
+                      {link.label}
+                      <ChevronDownIcon size={14} />
+                    </button>
+                    {shopDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
+                        <Link
+                          href="/products"
+                          onClick={() => setShopDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
+                        >
+                          Produkter
+                        </Link>
+                        {user && (
+                          <>
+                            <div className="border-t border-gray-100 my-1" />
+                            <Link
+                              href="/account"
+                              onClick={() => setShopDropdownOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
+                            >
+                              Mina Ordrar
+                            </Link>
+                            <Link
+                              href="/account/gamification"
+                              onClick={() => setShopDropdownOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
+                            >
+                              Gamification
+                            </Link>
+                            <Link
+                              href="/account/discount-codes"
+                              onClick={() => setShopDropdownOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
+                            >
+                              Rabattkoder
+                            </Link>
+                            <Link
+                              href="/returns"
+                              onClick={() => setShopDropdownOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
+                            >
+                              Returer
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    href={link.href}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      isActive(link.href)
+                        ? 'bg-primary-50 text-primary-900 font-semibold'
+                        : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                    }`}
+                  >
+                    {link.icon}
+                    {link.label}
+                  </Link>
+                )}
+              </div>
             ))}
           </nav>
 
@@ -120,19 +183,53 @@ export default function Navbar() {
         {mobileOpen && (
           <div className="md:hidden border-t border-gray-100 py-4 space-y-1">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition ${
-                  isActive(link.href)
-                    ? 'bg-primary-50 text-primary-900 font-semibold'
-                    : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
-                }`}
-              >
-                {link.icon}
-                {link.label}
-              </Link>
+              <div key={link.href}>
+                <Link
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition ${
+                    isActive(link.href)
+                      ? 'bg-primary-50 text-primary-900 font-semibold'
+                      : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                  }`}
+                >
+                  {link.icon}
+                  {link.label}
+                  {link.hasDropdown && <ChevronDownIcon size={14} />}
+                </Link>
+                {link.hasDropdown && user && (
+                  <div className="pl-8 space-y-1 mt-1">
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
+                    >
+                      Mina Ordrar
+                    </Link>
+                    <Link
+                      href="/account/gamification"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
+                    >
+                      Gamification
+                    </Link>
+                    <Link
+                      href="/account/discount-codes"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
+                    >
+                      Rabattkoder
+                    </Link>
+                    <Link
+                      href="/returns"
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
+                    >
+                      Returer
+                    </Link>
+                  </div>
+                )}
+              </div>
             ))}
             <div className="pt-3 border-t border-gray-100 space-y-2">
               <Link
