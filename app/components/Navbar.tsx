@@ -41,30 +41,33 @@ export default function Navbar() {
               <div key={link.href} className="relative">
                 {link.hasDropdown ? (
                   <>
-                    <button
-                      onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                        isActive(link.href)
-                          ? 'bg-primary-50 text-primary-900 font-semibold'
-                          : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
-                      }`}
-                    >
-                      {link.icon}
-                      {link.label}
-                      <ChevronDownIcon size={14} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <Link
+                        href={link.href}
+                        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                          isActive(link.href)
+                            ? 'bg-primary-50 text-primary-900 font-semibold'
+                            : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                        }`}
+                      >
+                        {link.icon}
+                        {link.label}
+                      </Link>
+                      <button
+                        onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
+                        className={`p-2 rounded-lg transition ${
+                          isActive(link.href)
+                            ? 'bg-primary-50 text-primary-900'
+                            : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                        }`}
+                      >
+                        <ChevronDownIcon size={14} />
+                      </button>
+                    </div>
                     {shopDropdownOpen && (
                       <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                        <Link
-                          href="/products"
-                          onClick={() => setShopDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
-                        >
-                          Produkter
-                        </Link>
                         {user && (
                           <>
-                            <div className="border-t border-gray-100 my-1" />
                             <Link
                               href="/account"
                               onClick={() => setShopDropdownOpen(false)}
@@ -93,8 +96,16 @@ export default function Navbar() {
                             >
                               Returer
                             </Link>
+                            <div className="border-t border-gray-100 my-1" />
                           </>
                         )}
+                        <Link
+                          href="/products"
+                          onClick={() => setShopDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
+                        >
+                          Alla produkter
+                        </Link>
                       </div>
                     )}
                   </>
@@ -195,7 +206,6 @@ export default function Navbar() {
                 >
                   {link.icon}
                   {link.label}
-                  {link.hasDropdown && <ChevronDownIcon size={14} />}
                 </Link>
                 {link.hasDropdown && user && (
                   <div className="pl-8 space-y-1 mt-1">
