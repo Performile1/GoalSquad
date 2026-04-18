@@ -62,89 +62,102 @@ BEGIN
       ON discount_codes FOR ALL
       USING (auth.role() = 'service_role');
 
-    -- Function to update updated_at timestamp
-    CREATE OR REPLACE FUNCTION update_discount_codes_updated_at()
-    RETURNS TRIGGER AS $$
-    BEGIN
-      NEW.updated_at = NOW();
-      RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
-
-    -- Trigger for updated_at
-    CREATE TRIGGER discount_codes_updated_at
-      BEFORE UPDATE ON discount_codes
-      FOR EACH ROW
-      EXECUTE FUNCTION update_discount_codes_updated_at();
-
-    -- Function to validate and use discount code
-    CREATE OR REPLACE FUNCTION use_discount_code(
-      p_code VARCHAR,
-      p_customer_id UUID,
-      p_purchase_amount DECIMAL
-    )
-    RETURNS TABLE(
-      success BOOLEAN,
-      discount_type VARCHAR,
-      discount_value DECIMAL,
-      discount_amount DECIMAL,
-      message TEXT
-    ) AS $$
-    DECLARE
-      v_discount RECORD;
-      v_discount_amount DECIMAL(12, 2);
-      v_final_discount_amount DECIMAL(12, 2);
-    BEGIN
-      -- Find valid discount code
-      SELECT * INTO v_discount
-      FROM discount_codes
-      WHERE code = p_code
-        AND is_active = TRUE
-        AND (valid_from <= NOW() OR valid_from IS NULL)
-        AND (valid_until >= NOW() OR valid_until IS NULL)
-        AND (customer_id = p_customer_id OR customer_id IS NULL)
-        AND (usage_limit IS NULL OR times_used < usage_limit);
-      
-      IF NOT FOUND THEN
-        RETURN QUERY SELECT FALSE, NULL::VARCHAR, NULL::DECIMAL, NULL::DECIMAL, 'Ogiltig rabattkod'::TEXT;
-        RETURN;
-      END IF;
-      
-      -- Check minimum purchase amount
-      IF v_discount.min_purchase_amount IS NOT NULL AND p_purchase_amount < v_discount.min_purchase_amount THEN
-        RETURN QUERY SELECT FALSE, v_discount.discount_type, v_discount.discount_value, NULL::DECIMAL, 
-          ('Minimiköp: ' || v_discount.min_purchase_amount || ' kr')::TEXT;
-        RETURN;
-      END IF;
-      
-      -- Calculate discount amount
-      IF v_discount.discount_type = 'percentage' THEN
-        v_discount_amount := p_purchase_amount * (v_discount.discount_value / 100);
-      ELSE
-        v_discount_amount := v_discount.discount_value;
-      END IF;
-      
-      -- Apply max discount limit
-      IF v_discount.max_discount_amount IS NOT NULL AND v_discount_amount > v_discount.max_discount_amount THEN
-        v_final_discount_amount := v_discount.max_discount_amount;
-      ELSE
-        v_final_discount_amount := v_discount_amount;
-      END IF;
-      
-      -- Increment usage count
-      UPDATE discount_codes
-      SET times_used = times_used + 1
-      WHERE id = v_discount.id;
-      
-      RETURN QUERY SELECT TRUE, v_discount.discount_type, v_discount.discount_value, v_final_discount_amount, 'Rabattkod applicerad'::TEXT;
-    END;
-    $$ LANGUAGE plpgsql SECURITY DEFINER;
-
     RAISE NOTICE 'Created discount_codes table and related objects';
   ELSE
     RAISE NOTICE 'discount_codes table already exists';
   END IF;
 END $$;
+
+-- ============================================
+-- DISCOUNT CODES FUNCTIONS AND TRIGGERS
+-- ============================================
+
+-- Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_discount_codes_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for updated_at (only create if trigger doesn't exist)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.triggers
+    WHERE trigger_name = 'discount_codes_updated_at'
+    AND event_object_table = 'discount_codes'
+  ) THEN
+    CREATE TRIGGER discount_codes_updated_at
+      BEFORE UPDATE ON discount_codes
+      FOR EACH ROW
+      EXECUTE FUNCTION update_discount_codes_updated_at();
+  END IF;
+END $$;
+
+-- Function to validate and use discount code
+CREATE OR REPLACE FUNCTION use_discount_code(
+  p_code VARCHAR,
+  p_customer_id UUID,
+  p_purchase_amount DECIMAL
+)
+RETURNS TABLE(
+  success BOOLEAN,
+  discount_type VARCHAR,
+  discount_value DECIMAL,
+  discount_amount DECIMAL,
+  message TEXT
+) AS $$
+DECLARE
+  v_discount RECORD;
+  v_discount_amount DECIMAL(12, 2);
+  v_final_discount_amount DECIMAL(12, 2);
+BEGIN
+  -- Find valid discount code
+  SELECT * INTO v_discount
+  FROM discount_codes
+  WHERE code = p_code
+    AND is_active = TRUE
+    AND (valid_from <= NOW() OR valid_from IS NULL)
+    AND (valid_until >= NOW() OR valid_until IS NULL)
+    AND (customer_id = p_customer_id OR customer_id IS NULL)
+    AND (usage_limit IS NULL OR times_used < usage_limit);
+  
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT FALSE, NULL::VARCHAR, NULL::DECIMAL, NULL::DECIMAL, 'Ogiltig rabattkod'::TEXT;
+    RETURN;
+  END IF;
+  
+  -- Check minimum purchase amount
+  IF v_discount.min_purchase_amount IS NOT NULL AND p_purchase_amount < v_discount.min_purchase_amount THEN
+    RETURN QUERY SELECT FALSE, v_discount.discount_type, v_discount.discount_value, NULL::DECIMAL, 
+      ('Minimiköp: ' || v_discount.min_purchase_amount || ' kr')::TEXT;
+    RETURN;
+  END IF;
+  
+  -- Calculate discount amount
+  IF v_discount.discount_type = 'percentage' THEN
+    v_discount_amount := p_purchase_amount * (v_discount.discount_value / 100);
+  ELSE
+    v_discount_amount := v_discount.discount_value;
+  END IF;
+  
+  -- Apply max discount limit
+  IF v_discount.max_discount_amount IS NOT NULL AND v_discount_amount > v_discount.max_discount_amount THEN
+    v_final_discount_amount := v_discount.max_discount_amount;
+  ELSE
+    v_final_discount_amount := v_discount_amount;
+  END IF;
+  
+  -- Increment usage count
+  UPDATE discount_codes
+  SET times_used = times_used + 1
+  WHERE id = v_discount.id;
+  
+  RETURN QUERY SELECT TRUE, v_discount.discount_type, v_discount.discount_value, v_final_discount_amount, 'Rabattkod applicerad'::TEXT;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================
 -- PRODUCT AUCTIONS TABLE
@@ -220,24 +233,39 @@ BEGIN
       ON product_auctions FOR ALL
       USING (auth.role() = 'service_role');
 
-    -- Function to update updated_at timestamp
-    CREATE OR REPLACE FUNCTION update_product_auctions_updated_at()
-    RETURNS TRIGGER AS $$
-    BEGIN
-      NEW.updated_at = NOW();
-      RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
-
-    -- Trigger for updated_at
-    CREATE TRIGGER product_auctions_updated_at
-      BEFORE UPDATE ON product_auctions
-      FOR EACH ROW
-      EXECUTE FUNCTION update_product_auctions_updated_at();
-
     RAISE NOTICE 'Created product_auctions table and related objects';
   ELSE
     RAISE NOTICE 'product_auctions table already exists';
+  END IF;
+END $$;
+
+-- ============================================
+-- PRODUCT AUCTIONS FUNCTIONS AND TRIGGERS
+-- ============================================
+
+-- Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_product_auctions_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for updated_at (only create if trigger doesn't exist)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'product_auctions' AND table_schema = 'public') THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.triggers
+      WHERE trigger_name = 'product_auctions_updated_at'
+      AND event_object_table = 'product_auctions'
+    ) THEN
+      CREATE TRIGGER product_auctions_updated_at
+        BEFORE UPDATE ON product_auctions
+        FOR EACH ROW
+        EXECUTE FUNCTION update_product_auctions_updated_at();
+    END IF;
   END IF;
 END $$;
 
