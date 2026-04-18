@@ -110,6 +110,11 @@ export default function Footer() {
               Handla
             </h3>
             <ul className="space-y-2">
+              <li>
+                <Link href="/login?redirect=/account" className="text-white font-semibold hover:text-white text-sm transition">
+                  Logga in →
+                </Link>
+              </li>
               {[
                 { href: '/products', label: 'Alla produkter' },
                 { href: '/marketplace', label: 'Community Marketplace' },
