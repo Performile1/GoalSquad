@@ -341,5 +341,3 @@ BEGIN
     END IF;
   END IF;
 END $$;
-
-RAISE NOTICE 'Validation and creation script completed successfully';
