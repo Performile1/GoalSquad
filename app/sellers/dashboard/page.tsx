@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import Link from 'next/link';
 import { ShareIcon, MessageIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
 
 export const dynamic = 'force-dynamic';
@@ -144,7 +145,25 @@ export default function SellerDashboardPage() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">Säljar-dashboard</h1>
-        
+
+        {/* Community Messaging Card */}
+        <Link href="/messages" className="block mb-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-primary-200 hover:border-primary-500 transition cursor-pointer">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-primary-100 rounded-xl">
+                <MessageIcon size={32} className="text-primary-900" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Community Meddelanden</h2>
+                <p className="text-gray-600">Kommunicera med andra säljare och din community</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </Link>
+
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Dela din shop</h2>
           <p className="text-gray-600 mb-6">Dela din personliga shop via olika kanaler för att nå fler kunder.</p>

@@ -18,6 +18,15 @@ const HERO_SLIDES = [
     ctaAlt: { label: 'Se hur det funkar', href: '/how-it-works' },
   },
   {
+    id: 'seller',
+    image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1920&q=80&auto=format&fit=crop',
+    badge: 'För säljare',
+    title: ['Tjäna pengar', 'för din förening'],
+    subtitle: 'Bli säljare och sälj produkter för att stödja din förening, klass eller klubb. Enkelt och flexibelt.',
+    cta: { label: 'Bli säljare', href: '/sellers/join' },
+    ctaAlt: { label: 'Se hur det funkar', href: '/how-it-works' },
+  },
+  {
     id: 'class',
     image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&q=80&auto=format&fit=crop',
     badge: 'För klasser & skolgrupper',
