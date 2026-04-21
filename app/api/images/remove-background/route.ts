@@ -5,6 +5,7 @@
  * Uses remove.bg or similar service to remove image background
  */
 
+import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import FormData from 'form-data';
 
@@ -12,12 +13,13 @@ import FormData from 'form-data';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const formData = await req.formData();
     const image = formData.get('image') as File;
 
@@ -75,8 +77,7 @@ async function removeBackgroundWithRemoveBg(image: File) {
   
   // Upload to Supabase Storage
   const fileName = `processed-${Date.now()}.png`;
-  const { createClient } = await import('@supabase/supabase-js');
-    const { data, error } = await supabase.storage
+  const { data, error } = await supabase.storage
     .from('product-images')
     .upload(fileName, resultBuffer, {
       contentType: 'image/png',
@@ -126,8 +127,7 @@ async function removeBackgroundLocal(image: File) {
   // Enhance image quality
   processedBuffer = await enhanceProductImage(processedBuffer);
   
-  const { createClient } = await import('@supabase/supabase-js');
-    const fileName = `processed-${Date.now()}.png`;
+  const fileName = `processed-${Date.now()}.png`;
   const { data, error } = await supabase.storage
     .from('product-images')
     .upload(fileName, processedBuffer, {

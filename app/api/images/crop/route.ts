@@ -5,6 +5,7 @@
  * Crop images with specified aspect ratio
  */
 
+import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
 
@@ -90,8 +91,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Upload to Supabase Storage
-    const { createClient } = await import('@supabase/supabase-js');
-        const fileName = `cropped-${Date.now()}.jpg`;
+    const fileName = `cropped-${Date.now()}.jpg`;
     const { data, error } = await supabase.storage
       .from('product-images')
       .upload(fileName, processedBuffer!, {
