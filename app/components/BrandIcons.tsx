@@ -665,10 +665,139 @@ export function ImpactIcon({ size = 48, className = '' }: IconProps) {
 export function ReferralIcon({ size = 48, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M24 8L14 18h6v12h8V18h6L24 8z" fill={A} stroke={P} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M14 32h20" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M18 36l-4-4 4-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M30 36l4-4-4-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="18" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 12v12M24 36v-6M12 24h12M36 24H30" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="18" cy="18" r="4" fill={P} />
+      <circle cx="30" cy="30" r="4" fill={P} />
+    </svg>
+  );
+}
+
+// Additional icons needed for new features
+
+export function XIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M18 6L6 18M6 6l12 12" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function EyeIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="3" stroke={P} strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function ViewIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="3" stroke={P} strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function ClickIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 3h6v6" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10 14L21 3" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function CalendarIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke={P} strokeWidth="2" />
+      <path d="M16 2v6M8 2v6M3 10h18" stroke={P} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function PlusIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 5v14M5 12h14" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function EditIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function TrashIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function GlobeIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="12" cy="12" r="10" stroke={P} strokeWidth="2" />
+      <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10M12 2a15.3 15.3 0 00-4 10 15.3 15.3 0 004 10" stroke={P} strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function SaveIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 21v-8H7v8" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 3v5h8" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ShieldIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function BellIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.73 21a2 2 0 01-3.46 0" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function PackageIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M16.5 9.4L7.55 4.24" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.27 6.96l8.73 5.07" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 22.08V12" stroke={P} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function ShoppingCartIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="9" cy="21" r="1" stroke={P} strokeWidth="2" />
+      <circle cx="20" cy="21" r="1" stroke={P} strokeWidth="2" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" stroke={P} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
