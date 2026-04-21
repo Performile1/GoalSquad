@@ -14,6 +14,10 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     const formData = await req.formData();
     const image = formData.get('image') as File;
 
@@ -72,12 +76,7 @@ async function removeBackgroundWithRemoveBg(image: File) {
   // Upload to Supabase Storage
   const fileName = `processed-${Date.now()}.png`;
   const { createClient } = await import('@supabase/supabase-js');
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
-  const { data, error } = await supabase.storage
+    const { data, error } = await supabase.storage
     .from('product-images')
     .upload(fileName, resultBuffer, {
       contentType: 'image/png',
@@ -128,12 +127,7 @@ async function removeBackgroundLocal(image: File) {
   processedBuffer = await enhanceProductImage(processedBuffer);
   
   const { createClient } = await import('@supabase/supabase-js');
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
-  const fileName = `processed-${Date.now()}.png`;
+    const fileName = `processed-${Date.now()}.png`;
   const { data, error } = await supabase.storage
     .from('product-images')
     .upload(fileName, processedBuffer, {

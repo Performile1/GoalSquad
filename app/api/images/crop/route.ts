@@ -10,6 +10,10 @@ import sharp from 'sharp';
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     const formData = await req.formData();
     const image = formData.get('image') as File;
     const aspectRatio = formData.get('aspectRatio') as string || 'free';
@@ -87,12 +91,7 @@ export async function POST(req: NextRequest) {
 
     // Upload to Supabase Storage
     const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-
-    const fileName = `cropped-${Date.now()}.jpg`;
+        const fileName = `cropped-${Date.now()}.jpg`;
     const { data, error } = await supabase.storage
       .from('product-images')
       .upload(fileName, processedBuffer!, {
