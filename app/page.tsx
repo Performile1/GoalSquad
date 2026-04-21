@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { SplitEngineIcon, LogisticsIcon, AuditIcon, NoImagePlaceholder, CommunityIcon, TrophyIcon, LaptopIcon, MerchantIcon, ShopIcon, UserIcon, DashboardIcon } from '@/app/components/BrandIcons'
+import AdBanner from '@/app/components/AdBanner'
 
 // ─── Hero Slider ──────────────────────────────────────────────────────────────
 
@@ -251,6 +252,11 @@ export default function Home() {
 
       {/* ── Hero Slider ── */}
       <HeroSlider />
+
+      {/* ── Ad Banner ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <AdBanner placementName="homepage_hero" className="w-full" />
+      </section>
 
       {/* ── Audience Segments ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

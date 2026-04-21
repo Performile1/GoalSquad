@@ -182,7 +182,7 @@ export default function LoginPage() {
           <p className="text-gray-600">
             Har du inget konto?{' '}
             <Link
-              href="/auth/register"
+              href="/auth/register-select"
               className="text-primary-900 hover:text-primary-600 font-bold"
             >
               Registrera dig här

@@ -15,6 +15,15 @@ interface Warehouse {
   services: string[];
   lat: number;
   lng: number;
+  entityType?: 'warehouse' | 'community' | 'seller' | 'team';
+  earnings?: {
+    storage: number;
+    handling: number;
+    shipping: number;
+    total: number;
+  };
+  communityName?: string;
+  teamName?: string;
 }
 
 const MOCK_WAREHOUSES: Warehouse[] = [
@@ -28,6 +37,8 @@ const MOCK_WAREHOUSES: Warehouse[] = [
     services: ['Lagring', 'Orderhantering', 'Frakt'],
     lat: 59.33,
     lng: 18.06,
+    entityType: 'warehouse',
+    earnings: { storage: 25000, handling: 15000, shipping: 10000, total: 50000 },
   },
   {
     id: '2',
@@ -39,6 +50,8 @@ const MOCK_WAREHOUSES: Warehouse[] = [
     services: ['Lagring', 'Frakt', 'Returhantering'],
     lat: 57.71,
     lng: 11.97,
+    entityType: 'warehouse',
+    earnings: { storage: 20000, handling: 12000, shipping: 8000, total: 40000 },
   },
   {
     id: '3',
@@ -50,9 +63,52 @@ const MOCK_WAREHOUSES: Warehouse[] = [
     services: ['Lagring', 'Orderhantering'],
     lat: 55.60,
     lng: 13.00,
+    entityType: 'warehouse',
+    earnings: { storage: 15000, handling: 9000, shipping: 6000, total: 30000 },
   },
   {
     id: '4',
+    name: 'Mölnlycke IF',
+    city: 'Mölnlycke',
+    country: 'SE',
+    capacity: '500 pallplatser',
+    packagesPerDay: 200,
+    services: ['Lagring', 'Orderhantering'],
+    lat: 57.66,
+    lng: 12.13,
+    entityType: 'community',
+    communityName: 'Mölnlycke IF',
+    earnings: { storage: 2500, handling: 1500, shipping: 1000, total: 5000 },
+  },
+  {
+    id: '5',
+    name: 'Mölnlycke IF - P14',
+    city: 'Mölnlycke',
+    country: 'SE',
+    capacity: '100 pallplatser',
+    packagesPerDay: 50,
+    services: ['Lagring'],
+    lat: 57.66,
+    lng: 12.13,
+    entityType: 'team',
+    teamName: 'Mölnlycke IF - P14',
+    earnings: { storage: 500, handling: 300, shipping: 200, total: 1000 },
+  },
+  {
+    id: '6',
+    name: 'Anna Andersson',
+    city: 'Stockholm',
+    country: 'SE',
+    capacity: '200 pallplatser',
+    packagesPerDay: 100,
+    services: ['Lagring', 'Orderhantering'],
+    lat: 59.33,
+    lng: 18.06,
+    entityType: 'seller',
+    earnings: { storage: 1000, handling: 600, shipping: 400, total: 2000 },
+  },
+  {
+    id: '7',
     name: 'Oslo Lagerpartner',
     city: 'Oslo',
     country: 'NO',
@@ -61,17 +117,8 @@ const MOCK_WAREHOUSES: Warehouse[] = [
     services: ['Lagring', 'Frakt'],
     lat: 59.91,
     lng: 10.75,
-  },
-  {
-    id: '5',
-    name: 'Copenhagen Logistics',
-    city: 'Copenhagen',
-    country: 'DK',
-    capacity: '7 000 pallplatser',
-    packagesPerDay: 3500,
-    services: ['Lagring', 'Orderhantering', 'Frakt', 'Returhantering'],
-    lat: 55.68,
-    lng: 12.57,
+    entityType: 'warehouse',
+    earnings: { storage: 12500, handling: 7500, shipping: 5000, total: 25000 },
   },
 ];
 
@@ -198,9 +245,32 @@ export default function WarehousesPage() {
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-bold text-primary-900">{warehouse.name}</h3>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-primary-900">{warehouse.name}</h3>
+                        {warehouse.entityType && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                            warehouse.entityType === 'warehouse' ? 'bg-blue-100 text-blue-700' :
+                            warehouse.entityType === 'community' ? 'bg-green-100 text-green-700' :
+                            warehouse.entityType === 'seller' ? 'bg-purple-100 text-purple-700' :
+                            warehouse.entityType === 'team' ? 'bg-orange-100 text-orange-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {warehouse.entityType === 'warehouse' ? 'Lager' :
+                             warehouse.entityType === 'community' ? 'Förening' :
+                             warehouse.entityType === 'seller' ? 'Säljare' :
+                             warehouse.entityType === 'team' ? 'Lag' :
+                             warehouse.entityType}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-500">{warehouse.city}, {warehouse.country}</p>
+                      {warehouse.communityName && (
+                        <p className="text-xs text-green-600 font-semibold">{warehouse.communityName}</p>
+                      )}
+                      {warehouse.teamName && (
+                        <p className="text-xs text-orange-600 font-semibold">{warehouse.teamName}</p>
+                      )}
                     </div>
                     <ShopIcon size={24} />
                   </div>
@@ -213,6 +283,12 @@ export default function WarehousesPage() {
                       <span className="text-gray-600">Paket/dag:</span>
                       <span className="font-semibold text-gray-900">{warehouse.packagesPerDay.toLocaleString()}</span>
                     </div>
+                    {warehouse.earnings && (
+                      <div className="flex justify-between bg-green-50 px-2 py-1 rounded">
+                        <span className="text-green-700 font-semibold">Intäkter:</span>
+                        <span className="font-bold text-green-900">{warehouse.earnings.total.toLocaleString()} kr</span>
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-1 mt-3">
                       {warehouse.services.map((service) => (
                         <span
@@ -248,8 +324,33 @@ export default function WarehousesPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-8 bg-white rounded-2xl shadow-lg p-8"
           >
-            <h2 className="text-2xl font-bold text-primary-900 mb-6">{selectedWarehouse.name}</h2>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-primary-900">{selectedWarehouse.name}</h2>
+              {selectedWarehouse.entityType && (
+                <span className={`px-4 py-2 rounded-full text-sm font-bold ${
+                  selectedWarehouse.entityType === 'warehouse' ? 'bg-blue-100 text-blue-700' :
+                  selectedWarehouse.entityType === 'community' ? 'bg-green-100 text-green-700' :
+                  selectedWarehouse.entityType === 'seller' ? 'bg-purple-100 text-purple-700' :
+                  selectedWarehouse.entityType === 'team' ? 'bg-orange-100 text-orange-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {selectedWarehouse.entityType === 'warehouse' ? '📦 Lager' :
+                   selectedWarehouse.entityType === 'community' ? '🤝 Förening' :
+                   selectedWarehouse.entityType === 'seller' ? '👤 Säljare' :
+                   selectedWarehouse.entityType === 'team' ? '🏆 Lag' :
+                   selectedWarehouse.entityType}
+                </span>
+              )}
+            </div>
+            
+            {selectedWarehouse.communityName && (
+              <p className="text-green-600 font-semibold mb-4">🤝 {selectedWarehouse.communityName}</p>
+            )}
+            {selectedWarehouse.teamName && (
+              <p className="text-orange-600 font-semibold mb-4">🏆 {selectedWarehouse.teamName}</p>
+            )}
+
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="bg-primary-50 rounded-xl p-6">
                 <div className="text-sm text-primary-700 mb-1">Plats</div>
                 <div className="text-xl font-bold text-primary-900">
@@ -269,7 +370,40 @@ export default function WarehousesPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-6">
+
+            {selectedWarehouse.earnings && (
+              <div className="bg-green-50 rounded-xl p-6 mb-6">
+                <h3 className="text-lg font-bold text-green-900 mb-4">💰 Intäkter</h3>
+                <div className="grid md:grid-cols-4 gap-4">
+                  <div>
+                    <div className="text-sm text-green-700 mb-1">Lagring</div>
+                    <div className="text-xl font-bold text-green-900">
+                      {selectedWarehouse.earnings.storage.toLocaleString()} kr
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-green-700 mb-1">Hantering</div>
+                    <div className="text-xl font-bold text-green-900">
+                      {selectedWarehouse.earnings.handling.toLocaleString()} kr
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-green-700 mb-1">Frakt</div>
+                    <div className="text-xl font-bold text-green-900">
+                      {selectedWarehouse.earnings.shipping.toLocaleString()} kr
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-green-700 mb-1">Totalt</div>
+                    <div className="text-2xl font-bold text-green-900">
+                      {selectedWarehouse.earnings.total.toLocaleString()} kr
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div>
               <div className="text-sm text-gray-600 mb-2">Tjänster</div>
               <div className="flex flex-wrap gap-2">
                 {selectedWarehouse.services.map((service) => (

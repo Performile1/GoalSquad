@@ -165,7 +165,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Link
-                href="/auth/login"
+                href="/auth/register-select"
                 className="px-4 py-2 text-sm font-medium text-primary-900 border border-primary-900 rounded-lg hover:bg-primary-50 transition"
               >
                 Logga in
@@ -275,7 +275,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <Link
-                  href="/auth/login"
+                  href="/auth/register-select"
                   onClick={() => setMobileOpen(false)}
                   className="block px-4 py-3 rounded-lg text-sm font-medium text-primary-900 border border-primary-900 text-center hover:bg-primary-50 transition"
                 >

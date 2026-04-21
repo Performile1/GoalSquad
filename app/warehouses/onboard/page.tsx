@@ -21,9 +21,13 @@ export default function WarehouseOnboardPage() {
     capacity: '',
     packagesPerDay: '',
     services: [] as string[],
+    storageCostPerUnit: '',
+    handlingCostPerUnit: '',
+    shippingCostType: 'goalsquad',
+    shippingCostPerUnit: '',
   });
 
-  const STEPS = ['Uppgifter', 'Tjänster', 'Kontakt', 'Klart'];
+  const STEPS = ['Uppgifter', 'Tjänster', 'Kostnader', 'Kontakt', 'Klart'];
 
   const SERVICES = [
     { id: 'storage', label: 'Lagring', icon: <ShopIcon size={24} /> },
@@ -51,11 +55,19 @@ export default function WarehouseOnboardPage() {
       setError('Välj minst en tjänst');
       return;
     }
-    if (step === 2 && (!form.contactName || !form.contactEmail)) {
+    if (step === 2 && (!form.storageCostPerUnit || !form.handlingCostPerUnit)) {
+      setError('Fyll i lagrings- och hanteringskostnad per enhet');
+      return;
+    }
+    if (step === 2 && form.shippingCostType === 'partner' && !form.shippingCostPerUnit) {
+      setError('Fyll i fraktkostnad per enhet när du ansvarar för frakt');
+      return;
+    }
+    if (step === 3 && (!form.contactName || !form.contactEmail)) {
       setError('Fyll i kontaktnamn och e-post');
       return;
     }
-    if (step < 3) setStep((s) => s + 1);
+    if (step < 4) setStep((s) => s + 1);
   };
 
   const handleSubmit = async () => {
@@ -222,8 +234,91 @@ export default function WarehouseOnboardPage() {
             </div>
           )}
 
-          {/* Step 3: Contact */}
+          {/* Step 3: Costs */}
           {step === 2 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-primary-900 mb-6">Kostnadskonfiguration</h2>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <p className="text-sm text-blue-800">
+                  Som lagerpartner kan du tjäna pengar genom att sätta dina egna kostnader för lagring, hantering och frakt. 
+                  Dessa kostnader adderas till varje order som går genom ditt lager.
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Lagringskostnad per enhet (kr) *
+                </label>
+                <input
+                  type="number"
+                  value={form.storageCostPerUnit}
+                  onChange={(e) => setForm({ ...form, storageCostPerUnit: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                  placeholder="T.ex. 5.00"
+                  min="0"
+                  step="0.01"
+                />
+                <p className="text-xs text-gray-500 mt-1">Kostnad för att lagra en produkt per dag</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Hanteringskostnad per enhet (kr) *
+                </label>
+                <input
+                  type="number"
+                  value={form.handlingCostPerUnit}
+                  onChange={(e) => setForm({ ...form, handlingCostPerUnit: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                  placeholder="T.ex. 10.00"
+                  min="0"
+                  step="0.01"
+                />
+                <p className="text-xs text-gray-500 mt-1">Kostnad för att plocka och packa en produkt</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Fraktansvar *
+                </label>
+                <select
+                  value={form.shippingCostType}
+                  onChange={(e) => setForm({ ...form, shippingCostType: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                >
+                  <option value="goalsquad">GoalSquad står för frakten</option>
+                  <option value="partner">Vi står för frakten</option>
+                  <option value="hybrid">Hybrid (delad kostnad)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Vem ansvarar för frakten av beställningar</p>
+              </div>
+              
+              {(form.shippingCostType === 'partner' || form.shippingCostType === 'hybrid') && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Fraktkostnad per enhet (kr) *
+                  </label>
+                  <input
+                    type="number"
+                    value={form.shippingCostPerUnit}
+                    onChange={(e) => setForm({ ...form, shippingCostPerUnit: e.target.value })}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                    placeholder="T.ex. 25.00"
+                    min="0"
+                    step="0.01"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {form.shippingCostType === 'hybrid' 
+                      ? 'Din del av fraktkostnaden per enhet' 
+                      : 'Full fraktkostnad per enhet'}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 4: Contact */}
+          {step === 3 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-primary-900 mb-6">Kontaktuppgifter</h2>
               <div>
@@ -277,8 +372,8 @@ export default function WarehouseOnboardPage() {
             </div>
           )}
 
-          {/* Step 4: Success */}
-          {step === 3 && (
+          {/* Step 5: Success */}
+          {step === 4 && (
             <div className="text-center py-8">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -299,7 +394,7 @@ export default function WarehouseOnboardPage() {
           )}
 
           {/* Navigation */}
-          {step < 3 && (
+          {step < 4 && (
             <div className="flex gap-4 mt-8">
               {step > 0 && (
                 <button
@@ -309,7 +404,7 @@ export default function WarehouseOnboardPage() {
                   Tillbaka
                 </button>
               )}
-              {step === 2 ? (
+              {step === 3 ? (
                 <button
                   onClick={handleSubmit}
                   disabled={loading}

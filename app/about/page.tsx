@@ -90,6 +90,51 @@ export default function AboutPage() {
           ))}
         </div>
 
+        {/* What differentiates us */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gradient-to-r from-primary-50 to-green-50 rounded-2xl p-12 mb-20 border-2 border-primary-200"
+        >
+          <h2 className="text-3xl font-bold text-primary-900 mb-8 text-center">Det som skiljer oss från andra</h2>
+          <p className="text-gray-600 mb-8 text-center max-w-3xl mx-auto">
+            Till skillnad från traditionell klubb- och klassförsäljning där du är låst till en produkt, låter GoalSquad både säljare och slutkonsumenter välja fritt från flera olika produkter och leverantörer.
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="w-12 h-12 bg-primary-900 rounded-lg flex items-center justify-center mb-4">
+                <ShopIcon size={24} className="text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Flera produkter, inga begränsningar</h3>
+              <p className="text-gray-600">
+                Säljare och kunder kan välja från hundratals produkter från olika leverantörer. Ingen låsning till en specifik produkt eller kategori.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="w-12 h-12 bg-primary-900 rounded-lg flex items-center justify-center mb-4">
+                <CommunityIcon size={24} className="text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">MOQ fördelas automatiskt</h3>
+              <p className="text-gray-600">
+                Minimum Order Quantity fördelas över flera klubbar, föreningar, klasser och slutkonsumenter. Ni behöver inte nå MOQ själva.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="w-12 h-12 bg-primary-900 rounded-lg flex items-center justify-center mb-4">
+                <TargetIcon size={24} className="text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Flexibel produktvy</h3>
+              <p className="text-gray-600">
+                Vårt dynamiska kortgränssnitt anpassar sig automatiskt – när det blir för många produkter på rad skapas en smidig slider för bättre överblick.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* How it works */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

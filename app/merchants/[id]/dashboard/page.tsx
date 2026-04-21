@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DashboardIcon, ShoppingBagIcon, MoneyIcon, UserIcon, MessageIcon } from '@/app/components/BrandIcons';
+import MerchantShippingPreferences from '@/app/components/MerchantShippingPreferences';
 
 interface MerchantStats {
   id: string;
@@ -218,12 +219,21 @@ export default function MerchantDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white rounded-2xl shadow-lg p-6"
+          className="bg-white rounded-2xl shadow-lg p-6 mb-8"
         >
           <h3 className="text-xl font-bold text-gray-900 mb-4">Senaste aktivitet</h3>
           <div className="text-gray-500 text-center py-8">
             Ingen nyligen aktivitet
           </div>
+        </motion.div>
+
+        {/* Shipping Preferences */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <MerchantShippingPreferences />
         </motion.div>
       </div>
     </div>

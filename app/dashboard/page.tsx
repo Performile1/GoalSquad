@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { ShopIcon, OrdersIcon, CommunityIcon, MessageIcon, LeaderboardIcon, MerchantIcon } from '@/app/components/BrandIcons';
+import Notifications from '@/app/components/Notifications';
+import SalesAnalytics from '@/app/components/SalesAnalytics';
+import Goals from '@/app/components/Goals';
+import InterClubMessaging from '@/app/components/InterClubMessaging';
 
 export default function DashboardPage() {
   const { user, profile, loading } = useAuth();
@@ -42,11 +46,14 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-2">
-            Hej, {profile?.full_name || user.email?.split('@')[0]}! 👋
-          </h1>
-          <p className="text-primary-100">Välkommen till din sida</p>
+        <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">
+              Hej, {profile?.full_name || user.email?.split('@')[0]}! 👋
+            </h1>
+            <p className="text-primary-100">Välkommen till din sida</p>
+          </div>
+          <Notifications />
         </div>
       </div>
 
@@ -68,6 +75,19 @@ export default function DashboardPage() {
             </Link>
           ))}
         </div>
+
+        {/* Sales Analytics */}
+        <SalesAnalytics period={30} groupBy="product" />
+
+        {/* Goals */}
+        {profile?.role === 'community' || profile?.role === 'seller' ? (
+          <Goals />
+        ) : null}
+
+        {/* Inter-Club Messaging */}
+        {profile?.role === 'community' || profile?.role === 'seller' ? (
+          <InterClubMessaging />
+        ) : null}
 
         {/* Account info */}
         <div className="bg-white rounded-2xl shadow-sm p-8">

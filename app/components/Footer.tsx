@@ -83,7 +83,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/login?redirect=/admin/blog" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/register-select?redirect=/admin/blog" className="text-white font-semibold hover:text-white text-sm transition">
                   Admin →
                 </Link>
               </li>
@@ -91,6 +91,7 @@ export default function Footer() {
                 { href: '/about/community-commerce', label: 'Community Commerce' },
                 { href: '/about', label: 'Om oss' },
                 { href: '/blog', label: 'Blog' },
+                { href: '/annonsera', label: 'Annonsera' },
                 { href: '/privacy', label: 'Integritetspolicy' },
                 { href: '/terms', label: 'Användarvillkor' },
                 { href: '/contact', label: 'Kontakt' },
@@ -111,7 +112,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/login?redirect=/account" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/register-select?redirect=/account" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -139,7 +140,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/login?redirect=/community/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/register-select?redirect=/community/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -168,7 +169,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/login?redirect=/sellers/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/register-select?redirect=/sellers/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -193,7 +194,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/login?redirect=/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/register-select?redirect=/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -219,7 +220,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/login?redirect=/warehouses/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/register-select?redirect=/warehouses/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>

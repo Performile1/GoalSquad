@@ -59,6 +59,28 @@ export default function CommunityCommercePage() {
             <li>• Säljaren kan vara en medlem/elev/förälder eller supporter</li>
             <li>• GoalSquad tar en del för plattformen och logistik</li>
           </ul>
+
+          <div className="bg-gradient-to-r from-primary-50 to-green-50 rounded-xl p-6 border-2 border-primary-200 mt-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Det som skiljer oss från andra</h2>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Till skillnad från traditionell klubb- och klassförsäljning där du är låst till en produkt, låter GoalSquad både säljare och slutkonsumenter välja fritt från flera olika produkter och leverantörer.
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-white rounded-lg p-4">
+                <h3 className="font-bold text-primary-900 mb-2">Flera produkter, inga begränsningar</h3>
+                <p className="text-sm text-gray-600">
+                  Säljare och kunder kan välja från hundratals produkter från olika leverantörer. Ingen låsning till en specifik produkt eller kategori.
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4">
+                <h3 className="font-bold text-primary-900 mb-2">MOQ fördelas automatiskt</h3>
+                <p className="text-sm text-gray-600">
+                  Minimum Order Quantity fördelas över flera klubbar, föreningar, klasser och slutkonsumenter. Ni behöver inte nå MOQ själva.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

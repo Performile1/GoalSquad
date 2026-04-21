@@ -567,8 +567,18 @@ export function Step4Details({
 
 // Step 5: Images
 export function Step5Images({
-  images, imagePreviews, handleImageUpload, removeImage
+  images, imagePreviews, handleImageUpload, removeImage,
+  imageSeoTags, setImageSeoTags
 }: any) {
+  const updateImageSeo = (index: number, field: string, value: string) => {
+    const newSeoTags = [...imageSeoTags];
+    if (!newSeoTags[index]) {
+      newSeoTags[index] = {};
+    }
+    newSeoTags[index][field] = value;
+    setImageSeoTags(newSeoTags);
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -576,7 +586,7 @@ export function Step5Images({
       </h2>
 
       <p className="text-gray-600 mb-6">
-        Ladda upp minst 1 bild. Första bilden blir huvudbild.
+        Ladda upp minst 1 bild. Första bilden blir huvudbild. Lägg till SEO-texter för bättre sökmotoroptimering.
       </p>
 
       {/* Upload Area */}
@@ -600,27 +610,80 @@ export function Step5Images({
         </label>
       </div>
 
-      {/* Image Previews */}
+      {/* Image Previews with SEO */}
       {imagePreviews.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="space-y-6">
           {imagePreviews.map((preview: string, index: number) => (
-            <div key={index} className="relative group">
-              <img
-                src={preview}
-                alt={`Preview ${index + 1}`}
-                className="w-full h-48 object-cover rounded-lg"
-              />
-              {index === 0 && (
-                <div className="absolute top-2 left-2 bg-primary-900 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                  Huvudbild
+            <div key={index} className="bg-white rounded-xl border-2 border-gray-200 p-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* Image Preview */}
+                <div className="relative group flex-shrink-0">
+                  <img
+                    src={preview}
+                    alt={imageSeoTags[index]?.alt_text || `Preview ${index + 1}`}
+                    title={imageSeoTags[index]?.title || ''}
+                    className="w-full md:w-48 h-48 object-cover rounded-lg"
+                  />
+                  {index === 0 && (
+                    <div className="absolute top-2 left-2 bg-primary-900 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                      Huvudbild
+                    </div>
+                  )}
+                  <button
+                    onClick={() => removeImage(index)}
+                    className="absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition"
+                  >
+                    ✕
+                  </button>
                 </div>
-              )}
-              <button
-                onClick={() => removeImage(index)}
-                className="absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition"
-              >
-                ✕
-              </button>
+
+                {/* SEO Fields */}
+                <div className="flex-1 space-y-4">
+                  <h3 className="font-bold text-gray-900">
+                    Bild {index + 1} - SEO-inställningar
+                  </h3>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Alt-text (beskrivning för skärmläsare)
+                    </label>
+                    <input
+                      type="text"
+                      value={imageSeoTags[index]?.alt_text || ''}
+                      onChange={(e) => updateImageSeo(index, 'alt_text', e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                      placeholder="Beskriv bilden för sökmotorer och skärmläsare"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Viktig för tillgänglighet och SEO</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Bildtitel (visas vid hovring)
+                    </label>
+                    <input
+                      type="text"
+                      value={imageSeoTags[index]?.title || ''}
+                      onChange={(e) => updateImageSeo(index, 'title', e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                      placeholder="Kort titel för bilden"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Bildtext/Caption
+                    </label>
+                    <textarea
+                      value={imageSeoTags[index]?.caption || ''}
+                      onChange={(e) => updateImageSeo(index, 'caption', e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                      rows={2}
+                      placeholder="Valfri bildtext som visas under bilden"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>

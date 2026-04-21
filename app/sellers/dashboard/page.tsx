@@ -17,6 +17,13 @@ export default function SellerDashboardPage() {
   const [selectedProduct, setSelectedProduct] = useState('');
   const [products, setProducts] = useState<any[]>([]);
   const [showProductShare, setShowProductShare] = useState(false);
+  const [isWarehousePartner, setIsWarehousePartner] = useState(false);
+  const [warehouseConfig, setWarehouseConfig] = useState({
+    storageCostPerUnit: 0,
+    handlingCostPerUnit: 0,
+    shippingCostType: 'goalsquad',
+    shippingCostPerUnit: 0,
+  });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -163,6 +170,101 @@ export default function SellerDashboardPage() {
             </div>
           </div>
         </Link>
+
+        {/* Warehouse Partner Card */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">📦 Bli lagerpartner</h2>
+          <p className="text-gray-600 mb-6">Tjäna extra pengar genom att erbjuda lagerhållning, hantering och frakt av produkter.</p>
+
+          <label className="flex items-center gap-4 cursor-pointer mb-6">
+            <input
+              type="checkbox"
+              checked={isWarehousePartner}
+              onChange={(e) => setIsWarehousePartner(e.target.checked)}
+              className="w-6 h-6 text-primary-900 rounded focus:ring-2 focus:ring-primary-600"
+            />
+            <div>
+              <div className="font-semibold text-gray-900">
+                Aktivera lagerpartnerskap
+              </div>
+              <div className="text-sm text-gray-600">
+                Sätt dina kostnader för lagertjänster
+              </div>
+            </div>
+          </label>
+
+          {isWarehousePartner && (
+            <div className="space-y-6 p-6 bg-primary-50 rounded-xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Lagerhållningskostnad (kr/enhet)
+                  </label>
+                  <input
+                    type="number"
+                    value={warehouseConfig.storageCostPerUnit}
+                    onChange={(e) => setWarehouseConfig({ ...warehouseConfig, storageCostPerUnit: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    step="0.01"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                    placeholder="0.50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Hanteringskostnad (kr/enhet)
+                  </label>
+                  <input
+                    type="number"
+                    value={warehouseConfig.handlingCostPerUnit}
+                    onChange={(e) => setWarehouseConfig({ ...warehouseConfig, handlingCostPerUnit: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    step="0.01"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                    placeholder="0.30"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Vem står för fraktkostnaden?
+                </label>
+                <select
+                  value={warehouseConfig.shippingCostType}
+                  onChange={(e) => setWarehouseConfig({ ...warehouseConfig, shippingCostType: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                >
+                  <option value="goalsquad">GoalSquad står för frakten</option>
+                  <option value="partner">Jag står för frakten</option>
+                  <option value="hybrid">Hybrid (delad kostnad)</option>
+                </select>
+              </div>
+
+              {warehouseConfig.shippingCostType !== 'goalsquad' && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Fraktkostnad (kr/enhet)
+                  </label>
+                  <input
+                    type="number"
+                    value={warehouseConfig.shippingCostPerUnit}
+                    onChange={(e) => setWarehouseConfig({ ...warehouseConfig, shippingCostPerUnit: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    step="0.01"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
+                    placeholder="1.00"
+                  />
+                </div>
+              )}
+
+              <button className="w-full bg-primary-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-600 transition">
+                Spara lagerpartner-inställningar
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Dela din shop</h2>

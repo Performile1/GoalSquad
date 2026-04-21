@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
+import { TrophyIcon, BoxIcon, MoneyIcon, LeaderboardIcon, TruckIcon } from '@/components/BrandIcons'
 
 export const dynamic = 'force-dynamic'
 
@@ -126,7 +127,9 @@ function SellerJoinContent() {
           {step === 'info' && (
             <>
               <div className="text-center mb-8">
-                <div className="text-5xl mb-4">🏆</div>
+                <div className="flex justify-center mb-4">
+                  <TrophyIcon size={64} />
+                </div>
                 <h1 className="text-2xl font-extrabold text-gray-900 mb-2">
                   Bli säljare på GoalSquad
                 </h1>
@@ -137,13 +140,13 @@ function SellerJoinContent() {
 
               <ul className="space-y-3 mb-8">
                 {[
-                  { icon: '📦', text: 'Välj produkter och dela din personliga länk' },
-                  { icon: '💸', text: 'Du tjänar en del av varje försäljning' },
-                  { icon: '🏅', text: 'Tävla med dina lagkamrater på leaderboardet' },
-                  { icon: '🚚', text: 'Vi sköter leverans och kundtjänst' },
+                  { icon: <BoxIcon size={32} />, text: 'Välj produkter och dela din personliga länk' },
+                  { icon: <MoneyIcon size={32} />, text: 'Du tjänar en del av varje försäljning' },
+                  { icon: <LeaderboardIcon size={32} />, text: 'Tävla med dina lagkamrater på leaderboardet' },
+                  { icon: <TruckIcon size={32} />, text: 'Vi sköter leverans och kundtjänst' },
                 ].map((item) => (
                   <li key={item.text} className="flex items-start gap-3">
-                    <span className="text-xl flex-shrink-0">{item.icon}</span>
+                    <span className="flex-shrink-0">{item.icon}</span>
                     <span className="text-sm text-gray-600 leading-snug">{item.text}</span>
                   </li>
                 ))}
