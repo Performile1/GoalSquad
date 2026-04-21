@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build query based on role
-    let analytics = [];
+    let analytics: any[] = [];
     
     if (profile.role === 'merchant') {
       // Merchants see all their sales data
