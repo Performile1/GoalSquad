@@ -895,7 +895,6 @@ export default function AdPurchasePage() {
                   </div>
                 </div>
               )}
-              </div>
             </div>
 
             {/* Summary */}

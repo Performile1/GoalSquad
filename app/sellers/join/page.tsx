@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { TrophyIcon, BoxIcon, MoneyIcon, LeaderboardIcon, TruckIcon } from '@/components/BrandIcons'
+import { TrophyIcon, BoxIcon, MoneyIcon, LeaderboardIcon, TruckIcon } from '@/app/components/BrandIcons'
 
 export const dynamic = 'force-dynamic'
 
