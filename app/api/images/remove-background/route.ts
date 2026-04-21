@@ -13,11 +13,6 @@ import FormData from 'form-data';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -76,6 +71,10 @@ async function removeBackgroundWithRemoveBg(image: File) {
   const resultBuffer = Buffer.from(await response.arrayBuffer());
   
   // Upload to Supabase Storage
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
   const fileName = `processed-${Date.now()}.png`;
   const { data, error } = await supabase.storage
     .from('product-images')
@@ -127,6 +126,10 @@ async function removeBackgroundLocal(image: File) {
   // Enhance image quality
   processedBuffer = await enhanceProductImage(processedBuffer);
   
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
   const fileName = `processed-${Date.now()}.png`;
   const { data, error } = await supabase.storage
     .from('product-images')
