@@ -109,16 +109,18 @@ export default function CommunityRegisterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
-          slug: form.name.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-          description: form.description,
+          name:         form.name,
+          slug:         form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+          description:  form.description,
           communityType: form.communityType,
-          country: form.country,
-          city: form.city,
-          schoolName: form.schoolName,
-          grade: form.grade,
-          treasurerId: '00000000-0000-0000-0000-000000000000', // TODO: Get from auth
-          adminId: '00000000-0000-0000-0000-000000000000', // TODO: Get from auth
+          country:      form.country,
+          city:         form.city,
+          contactName:  form.contactName,
+          contactEmail: form.contactEmail,
+          contactPhone: form.contactPhone,
+          schoolName:   form.schoolName,
+          grade:        form.grade,
+          website:      form.website,
         }),
       })
       const data = await res.json()
