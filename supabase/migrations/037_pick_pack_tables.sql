@@ -86,13 +86,19 @@ ALTER TABLE public.pick_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pick_session_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.product_barcodes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "pick_sessions_service_role" ON public.pick_sessions;
+DROP POLICY IF EXISTS "pick_sessions_authenticated" ON public.pick_sessions;
 CREATE POLICY "pick_sessions_service_role" ON public.pick_sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "pick_sessions_authenticated" ON public.pick_sessions FOR ALL TO authenticated USING (picker_id = auth.uid() OR true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "pick_session_items_service_role" ON public.pick_session_items;
+DROP POLICY IF EXISTS "pick_session_items_authenticated" ON public.pick_session_items;
 CREATE POLICY "pick_session_items_service_role" ON public.pick_session_items FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "pick_session_items_authenticated" ON public.pick_session_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "product_barcodes_read" ON public.product_barcodes;
+DROP POLICY IF EXISTS "product_barcodes_write" ON public.product_barcodes;
 CREATE POLICY "product_barcodes_read" ON public.product_barcodes FOR SELECT TO authenticated, anon USING (true);
 CREATE POLICY "product_barcodes_write" ON public.product_barcodes FOR ALL TO service_role USING (true) WITH CHECK (true);
 
-RAISE NOTICE 'Migration 037: Pick & Pack tables created';
+DO $$ BEGIN RAISE NOTICE 'Migration 037: Pick & Pack tables created'; END $$;
