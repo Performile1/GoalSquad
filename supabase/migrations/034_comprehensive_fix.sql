@@ -579,6 +579,11 @@ CREATE TABLE IF NOT EXISTS public.coordination_messages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS community_id UUID REFERENCES public.communities(id) ON DELETE CASCADE;
+ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS content TEXT;
+ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false;
+ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+
 CREATE INDEX IF NOT EXISTS idx_coordination_messages_community ON public.coordination_messages(community_id);
 
 ALTER TABLE public.coordination_messages ENABLE ROW LEVEL SECURITY;
