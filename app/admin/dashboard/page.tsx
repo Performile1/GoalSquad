@@ -145,23 +145,45 @@ export default function AdminDashboard() {
           <p className="text-gray-600">Översikt över hela plattformen</p>
         </motion.div>
 
-        {/* Community Messaging Card */}
-        <Link href="/messages" className="block mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-primary-200 hover:border-primary-500 transition cursor-pointer">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary-100 rounded-xl">
-                <MessageIcon size={32} className="text-primary-900" />
+        {/* Quick nav cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          {[
+            {
+              href: '/admin/users',
+              icon: UserIcon,
+              title: 'Användare',
+              desc: 'Hantera profiler, roller och konton',
+              accent: 'rgba(0,59,61,0.08)',
+              border: 'rgba(0,59,61,0.2)',
+            },
+            {
+              href: '/messages',
+              icon: MessageIcon,
+              title: 'Community Meddelanden',
+              desc: 'Kommunicera med säljare, föreningar och företag',
+              accent: 'rgba(0,59,61,0.05)',
+              border: 'rgba(0,59,61,0.12)',
+            },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} className="block">
+              <div
+                className="rounded-2xl p-6 hover:shadow-md transition cursor-pointer flex items-center gap-4"
+                style={{ background: item.accent, border: `2px solid ${item.border}` }}
+              >
+                <div className="p-3 rounded-xl bg-white elevation-petrol">
+                  <item.icon size={28} className="icon-brand" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-lg font-bold text-gray-900 mb-0.5">{item.title}</h2>
+                  <p className="text-sm text-gray-600">{item.desc}</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Community Meddelanden</h2>
-                <p className="text-gray-600">Kommunicera med säljare, föreningar och företag</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        </Link>
+            </Link>
+          ))}
+        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

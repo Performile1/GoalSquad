@@ -1,13 +1,34 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Client-side Supabase client
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const getUrl = () =>
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env.SUPABASE_URL ||
+  '';
 
-// Server-side Supabase client with service role (for admin operations)
-export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Client-side Supabase client (lazy — skapas vid första anrop)
+let _supabase: SupabaseClient | null = null;
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    if (!_supabase) {
+      _supabase = createClient(
+        getUrl(),
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+    }
+    return (_supabase as any)[prop];
+  },
+});
+
+// Server-side Supabase client with service role (lazy — skapas vid första anrop)
+let _supabaseAdmin: SupabaseClient | null = null;
+export const supabaseAdmin = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    if (!_supabaseAdmin) {
+      _supabaseAdmin = createClient(
+        getUrl(),
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+    }
+    return (_supabaseAdmin as any)[prop];
+  },
+});
