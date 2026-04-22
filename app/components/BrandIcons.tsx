@@ -1,12 +1,12 @@
 /**
  * GoalSquad Brand Icons
  * All icons use the brand color palette:
- *   Primary: #004040
- *   Accent:  #006666
+ *   Primary: #003B3D (Petrol)
+ *   Accent:  #004A4C (Petrol Light)
  */
 
-const P = '#004040'; // Huvudfärg
-const A = '#006666'; // Accentfärg
+const P = 'currentColor'; // Inherits CSS color — petrol on light, gold on dark
+const A = 'currentColor'; // Inherits CSS color — petrol on light, gold on dark
 
 interface IconProps {
   size?: number;
