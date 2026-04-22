@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import QRCode from 'qrcode';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const getSupabase = () => createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 );
+const supabase = typeof window !== 'undefined' ? getSupabase() : ({} as ReturnType<typeof getSupabase>);
 
 export default function ReturnsPage() {
   const [orderNumber, setOrderNumber] = useState('');
