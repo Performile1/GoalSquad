@@ -4,12 +4,21 @@
  * Handles order aggregation and warehouse assignment
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+let _client: SupabaseClient | null = null;
+const getClient = () => {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+  }
+  return _client;
+};
+const supabase = new Proxy({} as SupabaseClient, {
+  get(_t, p) { return (getClient() as any)[p]; },
+});
 
 export interface MOQStatus {
   moqEnabled: boolean;
