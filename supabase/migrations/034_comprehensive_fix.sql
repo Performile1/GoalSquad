@@ -282,7 +282,10 @@ CREATE TABLE IF NOT EXISTS public.consolidation_warehouses (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+ALTER TABLE public.consolidation_warehouses ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
 ALTER TABLE public.consolidation_warehouses ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "consolidation_warehouses_service_role" ON public.consolidation_warehouses;
+DROP POLICY IF EXISTS "consolidation_warehouses_authenticated_read" ON public.consolidation_warehouses;
 CREATE POLICY "consolidation_warehouses_service_role" ON public.consolidation_warehouses
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "consolidation_warehouses_authenticated_read" ON public.consolidation_warehouses
@@ -304,6 +307,7 @@ CREATE TABLE IF NOT EXISTS public.warehouse_inventory (
 );
 
 ALTER TABLE public.warehouse_inventory ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "warehouse_inventory_service_role" ON public.warehouse_inventory;
 CREATE POLICY "warehouse_inventory_service_role" ON public.warehouse_inventory
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -325,6 +329,8 @@ CREATE TABLE IF NOT EXISTS public.asn_notices (
 );
 
 ALTER TABLE public.asn_notices ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "asn_notices_service_role" ON public.asn_notices;
+DROP POLICY IF EXISTS "asn_notices_merchant_own" ON public.asn_notices;
 CREATE POLICY "asn_notices_service_role" ON public.asn_notices
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "asn_notices_merchant_own" ON public.asn_notices
@@ -345,6 +351,7 @@ CREATE TABLE IF NOT EXISTS public.warehouse_events (
 );
 
 ALTER TABLE public.warehouse_events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "warehouse_events_service_role" ON public.warehouse_events;
 CREATE POLICY "warehouse_events_service_role" ON public.warehouse_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -363,6 +370,8 @@ CREATE TABLE IF NOT EXISTS public.product_flow_summary (
 );
 
 ALTER TABLE public.product_flow_summary ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "product_flow_summary_service_role" ON public.product_flow_summary;
+DROP POLICY IF EXISTS "product_flow_summary_authenticated_read" ON public.product_flow_summary;
 CREATE POLICY "product_flow_summary_service_role" ON public.product_flow_summary
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "product_flow_summary_authenticated_read" ON public.product_flow_summary
@@ -391,6 +400,9 @@ CREATE INDEX IF NOT EXISTS idx_entity_goals_entity ON public.entity_goals(entity
 CREATE INDEX IF NOT EXISTS idx_entity_goals_status ON public.entity_goals(status);
 
 ALTER TABLE public.entity_goals ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "entity_goals_service_role" ON public.entity_goals;
+DROP POLICY IF EXISTS "entity_goals_authenticated_read" ON public.entity_goals;
+DROP POLICY IF EXISTS "entity_goals_own_manage" ON public.entity_goals;
 CREATE POLICY "entity_goals_service_role" ON public.entity_goals
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "entity_goals_authenticated_read" ON public.entity_goals
@@ -413,6 +425,8 @@ CREATE TABLE IF NOT EXISTS public.wallets (
 );
 
 ALTER TABLE public.wallets ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "wallets_service_role" ON public.wallets;
+DROP POLICY IF EXISTS "wallets_own_read" ON public.wallets;
 CREATE POLICY "wallets_service_role" ON public.wallets
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "wallets_own_read" ON public.wallets
@@ -437,6 +451,8 @@ CREATE INDEX IF NOT EXISTS idx_leaderboards_type_period ON public.leaderboards(l
 CREATE INDEX IF NOT EXISTS idx_leaderboards_rank ON public.leaderboards(rank);
 
 ALTER TABLE public.leaderboards ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "leaderboards_service_role" ON public.leaderboards;
+DROP POLICY IF EXISTS "leaderboards_public_read" ON public.leaderboards;
 CREATE POLICY "leaderboards_service_role" ON public.leaderboards
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "leaderboards_public_read" ON public.leaderboards
@@ -457,6 +473,8 @@ CREATE TABLE IF NOT EXISTS public.user_achievements (
 CREATE INDEX IF NOT EXISTS idx_user_achievements_user ON public.user_achievements(user_id);
 
 ALTER TABLE public.user_achievements ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "user_achievements_service_role" ON public.user_achievements;
+DROP POLICY IF EXISTS "user_achievements_own_read" ON public.user_achievements;
 CREATE POLICY "user_achievements_service_role" ON public.user_achievements
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "user_achievements_own_read" ON public.user_achievements
@@ -481,7 +499,10 @@ CREATE TABLE IF NOT EXISTS public.squad_tiers (
 
 CREATE INDEX IF NOT EXISTS idx_squad_tiers_community ON public.squad_tiers(community_id);
 
+ALTER TABLE public.squad_tiers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
 ALTER TABLE public.squad_tiers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "squad_tiers_service_role" ON public.squad_tiers;
+DROP POLICY IF EXISTS "squad_tiers_authenticated_read" ON public.squad_tiers;
 CREATE POLICY "squad_tiers_service_role" ON public.squad_tiers
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "squad_tiers_authenticated_read" ON public.squad_tiers
@@ -509,6 +530,8 @@ CREATE TABLE IF NOT EXISTS public.community_milestones (
 CREATE INDEX IF NOT EXISTS idx_community_milestones_community ON public.community_milestones(community_id);
 
 ALTER TABLE public.community_milestones ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "community_milestones_service_role" ON public.community_milestones;
+DROP POLICY IF EXISTS "community_milestones_authenticated_read" ON public.community_milestones;
 CREATE POLICY "community_milestones_service_role" ON public.community_milestones
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "community_milestones_authenticated_read" ON public.community_milestones
@@ -531,7 +554,10 @@ CREATE TABLE IF NOT EXISTS public.community_badges (
 
 CREATE INDEX IF NOT EXISTS idx_community_badges_community ON public.community_badges(community_id);
 
+ALTER TABLE public.community_badges ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
 ALTER TABLE public.community_badges ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "community_badges_service_role" ON public.community_badges;
+DROP POLICY IF EXISTS "community_badges_authenticated_read" ON public.community_badges;
 CREATE POLICY "community_badges_service_role" ON public.community_badges
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "community_badges_authenticated_read" ON public.community_badges
@@ -556,6 +582,8 @@ CREATE TABLE IF NOT EXISTS public.coordination_messages (
 CREATE INDEX IF NOT EXISTS idx_coordination_messages_community ON public.coordination_messages(community_id);
 
 ALTER TABLE public.coordination_messages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "coordination_messages_service_role" ON public.coordination_messages;
+DROP POLICY IF EXISTS "coordination_messages_authenticated" ON public.coordination_messages;
 CREATE POLICY "coordination_messages_service_role" ON public.coordination_messages
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "coordination_messages_authenticated" ON public.coordination_messages
@@ -579,6 +607,8 @@ CREATE INDEX IF NOT EXISTS idx_merchant_community_messages_merchant ON public.me
 CREATE INDEX IF NOT EXISTS idx_merchant_community_messages_community ON public.merchant_community_messages(community_id);
 
 ALTER TABLE public.merchant_community_messages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "merchant_community_messages_service_role" ON public.merchant_community_messages;
+DROP POLICY IF EXISTS "merchant_community_messages_own" ON public.merchant_community_messages;
 CREATE POLICY "merchant_community_messages_service_role" ON public.merchant_community_messages
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "merchant_community_messages_own" ON public.merchant_community_messages
@@ -603,6 +633,8 @@ CREATE TABLE IF NOT EXISTS public.broadcast_messages (
 );
 
 ALTER TABLE public.broadcast_messages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "broadcast_messages_service_role" ON public.broadcast_messages;
+DROP POLICY IF EXISTS "broadcast_messages_admin_read" ON public.broadcast_messages;
 CREATE POLICY "broadcast_messages_service_role" ON public.broadcast_messages
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "broadcast_messages_admin_read" ON public.broadcast_messages
@@ -623,6 +655,8 @@ CREATE TABLE IF NOT EXISTS public.broadcast_recipients (
 CREATE INDEX IF NOT EXISTS idx_broadcast_recipients_recipient ON public.broadcast_recipients(recipient_id);
 
 ALTER TABLE public.broadcast_recipients ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "broadcast_recipients_service_role" ON public.broadcast_recipients;
+DROP POLICY IF EXISTS "broadcast_recipients_own" ON public.broadcast_recipients;
 CREATE POLICY "broadcast_recipients_service_role" ON public.broadcast_recipients
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "broadcast_recipients_own" ON public.broadcast_recipients
@@ -644,6 +678,8 @@ CREATE TABLE IF NOT EXISTS public.customer_support_stats (
 );
 
 ALTER TABLE public.customer_support_stats ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "customer_support_stats_service_role" ON public.customer_support_stats;
+DROP POLICY IF EXISTS "customer_support_stats_admin_read" ON public.customer_support_stats;
 CREATE POLICY "customer_support_stats_service_role" ON public.customer_support_stats
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "customer_support_stats_admin_read" ON public.customer_support_stats
@@ -706,6 +742,8 @@ CREATE TABLE IF NOT EXISTS public.merchant_shipping_preferences (
 );
 
 ALTER TABLE public.merchant_shipping_preferences ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "merchant_shipping_preferences_service_role" ON public.merchant_shipping_preferences;
+DROP POLICY IF EXISTS "merchant_shipping_preferences_own" ON public.merchant_shipping_preferences;
 CREATE POLICY "merchant_shipping_preferences_service_role" ON public.merchant_shipping_preferences
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "merchant_shipping_preferences_own" ON public.merchant_shipping_preferences
@@ -737,6 +775,8 @@ CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON public.notifications(r
 CREATE INDEX IF NOT EXISTS idx_notifications_unread ON public.notifications(recipient_id, is_read) WHERE is_read = false;
 
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "notifications_service_role" ON public.notifications;
+DROP POLICY IF EXISTS "notifications_own" ON public.notifications;
 CREATE POLICY "notifications_service_role" ON public.notifications
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "notifications_own" ON public.notifications
