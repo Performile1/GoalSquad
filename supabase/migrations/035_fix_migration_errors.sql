@@ -14,7 +14,7 @@ DROP INDEX IF EXISTS public.idx_ad_placements_rotation;
 
 -- Correct replacement: index on actual columns that exist
 CREATE INDEX IF NOT EXISTS idx_ad_placements_rotation_order
-  ON public.ad_placements(rotation_order, is_active);
+  ON public.ad_placements(page, is_active);
 
 -- ============================================================
 -- FIX 027: notifications table missing updated_at column
