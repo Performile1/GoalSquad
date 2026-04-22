@@ -46,83 +46,79 @@ ALTER TABLE public.communities
 
 -- Columns referenced by ads/purchase route and admin/ads route
 -- Most are already added by 028/029/030 but we ensure all exist
-
-ALTER TABLE public.ads
-  ADD COLUMN IF NOT EXISTS placement_type TEXT DEFAULT 'rotating',
-  ADD COLUMN IF NOT EXISTS daily_view_limit INTEGER DEFAULT 1000,
-  ADD COLUMN IF NOT EXISTS daily_views_today INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS daily_views_reset_date DATE DEFAULT CURRENT_DATE,
-  ADD COLUMN IF NOT EXISTS is_daily_limit_reached BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS link_type TEXT DEFAULT 'external',
-  ADD COLUMN IF NOT EXISTS internal_link_path TEXT,
-  ADD COLUMN IF NOT EXISTS button_config JSONB DEFAULT '[]',
-  ADD COLUMN IF NOT EXISTS auto_restart_next_day BOOLEAN DEFAULT true,
-  ADD COLUMN IF NOT EXISTS approval_status TEXT DEFAULT 'pending',
-  ADD COLUMN IF NOT EXISTS payment_type TEXT DEFAULT 'daily',
-  ADD COLUMN IF NOT EXISTS payment_status TEXT DEFAULT 'pending',
-  ADD COLUMN IF NOT EXISTS advance_discount_percent INTEGER DEFAULT 10,
-  ADD COLUMN IF NOT EXISTS original_price DECIMAL(10,2),
-  ADD COLUMN IF NOT EXISTS discounted_price DECIMAL(10,2),
-  ADD COLUMN IF NOT EXISTS admin_fee_percent INTEGER DEFAULT 5,
-  ADD COLUMN IF NOT EXISTS refund_amount DECIMAL(10,2),
-  ADD COLUMN IF NOT EXISTS refund_date TIMESTAMP WITH TIME ZONE,
-  ADD COLUMN IF NOT EXISTS refund_reason TEXT,
-  ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT,
-  ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT,
-  ADD COLUMN IF NOT EXISTS stripe_payment_method_id TEXT,
-  ADD COLUMN IF NOT EXISTS save_card_for_daily_charges BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS daily_charge_limit DECIMAL(10,2),
-  ADD COLUMN IF NOT EXISTS last_daily_charge_date DATE,
-  ADD COLUMN IF NOT EXISTS total_daily_charged DECIMAL(10,2) DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS company_description TEXT,
-  ADD COLUMN IF NOT EXISTS company_name TEXT,
-  ADD COLUMN IF NOT EXISTS company_website TEXT,
-  ADD COLUMN IF NOT EXISTS backlink_url TEXT,
-  ADD COLUMN IF NOT EXISTS backlink_verified BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS backlink_discount_applied BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS content_flagged BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS flag_reason TEXT,
-  ADD COLUMN IF NOT EXISTS url_scanned BOOLEAN DEFAULT false,
-  ADD COLUMN IF NOT EXISTS url_scan_result JSONB;
-
--- Fix CHECK constraints safely (add only if not exist)
-DO $$
-BEGIN
-  ALTER TABLE public.ads ADD CONSTRAINT ads_placement_type_check CHECK (placement_type IN ('fixed', 'rotating'));
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;
+-- Wrapped in DO block so it skips safely if ads table doesn't exist yet
 
 DO $$
 BEGIN
-  ALTER TABLE public.ads ADD CONSTRAINT ads_link_type_check CHECK (link_type IN ('internal', 'external'));
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'ads' AND schemaname = 'public') THEN
+    ALTER TABLE public.ads
+      ADD COLUMN IF NOT EXISTS placement_type TEXT DEFAULT 'rotating',
+      ADD COLUMN IF NOT EXISTS daily_view_limit INTEGER DEFAULT 1000,
+      ADD COLUMN IF NOT EXISTS daily_views_today INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS daily_views_reset_date DATE DEFAULT CURRENT_DATE,
+      ADD COLUMN IF NOT EXISTS is_daily_limit_reached BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS link_type TEXT DEFAULT 'external',
+      ADD COLUMN IF NOT EXISTS internal_link_path TEXT,
+      ADD COLUMN IF NOT EXISTS button_config JSONB DEFAULT '[]',
+      ADD COLUMN IF NOT EXISTS auto_restart_next_day BOOLEAN DEFAULT true,
+      ADD COLUMN IF NOT EXISTS approval_status TEXT DEFAULT 'pending',
+      ADD COLUMN IF NOT EXISTS payment_type TEXT DEFAULT 'daily',
+      ADD COLUMN IF NOT EXISTS payment_status TEXT DEFAULT 'pending',
+      ADD COLUMN IF NOT EXISTS advance_discount_percent INTEGER DEFAULT 10,
+      ADD COLUMN IF NOT EXISTS original_price DECIMAL(10,2),
+      ADD COLUMN IF NOT EXISTS discounted_price DECIMAL(10,2),
+      ADD COLUMN IF NOT EXISTS admin_fee_percent INTEGER DEFAULT 5,
+      ADD COLUMN IF NOT EXISTS refund_amount DECIMAL(10,2),
+      ADD COLUMN IF NOT EXISTS refund_date TIMESTAMP WITH TIME ZONE,
+      ADD COLUMN IF NOT EXISTS refund_reason TEXT,
+      ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT,
+      ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT,
+      ADD COLUMN IF NOT EXISTS stripe_payment_method_id TEXT,
+      ADD COLUMN IF NOT EXISTS save_card_for_daily_charges BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS daily_charge_limit DECIMAL(10,2),
+      ADD COLUMN IF NOT EXISTS last_daily_charge_date DATE,
+      ADD COLUMN IF NOT EXISTS total_daily_charged DECIMAL(10,2) DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS company_description TEXT,
+      ADD COLUMN IF NOT EXISTS company_name TEXT,
+      ADD COLUMN IF NOT EXISTS company_website TEXT,
+      ADD COLUMN IF NOT EXISTS backlink_url TEXT,
+      ADD COLUMN IF NOT EXISTS backlink_verified BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS backlink_discount_applied BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS content_flagged BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS flag_reason TEXT,
+      ADD COLUMN IF NOT EXISTS url_scanned BOOLEAN DEFAULT false,
+      ADD COLUMN IF NOT EXISTS url_scan_result JSONB;
 
-DO $$
-BEGIN
-  ALTER TABLE public.ads ADD CONSTRAINT ads_approval_status_check CHECK (approval_status IN ('pending', 'approved', 'rejected'));
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;
-
-DO $$
-BEGIN
-  ALTER TABLE public.ads ADD CONSTRAINT ads_payment_type_check CHECK (payment_type IN ('daily', 'advance'));
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;
-
-DO $$
-BEGIN
-  ALTER TABLE public.ads ADD CONSTRAINT ads_payment_status_check CHECK (payment_status IN ('pending', 'paid', 'refunded', 'partial_refund'));
-EXCEPTION WHEN duplicate_object THEN NULL;
-END $$;
-
--- Also add 'paused' to ads status if not already
-DO $$
-BEGIN
-  ALTER TABLE public.ads DROP CONSTRAINT IF EXISTS ads_status_check;
-  ALTER TABLE public.ads ADD CONSTRAINT ads_status_check 
-    CHECK (status IN ('pending', 'approved', 'rejected', 'active', 'paused', 'completed', 'cancelled'));
-EXCEPTION WHEN others THEN NULL;
+    -- CHECK constraints
+    BEGIN
+      ALTER TABLE public.ads ADD CONSTRAINT ads_placement_type_check CHECK (placement_type IN ('fixed', 'rotating'));
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER TABLE public.ads ADD CONSTRAINT ads_link_type_check CHECK (link_type IN ('internal', 'external'));
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER TABLE public.ads ADD CONSTRAINT ads_approval_status_check CHECK (approval_status IN ('pending', 'approved', 'rejected'));
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER TABLE public.ads ADD CONSTRAINT ads_payment_type_check CHECK (payment_type IN ('daily', 'advance'));
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER TABLE public.ads ADD CONSTRAINT ads_payment_status_check CHECK (payment_status IN ('pending', 'paid', 'refunded', 'partial_refund'));
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER TABLE public.ads DROP CONSTRAINT IF EXISTS ads_status_check;
+      ALTER TABLE public.ads ADD CONSTRAINT ads_status_check
+        CHECK (status IN ('pending', 'approved', 'rejected', 'active', 'paused', 'completed', 'cancelled'));
+    EXCEPTION WHEN others THEN NULL;
+    END;
+  ELSE
+    RAISE NOTICE 'ads table does not exist yet - skipping Section 3 (will apply after migration 026 runs)';
+  END IF;
 END $$;
 
 -- ============================================================
@@ -132,124 +128,138 @@ END $$;
 -- Correct: ads.placement_id → ad_placements.id
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION public.get_active_ads_for_placement(p_placement_id UUID)
-RETURNS TABLE (
-  ad_id UUID,
-  title TEXT,
-  image_url TEXT,
-  link_url TEXT,
-  link_type TEXT,
-  internal_link_path TEXT,
-  button_config JSONB
-) AS $$
+DO $$
 BEGIN
-  -- Reset daily views if needed
-  PERFORM public.reset_daily_ad_views();
-  PERFORM public.check_daily_ad_limits();
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'ads' AND schemaname = 'public') THEN
+    CREATE OR REPLACE FUNCTION public.get_active_ads_for_placement(p_placement_id UUID)
+    RETURNS TABLE (
+      ad_id UUID,
+      title TEXT,
+      image_url TEXT,
+      link_url TEXT,
+      link_type TEXT,
+      internal_link_path TEXT,
+      button_config JSONB
+    ) AS $func$
+    BEGIN
+      IF EXISTS (SELECT FROM pg_proc WHERE proname = 'reset_daily_ad_views') THEN
+        PERFORM public.reset_daily_ad_views();
+      END IF;
+      IF EXISTS (SELECT FROM pg_proc WHERE proname = 'check_daily_ad_limits') THEN
+        PERFORM public.check_daily_ad_limits();
+      END IF;
 
-  RETURN QUERY
-  SELECT
-    a.id,
-    a.title,
-    a.image_url,
-    a.link_url,
-    a.link_type,
-    a.internal_link_path,
-    a.button_config
-  FROM public.ads a
-  WHERE
-    a.placement_id = p_placement_id
-    AND a.status = 'active'
-    AND a.approval_status = 'approved'
-    AND a.is_daily_limit_reached = false
-    AND a.start_date <= CURRENT_DATE
-    AND (a.end_date IS NULL OR a.end_date >= CURRENT_DATE)
-  ORDER BY a.priority DESC, random();
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+      RETURN QUERY
+      SELECT
+        a.id,
+        a.title,
+        a.image_url,
+        a.link_url,
+        a.link_type,
+        a.internal_link_path,
+        a.button_config
+      FROM public.ads a
+      WHERE
+        a.placement_id = p_placement_id
+        AND a.status = 'active'
+        AND a.approval_status = 'approved'
+        AND a.is_daily_limit_reached = false
+        AND a.start_date <= CURRENT_DATE
+        AND (a.end_date IS NULL OR a.end_date >= CURRENT_DATE)
+      ORDER BY a.priority DESC, random();
+    END;
+    $func$ LANGUAGE plpgsql SECURITY DEFINER;
+  ELSE
+    RAISE NOTICE 'ads table not found - skipping get_active_ads_for_placement function';
+  END IF;
+END $$;
 
 -- ============================================================
 -- SECTION 5: FIX BROKEN check_total_ad_limits FUNCTION
 -- Original referenced non-existent columns total_views/total_days
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION public.check_total_ad_limits()
-RETURNS VOID AS $$
+DO $$
 BEGIN
-  -- Complete ads that have reached their purchased quantity
-  UPDATE public.ads
-  SET status = 'completed'
-  WHERE status = 'active'
-    AND purchase_type = 'views'
-    AND max_views IS NOT NULL
-    AND (
-      SELECT COALESCE(SUM(views), 0)
-      FROM public.ad_stats
-      WHERE ad_stats.ad_id = public.ads.id
-    ) >= max_views;
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'ads' AND schemaname = 'public') THEN
+    CREATE OR REPLACE FUNCTION public.check_total_ad_limits()
+    RETURNS VOID AS $func$
+    BEGIN
+      UPDATE public.ads SET status = 'completed'
+      WHERE status = 'active' AND purchase_type = 'views' AND max_views IS NOT NULL
+        AND (SELECT COALESCE(SUM(views), 0) FROM public.ad_stats WHERE ad_stats.ad_id = public.ads.id) >= max_views;
 
-  UPDATE public.ads
-  SET status = 'completed'
-  WHERE status = 'active'
-    AND purchase_type = 'clicks'
-    AND max_clicks IS NOT NULL
-    AND (
-      SELECT COALESCE(SUM(clicks), 0)
-      FROM public.ad_stats
-      WHERE ad_stats.ad_id = public.ads.id
-    ) >= max_clicks;
+      UPDATE public.ads SET status = 'completed'
+      WHERE status = 'active' AND purchase_type = 'clicks' AND max_clicks IS NOT NULL
+        AND (SELECT COALESCE(SUM(clicks), 0) FROM public.ad_stats WHERE ad_stats.ad_id = public.ads.id) >= max_clicks;
 
-  UPDATE public.ads
-  SET status = 'completed'
-  WHERE status = 'active'
-    AND purchase_type = 'days'
-    AND end_date IS NOT NULL
-    AND end_date < CURRENT_DATE;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+      UPDATE public.ads SET status = 'completed'
+      WHERE status = 'active' AND purchase_type = 'days'
+        AND end_date IS NOT NULL AND end_date < CURRENT_DATE;
+    END;
+    $func$ LANGUAGE plpgsql SECURITY DEFINER;
+  ELSE
+    RAISE NOTICE 'ads table not found - skipping check_total_ad_limits function';
+  END IF;
+END $$;
 
 -- ============================================================
 -- SECTION 6: FIX ad_payment_transactions RLS
 -- Migration 029 used ads.merchant_id but column is advertiser_id
 -- ============================================================
 
-DROP POLICY IF EXISTS ad_payment_transactions_select_policy ON public.ad_payment_transactions;
-DROP POLICY IF EXISTS ad_payment_transactions_insert_policy ON public.ad_payment_transactions;
-DROP POLICY IF EXISTS ad_payment_transactions_update_policy ON public.ad_payment_transactions;
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'ad_payment_transactions' AND schemaname = 'public') THEN
+    DROP POLICY IF EXISTS ad_payment_transactions_select_policy ON public.ad_payment_transactions;
+    DROP POLICY IF EXISTS ad_payment_transactions_insert_policy ON public.ad_payment_transactions;
+    DROP POLICY IF EXISTS ad_payment_transactions_update_policy ON public.ad_payment_transactions;
+    DROP POLICY IF EXISTS ad_payment_transactions_select_own ON public.ad_payment_transactions;
+    DROP POLICY IF EXISTS ad_payment_transactions_insert_own ON public.ad_payment_transactions;
+    DROP POLICY IF EXISTS ad_payment_transactions_service_role ON public.ad_payment_transactions;
 
-CREATE POLICY "ad_payment_transactions_select_own" ON public.ad_payment_transactions
-  FOR SELECT TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM public.ads WHERE ads.id = ad_payment_transactions.ad_id AND ads.advertiser_id = auth.uid())
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "ad_payment_transactions_insert_own" ON public.ad_payment_transactions
-  FOR INSERT TO authenticated
-  WITH CHECK (
-    EXISTS (SELECT 1 FROM public.ads WHERE ads.id = ad_payment_transactions.ad_id AND ads.advertiser_id = auth.uid())
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
-
-CREATE POLICY "ad_payment_transactions_service_role" ON public.ad_payment_transactions
-  FOR ALL TO service_role
-  USING (true) WITH CHECK (true);
+    CREATE POLICY "ad_payment_transactions_select_own" ON public.ad_payment_transactions
+      FOR SELECT TO authenticated
+      USING (
+        EXISTS (SELECT 1 FROM public.ads WHERE ads.id = ad_payment_transactions.ad_id AND ads.advertiser_id = auth.uid())
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+      );
+    CREATE POLICY "ad_payment_transactions_insert_own" ON public.ad_payment_transactions
+      FOR INSERT TO authenticated
+      WITH CHECK (
+        EXISTS (SELECT 1 FROM public.ads WHERE ads.id = ad_payment_transactions.ad_id AND ads.advertiser_id = auth.uid())
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+      );
+    CREATE POLICY "ad_payment_transactions_service_role" ON public.ad_payment_transactions
+      FOR ALL TO service_role USING (true) WITH CHECK (true);
+  ELSE
+    RAISE NOTICE 'ad_payment_transactions table not found - skipping Section 6';
+  END IF;
+END $$;
 
 -- ============================================================
 -- SECTION 7: FIX ads UPDATE RLS (028 used merchant_id)
 -- ============================================================
 
-DROP POLICY IF EXISTS ads_update_policy ON public.ads;
-CREATE POLICY "ads_update_own" ON public.ads
-  FOR UPDATE TO authenticated
-  USING (
-    advertiser_id = auth.uid()
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  )
-  WITH CHECK (
-    advertiser_id = auth.uid()
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-  );
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'ads' AND schemaname = 'public') THEN
+    DROP POLICY IF EXISTS ads_update_policy ON public.ads;
+    DROP POLICY IF EXISTS ads_update_own ON public.ads;
+    CREATE POLICY "ads_update_own" ON public.ads
+      FOR UPDATE TO authenticated
+      USING (
+        advertiser_id = auth.uid()
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+      )
+      WITH CHECK (
+        advertiser_id = auth.uid()
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+      );
+  ELSE
+    RAISE NOTICE 'ads table not found - skipping Section 7';
+  END IF;
+END $$;
 
 -- ============================================================
 -- SECTION 8: MISSING TABLES
@@ -647,11 +657,18 @@ CREATE POLICY "customer_support_stats_admin_read" ON public.customer_support_sta
 -- SECTION 9: FIX SELLER_PROFILES TABLE - MISSING COLUMNS
 -- ============================================================
 
-ALTER TABLE public.seller_profiles
-  ADD COLUMN IF NOT EXISTS shop_url VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS total_sales INTEGER DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1,
-  ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'seller_profiles' AND schemaname = 'public') THEN
+    ALTER TABLE public.seller_profiles
+      ADD COLUMN IF NOT EXISTS shop_url VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS total_sales INTEGER DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1,
+      ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
+  ELSE
+    RAISE NOTICE 'seller_profiles table not found - skipping Section 9';
+  END IF;
+END $$;
 
 -- ============================================================
 -- SECTION 10: FIX ORGANIZATIONS TABLE
@@ -731,10 +748,15 @@ CREATE POLICY "notifications_own" ON public.notifications
 -- SECTION 13: INDEXES FOR NEW COLUMNS ON ADS
 -- ============================================================
 
-CREATE INDEX IF NOT EXISTS idx_ads_approval_status ON public.ads(approval_status);
-CREATE INDEX IF NOT EXISTS idx_ads_payment_status ON public.ads(payment_status);
-CREATE INDEX IF NOT EXISTS idx_ads_daily_limit_reached ON public.ads(is_daily_limit_reached);
-CREATE INDEX IF NOT EXISTS idx_ads_content_flagged ON public.ads(content_flagged);
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'ads' AND schemaname = 'public') THEN
+    CREATE INDEX IF NOT EXISTS idx_ads_approval_status ON public.ads(approval_status);
+    CREATE INDEX IF NOT EXISTS idx_ads_payment_status ON public.ads(payment_status);
+    CREATE INDEX IF NOT EXISTS idx_ads_daily_limit_reached ON public.ads(is_daily_limit_reached);
+    CREATE INDEX IF NOT EXISTS idx_ads_content_flagged ON public.ads(content_flagged);
+  END IF;
+END $$;
 
 -- ============================================================
 -- SECTION 14: ENSURE SERVICE ROLE FULL ACCESS ON ALL CORE TABLES
