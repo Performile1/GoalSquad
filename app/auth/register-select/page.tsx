@@ -96,7 +96,7 @@ export default function RegisterSelectPage() {
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-primary-50 rounded-xl group-hover:bg-primary-100 transition">
-                    <type.icon size={40} />
+                    <type.icon size={40} className="icon-brand" />
                   </div>
                   {type.badge && (
                     <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full uppercase tracking-wider">

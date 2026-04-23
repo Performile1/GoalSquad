@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { AlertIcon } from '@/app/components/BrandIcons';
 
 function GoogleLogo() {
   return (
@@ -88,9 +89,10 @@ export default function LoginPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg">
+          <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg flex items-center gap-3">
+            <AlertIcon size={20} className="text-red-600" />
             <p className="text-red-700 text-sm font-semibold">
-              ❌ {error}
+              {error}
             </p>
           </div>
         )}
