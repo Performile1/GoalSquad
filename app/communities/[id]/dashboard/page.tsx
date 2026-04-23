@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { MessageIcon } from '@/app/components/BrandIcons';
+import { MessageIcon, UserIcon, OrdersIcon, AlertIcon } from '@/app/components/BrandIcons';
 
 interface CommunityStats {
   name: string;
@@ -94,11 +94,11 @@ export default function CommunityDashboard() {
         </motion.div>
 
         {/* Community Messaging Card */}
-        <Link href="/messages" className="block mb-8">
+        <Link href={`/communities/${communityId}/messages`} className="block mb-4">
           <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-green-200 hover:border-green-500 transition cursor-pointer">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-green-100 rounded-xl">
-                <MessageIcon size={32} className="text-green-900" />
+                <MessageIcon size={32} className="text-green-900 icon-brand" />
               </div>
               <div className="flex-1">
                 <h2 className="text-xl font-bold text-gray-900 mb-1">Community Meddelanden</h2>
@@ -110,6 +110,58 @@ export default function CommunityDashboard() {
             </div>
           </div>
         </Link>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Link href={`/communities/${communityId}/sellers`} className="block">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-green-200 hover:border-green-500 transition cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-green-100 rounded-xl">
+                  <UserIcon size={32} className="text-green-900 icon-brand" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Mina säljare</h2>
+                  <p className="text-gray-600">Se alla säljare i föreningen</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+          <Link href={`/communities/${communityId}/orders`} className="block">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-blue-200 hover:border-blue-500 transition cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-100 rounded-xl">
+                  <OrdersIcon size={32} className="text-blue-900 icon-brand" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Ordrar</h2>
+                  <p className="text-gray-600">Se alla ordrar</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+          <Link href={`/communities/${communityId}/returns`} className="block">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-red-200 hover:border-red-500 transition cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-red-100 rounded-xl">
+                  <AlertIcon size={32} className="text-red-900 icon-brand" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Returer</h2>
+                  <p className="text-gray-600">Se alla returer</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

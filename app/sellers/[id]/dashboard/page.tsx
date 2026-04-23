@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { TrophyIcon, UserIcon, DashboardIcon } from '@/app/components/BrandIcons';
 import { apiFetch } from '@/lib/api-client';
 
@@ -258,31 +259,6 @@ export default function SellerDashboard() {
                     <div className="text-4xl mb-2">{achievement.iconUrl || '🏅'}</div>
                     <h4 className="font-bold text-sm mb-1">{achievement.name}</h4>
                     <p className="text-xs text-gray-600">{achievement.description}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Snabbåtgärder</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <button className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition">
-                  📦 Mina produkter
-                </button>
-                <button className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition">
-                  📊 Se ordrar
-                </button>
-                <button className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition">
-                  🎯 Leaderboard
-                </button>
-                <button className="border-2 border-primary-900 text-primary-900 py-4 rounded-xl font-semibold hover:bg-primary-50 transition">
-                  ⚙️ Inställningar
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
       </div>
     </div>
   );
