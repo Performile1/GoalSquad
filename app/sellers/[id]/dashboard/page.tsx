@@ -259,6 +259,31 @@ export default function SellerDashboard() {
                     <div className="text-4xl mb-2">{achievement.iconUrl || '🏅'}</div>
                     <h4 className="font-bold text-sm mb-1">{achievement.name}</h4>
                     <p className="text-xs text-gray-600">{achievement.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Snabbåtgärder</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Link href={`/sellers/${sellerId}/products`} className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
+                  📦 Mina produkter
+                </Link>
+                <Link href={`/sellers/${sellerId}/orders`} className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
+                  📊 Se ordrar
+                </Link>
+                <Link href={`/sellers/${sellerId}/returns`} className="bg-red-600 text-white py-4 rounded-xl font-semibold hover:bg-red-700 transition text-center">
+                  ↩️ Returer
+                </Link>
+                <Link href="/leaderboard" className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
+                  🎯 Leaderboard
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
