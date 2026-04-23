@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function POST(
   req: NextRequest,
@@ -14,11 +15,11 @@ export async function POST(
 ) {
   try {
     const communityId = params.id;
-    const userId = req.headers.get('x-user-id'); // TODO: Get from session
-
-    if (!userId) {
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const userId = authUser.id;
 
     // Verify user is community admin
     const { data: member } = await supabaseAdmin
@@ -136,11 +137,11 @@ export async function PUT(
 ) {
   try {
     const communityId = params.id;
-    const userId = req.headers.get('x-user-id');
-
-    if (!userId) {
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const userId = authUser.id;
 
     // Verify admin
     const { data: member } = await supabaseAdmin

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BellIcon, XIcon, CheckIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Notification {
   id: string;
@@ -32,7 +33,7 @@ export default function Notifications({ recipientId }: NotificationsProps) {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('/api/notifications?unread=true');
+      const response = await apiFetch('/api/notifications?unread=true');
       const data = await response.json();
       setNotifications(data.notifications || []);
       setUnreadCount(data.notifications?.filter((n: Notification) => !n.is_read).length || 0);
@@ -45,9 +46,8 @@ export default function Notifications({ recipientId }: NotificationsProps) {
 
   const markAsRead = async (notificationIds: string[]) => {
     try {
-      await fetch('/api/notifications', {
+      await apiFetch('/api/notifications', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationIds, markAsRead: true }),
       });
       fetchNotifications();

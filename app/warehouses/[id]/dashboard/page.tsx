@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { DashboardIcon, ShoppingBagIcon, TruckIcon, BoxIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface WarehouseStats {
   id: string;
@@ -30,7 +31,7 @@ export default function WarehouseDashboard() {
 
   const fetchWarehouseStats = async () => {
     try {
-      const response = await fetch(`/api/warehouses/${warehouseId}/stats`);
+      const response = await apiFetch(`/api/warehouses/${warehouseId}/stats`);
       const data = await response.json();
       setStats(data);
     } catch (error) {

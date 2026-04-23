@@ -175,7 +175,7 @@ export default function AboutPage() {
                   <div className="relative">
                     <div
                       className="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden"
-                      style={{ background: 'linear-gradient(135deg, #004040 0%, #006666 100%)' }}
+                      style={{ background: 'linear-gradient(135deg, #003B3D 0%, #004A4C 100%)' }}
                     >
                       <div className="absolute inset-0 bg-black/30 rounded-full" />
                       <member.icon size={32} />

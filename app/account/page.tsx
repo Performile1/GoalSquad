@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { OrdersIcon, SupportIcon, ImpactIcon, BadgeIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Order {
   id: string;
@@ -90,21 +91,21 @@ export default function AccountPage() {
   const fetchData = async () => {
     try {
       // Fetch orders
-      const ordersRes = await fetch('/api/orders');
+      const ordersRes = await apiFetch('/api/orders');
       if (ordersRes.ok) {
         const ordersData = await ordersRes.json();
         setOrders(ordersData.orders || []);
       }
 
       // Fetch returns
-      const returnsRes = await fetch('/api/returns');
+      const returnsRes = await apiFetch('/api/returns');
       if (returnsRes.ok) {
         const returnsData = await returnsRes.json();
         setReturns(returnsData.returns || []);
       }
 
       // Fetch support stats
-      const statsRes = await fetch('/api/customer/support-stats');
+      const statsRes = await apiFetch('/api/customer/support-stats');
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setSupportStats(statsData);

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TruckIcon, SaveIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface ShippingPreferences {
   id?: string;
@@ -37,7 +38,7 @@ export default function MerchantShippingPreferences() {
 
   const fetchPreferences = async () => {
     try {
-      const response = await fetch('/api/shipping/preferences');
+      const response = await apiFetch('/api/shipping/preferences');
       const data = await response.json();
       if (data.preferences) {
         setPreferences(data.preferences);
@@ -52,9 +53,8 @@ export default function MerchantShippingPreferences() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const response = await fetch('/api/shipping/preferences', {
+      const response = await apiFetch('/api/shipping/preferences', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(preferences),
       });
       const data = await response.json();

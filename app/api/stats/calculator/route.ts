@@ -7,22 +7,18 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     // Get total communities
-    const { count: communitiesCount } = await supabase
+    const { count: communitiesCount } = await supabaseAdmin
       .from('communities')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true);
 
     // Get total revenue from completed orders
-    const { data: revenueData } = await supabase
+    const { data: revenueData } = await supabaseAdmin
       .from('orders')
       .select('total_amount')
       .in('status', ['completed', 'delivered']);
@@ -33,7 +29,7 @@ export async function GET(req: NextRequest) {
     );
 
     // Calculate average profit percentage from products
-    const { data: productsData } = await supabase
+    const { data: productsData } = await supabaseAdmin
       .from('products')
       .select('price, cost_price')
       .not('cost_price', 'is', null)

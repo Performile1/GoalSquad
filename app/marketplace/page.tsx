@@ -119,7 +119,7 @@ export default function MarketplacePage() {
         </div>
 
         {/* Category tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-6">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
@@ -133,6 +133,26 @@ export default function MarketplacePage() {
               <cat.icon size={18} /> {cat.label}
             </button>
           ))}
+        </div>
+
+        {/* Suggestion CTA */}
+        <div className="mb-8 bg-gradient-to-r from-primary-50 to-primary-100 rounded-2xl p-6 border-2 border-primary-200">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-bold text-primary-900 mb-1">
+                Saknar du något i community shoppen?
+              </h3>
+              <p className="text-primary-700 text-sm">
+                Föreslå nya produkter eller kategorier så försöker vi lösa det.
+              </p>
+            </div>
+            <Link
+              href="/suggest"
+              className="bg-primary-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-600 transition whitespace-nowrap"
+            >
+              Föreslå produkt →
+            </Link>
+          </div>
         </div>
 
         {/* Product grid */}

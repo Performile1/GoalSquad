@@ -1,20 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthUser(request);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get seller profile for the current user
-    const { data: sellerProfile, error: profileError } = await supabase
+    const { data: sellerProfile, error: profileError } = await supabaseAdmin
       .from('seller_profiles')
       .select('id')
       .eq('user_id', user.id)
@@ -25,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch active quests
-    const { data: quests, error: questsError } = await supabase
+    const { data: quests, error: questsError } = await supabaseAdmin
       .from('seller_quests')
       .select('*')
       .eq('is_active', true);
@@ -34,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch quest progress for the seller
     const questIds = quests.map(q => q.id);
-    const { data: progress, error: progressError } = await supabase
+    const { data: progress, error: progressError } = await supabaseAdmin
       .from('seller_quest_progress')
       .select('*')
       .eq('seller_profile_id', sellerProfile.id)

@@ -2,51 +2,263 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
-}
+/* ═══════════════════════════════════════════════════════════
+   GOALSQUAD DESIGN SYSTEM — High-Contrast Adaptive Strategy
+   ═══════════════════════════════════════════════════════════
+   Light context  → Off-White bg + Petrol primary
+   Dark context   → Charcoal bg  + Gold primary
+   ═══════════════════════════════════════════════════════════ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 10, 10, 10;
-    --background-end-rgb: 10, 10, 10;
-  }
+:root {
+  /* Core palette */
+  --gs-petrol:       #003B3D;
+  --gs-petrol-light: #004A4C;
+  --gs-petrol-dark:  #002829;
+  --gs-gold:         #FFD700;
+  --gs-gold-glow:    rgba(255, 215, 0, 0.35);
+  --gs-charcoal:     #1A1A1A;
+  --gs-charcoal-l:   #2A2A2A;
+  --gs-offwhite:     #F8F9FA;
+  --gs-offwhite-d:   #EAECEE;
+  --gs-text:         #1A1A1A;
+  --gs-text-muted:   #6B7280;
+
+  /* Light context defaults */
+  --ctx-bg:          var(--gs-offwhite);
+  --ctx-surface:     #FFFFFF;
+  --ctx-primary:     var(--gs-petrol);
+  --ctx-primary-h:   var(--gs-petrol-light);
+  --ctx-text:        var(--gs-text);
+  --ctx-text-inv:    #FFFFFF;
+  --ctx-border:      #E5E7EB;
+  --ctx-shadow:      0 2px 8px rgba(0,59,61,0.12), 0 1px 3px rgba(0,59,61,0.08);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--gs-offwhite);
+  color: var(--gs-text);
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* ── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--gs-offwhite-d); }
+::-webkit-scrollbar-thumb { background: #9CA3AF; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gs-petrol); }
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION CONTEXTS
+   ═══════════════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ── Light / Standard / Admin ── */
+  .section-light {
+    background-color: var(--gs-offwhite);
+    color: var(--gs-text);
   }
-}
+  .section-white {
+    background-color: #FFFFFF;
+    color: var(--gs-text);
+  }
+  .section-petrol {
+    background-color: var(--gs-petrol);
+    color: #FFFFFF;
+  }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+  /* ── Dark / Gamified / Action ── */
+  .section-dark {
+    background-color: var(--gs-charcoal);
+    color: #FFFFFF;
+  }
+  .section-dark-surface {
+    background-color: var(--gs-charcoal-l);
+    color: #FFFFFF;
+  }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
+  /* ═══════════════════════════════════════════════════════
+     BUTTONS
+     ═══════════════════════════════════════════════════════ */
 
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
+  /* Primary: Petrol bg + white text — light surfaces */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg
+           text-sm font-semibold text-white transition-all duration-200;
+    background-color: var(--gs-petrol);
+    box-shadow: 0 2px 8px rgba(0,59,61,0.25), 0 1px 2px rgba(0,59,61,0.15);
+  }
+  .btn-primary:hover {
+    background-color: var(--gs-petrol-light);
+    box-shadow: 0 4px 14px rgba(0,59,61,0.35), 0 2px 4px rgba(0,59,61,0.2);
+    transform: translateY(-1px);
+  }
+  .btn-primary:active { transform: translateY(0); }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  /* Hero / Achievement: Gold bg + dark text — draws the eye */
+  .btn-hero {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg
+           text-sm font-bold transition-all duration-200;
+    background-color: var(--gs-gold);
+    color: var(--gs-charcoal);
+    box-shadow: 0 0 0 0 var(--gs-gold-glow);
+  }
+  .btn-hero:hover {
+    background-color: #FFE033;
+    box-shadow: 0 0 18px 4px var(--gs-gold-glow), 0 2px 8px rgba(255,215,0,0.4);
+    transform: translateY(-1px);
+  }
+  .btn-hero:active { transform: translateY(0); }
+
+  /* Outline: Petrol border + text — secondary on light */
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg
+           text-sm font-semibold transition-all duration-200;
+    color: var(--gs-petrol);
+    border: 1.5px solid var(--gs-petrol);
+    background: transparent;
+  }
+  .btn-outline:hover {
+    background-color: rgba(0,59,61,0.06);
+  }
+
+  /* Ghost on dark: white text, subtle border */
+  .btn-ghost-dark {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg
+           text-sm font-semibold text-white transition-all duration-200;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.07);
+  }
+  .btn-ghost-dark:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.5);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     CARDS
+     ═══════════════════════════════════════════════════════ */
+
+  /* Card on light bg — petrol shadow elevation */
+  .card {
+    @apply rounded-xl bg-white border border-gray-100;
+    box-shadow: var(--ctx-shadow);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    box-shadow: 0 8px 24px rgba(0,59,61,0.16), 0 2px 6px rgba(0,59,61,0.1);
+    transform: translateY(-2px);
+  }
+
+  /* Card on dark bg — gold outer glow */
+  .card-dark {
+    @apply rounded-xl;
+    background-color: var(--gs-charcoal-l);
+    border: 1px solid rgba(255,215,0,0.15);
+    box-shadow: 0 0 0 0 var(--gs-gold-glow);
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .card-dark:hover {
+    border-color: rgba(255,215,0,0.4);
+    box-shadow: 0 0 20px 2px var(--gs-gold-glow);
+    transform: translateY(-2px);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     BADGES / TAGS
+     ═══════════════════════════════════════════════════════ */
+
+  .badge-petrol {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    background-color: rgba(0,59,61,0.1);
+    color: var(--gs-petrol);
+  }
+  .badge-gold {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold;
+    background-color: var(--gs-gold);
+    color: var(--gs-charcoal);
+  }
+  .badge-gold-outline {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    border: 1px solid var(--gs-gold);
+    color: var(--gs-gold);
+    background: transparent;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     ICONS — adaptive: petrol on light, gold on dark
+     ═══════════════════════════════════════════════════════ */
+
+  .icon-brand { color: var(--gs-petrol); }
+
+  .section-dark .icon-brand,
+  .section-dark-surface .icon-brand,
+  .section-petrol .icon-brand {
+    color: var(--gs-gold);
+  }
+
+  /* Achievement / Level-up modal icons always gold */
+  .icon-achievement { color: var(--gs-gold); }
+
+  /* ═══════════════════════════════════════════════════════
+     ELEVATION UTILITIES
+     ═══════════════════════════════════════════════════════ */
+
+  .elevation-petrol {
+    box-shadow: 0 4px 16px rgba(0,59,61,0.2), 0 1px 4px rgba(0,59,61,0.12);
+  }
+  .elevation-gold-glow {
+    box-shadow: 0 0 24px 4px rgba(255,215,0,0.3), 0 2px 8px rgba(255,215,0,0.15);
+  }
+  .ring-gold {
+    outline: 2px solid var(--gs-gold);
+    outline-offset: 2px;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     FORM INPUTS
+     ═══════════════════════════════════════════════════════ */
+
+  .input {
+    @apply w-full px-3.5 py-2.5 rounded-lg border text-sm transition-all duration-200
+           bg-white text-gray-900 outline-none;
+    border-color: var(--gs-offwhite-d);
+  }
+  .input:focus {
+    border-color: var(--gs-petrol);
+    box-shadow: 0 0 0 3px rgba(0,59,61,0.12);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     STAT / METRIC BLOCKS (gamified dark)
+     ═══════════════════════════════════════════════════════ */
+
+  .stat-dark {
+    @apply rounded-xl p-5 flex flex-col gap-1;
+    background: var(--gs-charcoal-l);
+    border: 1px solid rgba(255,215,0,0.12);
+  }
+  .stat-dark .stat-value {
+    @apply text-2xl font-bold;
+    color: var(--gs-gold);
+  }
+  .stat-dark .stat-label {
+    @apply text-xs font-medium uppercase tracking-wider;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     DIVIDERS
+     ═══════════════════════════════════════════════════════ */
+
+  .divider-light { border-top: 1px solid var(--gs-offwhite-d); }
+  .divider-dark  { border-top: 1px solid rgba(255,255,255,0.1); }
+  .divider-gold  { border-top: 1px solid rgba(255,215,0,0.25); }
+
+  /* ═══════════════════════════════════════════════════════
+     TEXT UTILITIES
+     ═══════════════════════════════════════════════════════ */
+
+  .text-balance { text-wrap: balance; }
+  .text-petrol  { color: var(--gs-petrol); }
+  .text-gold    { color: var(--gs-gold); }
+  .text-muted   { color: var(--gs-text-muted); }
 }

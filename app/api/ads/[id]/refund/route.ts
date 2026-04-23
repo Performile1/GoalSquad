@@ -1,22 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -25,18 +20,18 @@ export async function POST(
     const { reason, rejectAd } = body;
 
     // Check if user is admin
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profile || profile.role !== 'admin') {
+    if (!profile || profile.role !== 'gs_admin') {
       return NextResponse.json({ error: 'Only admins can process refunds' }, { status: 403 });
     }
 
     // Get ad details
-    const { data: ad, error: adError } = await supabase
+    const { data: ad, error: adError } = await supabaseAdmin
       .from('ads')
       .select('*')
       .eq('id', params.id)
@@ -56,7 +51,7 @@ export async function POST(
     }
 
     // Get admin fee configuration
-    const { data: feeConfig } = await supabase
+    const { data: feeConfig } = await supabaseAdmin
       .from('admin_fee_config')
       .select('fee_percent, fixed_fee')
       .eq('fee_type', 'ad_rejection')
@@ -67,14 +62,14 @@ export async function POST(
     const fixedFee = feeConfig?.fixed_fee || 50;
 
     // Calculate refund amount with admin fee deduction
-    const { data: refundAmount } = await supabase.rpc('calculate_refund_amount', {
+    const { data: refundAmount } = await supabaseAdmin.rpc('calculate_refund_amount', {
       p_paid_amount: ad.discounted_price,
       p_admin_fee_percent: adminFeePercent,
       p_fixed_fee: fixedFee,
     });
 
     // Update ad status
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('ads')
       .update({
         payment_status: 'refunded',
@@ -88,7 +83,7 @@ export async function POST(
     if (updateError) throw updateError;
 
     // Create refund transaction record
-    const { error: transactionError } = await supabase
+    const { error: transactionError } = await supabaseAdmin
       .from('ad_payment_transactions')
       .insert({
         ad_id: ad.id,
@@ -114,8 +109,8 @@ export async function POST(
       refundAmount,
       adminFee: ad.discounted_price - refundAmount,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error processing refund:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

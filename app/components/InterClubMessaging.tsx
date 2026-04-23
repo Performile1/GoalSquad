@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageIcon, PlusIcon, SendIcon, PackageIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface CoordinationMessage {
   id: string;
@@ -47,7 +48,7 @@ export default function InterClubMessaging({ entityType }: InterClubMessagingPro
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch('/api/coordination?status=open');
+      const response = await apiFetch('/api/coordination?status=open');
       const data = await response.json();
       setMessages(data.messages || []);
     } catch (error) {
@@ -59,9 +60,8 @@ export default function InterClubMessaging({ entityType }: InterClubMessagingPro
 
   const handleCreateMessage = async () => {
     try {
-      const response = await fetch('/api/coordination', {
+      const response = await apiFetch('/api/coordination', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMessage),
       });
       const data = await response.json();
@@ -84,9 +84,8 @@ export default function InterClubMessaging({ entityType }: InterClubMessagingPro
 
   const handleUpdateStatus = async (messageId: string, status: string) => {
     try {
-      await fetch('/api/coordination', {
+      await apiFetch('/api/coordination', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messageId, status }),
       });
       fetchMessages();

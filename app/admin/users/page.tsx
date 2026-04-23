@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { UserIcon, SearchIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 type Role = 'all' | 'buyer' | 'seller' | 'merchant' | 'admin' | 'warehouse_manager' | 'community_manager';
 type SortField = 'created_at' | 'email' | 'display_name' | 'role';
@@ -70,7 +71,7 @@ export default function AdminUsersPage() {
         ...(roleFilter !== 'all' && { role: roleFilter }),
         ...(activeOnly && { active: 'true' }),
       });
-      const res = await fetch(`/api/admin/users?${params}`);
+      const res = await apiFetch(`/api/admin/users?${params}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       setData(json);
@@ -314,7 +315,7 @@ export default function AdminUsersPage() {
                                 className="text-xs font-semibold text-red-500 hover:text-red-700"
                                 onClick={() => {
                                   if (confirm(`Inaktivera ${user.display_name || user.email}?`)) {
-                                    fetch(`/api/admin/users/${user.id}/deactivate`, { method: 'POST' }).then(fetchUsers);
+                                    apiFetch(`/api/admin/users/${user.id}/deactivate`, { method: 'POST' }).then(fetchUsers);
                                   }
                                 }}
                               >

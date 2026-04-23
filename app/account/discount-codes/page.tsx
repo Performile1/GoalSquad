@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { CouponIcon, GiftIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface DiscountCode {
   id: string;
@@ -38,7 +39,7 @@ export default function CustomerDiscountCodesPage() {
 
   const fetchDiscountCodes = async () => {
     try {
-      const res = await fetch('/api/customer/discount-codes');
+      const res = await apiFetch('/api/customer/discount-codes');
       if (res.ok) {
         const data = await res.json();
         setDiscountCodes(data);

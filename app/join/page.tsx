@@ -37,7 +37,7 @@ export default function JoinPage() {
             className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full flex flex-col"
           >
             <div className="flex justify-center mb-6">
-              <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition">
+              <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition icon-brand">
                 <CommunityIcon size={64} />
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function JoinPage() {
             className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full flex flex-col"
           >
             <div className="flex justify-center mb-6">
-              <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition">
+              <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition icon-brand">
                 <MerchantIcon size={64} />
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function JoinPage() {
             className="group block bg-white rounded-3xl p-10 shadow-2xl hover:shadow-3xl transition h-full flex flex-col"
           >
             <div className="flex justify-center mb-6">
-              <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition">
+              <div className="bg-primary-50 rounded-2xl p-5 group-hover:bg-primary-100 transition icon-brand">
                 <UserIcon size={64} />
               </div>
             </div>

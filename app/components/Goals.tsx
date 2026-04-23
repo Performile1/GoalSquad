@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrophyIcon, PlusIcon, CheckIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Goal {
   id: string;
@@ -41,7 +42,7 @@ export default function Goals({ entityType }: GoalsProps) {
 
   const fetchGoals = async () => {
     try {
-      const response = await fetch('/api/goals?status=active');
+      const response = await apiFetch('/api/goals?status=active');
       const data = await response.json();
       setGoals(data.goals || []);
     } catch (error) {
@@ -53,9 +54,8 @@ export default function Goals({ entityType }: GoalsProps) {
 
   const handleCreateGoal = async () => {
     try {
-      const response = await fetch('/api/goals', {
+      const response = await apiFetch('/api/goals', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newGoal),
       });
       const data = await response.json();

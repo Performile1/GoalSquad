@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/api-client';
 
 export default function AvatarCreator() {
   const params = useParams();
@@ -89,10 +90,9 @@ export default function AvatarCreator() {
 
     try {
       // Send to AI cartoonization API
-      const response = await fetch('/api/avatar/cartoonize', {
+      const response = await apiFetch('/api/avatar/cartoonize', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+                body: JSON.stringify({
           image: capturedImage,
           userId: sellerId,
         }),
@@ -118,10 +118,9 @@ export default function AvatarCreator() {
     if (!cartoonizedImage) return;
 
     try {
-      const response = await fetch(`/api/sellers/${sellerId}/avatar/save`, {
+      const response = await apiFetch(`/api/sellers/${sellerId}/avatar/save`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+                body: JSON.stringify({
           avatarImage: cartoonizedImage,
         }),
       });

@@ -6,20 +6,16 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     // TODO: Add permission check (user owns order)
 
-    const { data, error } = await supabase.rpc('create_split_shipments', {
+    const { data, error } = await supabaseAdmin.rpc('create_split_shipments', {
       p_order_id: params.id,
       p_strategy: 'split_shipment',
     });

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { DashboardIcon, SearchIcon, FilterIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Order {
   id: string;
@@ -31,7 +32,7 @@ export default function SellerOrders() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`/api/sellers/${sellerId}/orders`);
+      const response = await apiFetch(`/api/sellers/${sellerId}/orders`);
       const data = await response.json();
       setOrders(data.orders || []);
     } catch (error) {

@@ -9,36 +9,56 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // ─── Design System: Standard/Admin context (light bg) ───
         primary: {
-          50: '#e6f2f2',
-          100: '#cce6e6',
-          200: '#99cccc',
-          300: '#66b3b3',
-          400: '#339999',
-          500: '#008080',
-          600: '#006666', // Accentfärg
-          700: '#004d4d',
-          800: '#003333',
-          900: '#004040', // Huvudfärg
-          950: '#002020',
+          50:  '#e6f0f0',
+          100: '#cce0e1',
+          200: '#99c1c2',
+          300: '#66a3a5',
+          400: '#338487',
+          500: '#005759',
+          600: '#004A4C',  // Petrol Light — accent & hover
+          700: '#003F41',
+          800: '#003B3D',  // Petrol — main brand color
+          900: '#003B3D',  // Petrol — kept at 900 for backward compat
+          950: '#002829',
         },
+        // ─── Design System: Action/Gamified context (dark bg) ───
+        gold: {
+          50:  '#FFFDE0',
+          100: '#FFF9B3',
+          200: '#FFF280',
+          300: '#FFEB4D',
+          400: '#FFE41A',
+          DEFAULT: '#FFD700',  // Electric Gold — hero & achievement
+          600: '#CCAC00',
+          700: '#997F00',
+          800: '#665400',
+          900: '#332900',
+        },
+        // ─── Neutral contexts ───
+        charcoal: {
+          DEFAULT: '#1A1A1A',  // Dark bg — gamified sections
+          light:   '#2A2A2A',
+          lighter: '#3A3A3A',
+          border:  '#404040',
+        },
+        offwhite: {
+          DEFAULT: '#F8F9FA',  // Light bg — standard/admin
+          dark:    '#EAECEE',
+        },
+        // ─── Legacy alias (keep backward compat) ───
         accent: {
-          50: '#e6f2f2',
-          100: '#cce6e6',
-          200: '#99cccc',
-          300: '#66b3b3',
-          400: '#339999',
-          500: '#008080',
-          600: '#006666', // Accentfärg - ljusare teal
-          700: '#004d4d',
-          800: '#003333',
-          900: '#004040', // Huvudfärg - mörk petroleumgrön
-          950: '#002020',
+          DEFAULT: '#003B3D',
+          light:   '#004A4C',
         },
         brand: {
-          primary: '#004040',   // Huvudfärg
-          accent: '#006666',    // Accentfärg
-          white: '#FFFFFF',     // Bakgrund
+          petrol:    '#003B3D',
+          gold:      '#FFD700',
+          charcoal:  '#1A1A1A',
+          offwhite:  '#F8F9FA',
+          text:      '#1A1A1A',
+          textLight: '#F8F9FA',
         },
       },
       fontFamily: {

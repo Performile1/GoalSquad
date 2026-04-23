@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MoneyIcon, TrophyIcon, ShopIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface AnalyticsItem {
   key: string;
@@ -30,7 +31,7 @@ export default function SalesAnalytics({ period = 30, groupBy = 'product' }: Sal
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch(`/api/analytics/sales?period=${selectedPeriod}&groupBy=${selectedGroupBy}`);
+      const response = await apiFetch(`/api/analytics/sales?period=${selectedPeriod}&groupBy=${selectedGroupBy}`);
       const data = await response.json();
       setAnalytics(data.analytics || []);
       setTotals(data.totals || { totalQuantity: 0, totalRevenue: 0, totalCommission: 0 });
@@ -54,7 +55,7 @@ export default function SalesAnalytics({ period = 30, groupBy = 'product' }: Sal
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 border-2 border-gray-200">
+    <div className="card p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900">Försäljningsanalys</h2>
@@ -62,7 +63,8 @@ export default function SalesAnalytics({ period = 30, groupBy = 'product' }: Sal
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(parseInt(e.target.value))}
-            className="px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-primary-900 focus:outline-none"
+            className="input px-3 py-2 text-sm"
+            style={{ width: 'auto' }}
           >
             <option value="7">7 dagar</option>
             <option value="30">30 dagar</option>
@@ -72,7 +74,8 @@ export default function SalesAnalytics({ period = 30, groupBy = 'product' }: Sal
           <select
             value={selectedGroupBy}
             onChange={(e) => setSelectedGroupBy(e.target.value as 'product' | 'category' | 'date')}
-            className="px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-primary-900 focus:outline-none"
+            className="input px-3 py-2 text-sm"
+            style={{ width: 'auto' }}
           >
             <option value="product">Produkt</option>
             <option value="category">Kategori</option>
@@ -83,19 +86,19 @@ export default function SalesAnalytics({ period = 30, groupBy = 'product' }: Sal
 
       {/* Totals */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-primary-50 rounded-lg p-4 text-center">
-          <ShopIcon size={24} className="text-primary-900 mx-auto mb-2" />
-          <div className="text-2xl font-bold text-primary-900">{totals.totalQuantity}</div>
+        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(0,59,61,0.07)', border: '1px solid rgba(0,59,61,0.12)' }}>
+          <ShopIcon size={24} className="mx-auto mb-2" />
+          <div className="text-2xl font-bold" style={{ color: '#003B3D' }}>{totals.totalQuantity}</div>
           <div className="text-sm text-gray-600">Sålda</div>
         </div>
-        <div className="bg-green-50 rounded-lg p-4 text-center">
-          <MoneyIcon size={24} className="text-green-600 mx-auto mb-2" />
+        <div className="rounded-xl p-4 text-center" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+          <MoneyIcon size={24} className="mx-auto mb-2" />
           <div className="text-2xl font-bold text-green-600">{formatCurrency(totals.totalRevenue)}</div>
           <div className="text-sm text-gray-600">Intäkter</div>
         </div>
-        <div className="bg-blue-50 rounded-lg p-4 text-center">
-          <TrophyIcon size={24} className="text-blue-600 mx-auto mb-2" />
-          <div className="text-2xl font-bold text-blue-600">{formatCurrency(totals.totalCommission)}</div>
+        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.25)' }}>
+          <TrophyIcon size={24} className="mx-auto mb-2" />
+          <div className="text-2xl font-bold" style={{ color: '#997F00' }}>{formatCurrency(totals.totalCommission)}</div>
           <div className="text-sm text-gray-600">Provision</div>
         </div>
       </div>

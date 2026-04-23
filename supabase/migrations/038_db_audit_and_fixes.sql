@@ -77,6 +77,21 @@ CREATE TRIGGER update_treasury_holds_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================
+-- 1b. WALLETS (måste finnas INNAN ledger_entries RLS-policy)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.wallets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  owner_type VARCHAR(50) DEFAULT 'user',
+  owner_id UUID,
+  balance DECIMAL(12,2) DEFAULT 0 CHECK (balance >= 0),
+  currency VARCHAR(3) DEFAULT 'SEK',
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ============================================================
 -- 2. LEDGER ENTRIES
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.ledger_entries (
@@ -234,22 +249,9 @@ CREATE TRIGGER update_shipments_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================
--- 6. WALLETS — skapa om saknas, fixa kolumner
+-- 6. WALLETS — fixa kolumner (tabell skapades redan i 1b)
 --    split-engine.ts kräver owner_type ('platform','merchant','carrier','hub')
---    Migration 034 skapade wallets med user_id ONLY → mismatch
 -- ============================================================
-CREATE TABLE IF NOT EXISTS public.wallets (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
-  owner_type VARCHAR(50) DEFAULT 'user',
-  owner_id UUID,
-  balance DECIMAL(12,2) DEFAULT 0 CHECK (balance >= 0),
-  currency VARCHAR(3) DEFAULT 'SEK',
-  metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
 ALTER TABLE public.wallets ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "wallets_service_role" ON public.wallets;
 CREATE POLICY "wallets_service_role"
@@ -383,22 +385,41 @@ END $$;
 -- 8. FIX MERCHANTS — business_name (leaderboard route refererar det)
 -- ============================================================
 DO $$
+DECLARE
+  has_business_name BOOLEAN;
+  has_merchant_name BOOLEAN;
+  has_name          BOOLEAN;
 BEGIN
-  IF NOT EXISTS (
+  SELECT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'merchants' AND column_name = 'business_name'
-  ) THEN
-    ALTER TABLE public.merchants ADD COLUMN business_name VARCHAR(255)
-      GENERATED ALWAYS AS (merchant_name) STORED;
+  ) INTO has_business_name;
+
+  IF has_business_name THEN
+    RETURN; -- already exists, nothing to do
   END IF;
-EXCEPTION WHEN feature_not_supported THEN
-  IF NOT EXISTS (
+
+  SELECT EXISTS (
     SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'merchants' AND column_name = 'business_name'
-  ) THEN
-    ALTER TABLE public.merchants ADD COLUMN business_name VARCHAR(255);
+    WHERE table_name = 'merchants' AND column_name = 'merchant_name'
+  ) INTO has_merchant_name;
+
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'merchants' AND column_name = 'name'
+  ) INTO has_name;
+
+  -- Add as plain column first (safest), then backfill from whichever source exists
+  ALTER TABLE public.merchants ADD COLUMN business_name VARCHAR(255);
+
+  IF has_merchant_name THEN
     UPDATE public.merchants SET business_name = merchant_name WHERE business_name IS NULL;
+  ELSIF has_name THEN
+    UPDATE public.merchants SET business_name = name WHERE business_name IS NULL;
   END IF;
+
+EXCEPTION WHEN others THEN
+  NULL; -- column may already exist via a concurrent migration; safe to ignore
 END $$;
 
 -- ============================================================
@@ -442,23 +463,18 @@ END $$;
 -- 10. FIX PRODUCTS — saknade kolumner från API-anrop
 -- ============================================================
 DO $$
+DECLARE
+  has_name  BOOLEAN;
+  has_title BOOLEAN;
 BEGIN
-  -- 'name' används i shop/[sellerId] och products/calculator-products
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'products' AND column_name = 'name'
-  ) THEN
-    ALTER TABLE public.products ADD COLUMN name VARCHAR(255)
-      GENERATED ALWAYS AS (title) STORED;
-  END IF;
-EXCEPTION WHEN feature_not_supported THEN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'products' AND column_name = 'name'
-  ) THEN
-    ALTER TABLE public.products ADD COLUMN name VARCHAR(255);
+  SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='name')  INTO has_name;
+  SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='title') INTO has_title;
+  IF has_name THEN RETURN; END IF;
+  ALTER TABLE public.products ADD COLUMN name VARCHAR(255);
+  IF has_title THEN
     UPDATE public.products SET name = title WHERE name IS NULL;
   END IF;
+EXCEPTION WHEN others THEN NULL;
 END $$;
 
 DO $$
@@ -500,22 +516,18 @@ END $$;
 -- 11. FIX ORDERS — total_amount refereras av stats/calculator
 -- ============================================================
 DO $$
+DECLARE
+  has_total_amount BOOLEAN;
+  has_total        BOOLEAN;
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'orders' AND column_name = 'total_amount'
-  ) THEN
-    ALTER TABLE public.orders ADD COLUMN total_amount DECIMAL(10,2)
-      GENERATED ALWAYS AS (total) STORED;
-  END IF;
-EXCEPTION WHEN feature_not_supported THEN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'orders' AND column_name = 'total_amount'
-  ) THEN
-    ALTER TABLE public.orders ADD COLUMN total_amount DECIMAL(10,2);
+  SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='orders' AND column_name='total_amount') INTO has_total_amount;
+  SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='orders' AND column_name='total')        INTO has_total;
+  IF has_total_amount THEN RETURN; END IF;
+  ALTER TABLE public.orders ADD COLUMN total_amount DECIMAL(10,2);
+  IF has_total THEN
     UPDATE public.orders SET total_amount = total WHERE total_amount IS NULL;
   END IF;
+EXCEPTION WHEN others THEN NULL;
 END $$;
 
 -- ============================================================

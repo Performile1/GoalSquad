@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 
-const P = '#004040';
-const A = '#006666';
+const P = '#1A1A1A';  // Charcoal — dark context
+const GOLD = '#FFD700';
 
 function ProviderBadge({ label, sub }: { label: string; sub?: string }) {
   return (
@@ -72,18 +72,18 @@ export default function Footer() {
   ];
 
   return (
-    <footer style={{ backgroundColor: P }} className="text-white">
+    <footer style={{ backgroundColor: P }} className="section-dark text-white">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
           {/* GoalSquad */}
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+            <h3 className="font-semibold mb-4 text-xs uppercase tracking-widest" style={{ color: GOLD }}>
               GoalSquad
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/auth/register-select?redirect=/admin/blog" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/login?redirect=/admin/blog" className="text-white font-semibold hover:text-white text-sm transition">
                   Admin →
                 </Link>
               </li>
@@ -107,12 +107,12 @@ export default function Footer() {
 
           {/* Shop */}
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+            <h3 className="font-semibold mb-4 text-xs uppercase tracking-widest" style={{ color: GOLD }}>
               Handla
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/auth/register-select?redirect=/account" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/login?redirect=/account" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -135,12 +135,12 @@ export default function Footer() {
 
           {/* Förening / Klass */}
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+            <h3 className="font-semibold mb-4 text-xs uppercase tracking-widest" style={{ color: GOLD }}>
               Förening / Klass
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/auth/register-select?redirect=/community/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/login?redirect=/community/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -164,12 +164,12 @@ export default function Footer() {
 
           {/* Säljare */}
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+            <h3 className="font-semibold mb-4 text-xs uppercase tracking-widest" style={{ color: GOLD }}>
               Säljare
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/auth/register-select?redirect=/sellers/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/login?redirect=/sellers/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -189,12 +189,12 @@ export default function Footer() {
 
           {/* Företag */}
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+            <h3 className="font-semibold mb-4 text-xs uppercase tracking-widest" style={{ color: GOLD }}>
               Företag
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/auth/register-select?redirect=/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/login?redirect=/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -215,12 +215,12 @@ export default function Footer() {
 
           {/* Lagerpartners */}
           <div>
-            <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">
+            <h3 className="font-semibold mb-4 text-xs uppercase tracking-widest" style={{ color: GOLD }}>
               Lagerpartners
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/auth/register-select?redirect=/warehouses/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
+                <Link href="/auth/login?redirect=/warehouses/dashboard" className="text-white font-semibold hover:text-white text-sm transition">
                   Logga in →
                 </Link>
               </li>
@@ -242,11 +242,11 @@ export default function Footer() {
         {/* Providers section */}
         <div
           className="rounded-2xl p-6 mb-8"
-          style={{ background: 'rgba(0,0,0,0.2)' }}
+          style={{ background: '#2A2A2A', border: '1px solid rgba(255,215,0,0.12)' }}
         >
           {/* Payment */}
           <div className="mb-6">
-            <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: GOLD, opacity: 0.7 }}>
               Betalning
             </p>
             <div className="flex flex-wrap gap-3">
@@ -258,7 +258,7 @@ export default function Footer() {
 
           {/* Logistics */}
           <div>
-            <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-3">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: GOLD, opacity: 0.7 }}>
               Leverans
             </p>
             <div className="flex flex-wrap gap-3">

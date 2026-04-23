@@ -5,16 +5,12 @@
  * Crop images with specified aspect ratio
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const formData = await req.formData();
     const image = formData.get('image') as File;
     const aspectRatio = formData.get('aspectRatio') as string || 'free';
@@ -92,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     // Upload to Supabase Storage
     const fileName = `cropped-${Date.now()}.jpg`;
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseAdmin.storage
       .from('product-images')
       .upload(fileName, processedBuffer!, {
         contentType: 'image/jpeg',

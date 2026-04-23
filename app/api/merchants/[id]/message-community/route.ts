@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function POST(
   req: NextRequest,
@@ -14,7 +15,11 @@ export async function POST(
 ) {
   try {
     const merchantId = params.id;
-    const userId = req.headers.get('x-user-id'); // TODO: Get from session
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = authUser.id;
     const {
       communityId,
       subject,
@@ -22,14 +27,10 @@ export async function POST(
       messageType,
     } = await req.json();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     // Verify user owns this merchant
     const { data: merchant } = await supabaseAdmin
       .from('merchants')
-      .select('organization_id')
+      .select('user_id, organization_id')
       .eq('id', merchantId)
       .single();
 
@@ -37,7 +38,9 @@ export async function POST(
       return NextResponse.json({ error: 'Merchant not found' }, { status: 404 });
     }
 
-    // TODO: Verify user has permission for this merchant's organization
+    if (merchant.user_id !== userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     // Create merchant-community message
     const { data: message, error } = await supabaseAdmin

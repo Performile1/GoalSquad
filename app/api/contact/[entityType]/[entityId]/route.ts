@@ -6,17 +6,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { entityType: string; entityId: string } }
 ) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const { entityType, entityId } = params;
 
     // Validate entity type
@@ -29,7 +25,7 @@ export async function GET(
     }
 
     // Get contact information
-    const { data: contact, error } = await supabase
+    const { data: contact, error } = await supabaseAdmin
       .from('contact_information')
       .select('*')
       .eq('entity_type', entityType)
@@ -60,10 +56,6 @@ export async function PUT(
   { params }: { params: { entityType: string; entityId: string } }
 ) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const { entityType, entityId } = params;
     const body = await req.json();
 
@@ -80,7 +72,7 @@ export async function PUT(
     // For now, assuming authenticated user has permission
 
     // Check if contact exists
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('contact_information')
       .select('id')
       .eq('entity_type', entityType)
@@ -118,7 +110,7 @@ export async function PUT(
     let result;
     if (existing) {
       // Update existing
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('contact_information')
         .update(contactData)
         .eq('id', existing.id)
@@ -129,7 +121,7 @@ export async function PUT(
       result = data;
     } else {
       // Create new
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('contact_information')
         .insert(contactData)
         .select()

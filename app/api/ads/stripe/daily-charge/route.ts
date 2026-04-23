@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -8,29 +8,25 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin or system
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profile || (profile.role !== 'admin' && profile.role !== 'system')) {
+    if (!profile || (profile.role !== 'gs_admin' && profile.role !== 'system')) {
       return NextResponse.json({ error: 'Only admins can process daily charges' }, { status: 403 });
     }
 
@@ -42,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get ad details
-    const { data: ad, error: adError } = await supabase
+    const { data: ad, error: adError } = await supabaseAdmin
       .from('ads')
       .select('*')
       .eq('id', adId)
@@ -53,21 +49,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if daily charge is needed
-    const { data: shouldCharge } = await supabase.rpc('should_charge_daily', { p_ad_id: adId });
+    const { data: shouldCharge } = await supabaseAdmin.rpc('should_charge_daily', { p_ad_id: adId });
 
     if (!shouldCharge) {
       return NextResponse.json({ success: true, message: 'No charge needed' });
     }
 
     // Calculate daily charge amount
-    const { data: chargeAmount } = await supabase.rpc('calculate_daily_charge_amount', { p_ad_id: adId });
+    const { data: chargeAmount } = await supabaseAdmin.rpc('calculate_daily_charge_amount', { p_ad_id: adId });
 
     if (!chargeAmount || chargeAmount <= 0) {
       return NextResponse.json({ success: true, message: 'No charge amount' });
     }
 
     // Get user's Stripe customer ID and default payment method
-    const { data: userProfile } = await supabase
+    const { data: userProfile } = await supabaseAdmin
       .from('profiles')
       .select('stripe_customer_id')
       .eq('id', ad.advertiser_id)
@@ -102,7 +98,7 @@ export async function POST(request: NextRequest) {
 
     if (paymentIntent.status === 'succeeded') {
       // Update ad with charge info
-      await supabase
+      await supabaseAdmin
         .from('ads')
         .update({
           last_daily_charge_date: new Date().toISOString(),
@@ -111,7 +107,7 @@ export async function POST(request: NextRequest) {
         .eq('id', adId);
 
       // Create transaction record
-      await supabase
+      await supabaseAdmin
         .from('ad_payment_transactions')
         .insert({
           ad_id: adId,
@@ -133,8 +129,8 @@ export async function POST(request: NextRequest) {
       amount: chargeAmount,
       paymentIntentId: paymentIntent.id,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error processing daily charge:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -192,7 +192,7 @@ export default function WarehousesPage() {
                         style={{
                           width: isSelected ? '40px' : isHovered ? '32px' : '24px',
                           height: isSelected ? '40px' : isHovered ? '32px' : '24px',
-                          backgroundColor: isSelected ? '#004040' : isHovered ? '#006666' : '#004040',
+                          backgroundColor: isSelected ? '#003B3D' : isHovered ? '#004A4C' : '#003B3D',
                           opacity: isSelected ? 1 : isHovered ? 0.9 : 0.7,
                         }}
                       >

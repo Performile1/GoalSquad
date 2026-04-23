@@ -65,13 +65,13 @@ export default function PublicLeaderboardPage() {
   const leaderboardData = activeTab === 'sellers' ? sellers : activeTab === 'communities' ? communities : merchants;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary-900 to-primary-600 text-white py-16">
+    <div className="min-h-screen" style={{ background: '#F8F9FA' }}>
+      {/* Header — gamified dark context */}
+      <div className="section-dark py-16">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex justify-center mb-4"><TrophyIcon size={56} /></div>
+          <div className="flex justify-center mb-4 icon-achievement"><TrophyIcon size={56} /></div>
           <h1 className="text-5xl font-bold mb-4">GoalSquad Leaderboard</h1>
-          <p className="text-xl text-white/70">
+          <p className="text-xl" style={{ color: 'rgba(255,255,255,0.65)' }}>
             Se vem som leder försäljningen!
           </p>
         </div>
@@ -188,7 +188,7 @@ export default function PublicLeaderboardPage() {
               className="text-center"
             >
               <div className="flex justify-center mb-2"><TrophyIcon size={36} /></div>
-              <div className="bg-gradient-to-br from-primary-900 to-primary-600 w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center shadow-xl border-4 border-primary-300 text-white">
+              <div className="w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center text-white" style={{ background: '#003B3D', boxShadow: '0 0 24px 6px rgba(255,215,0,0.35)', border: '4px solid #FFD700' }}>
                 {leaderboardData[0].avatarUrl ? (
                   <img
                     src={leaderboardData[0].avatarUrl}

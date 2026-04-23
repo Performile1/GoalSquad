@@ -1,24 +1,20 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('role')
       .eq('id', user.id)
@@ -28,7 +24,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Only merchants can access shipping preferences' }, { status: 403 });
     }
 
-    const { data: preferences, error } = await supabase
+    const { data: preferences, error } = await supabaseAdmin
       .from('merchant_shipping_preferences')
       .select('*')
       .eq('merchant_id', user.id)
@@ -47,21 +43,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('role')
       .eq('id', user.id)
@@ -83,7 +75,7 @@ export async function POST(request: NextRequest) {
       notes,
     } = body;
 
-    const { data: preferences, error } = await supabase
+    const { data: preferences, error } = await supabaseAdmin
       .from('merchant_shipping_preferences')
       .upsert({
         merchant_id: user.id,
@@ -110,16 +102,12 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -136,7 +124,7 @@ export async function PATCH(request: NextRequest) {
     if (body.delivery_time_days !== undefined) updateData.delivery_time_days = body.delivery_time_days;
     if (body.notes !== undefined) updateData.notes = body.notes;
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('merchant_shipping_preferences')
       .update(updateData)
       .eq('merchant_id', user.id);

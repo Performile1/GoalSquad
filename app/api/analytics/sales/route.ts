@@ -1,34 +1,31 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const period = searchParams.get('period') || '30'; // default 30 days
+    const rawPeriod = parseInt(searchParams.get('period') || '30', 10);
+    const period = Math.min(Math.max(rawPeriod, 1), 365); // clamp 1–365 days
     const groupBy = searchParams.get('groupBy') || 'product'; // product, category, date
 
     // Calculate date range
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - parseInt(period));
+    startDate.setDate(startDate.getDate() - period);
 
     // Get user's role and entity info
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('role, entity_type')
       .eq('id', user.id)
@@ -43,7 +40,7 @@ export async function GET(request: NextRequest) {
     
     if (profile.role === 'merchant') {
       // Merchants see all their sales data
-      const { data: merchantData } = await supabase
+      const { data: merchantData } = await supabaseAdmin
         .from('order_items')
         .select(`
           quantity,
@@ -67,7 +64,7 @@ export async function GET(request: NextRequest) {
       }
     } else if (profile.role === 'seller') {
       // Sellers see their sales with commission
-      const { data: sellerData } = await supabase
+      const { data: sellerData } = await supabaseAdmin
         .from('order_items')
         .select(`
           quantity,
@@ -91,7 +88,7 @@ export async function GET(request: NextRequest) {
       }
     } else if (profile.role === 'community') {
       // Communities see their members' sales
-      const { data: communityData } = await supabase
+      const { data: communityData } = await supabaseAdmin
         .from('order_items')
         .select(`
           quantity,

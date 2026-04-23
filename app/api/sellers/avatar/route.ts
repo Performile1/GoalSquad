@@ -1,20 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthUser(request);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get seller profile for the current user
-    const { data: sellerProfile, error: profileError } = await supabase
+    const { data: sellerProfile, error: profileError } = await supabaseAdmin
       .from('seller_profiles')
       .select('id')
       .eq('user_id', user.id)
@@ -25,7 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch seller avatar equipment
-    const { data: avatar, error } = await supabase
+    const { data: avatar, error } = await supabaseAdmin
       .from('seller_avatar_equipment')
       .select('*')
       .eq('seller_profile_id', sellerProfile.id)
@@ -37,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     if (!avatar) {
       // Create new avatar record
-      const { data: newAvatar, error: createError } = await supabase
+      const { data: newAvatar, error: createError } = await supabaseAdmin
         .from('seller_avatar_equipment')
         .insert({
           seller_profile_id: sellerProfile.id,

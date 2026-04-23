@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 export interface TreasuryHold {
   orderId: string;
   transactionId: string;
-  holderType: 'merchant' | 'community' | 'seller';
+  holderType: 'merchant' | 'community' | 'seller' | 'warehouse';
   holderId: string;
   amount: number;
   currency: string;
@@ -121,7 +121,6 @@ export class Treasury {
         .select('*')
         .eq('owner_type', hold.holder_type)
         .eq('owner_id', hold.holder_id)
-        .eq('currency', hold.currency)
         .single();
 
       if (!wallet) {
@@ -157,13 +156,18 @@ export class Treasury {
         .from('ledger_entries')
         .insert({
           transaction_id: uuidv4(),
-          order_id: hold.order_id,
           wallet_id: wallet.id,
           entry_type: 'credit',
           amount: hold.amount,
           currency: hold.currency,
-          category: hold.holder_type === 'merchant' ? 'merchant_payout' : 'platform_revenue',
+          reference_type: 'order',
+          reference_id: hold.order_id,
           description: `Treasury release for order ${hold.order_id}`,
+          metadata: {
+            category: hold.holder_type === 'merchant' ? 'merchant_payout' : 'platform_revenue',
+            holder_type: hold.holder_type,
+            holder_id: hold.holder_id,
+          },
         });
 
       // Update hold status
@@ -329,14 +333,14 @@ export class Treasury {
       if (balance.available < amount) {
         return {
           success: false,
-          error: `Insufficient available balance. Available: ${balance.available}, Requested: ${amount}`,
+          error: `Insufficient available balance. Available: ${balance.available} SEK, Requested: ${amount} SEK`,
         };
       }
 
       // TODO: Integrate with Stripe Connect for actual payout
       // For now, just log the request
 
-      console.log(`Payout requested: ${amount} NOK to ${bankAccount} for community ${communityId}`);
+      console.log(`Payout requested: ${amount} SEK to ${bankAccount} for community ${communityId}`);
 
       return {
         success: true,

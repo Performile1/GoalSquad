@@ -93,6 +93,26 @@ export default function ProductsPage() {
       </div>
 
       <div className="container mx-auto px-4 py-12">
+        {/* Suggestion CTA */}
+        <div className="mb-8 bg-gradient-to-r from-primary-50 to-primary-100 rounded-2xl p-6 border-2 border-primary-200">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-bold text-primary-900 mb-1">
+                Saknar du något i sortimentet?
+              </h3>
+              <p className="text-primary-700 text-sm">
+                Föreslå nya produkter eller kategorier så försöker vi lösa det.
+              </p>
+            </div>
+            <Link
+              href="/suggest"
+              className="bg-primary-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-600 transition whitespace-nowrap"
+            >
+              Föreslå produkt →
+            </Link>
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Filters */}
           <div className="lg:w-80 flex-shrink-0">
@@ -169,7 +189,7 @@ export default function ProductsPage() {
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
                     className="w-full h-2 rounded-lg appearance-none cursor-pointer"
-                    style={{ accentColor: '#004040' }}
+                    style={{ accentColor: '#003B3D' }}
                   />
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>0 kr</span>

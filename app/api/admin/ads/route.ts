@@ -1,18 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     const searchParams = request.nextUrl.searchParams;
     const filter = searchParams.get('filter') || 'all';
 
     // Build query based on filter
-    let query = supabase
+    let query = supabaseAdmin
       .from('ads')
       .select(`
         *,
@@ -47,7 +43,7 @@ export async function GET(request: NextRequest) {
     }));
 
     // Get stats
-    const { data: statsData } = await supabase
+    const { data: statsData } = await supabaseAdmin
       .from('ads')
       .select('status');
 
@@ -68,7 +64,7 @@ export async function GET(request: NextRequest) {
     let statsMap: Record<string, { views: number; clicks: number }> = {};
     
     if (adIds.length > 0) {
-      const { data: adStats } = await supabase
+      const { data: adStats } = await supabaseAdmin
         .from('ad_stats')
         .select('ad_id, views, clicks')
         .in('ad_id', adIds);
@@ -96,8 +92,8 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ ads: finalAds, stats });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching ads:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

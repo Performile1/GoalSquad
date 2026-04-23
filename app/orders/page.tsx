@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { OrdersIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Order {
   id: string;
@@ -47,7 +48,7 @@ export default function OrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('/api/orders');
+      const res = await apiFetch('/api/orders');
       if (res.ok) {
         const data = await res.json();
         setOrders(data.orders || []);

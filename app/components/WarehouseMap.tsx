@@ -102,7 +102,7 @@ export default function WarehouseMap({
               <path
                 d="M 400 50 L 450 100 L 480 200 L 500 350 L 490 500 L 470 650 L 450 750 L 420 850 L 400 950 L 380 850 L 350 750 L 330 650 L 310 500 L 320 350 L 340 200 L 370 100 Z"
                 fill="#e6f0f0"
-                stroke="#004040"
+                stroke="#003B3D"
                 strokeWidth="2"
               />
 

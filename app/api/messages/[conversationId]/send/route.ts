@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function POST(
   req: NextRequest,
@@ -12,12 +13,12 @@ export async function POST(
 ) {
   try {
     const conversationId = params.conversationId;
-    const userId = req.headers.get('x-user-id'); // TODO: Get from session
-    const { content } = await req.json();
-
-    if (!userId) {
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const userId = authUser.id;
+    const { content } = await req.json();
 
     if (!content || !content.trim()) {
       return NextResponse.json({ error: 'Content required' }, { status: 400 });

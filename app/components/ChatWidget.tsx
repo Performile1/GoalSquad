@@ -178,7 +178,7 @@ export default function ChatWidget() {
         whileTap={{ scale: 0.95 }}
         className="w-14 h-14 rounded-full bg-primary-900 text-white shadow-xl hover:bg-primary-700 transition flex items-center justify-center relative"
         aria-label={open ? 'Stäng chat' : 'Öppna chat'}
-        style={{ boxShadow: '0 4px 24px rgba(0,64,64,0.35)' }}
+        style={{ boxShadow: '0 4px 24px rgba(0,59,61,0.4)' }}
       >
         <AnimatePresence mode="wait">
           {open ? (
@@ -186,9 +186,9 @@ export default function ChatWidget() {
           ) : (
             <motion.svg key="chat" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="white" />
-              <circle cx="8" cy="11" r="1.5" fill="#004040" />
-              <circle cx="12" cy="11" r="1.5" fill="#004040" />
-              <circle cx="16" cy="11" r="1.5" fill="#004040" />
+              <circle cx="8" cy="11" r="1.5" fill="#003B3D" />
+              <circle cx="12" cy="11" r="1.5" fill="#003B3D" />
+              <circle cx="16" cy="11" r="1.5" fill="#003B3D" />
             </motion.svg>
           )}
         </AnimatePresence>

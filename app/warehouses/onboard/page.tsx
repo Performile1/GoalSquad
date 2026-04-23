@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { LogisticsIcon, ShopIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 export default function WarehouseOnboardPage() {
   const [step, setStep] = useState(0);
@@ -74,9 +75,8 @@ export default function WarehouseOnboardPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/warehouses/register', {
+      const res = await apiFetch('/api/warehouses/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
       const data = await res.json();
@@ -106,7 +106,7 @@ export default function WarehouseOnboardPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-4 icon-brand">
             <LogisticsIcon size={64} />
           </div>
           <h1 className="text-4xl font-bold text-primary-900 mb-4">Bli Lagerpartner</h1>

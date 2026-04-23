@@ -9,28 +9,17 @@
  * Money NEVER lands in a single account - it's split virtually at checkout.
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 import { Treasury } from './treasury';
 import { GamificationEngine } from './gamification-engine';
-
-let _client: SupabaseClient | null = null;
-const getClient = () => {
-  if (!_client) {
-    _client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-  }
-  return _client;
-};
-const supabase = new Proxy({} as SupabaseClient, {
-  get(_t, p) { return (getClient() as any)[p]; },
-});
+import { supabaseAdmin as supabase } from './supabase';
 
 export interface SplitConfiguration {
-  salesMarginPercent: number;
-  handlingFeeFixed: number;
+  platformPercent: number;
+  communityPercent: number;
+  sellerPercent: number;
+  warehousePercent: number;
+  handlingFee: number;
   shippingSpreadPercent: number;
 }
 
@@ -38,10 +27,11 @@ export interface OrderSplitResult {
   transactionId: string;
   totalAmount: number;
   splits: {
-    merchantPayout: number;
-    salesMargin: number;
+    platformShare: number;
+    communityShare: number;
+    sellerShare: number;
+    warehouseShare: number;
     handlingFee: number;
-    shippingSpread: number;
     platformRevenue: number;
   };
   ledgerEntries: any[];
@@ -61,28 +51,33 @@ export class SplitEngine {
       .eq('active', true)
       .or(`merchant_id.eq.${merchantId},merchant_id.is.null`)
       .or(`product_category.eq.${productCategory},product_category.is.null`)
-      .order('priority', { ascending: false })
       .limit(1)
       .single();
 
     if (error || !data) {
       // Return platform defaults
       return {
-        salesMarginPercent: 15.0,
-        handlingFeeFixed: 25.0,
+        platformPercent: 12.0,
+        communityPercent: 60.0,
+        sellerPercent: 20.0,
+        warehousePercent: 8.0,
+        handlingFee: 25.0,
         shippingSpreadPercent: 20.0,
       };
     }
 
     return {
-      salesMarginPercent: parseFloat(data.sales_margin_percent),
-      handlingFeeFixed: parseFloat(data.handling_fee_fixed),
+      platformPercent: parseFloat(data.platform_percent),
+      communityPercent: parseFloat(data.community_percent),
+      sellerPercent: parseFloat(data.seller_percent),
+      warehousePercent: parseFloat(data.warehouse_percent),
+      handlingFee: parseFloat(data.handling_fee),
       shippingSpreadPercent: parseFloat(data.shipping_spread_percent),
     };
   }
 
   /**
-   * Calculate splits for an order item
+   * Calculate splits for an order item (no longer used - using percentage-based split)
    */
   static calculateItemSplit(
     quantity: number,
@@ -90,45 +85,14 @@ export class SplitEngine {
     merchantBasePrice: number,
     config: SplitConfiguration
   ) {
-    const subtotal = quantity * unitPrice;
-    const merchantSubtotal = quantity * merchantBasePrice;
-
-    // 1. Sales Margin = (Retail - Merchant Base) * quantity
-    const salesMargin = subtotal - merchantSubtotal;
-
-    // 2. Handling Fee = Fixed fee (applied once per order, not per item)
-    // This will be calculated at order level
-
-    // 3. Merchant Payout = Merchant base * quantity
-    const merchantPayout = merchantSubtotal;
-
-    return {
-      subtotal,
-      salesMargin,
-      merchantPayout,
-    };
-  }
-
-  /**
-   * Calculate shipping spread
-   */
-  static calculateShippingSpread(
-    carrierCost: number,
-    config: SplitConfiguration
-  ) {
-    const customerCost = carrierCost * (1 + config.shippingSpreadPercent / 100);
-    const shippingSpread = customerCost - carrierCost;
-
-    return {
-      carrierCost,
-      customerCost,
-      shippingSpread,
-    };
+    // Not used in new percentage-based split logic
+    return { subtotal: 0, salesMargin: 0, merchantPayout: 0 };
   }
 
   /**
    * Process order payment and split funds
    * This is called when Stripe checkout completes
+   * Uses 4-way percentage split: platform% + community% + seller% + warehouse%
    */
   static async processOrderSplit(orderId: string): Promise<OrderSplitResult> {
     // Fetch order with items
@@ -148,13 +112,6 @@ export class SplitEngine {
       throw new Error(`Order not found: ${orderId}`);
     }
 
-    // Fetch shipment for shipping spread
-    const { data: shipment } = await supabase
-      .from('shipments')
-      .select('*')
-      .eq('order_id', orderId)
-      .single();
-
     const transactionId = uuidv4();
     const ledgerEntries: any[] = [];
 
@@ -170,121 +127,179 @@ export class SplitEngine {
       throw new Error('Platform wallet not found');
     }
 
-    let totalSalesMargin = 0;
-    let totalMerchantPayout = 0;
-    const merchantPayouts = new Map<string, number>();
+    // Calculate total order amount (excluding shipping)
+    const totalOrderAmount = parseFloat(order.total_amount ?? order.total ?? '0');
+    const handlingFee = 25.0; // Default handling fee
 
-    // Process each order item
-    for (const item of order.order_items) {
-      const config = await this.getSplitConfig(item.merchant_id);
-
-      const split = this.calculateItemSplit(
-        item.quantity,
-        parseFloat(item.unit_price),
-        parseFloat(item.merchant_base_price),
-        config
-      );
-
-      totalSalesMargin += split.salesMargin;
-      totalMerchantPayout += split.merchantPayout;
-
-      // Accumulate merchant payouts
-      const currentPayout = merchantPayouts.get(item.merchant_id) || 0;
-      merchantPayouts.set(item.merchant_id, currentPayout + split.merchantPayout);
-
-      // Record sales margin to platform
-      ledgerEntries.push({
-        transaction_id: transactionId,
-        order_id: orderId,
-        wallet_id: platformWallet.id,
-        entry_type: 'credit',
-        amount: split.salesMargin,
-        currency: order.currency,
-        category: 'sales_margin',
-        description: `Sales margin for order ${order.order_number}, item ${item.sku}`,
-      });
-    }
-
-    // Get split config for handling fee
+    // Get split configuration
     const config = await this.getSplitConfig();
-    const handlingFee = config.handlingFeeFixed;
 
-    // Record handling fee to platform
+    // Calculate splits (4-way percentage split)
+    const platformAmount = (totalOrderAmount * config.platformPercent) / 100 - handlingFee;
+    const communityAmount = (totalOrderAmount * config.communityPercent) / 100;
+    const sellerAmount = (totalOrderAmount * config.sellerPercent) / 100;
+    const warehouseAmount = (totalOrderAmount * config.warehousePercent) / 100;
+
+    // Record platform share (after handling fee deduction)
     ledgerEntries.push({
       transaction_id: transactionId,
-      order_id: orderId,
+      wallet_id: platformWallet.id,
+      entry_type: 'credit',
+      amount: Math.max(0, platformAmount),
+      currency: order.currency,
+      reference_type: 'order',
+      reference_id: orderId,
+      description: `Platform share for order ${order.order_number}`,
+      metadata: { category: 'platform_share', percent: config.platformPercent },
+    });
+
+    // Record handling fee
+    ledgerEntries.push({
+      transaction_id: transactionId,
       wallet_id: platformWallet.id,
       entry_type: 'credit',
       amount: handlingFee,
       currency: order.currency,
-      category: 'handling_fee',
+      reference_type: 'order',
+      reference_id: orderId,
       description: `Handling fee for order ${order.order_number}`,
+      metadata: { category: 'handling_fee' },
     });
 
-    // Calculate shipping spread
-    let shippingSpread = 0;
-    if (shipment) {
-      const carrierCost = parseFloat(shipment.carrier_cost || '0');
-      const customerCost = parseFloat(order.shipping_total);
-      shippingSpread = customerCost - carrierCost;
-
-      // Record shipping spread to platform
-      ledgerEntries.push({
-        transaction_id: transactionId,
-        order_id: orderId,
-        shipment_id: shipment.id,
-        wallet_id: platformWallet.id,
-        entry_type: 'credit',
-        amount: shippingSpread,
-        currency: order.currency,
-        category: 'shipping_spread',
-        description: `Shipping spread for order ${order.order_number}`,
-      });
-    }
-
-    // Process merchant payouts
-    for (const [merchantId, payoutAmount] of merchantPayouts.entries()) {
-      // Get or create merchant wallet
-      let { data: merchantWallet } = await supabase
+    // Record community share (if community_id exists on order)
+    if (order.community_id) {
+      // Get or create community wallet
+      let { data: communityWallet } = await supabase
         .from('wallets')
         .select('*')
-        .eq('owner_type', 'merchant')
-        .eq('owner_id', merchantId)
+        .eq('owner_type', 'community')
+        .eq('owner_id', order.community_id)
         .single();
 
-      if (!merchantWallet) {
+      if (!communityWallet) {
         const { data: newWallet } = await supabase
           .from('wallets')
           .insert({
-            owner_type: 'merchant',
-            owner_id: merchantId,
+            owner_type: 'community',
+            owner_id: order.community_id,
             currency: order.currency,
+            balance: 0,
           })
           .select()
           .single();
-
-        merchantWallet = newWallet;
+        communityWallet = newWallet;
       }
 
-      // Record merchant payout
-      ledgerEntries.push({
-        transaction_id: transactionId,
-        order_id: orderId,
-        wallet_id: merchantWallet!.id,
-        entry_type: 'credit',
-        amount: payoutAmount,
-        currency: order.currency,
-        category: 'merchant_payout',
-        description: `Merchant payout for order ${order.order_number}`,
-      });
+      if (communityWallet) {
+        ledgerEntries.push({
+          transaction_id: transactionId,
+          wallet_id: communityWallet.id,
+          entry_type: 'credit',
+          amount: communityAmount,
+          currency: order.currency,
+          reference_type: 'order',
+          reference_id: orderId,
+          description: `Community share for order ${order.order_number}`,
+          metadata: { category: 'community_share', percent: config.communityPercent },
+        });
 
-      // Update merchant wallet balance
-      await supabase
+        await supabase
+          .from('wallets')
+          .update({
+            balance: parseFloat(communityWallet.balance) + communityAmount,
+          })
+          .eq('id', communityWallet.id);
+      }
+    }
+
+    // Record seller share (if seller_id exists on order)
+    if (order.seller_id) {
+      let { data: sellerWallet } = await supabase
         .from('wallets')
-        .update({
-          balance: parseFloat(merchantWallet!.balance) + payoutAmount,
-        })
-        .eq('id', merchantWallet!.id);
+        .select('*')
+        .eq('owner_type', 'seller')
+        .eq('owner_id', order.seller_id)
+        .single();
+
+      if (!sellerWallet) {
+        const { data: newWallet } = await supabase
+          .from('wallets')
+          .insert({
+            owner_type: 'seller',
+            owner_id: order.seller_id,
+            currency: order.currency,
+            balance: 0,
+          })
+          .select()
+          .single();
+        sellerWallet = newWallet;
+      }
+
+      if (sellerWallet) {
+        ledgerEntries.push({
+          transaction_id: transactionId,
+          wallet_id: sellerWallet.id,
+          entry_type: 'credit',
+          amount: sellerAmount,
+          currency: order.currency,
+          reference_type: 'order',
+          reference_id: orderId,
+          description: `Seller share for order ${order.order_number}`,
+          metadata: { category: 'seller_share', percent: config.sellerPercent },
+        });
+
+        await supabase
+          .from('wallets')
+          .update({
+            balance: parseFloat(sellerWallet.balance) + sellerAmount,
+          })
+          .eq('id', sellerWallet.id);
+      }
+    }
+
+    // Record warehouse share (if warehouse_id exists on order)
+    if (order.warehouse_id) {
+      let { data: warehouseWallet } = await supabase
+        .from('wallets')
+        .select('*')
+        .eq('owner_type', 'warehouse')
+        .eq('owner_id', order.warehouse_id)
+        .single();
+
+      if (!warehouseWallet) {
+        const { data: newWallet } = await supabase
+          .from('wallets')
+          .insert({
+            owner_type: 'warehouse',
+            owner_id: order.warehouse_id,
+            currency: order.currency,
+            balance: 0,
+          })
+          .select()
+          .single();
+        warehouseWallet = newWallet;
+      }
+
+      if (warehouseWallet) {
+        ledgerEntries.push({
+          transaction_id: transactionId,
+          wallet_id: warehouseWallet.id,
+          entry_type: 'credit',
+          amount: warehouseAmount,
+          currency: order.currency,
+          reference_type: 'order',
+          reference_id: orderId,
+          description: `Warehouse share for order ${order.order_number}`,
+          metadata: { category: 'warehouse_share', percent: config.warehousePercent },
+        });
+
+        await supabase
+          .from('wallets')
+          .update({
+            balance: parseFloat(warehouseWallet.balance) + warehouseAmount,
+          })
+          .eq('id', warehouseWallet.id);
+      }
     }
 
     // Insert all ledger entries
@@ -297,23 +312,24 @@ export class SplitEngine {
     }
 
     // Update platform wallet balance
-    const platformRevenue = totalSalesMargin + handlingFee + shippingSpread;
+    const totalPlatformAmount = Math.max(0, platformAmount) + handlingFee;
     await supabase
       .from('wallets')
       .update({
-        balance: parseFloat(platformWallet.balance) + platformRevenue,
+        balance: parseFloat(platformWallet.balance) + totalPlatformAmount,
       })
       .eq('id', platformWallet.id);
 
     return {
       transactionId,
-      totalAmount: parseFloat(order.total),
+      totalAmount: totalOrderAmount,
       splits: {
-        merchantPayout: totalMerchantPayout,
-        salesMargin: totalSalesMargin,
+        platformShare: Math.max(0, platformAmount),
+        communityShare: communityAmount,
+        sellerShare: sellerAmount,
+        warehouseShare: warehouseAmount,
         handlingFee,
-        shippingSpread,
-        platformRevenue,
+        platformRevenue: totalPlatformAmount,
       },
       ledgerEntries,
     };
@@ -334,7 +350,7 @@ export class SplitEngine {
       .single();
 
     if (error || !data) {
-      return { balance: 0, currency: 'NOK' };
+      return { balance: 0, currency: 'SEK' };
     }
 
     return {

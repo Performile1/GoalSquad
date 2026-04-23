@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -6,14 +6,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const communityId = params.id;
 
     // Fetch community milestones
-    const { data: milestones, error } = await supabase
+    const { data: milestones, error } = await supabaseAdmin
       .from('community_milestones')
       .select('*')
       .eq('community_id', communityId)

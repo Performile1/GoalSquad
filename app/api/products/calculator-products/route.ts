@@ -7,16 +7,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     // Get products with merchant info and profit calculations
-    const { data: products, error } = await supabase
+    const { data: products, error } = await supabaseAdmin
       .from('products')
       .select(`
         id,

@@ -1,20 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthUser(request);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Fetch or create customer support stats
-    const { data: stats, error } = await supabase
+    const { data: stats, error } = await supabaseAdmin
       .from('customer_support_stats')
       .select('*')
       .eq('user_id', user.id)
@@ -26,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     if (!stats) {
       // Create new stats record
-      const { data: newStats, error: createError } = await supabase
+      const { data: newStats, error: createError } = await supabaseAdmin
         .from('customer_support_stats')
         .insert({
           user_id: user.id,

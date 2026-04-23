@@ -75,8 +75,8 @@ function HeroSlider() {
             </h1>
             <p className="text-lg sm:text-xl text-white/75 mb-10 max-w-xl leading-relaxed">{slide.subtitle}</p>
             <div className="flex flex-wrap gap-4">
-              <Link href={slide.cta.href} className="btn-hero text-base px-8 py-4">{slide.cta.label} →</Link>
-              <Link href={slide.ctaAlt.href} className="btn-ghost-dark text-base px-8 py-4">{slide.ctaAlt.label}</Link>
+              <Link href={slide.cta.href} className="text-base px-8 py-4 rounded-xl font-bold transition hover:scale-105" style={{ background: '#FFD700', color: '#003B3D' }}>{slide.cta.label} →</Link>
+              <Link href={slide.ctaAlt.href} className="text-base px-8 py-4 rounded-xl font-semibold transition hover:scale-105" style={{ background: 'rgba(255,255,255,0.15)', color: '#FFFFFF', border: '1.5px solid rgba(255,255,255,0.4)' }}>{slide.ctaAlt.label}</Link>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -107,8 +107,8 @@ function EarningsCalculator() {
     <section id="kalkylator" className="section-dark py-20 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-white mb-3">Beräkna er intäkt</h2>
-          <p className="text-lg" style={{ color: 'rgba(255,255,255,0.6)' }}>Dra i reglagen och se hur mycket er förening kan tjäna</p>
+          <h2 className="text-4xl font-extrabold mb-3" style={{ color: '#003B3D' }}>Beräkna er intäkt</h2>
+          <p className="text-lg" style={{ color: '#004A4C' }}>Dra i reglagen och se hur mycket er förening kan tjäna</p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl p-8" style={{ boxShadow: '0 0 40px 8px rgba(255,215,0,0.12), 0 4px 24px rgba(0,0,0,0.3)' }}>
@@ -330,7 +330,7 @@ export default function Home() {
             { step: '03', title: 'Inkassera', desc: 'Vi levererar direkt till kunden. Ni ser varje försäljning i realtid och pengarna betalas ut månadsvis.', icon: <TrophyIcon size={32} /> },
           ].map((s, i) => (
             <motion.div key={s.step} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
-              <div className="w-20 h-20 rounded-2xl text-white flex items-center justify-center mx-auto mb-5" style={{ background: '#003B3D', boxShadow: '0 4px 16px rgba(0,59,61,0.3)' }}>{s.icon}</div>
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: '#003B3D', color: '#FFD700', boxShadow: '0 4px 16px rgba(0,59,61,0.3)' }}>{s.icon}</div>
               <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#003B3D' }}>{s.step}</div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">{s.title}</h3>
               <p className="text-gray-500">{s.desc}</p>
@@ -367,7 +367,7 @@ export default function Home() {
           <div className="section-dark rounded-2xl p-8" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }}>
             <h2 className="text-2xl font-bold text-white mb-3">Behöver du returnera en produkt?</h2>
             <p className="mb-6" style={{ color: 'rgba(255,255,255,0.65)' }}>Enkel och smidig returhantering med QR-kod för returfraktsedel</p>
-            <Link href="/returns" className="btn-hero inline-block px-8 py-3">
+            <Link href="/returns" className="btn-outline inline-block px-8 py-3">
               Skapa retur →
             </Link>
           </div>

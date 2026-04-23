@@ -5,17 +5,17 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    // TODO: Get user ID from session
-    const userId = req.headers.get('x-user-id'); // Placeholder
-
-    if (!userId) {
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const userId = authUser.id;
 
     // Get user's conversations
     const { data: conversations, error } = await supabaseAdmin
@@ -39,47 +39,58 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Enrich with last message and unread count
-    const enrichedConversations = await Promise.all(
-      (conversations || []).map(async (cp: any) => {
-        const conv = cp.conversation;
+    const convIds = (conversations || []).map((cp: any) => cp.conversation?.id).filter(Boolean);
 
-        // Get last message
-        const { data: lastMsg } = await supabaseAdmin
+    // Fetch last messages for all conversations in one query
+    const { data: lastMessages } = convIds.length
+      ? await supabaseAdmin
           .from('messages')
-          .select('content, created_at')
-          .eq('conversation_id', conv.id)
+          .select('conversation_id, content, created_at')
+          .in('conversation_id', convIds)
           .is('deleted_at', null)
           .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+      : { data: [] };
 
-        // Get unread count
-        const { data: participant } = await supabaseAdmin
+    // Build last-message map (first hit per conversation_id = latest)
+    const lastMsgMap: Record<string, { content: string; created_at: string }> = {};
+    for (const msg of (lastMessages || [])) {
+      if (!lastMsgMap[msg.conversation_id]) lastMsgMap[msg.conversation_id] = msg;
+    }
+
+    // Fetch participant last_read_at for all conversations at once
+    const { data: participantRows } = convIds.length
+      ? await supabaseAdmin
           .from('conversation_participants')
-          .select('last_read_at')
-          .eq('conversation_id', conv.id)
+          .select('conversation_id, last_read_at')
+          .in('conversation_id', convIds)
           .eq('user_id', userId)
-          .single();
+      : { data: [] };
 
-        const { count: unreadCount } = await supabaseAdmin
-          .from('messages')
-          .select('*', { count: 'exact', head: true })
-          .eq('conversation_id', conv.id)
-          .neq('sender_id', userId)
-          .gt('created_at', participant?.last_read_at || new Date(0).toISOString())
-          .is('deleted_at', null);
+    const readAtMap: Record<string, string> = {};
+    for (const p of (participantRows || [])) {
+      readAtMap[p.conversation_id] = p.last_read_at || new Date(0).toISOString();
+    }
 
-        return {
-          id: conv.id,
-          name: conv.name || conv.community?.name || 'Chat',
-          conversationType: conv.conversation_type,
-          lastMessage: lastMsg?.content || 'No messages yet',
-          lastMessageTime: lastMsg?.created_at || conv.created_at,
-          unreadCount: unreadCount || 0,
-        };
-      })
-    );
+    // Count unread per conversation (messages after last_read_at not sent by self)
+    const unreadMap: Record<string, number> = {};
+    for (const msg of (lastMessages || [])) {
+      if (msg.created_at > (readAtMap[msg.conversation_id] || new Date(0).toISOString())) {
+        unreadMap[msg.conversation_id] = (unreadMap[msg.conversation_id] || 0) + 1;
+      }
+    }
+
+    const enrichedConversations = (conversations || []).map((cp: any) => {
+      const conv = cp.conversation;
+      const lastMsg = lastMsgMap[conv.id];
+      return {
+        id: conv.id,
+        name: conv.name || conv.community?.name || 'Chat',
+        conversationType: conv.conversation_type,
+        lastMessage: lastMsg?.content || 'No messages yet',
+        lastMessageTime: lastMsg?.created_at || null,
+        unreadCount: unreadMap[conv.id] || 0,
+      };
+    });
 
     return NextResponse.json({ conversations: enrichedConversations });
   } catch (error) {

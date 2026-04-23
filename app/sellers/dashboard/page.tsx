@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
 import { ShareIcon, MessageIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,7 +41,7 @@ export default function SellerDashboardPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products');
+      const res = await apiFetch('/api/products');
       const data = await res.json();
       setProducts(data.products || []);
     } catch (error) {

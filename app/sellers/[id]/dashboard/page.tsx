@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import { TrophyIcon, UserIcon, DashboardIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface SellerStats {
   fullName: string;
@@ -53,7 +54,7 @@ export default function SellerDashboard() {
 
   const fetchSellerStats = async () => {
     try {
-      const response = await fetch(`/api/sellers/${sellerId}/stats`);
+      const response = await apiFetch(`/api/sellers/${sellerId}/stats`);
       const data = await response.json();
       setStats(data);
     } catch (error) {

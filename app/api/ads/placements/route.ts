@@ -1,14 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
-    const { data: placements, error } = await supabase
+    const { data: placements, error } = await supabaseAdmin
       .from('ad_placements')
       .select('*')
       .eq('is_active', true)

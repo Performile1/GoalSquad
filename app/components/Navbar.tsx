@@ -23,16 +23,16 @@ export default function Navbar() {
     pathname === href || pathname?.startsWith(href + '/');
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+    <header className="sticky top-0 z-50 border-b" style={{ background: '#F8F9FA', borderColor: '#EAECEE', boxShadow: '0 2px 8px rgba(0,59,61,0.08)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
             href="/"
             className="font-bold text-xl hover:opacity-80 transition"
-            style={{ color: '#004040' }}
+            style={{ color: '#003B3D' }}
           >
-            GoalSquad
+            Goal<span style={{ color: '#003B3D' }}>Squad</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -41,69 +41,46 @@ export default function Navbar() {
               <div key={link.href} className="relative">
                 {link.hasDropdown ? (
                   <>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       <Link
                         href={link.href}
-                        className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
                           isActive(link.href)
-                            ? 'bg-primary-50 text-primary-900 font-semibold'
-                            : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                            ? 'font-semibold'
+                            : 'text-gray-600 hover:text-[#003B3D]'
                         }`}
+                        style={isActive(link.href) ? { color: '#003B3D', background: 'rgba(0,59,61,0.07)' } : {}}
                       >
-                        {link.icon}
+                        <span className="icon-brand">{link.icon}</span>
                         {link.label}
                       </Link>
                       <button
                         onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
-                        className={`p-2 rounded-lg transition ${
-                          isActive(link.href)
-                            ? 'bg-primary-50 text-primary-900'
-                            : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
-                        }`}
+                        className="p-1.5 rounded-lg transition text-gray-500 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.07)]"
                       >
                         <ChevronDownIcon size={14} />
                       </button>
                     </div>
                     {shopDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
+                      <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-xl border border-[#EAECEE] py-1.5 z-50" style={{ boxShadow: '0 8px 24px rgba(0,59,61,0.14)' }}>
                         {user && (
                           <>
-                            <Link
-                              href="/account"
-                              onClick={() => setShopDropdownOpen(false)}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
-                            >
-                              Mina Ordrar
-                            </Link>
-                            <Link
-                              href="/account/gamification"
-                              onClick={() => setShopDropdownOpen(false)}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
-                            >
-                              Gamification
-                            </Link>
-                            <Link
-                              href="/account/discount-codes"
-                              onClick={() => setShopDropdownOpen(false)}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
-                            >
-                              Rabattkoder
-                            </Link>
-                            <Link
-                              href="/returns"
-                              onClick={() => setShopDropdownOpen(false)}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
-                            >
-                              Returer
-                            </Link>
-                            <div className="border-t border-gray-100 my-1" />
+                            {[
+                              { href: '/account', label: 'Mina Ordrar' },
+                              { href: '/account/gamification', label: 'Gamification' },
+                              { href: '/account/discount-codes', label: 'Rabattkoder' },
+                              { href: '/returns', label: 'Returer' },
+                            ].map(item => (
+                              <Link key={item.href} href={item.href} onClick={() => setShopDropdownOpen(false)}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-[rgba(0,59,61,0.06)] hover:text-[#003B3D] transition-colors">
+                                {item.label}
+                              </Link>
+                            ))}
+                            <div className="my-1.5 border-t border-[#EAECEE]" />
                           </>
                         )}
-                        <Link
-                          href="/products"
-                          onClick={() => setShopDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-900"
-                        >
+                        <Link href="/products" onClick={() => setShopDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-[rgba(0,59,61,0.06)] hover:text-[#003B3D] transition-colors">
                           Alla produkter
                         </Link>
                       </div>
@@ -112,13 +89,12 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={link.href}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      isActive(link.href)
-                        ? 'bg-primary-50 text-primary-900 font-semibold'
-                        : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                      isActive(link.href) ? 'font-semibold' : 'text-gray-600 hover:text-[#003B3D]'
                     }`}
+                    style={isActive(link.href) ? { color: '#003B3D', background: 'rgba(0,59,61,0.07)' } : {}}
                   >
-                    {link.icon}
+                    <span className="icon-brand">{link.icon}</span>
                     {link.label}
                   </Link>
                 )}
@@ -127,57 +103,42 @@ export default function Navbar() {
           </nav>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2.5">
             {/* Cart */}
-            <Link
-              href="/cart"
-              className="p-2 text-gray-600 hover:text-primary-900 hover:bg-primary-50 rounded-lg transition"
-              title="Varukorg"
-            >
+            <Link href="/cart" title="Varukorg"
+              className="p-2 rounded-lg text-gray-500 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.07)] transition-all">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </Link>
 
-            {/* Join CTA */}
-            <Link
-              href="/join"
-              className="px-4 py-2 bg-primary-900 text-white text-sm font-semibold rounded-lg hover:bg-primary-600 transition shadow-sm"
-            >
+            {/* Join CTA — btn-primary */}
+            <Link href="/join" className="btn-primary text-sm px-4 py-2">
               Registrera dig →
             </Link>
 
             {/* Auth */}
             {user ? (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/dashboard"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary-900 hover:bg-primary-50 rounded-lg transition"
-                >
+              <div className="flex items-center gap-1.5">
+                <Link href="/dashboard"
+                  className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-700 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)]">
                   Min sida
                 </Link>
-                <button
-                  onClick={() => signOut()}
-                  className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition"
-                >
+                <button onClick={() => signOut()}
+                  className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-500 hover:text-gray-700 hover:bg-gray-100">
                   Logga ut
                 </button>
               </div>
             ) : (
-              <Link
-                href="/auth/register-select"
-                className="px-4 py-2 text-sm font-medium text-primary-900 border border-primary-900 rounded-lg hover:bg-primary-50 transition"
-              >
+              <Link href="/auth/login" className="btn-outline text-sm px-4 py-2">
                 Logga in
               </Link>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-50"
-          >
+          <button onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-[rgba(0,59,61,0.07)] transition-colors">
             {mobileOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -192,93 +153,58 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-gray-100 py-4 space-y-1">
+          <div className="md:hidden border-t border-[#EAECEE] py-3 space-y-0.5">
             {navLinks.map((link) => (
               <div key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition ${
-                    isActive(link.href)
-                      ? 'bg-primary-50 text-primary-900 font-semibold'
-                      : 'text-gray-600 hover:bg-primary-50 hover:text-primary-900'
+                <Link href={link.href} onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                    isActive(link.href) ? 'font-semibold' : 'text-gray-600'
                   }`}
-                >
-                  {link.icon}
+                  style={isActive(link.href) ? { color: '#003B3D', background: 'rgba(0,59,61,0.07)' } : {}}>
+                  <span className="icon-brand">{link.icon}</span>
                   {link.label}
                 </Link>
                 {link.hasDropdown && user && (
-                  <div className="pl-8 space-y-1 mt-1">
-                    <Link
-                      href="/account"
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
-                    >
-                      Mina Ordrar
-                    </Link>
-                    <Link
-                      href="/account/gamification"
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
-                    >
-                      Gamification
-                    </Link>
-                    <Link
-                      href="/account/discount-codes"
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
-                    >
-                      Rabattkoder
-                    </Link>
-                    <Link
-                      href="/returns"
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-900"
-                    >
-                      Returer
-                    </Link>
+                  <div className="pl-8 space-y-0.5 mt-0.5">
+                    {[
+                      { href: '/account', label: 'Mina Ordrar' },
+                      { href: '/account/gamification', label: 'Gamification' },
+                      { href: '/account/discount-codes', label: 'Rabattkoder' },
+                      { href: '/returns', label: 'Returer' },
+                    ].map(item => (
+                      <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
+                        className="block px-4 py-2 rounded-lg text-sm text-gray-600 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)] transition-colors">
+                        {item.label}
+                      </Link>
+                    ))}
                   </div>
                 )}
               </div>
             ))}
-            <div className="pt-3 border-t border-gray-100 space-y-2">
-              <Link
-                href="/cart"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-primary-50 hover:text-primary-900 transition"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <div className="pt-3 border-t border-[#EAECEE] space-y-2">
+              <Link href="/cart" onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)] transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
                 Varukorg
               </Link>
-              <Link
-                href="/merchants/onboard"
-                onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 rounded-lg text-sm font-semibold bg-primary-900 text-white text-center hover:bg-primary-600 transition"
-              >
+              <Link href="/merchants/onboard" onClick={() => setMobileOpen(false)} className="btn-primary w-full text-center block py-3">
                 Bli Merchant →
               </Link>
               {user ? (
                 <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
-                  >
+                  <Link href="/dashboard" onClick={() => setMobileOpen(false)}
+                    className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
                     Min sida
                   </Link>
-                  <button
-                    onClick={() => { signOut(); setMobileOpen(false); }}
-                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50"
-                  >
+                  <button onClick={() => { signOut(); setMobileOpen(false); }}
+                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 transition-colors">
                     Logga ut
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/auth/register-select"
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-3 rounded-lg text-sm font-medium text-primary-900 border border-primary-900 text-center hover:bg-primary-50 transition"
-                >
+                <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="btn-outline w-full text-center block py-3">
                   Logga in
                 </Link>
               )}

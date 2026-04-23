@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { DashboardIcon, SearchIcon, FilterIcon, TruckIcon, BoxIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Order {
   id: string;
@@ -33,7 +34,7 @@ export default function WarehouseOrders() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`/api/warehouses/${warehouseId}/orders`);
+      const response = await apiFetch(`/api/warehouses/${warehouseId}/orders`);
       const data = await response.json();
       setOrders(data.orders || []);
     } catch (error) {

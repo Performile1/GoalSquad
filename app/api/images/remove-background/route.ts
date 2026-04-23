@@ -5,7 +5,7 @@
  * Uses remove.bg or similar service to remove image background
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import FormData from 'form-data';
 
@@ -71,12 +71,8 @@ async function removeBackgroundWithRemoveBg(image: File) {
   const resultBuffer = Buffer.from(await response.arrayBuffer());
   
   // Upload to Supabase Storage
-  const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
   const fileName = `processed-${Date.now()}.png`;
-  const { data, error } = await supabase.storage
+  const { data, error } = await supabaseAdmin.storage
     .from('product-images')
     .upload(fileName, resultBuffer, {
       contentType: 'image/png',
@@ -126,12 +122,8 @@ async function removeBackgroundLocal(image: File) {
   // Enhance image quality
   processedBuffer = await enhanceProductImage(processedBuffer);
   
-  const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
   const fileName = `processed-${Date.now()}.png`;
-  const { data, error } = await supabase.storage
+  const { data, error } = await supabaseAdmin.storage
     .from('product-images')
     .upload(fileName, processedBuffer, {
       contentType: 'image/png',

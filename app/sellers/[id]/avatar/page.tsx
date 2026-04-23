@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
+import { apiFetch } from '@/lib/api-client';
 
 interface AvatarItem {
   itemId: string;
@@ -37,7 +38,7 @@ export default function AvatarCustomizer() {
 
   const fetchAvatarData = async () => {
     try {
-      const response = await fetch(`/api/sellers/${sellerId}/avatar`);
+      const response = await apiFetch(`/api/sellers/${sellerId}/avatar`);
       const data = await response.json();
       setAvatarData(data.avatarData);
       setAvailableItems(data.availableItems);
@@ -65,10 +66,9 @@ export default function AvatarCustomizer() {
     }
 
     try {
-      await fetch(`/api/sellers/${sellerId}/avatar`, {
+      await apiFetch(`/api/sellers/${sellerId}/avatar`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ avatarData: newAvatarData }),
+                body: JSON.stringify({ avatarData: newAvatarData }),
       });
       setAvatarData(newAvatarData);
     } catch (error) {

@@ -1,12 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     const searchParams = request.nextUrl.searchParams;
     const placement = searchParams.get('placement');
@@ -16,7 +12,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get placement by name
-    const { data: placementData, error: placementError } = await supabase
+    const { data: placementData, error: placementError } = await supabaseAdmin
       .from('ad_placements')
       .select('id')
       .eq('name', placement)
@@ -28,12 +24,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Reset daily views and check limits before fetching
-    await supabase.rpc('reset_daily_ad_views');
-    await supabase.rpc('check_daily_ad_limits');
-    await supabase.rpc('check_total_ad_limits');
+    await supabaseAdmin.rpc('reset_daily_ad_views');
+    await supabaseAdmin.rpc('check_daily_ad_limits');
+    await supabaseAdmin.rpc('check_total_ad_limits');
 
     // Get active ads for this placement using new rotation function
-    const { data: ads, error: adsError } = await supabase.rpc('get_active_ads_for_placement', {
+    const { data: ads, error: adsError } = await supabaseAdmin.rpc('get_active_ads_for_placement', {
       p_placement_id: placementData.id,
     });
 

@@ -182,8 +182,8 @@ export default function FundraisingPage() {
               >
                 {/* Image */}
                 <div className="h-48 bg-gradient-to-br from-primary-100 to-primary-200 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <TypeIcon size={64} className="text-primary-300" />
+                  <div className="absolute inset-0 flex items-center justify-center icon-brand">
+                    <TypeIcon size={64} />
                   </div>
                   <div className="absolute top-4 left-4">
                     <span className="px-3 py-1 bg-white/90 backdrop-blur rounded-full text-xs font-semibold text-primary-900">
@@ -196,7 +196,7 @@ export default function FundraisingPage() {
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-primary-900 mb-2">{fundraiser.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{fundraiser.description}</p>
-                  <p className="text-sm text-gray-500 mb-4 flex items-center gap-1">
+                  <p className="text-sm text-gray-500 mb-4 flex items-center gap-1 icon-brand">
                     <DashboardIcon size={16} />
                     {fundraiser.location}
                   </p>
@@ -243,7 +243,7 @@ export default function FundraisingPage() {
 
         {filteredFundraisers.length === 0 && (
           <div className="text-center py-16">
-            <SearchIcon size={64} className="text-gray-300 mx-auto mb-4" />
+            <div className="icon-brand mx-auto mb-4"><SearchIcon size={64} /></div>
             <p className="text-gray-600 text-lg">Inga insamlingar matchade din sökning</p>
           </div>
         )}

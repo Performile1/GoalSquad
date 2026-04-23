@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function GET(
   req: NextRequest,
@@ -12,11 +13,11 @@ export async function GET(
 ) {
   try {
     const conversationId = params.conversationId;
-    const userId = req.headers.get('x-user-id'); // TODO: Get from session
-
-    if (!userId) {
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const userId = authUser.id;
 
     // Verify user is participant
     const { data: participant } = await supabaseAdmin

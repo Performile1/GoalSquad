@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { XPIcon, LevelIcon, AvatarIcon, QuestIcon, LootBoxIcon, FireModeIcon, StreakIcon, BadgeIcon, EquipmentSlotIcon, SkinIcon, GoldenHoodieIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface SellerXP {
   current_xp: number;
@@ -78,28 +79,28 @@ export default function SellerGamificationPage() {
   const fetchData = async () => {
     try {
       // Fetch seller XP
-      const xpRes = await fetch('/api/sellers/xp');
+      const xpRes = await apiFetch('/api/sellers/xp');
       if (xpRes.ok) {
         const xpData = await xpRes.json();
         setSellerXP(xpData);
       }
 
       // Fetch avatar equipment
-      const avatarRes = await fetch('/api/sellers/avatar');
+      const avatarRes = await apiFetch('/api/sellers/avatar');
       if (avatarRes.ok) {
         const avatarData = await avatarRes.json();
         setAvatarEquipment(avatarData);
       }
 
       // Fetch quests
-      const questsRes = await fetch('/api/sellers/quests');
+      const questsRes = await apiFetch('/api/sellers/quests');
       if (questsRes.ok) {
         const questsData = await questsRes.json();
         setQuests(questsData);
       }
 
       // Fetch loot boxes
-      const lootRes = await fetch('/api/sellers/loot-boxes');
+      const lootRes = await apiFetch('/api/sellers/loot-boxes');
       if (lootRes.ok) {
         const lootData = await lootRes.json();
         setLootBoxes(lootData);

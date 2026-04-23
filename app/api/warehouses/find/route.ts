@@ -6,16 +6,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const searchParams = req.nextUrl.searchParams;
     const postalCode = searchParams.get('postalCode');
     const country = searchParams.get('country') || 'SE';
@@ -27,7 +23,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const { data: warehouseId, error } = await supabase.rpc('find_nearest_warehouse', {
+    const { data: warehouseId, error } = await supabaseAdmin.rpc('find_nearest_warehouse', {
       p_postal_code: postalCode,
       p_country: country,
     });
@@ -41,7 +37,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const { data: warehouse } = await supabase
+    const { data: warehouse } = await supabaseAdmin
       .from('consolidation_warehouses')
       .select('*')
       .eq('id', warehouseId)

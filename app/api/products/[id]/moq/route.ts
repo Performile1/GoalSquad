@@ -6,17 +6,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const {
       moqEnabled,
       minimumOrderQuantity,
@@ -28,7 +24,7 @@ export async function PUT(
 
     // TODO: Add permission check (merchant owns product)
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('products')
       .update({
         moq_enabled: moqEnabled,

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { apiFetch } from '@/lib/api-client';
 
 interface Conversation {
   id: string;
@@ -47,7 +48,7 @@ export default function MessagesPage() {
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch('/api/messages/conversations');
+      const response = await apiFetch('/api/messages/conversations');
       const data = await response.json();
       setConversations(data.conversations || []);
     } catch (error) {
@@ -59,12 +60,12 @@ export default function MessagesPage() {
 
   const fetchMessages = async (conversationId: string) => {
     try {
-      const response = await fetch(`/api/messages/${conversationId}`);
+      const response = await apiFetch(`/api/messages/${conversationId}`);
       const data = await response.json();
       setMessages(data.messages || []);
       
       // Mark as read
-      await fetch(`/api/messages/${conversationId}/read`, { method: 'POST' });
+      await apiFetch(`/api/messages/${conversationId}/read`, { method: 'POST' });
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     }
@@ -74,9 +75,8 @@ export default function MessagesPage() {
     if (!newMessage.trim() || !selectedConversation) return;
 
     try {
-      const response = await fetch(`/api/messages/${selectedConversation}/send`, {
+      const response = await apiFetch(`/api/messages/${selectedConversation}/send`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: newMessage }),
       });
 

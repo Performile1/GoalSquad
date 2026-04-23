@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { BoxIcon, TruckIcon, DashboardIcon, ShoppingBagIcon, ArrowRightIcon, UserIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface IncomingPallet {
   id: string;
@@ -48,9 +49,9 @@ export default function WarehouseManagement() {
   const fetchData = async () => {
     try {
       const [palletsRes, groupsRes, shipmentsRes] = await Promise.all([
-        fetch(`/api/warehouses/${warehouseId}/incoming-pallets`),
-        fetch(`/api/warehouses/${warehouseId}/consolidation-groups`),
-        fetch(`/api/warehouses/${warehouseId}/shipments`),
+        apiFetch(`/api/warehouses/${warehouseId}/incoming-pallets`),
+        apiFetch(`/api/warehouses/${warehouseId}/consolidation-groups`),
+        apiFetch(`/api/warehouses/${warehouseId}/shipments`),
       ]);
 
       const palletsData = await palletsRes.json();
@@ -69,7 +70,7 @@ export default function WarehouseManagement() {
 
   const handleReceivePallet = async (palletId: string) => {
     try {
-      await fetch(`/api/warehouses/${warehouseId}/pallets/${palletId}/receive`, {
+      await apiFetch(`/api/warehouses/${warehouseId}/pallets/${palletId}/receive`, {
         method: 'POST',
       });
       fetchData();
@@ -80,10 +81,9 @@ export default function WarehouseManagement() {
 
   const handleCreateConsolidation = async (selectedPallets: string[], targetWarehouseId: string) => {
     try {
-      await fetch(`/api/warehouses/${warehouseId}/consolidations`, {
+      await apiFetch(`/api/warehouses/${warehouseId}/consolidations`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ palletIds: selectedPallets, targetWarehouseId }),
+                body: JSON.stringify({ palletIds: selectedPallets, targetWarehouseId }),
       });
       fetchData();
     } catch (error) {
@@ -93,7 +93,7 @@ export default function WarehouseManagement() {
 
   const handleShipConsolidation = async (groupId: string) => {
     try {
-      await fetch(`/api/warehouses/${warehouseId}/consolidations/${groupId}/ship`, {
+      await apiFetch(`/api/warehouses/${warehouseId}/consolidations/${groupId}/ship`, {
         method: 'POST',
       });
       fetchData();

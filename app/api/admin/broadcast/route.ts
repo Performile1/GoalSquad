@@ -10,10 +10,15 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const userId = req.headers.get('x-user-id'); // TODO: Get from session
+    const authUser = await getAuthUser(req);
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = authUser.id;
     const {
       targetType,
       targetId,
@@ -23,18 +28,14 @@ export async function POST(req: NextRequest) {
       priority,
     } = await req.json();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     // Verify user is gs_admin
-    const { data: user } = await supabaseAdmin
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('role')
       .eq('id', userId)
       .single();
 
-    if (user?.role !== 'gs_admin') {
+    if (profile?.role !== 'gs_admin') {
       return NextResponse.json({ error: 'Forbidden: Admin only' }, { status: 403 });
     }
 

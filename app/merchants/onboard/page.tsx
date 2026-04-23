@@ -123,7 +123,7 @@ export default function MerchantOnboarding() {
           className="bg-white rounded-3xl shadow-xl p-8"
         >
           <div className="flex items-center gap-3 mb-2">
-            <MerchantIcon size={40} />
+            <div className="icon-brand"><MerchantIcon size={40} /></div>
             <h1 className="text-3xl font-extrabold text-gray-900">
               Registrera ditt företag
             </h1>

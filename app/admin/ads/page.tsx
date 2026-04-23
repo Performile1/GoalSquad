@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { DashboardIcon, CheckIcon, XIcon, EyeIcon, AlertIcon, MoneyIcon, CalendarIcon, ClickIcon, ViewIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Ad {
   id: string;
@@ -65,7 +66,7 @@ export default function AdminAdsPage() {
 
   const fetchAds = async () => {
     try {
-      const response = await fetch(`/api/admin/ads?filter=${filter}`);
+      const response = await apiFetch(`/api/admin/ads?filter=${filter}`);
       const data = await response.json();
       setAds(data.ads || []);
       setStats(data.stats || null);
@@ -78,7 +79,7 @@ export default function AdminAdsPage() {
 
   const handleApprove = async (adId: string) => {
     try {
-      const response = await fetch(`/api/admin/ads/${adId}/approve`, {
+      const response = await apiFetch(`/api/admin/ads/${adId}/approve`, {
         method: 'POST',
       });
       if (response.ok) {
@@ -92,10 +93,9 @@ export default function AdminAdsPage() {
 
   const handleReject = async (adId: string, reason: string) => {
     try {
-      const response = await fetch(`/api/admin/ads/${adId}/reject`, {
+      const response = await apiFetch(`/api/admin/ads/${adId}/reject`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
+                body: JSON.stringify({ reason }),
       });
       if (response.ok) {
         fetchAds();

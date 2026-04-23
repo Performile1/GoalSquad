@@ -1,19 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
 
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -66,7 +62,7 @@ export async function POST(request: NextRequest) {
     let discountPercent = advance_discount_percent || 10;
 
     if (payment_type === 'advance') {
-      const { data: discountResult } = await supabase.rpc('calculate_discounted_price', {
+      const { data: discountResult } = await supabaseAdmin.rpc('calculate_discounted_price', {
         p_original_price: price_paid,
         p_discount_percent: discountPercent,
       });
@@ -74,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create ad
-    const { data: ad, error: adError } = await supabase
+    const { data: ad, error: adError } = await supabaseAdmin
       .from('ads')
       .insert({
         advertiser_id: user.id,
@@ -118,11 +114,11 @@ export async function POST(request: NextRequest) {
     if (adError) throw adError;
 
     // Check for prohibited content
-    const { data: flagged } = await supabase.rpc('flag_ad_content', { p_ad_id: ad.id });
+    const { data: flagged } = await supabaseAdmin.rpc('flag_ad_content', { p_ad_id: ad.id });
 
     if (flagged) {
       // Get the ad to see rejection reason
-      const { data: updatedAd } = await supabase
+      const { data: updatedAd } = await supabaseAdmin
         .from('ads')
         .select('rejection_reason')
         .eq('id', ad.id)
@@ -138,11 +134,11 @@ export async function POST(request: NextRequest) {
 
     // Verify backlink if provided
     if (backlink_url) {
-      await supabase.rpc('verify_backlink', { p_ad_id: ad.id });
+      await supabaseAdmin.rpc('verify_backlink', { p_ad_id: ad.id });
     }
 
     // Create payment transaction record
-    const { error: paymentError } = await supabase
+    const { error: paymentError } = await supabaseAdmin
       .from('ad_payment_transactions')
       .insert({
         ad_id: ad.id,

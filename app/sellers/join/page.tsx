@@ -127,14 +127,14 @@ function SellerJoinContent() {
           {step === 'info' && (
             <>
               <div className="text-center mb-8">
-                <div className="flex justify-center mb-4">
+                <div className="flex justify-center mb-4 icon-brand">
                   <TrophyIcon size={64} />
                 </div>
                 <h1 className="text-2xl font-extrabold text-gray-900 mb-2">
                   Bli säljare på GoalSquad
                 </h1>
                 <p className="text-gray-500 leading-relaxed">
-                  Sälj produkter, stöd din förening och tjäna din del av intäkterna — allt via din telefon.
+                  Sälj produkter, stöd era lokala föreningar och tjäna provision — allt via din telefon.
                 </p>
               </div>
 
@@ -146,7 +146,7 @@ function SellerJoinContent() {
                   { icon: <TruckIcon size={32} />, text: 'Vi sköter leverans och kundtjänst' },
                 ].map((item) => (
                   <li key={item.text} className="flex items-start gap-3">
-                    <span className="flex-shrink-0">{item.icon}</span>
+                    <span className="flex-shrink-0 icon-brand">{item.icon}</span>
                     <span className="text-sm text-gray-600 leading-snug">{item.text}</span>
                   </li>
                 ))}
