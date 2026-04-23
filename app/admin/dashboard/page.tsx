@@ -146,7 +146,7 @@ export default function AdminDashboard() {
         </motion.div>
 
         {/* Quick nav cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {[
             {
               href: '/admin/users',
@@ -157,10 +157,66 @@ export default function AdminDashboard() {
               border: 'rgba(0,59,61,0.2)',
             },
             {
+              href: '/admin/sellers',
+              icon: UserIcon,
+              title: 'Säljare',
+              desc: 'Översikt över alla säljare',
+              accent: 'rgba(59,130,246,0.08)',
+              border: 'rgba(59,130,246,0.2)',
+            },
+            {
+              href: '/admin/merchants',
+              icon: ShoppingBagIcon,
+              title: 'Företag',
+              desc: 'Översikt över alla merchants',
+              accent: 'rgba(234,179,8,0.08)',
+              border: 'rgba(234,179,8,0.2)',
+            },
+            {
+              href: '/admin/communities',
+              icon: CommunityIcon,
+              title: 'Föreningar & Klubbar',
+              desc: 'Översikt över alla communities',
+              accent: 'rgba(16,185,129,0.08)',
+              border: 'rgba(16,185,129,0.2)',
+            },
+            {
+              href: '/admin/warehouses',
+              icon: TruckIcon,
+              title: 'Lagerpartners',
+              desc: 'Översikt över alla lager',
+              accent: 'rgba(168,85,247,0.08)',
+              border: 'rgba(168,85,247,0.2)',
+            },
+            {
+              href: '/admin/orders',
+              icon: DashboardIcon,
+              title: 'Ordrar',
+              desc: 'Översikt över alla ordrar',
+              accent: 'rgba(0,59,61,0.05)',
+              border: 'rgba(0,59,61,0.12)',
+            },
+            {
+              href: '/admin/returns',
+              icon: AlertIcon,
+              title: 'Returer',
+              desc: 'Översikt över alla returer',
+              accent: 'rgba(239,68,68,0.08)',
+              border: 'rgba(239,68,68,0.2)',
+            },
+            {
               href: '/messages',
               icon: MessageIcon,
               title: 'Community Meddelanden',
               desc: 'Kommunicera med säljare, föreningar och företag',
+              accent: 'rgba(0,59,61,0.05)',
+              border: 'rgba(0,59,61,0.12)',
+            },
+            {
+              href: '/admin/blog',
+              icon: DashboardIcon,
+              title: 'Blogg',
+              desc: 'Hantera blogginlägg',
               accent: 'rgba(0,59,61,0.05)',
               border: 'rgba(0,59,61,0.12)',
             },

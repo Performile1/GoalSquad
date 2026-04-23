@@ -169,6 +169,10 @@ export default function AdminUsersPage() {
           <button onClick={fetchUsers} className="btn-primary px-4 py-2 text-sm">
             Uppdatera
           </button>
+
+          <Link href="/admin/users/create" className="btn-hero px-4 py-2 text-sm flex items-center gap-2">
+            <span>+</span> Skapa användare
+          </Link>
         </div>
 
         {/* Table */}
