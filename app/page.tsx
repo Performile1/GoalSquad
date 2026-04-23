@@ -104,7 +104,7 @@ function EarningsCalculator() {
   const totalEarnings = sellers * salesPerSeller * avgMargin
 
   return (
-    <section id="kalkylator" className="section-dark py-20 px-4">
+    <section id="kalkylator" className="section-light py-20 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-4xl font-extrabold mb-3" style={{ color: '#003B3D' }}>Beräkna er intäkt</h2>
@@ -364,10 +364,10 @@ export default function Home() {
       {/* ── Returns CTA ── */}
       <section className="py-12" style={{ background: '#F8F9FA' }}>
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="section-dark rounded-2xl p-8" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }}>
+          <div className="rounded-2xl p-8 text-white" style={{ background: '#003B3D', boxShadow: '0 4px 24px rgba(0,59,61,0.3)' }}>
             <h2 className="text-2xl font-bold text-white mb-3">Behöver du returnera en produkt?</h2>
-            <p className="mb-6" style={{ color: 'rgba(255,255,255,0.65)' }}>Enkel och smidig returhantering med QR-kod för returfraktsedel</p>
-            <Link href="/returns" className="btn-outline inline-block px-8 py-3">
+            <p className="mb-6" style={{ color: 'rgba(255,255,255,0.8)' }}>Enkel och smidig returhantering med QR-kod för returfraktsedel</p>
+            <Link href="/returns" className="inline-block px-8 py-3 rounded-xl font-bold transition" style={{ background: '#FFFFFF', color: '#003B3D' }}>
               Skapa retur →
             </Link>
           </div>
@@ -418,7 +418,7 @@ export default function Home() {
       </section>
 
       {/* ── App Download ── */}
-      <section className="section-dark py-20">
+      <section className="py-20" style={{ background: '#003B3D' }}>
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Text */}
@@ -517,7 +517,7 @@ export default function Home() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="section-dark py-20" style={{ borderTop: '1px solid rgba(255,215,0,0.12)' }}>
+      <section className="py-20 text-white" style={{ background: '#003B3D', borderTop: '1px solid rgba(255,215,0,0.12)' }}>
         <div className="max-w-4xl mx-auto px-4 text-center text-white">
           <div className="flex justify-center mb-6 icon-achievement"><CommunityIcon size={64} /></div>
           <h2 className="text-4xl font-extrabold mb-4">Redo att börja?</h2>

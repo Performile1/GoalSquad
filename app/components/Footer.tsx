@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-const P = '#1A1A1A';  // Charcoal — dark context
+const P = '#003B3D';  // Dark petroleum — dark context
 const GOLD = '#FFD700';
 
 function ProviderBadge({ label, sub }: { label: string; sub?: string }) {
