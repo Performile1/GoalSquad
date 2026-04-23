@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { ShopIcon, OrdersIcon, SearchIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 interface Category {
