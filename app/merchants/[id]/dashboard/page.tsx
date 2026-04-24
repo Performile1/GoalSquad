@@ -206,6 +206,30 @@ export default function MerchantDashboard() {
             >
               ⚙️ Inställningar
             </button>
+            <button
+              onClick={() => router.push(`/merchants/${merchantId}/moq-rules`)}
+              className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
+              📦 MOQ-regler
+            </button>
+            <button
+              onClick={() => router.push(`/merchants/${merchantId}/warehouse-assignments`)}
+              className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
+              🏭 Lagertilldelning
+            </button>
+            <button
+              onClick={() => router.push(`/merchants/${merchantId}/asn`)}
+              className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
+              🚛 ASN
+            </button>
+            <button
+              onClick={() => router.push(`/merchants/${merchantId}/barcodes`)}
+              className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
+              🔢 Streckkoder
+            </button>
             {!stats.stripeAccountConnected && (
               <button className="bg-yellow-500 text-white py-4 rounded-xl font-semibold hover:bg-yellow-600 transition">
                 Anslut Stripe
