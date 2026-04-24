@@ -1,11 +1,27 @@
 -- Fix admin role and verify all users
 
--- Update admin user role to gs_admin
-UPDATE profiles
-SET role = 'gs_admin',
-    is_active = true,
-    is_verified = true
-WHERE email = 'admin@goalsquad.se';
+-- Create or update admin user
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM profiles WHERE email = 'admin@goalsquad.se') THEN
+    -- Update existing admin user
+    UPDATE profiles
+    SET role = 'gs_admin',
+        is_active = true,
+        is_verified = true
+    WHERE email = 'admin@goalsquad.se';
+  ELSE
+    -- Create admin user
+    INSERT INTO profiles (email, full_name, role, is_active, is_verified)
+    VALUES (
+      'admin@goalsquad.se',
+      'GoalSquad Admin',
+      'gs_admin',
+      true,
+      true
+    );
+  END IF;
+END $$;
 
 -- Check all users and their current status
 SELECT 
