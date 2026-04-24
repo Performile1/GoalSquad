@@ -1,5 +1,24 @@
 -- Fix admin role and verify all users
 
+-- Fix all test user roles based on their email
+UPDATE profiles
+SET role = 'merchant',
+    is_active = true,
+    is_verified = true
+WHERE email = 'merchant@gamesquad.se';
+
+UPDATE profiles
+SET role = 'seller',
+    is_active = true,
+    is_verified = true
+WHERE email = 'seller@gamesquad.se';
+
+UPDATE profiles
+SET role = 'warehouse',
+    is_active = true,
+    is_verified = true
+WHERE email = 'warehouse@gamesquad.se';
+
 -- Check if admin user exists before update
 SELECT 
   'Admin User Before Update' as check_type,
