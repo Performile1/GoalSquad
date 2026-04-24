@@ -18,15 +18,22 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     if (!await verifyMerchant(params.id, authUser.id)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
+    const { data: productRows } = await supabase
+      .from('products')
+      .select('id')
+      .eq('merchant_id', params.id);
+
+    const productIds = (productRows || []).map(p => p.id);
+
+    if (productIds.length === 0) return NextResponse.json({ barcodes: [] });
+
     const { data: barcodes, error } = await supabase
       .from('product_barcodes')
       .select(`
         *,
         products(id, name, title, sku)
       `)
-      .in('product_id',
-        supabase.from('products').select('id').eq('merchant_id', params.id)
-      )
+      .in('product_id', productIds)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
