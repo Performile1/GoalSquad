@@ -51,10 +51,23 @@ CREATE POLICY "community_merchants_merchant_read" ON public.community_merchants
     )
   );
 
--- 2. Add product_id to entity_goals for product-specific goals
+-- 2. Add missing columns to entity_goals for product-specific goals
 ALTER TABLE public.entity_goals
   ADD COLUMN IF NOT EXISTS product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
-  ADD COLUMN IF NOT EXISTS period VARCHAR(50) DEFAULT 'monthly' CHECK (period IN ('daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'custom'));
+  ADD COLUMN IF NOT EXISTS period VARCHAR(50) DEFAULT 'monthly' CHECK (period IN ('daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'custom')),
+  ADD COLUMN IF NOT EXISTS title VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+
+-- For backward compatibility, ensure goal_title exists and copy to title if title is null
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'entity_goals' AND column_name = 'goal_title') THEN
+    ALTER TABLE public.entity_goals ADD COLUMN goal_title VARCHAR(200);
+  END IF;
+  
+  -- Copy goal_title to title if title is null
+  UPDATE entity_goals SET title = goal_title WHERE title IS NULL AND goal_title IS NOT NULL;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_entity_goals_product ON public.entity_goals(product_id);
 CREATE INDEX IF NOT EXISTS idx_entity_goals_period ON public.entity_goals(period);
@@ -137,7 +150,7 @@ SELECT
   eg.entity_id as community_id,
   eg.entity_type,
   eg.goal_type,
-  eg.goal_title as title,
+  COALESCE(eg.title, eg.goal_title) as title,
   eg.description,
   eg.product_id,
   p.name as product_name,
@@ -149,7 +162,7 @@ SELECT
   eg.status,
   eg.start_date,
   eg.end_date,
-  COALESCE(eg.metadata, '{}'::jsonb) as metadata,
+  eg.metadata,
   eg.created_at,
   eg.updated_at
 FROM entity_goals eg
