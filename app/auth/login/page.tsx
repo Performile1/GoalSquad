@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AlertIcon } from '@/app/components/BrandIcons';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function GoogleLogo() {
   return (
@@ -60,12 +61,34 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
+      const { data, error } = await signIn(email, password);
       
       if (error) {
         setError(error.message);
-      } else {
-        router.push(redirect);
+      } else if (data.user) {
+        // Fetch profile to determine role-based redirect
+        const supabase = createClientComponentClient();
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        // Check if redirect is specified, otherwise use role-based routing
+        if (redirect !== '/dashboard') {
+          router.push(redirect);
+        } else if (profile?.role === 'gs_admin') {
+          router.push('/admin/dashboard');
+        } else if (profile?.role === 'merchant') {
+          router.push('/merchants/dashboard');
+        } else if (profile?.role === 'warehouse') {
+          router.push('/warehouses/dashboard');
+        } else if (profile?.role === 'seller') {
+          // Redirect to seller dashboard (need seller_id)
+          router.push('/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (err: any) {
       setError(err.message);

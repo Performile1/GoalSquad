@@ -9,7 +9,27 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = createRouteHandlerClient({ cookies });
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data: { user } } = await supabase.auth.exchangeCodeForSession(code);
+
+    // Fetch profile to determine role-based redirect
+    if (user && next === '/dashboard') {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      let redirectPath = '/dashboard';
+      if (profile?.role === 'gs_admin') {
+        redirectPath = '/admin/dashboard';
+      } else if (profile?.role === 'merchant') {
+        redirectPath = '/merchants/dashboard';
+      } else if (profile?.role === 'warehouse') {
+        redirectPath = '/warehouses/dashboard';
+      }
+
+      return NextResponse.redirect(new URL(redirectPath, requestUrl.origin));
+    }
   }
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));
