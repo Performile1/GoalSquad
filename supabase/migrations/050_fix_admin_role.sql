@@ -1,10 +1,32 @@
 -- Fix admin role and verify all users
 
+-- Check if admin user exists before update
+SELECT 
+  'Admin User Before Update' as check_type,
+  id,
+  email,
+  role,
+  is_active,
+  is_verified
+FROM profiles
+WHERE id = '4413b038-d4a9-4916-93c0-c6959a0b8d1c';
+
 -- Update admin user with specific UUID
 UPDATE profiles
 SET role = 'gs_admin',
     is_active = true,
     is_verified = true
+WHERE id = '4413b038-d4a9-4916-93c0-c6959a0b8d1c';
+
+-- Check if admin user exists after update
+SELECT 
+  'Admin User After Update' as check_type,
+  id,
+  email,
+  role,
+  is_active,
+  is_verified
+FROM profiles
 WHERE id = '4413b038-d4a9-4916-93c0-c6959a0b8d1c';
 
 -- If admin user doesn't exist, create with specific UUID
