@@ -69,14 +69,31 @@ const RETURN_STATUS_LABELS: Record<string, string> = {
   refunded: 'Återbetald',
 };
 
+interface Profile {
+  full_name?: string;
+  phone?: string;
+  date_of_birth?: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  personal_id_number?: string;
+  email_notifications?: boolean;
+  sms_notifications?: boolean;
+}
+
 export default function AccountPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'orders' | 'returns' | 'support'>('orders');
+  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'returns' | 'support'>('profile');
   const [orders, setOrders] = useState<Order[]>([]);
   const [returns, setReturns] = useState<Return[]>([]);
   const [supportStats, setSupportStats] = useState<SupportStats | null>(null);
   const [fetching, setFetching] = useState(true);
+  const [profile, setProfile] = useState<Profile>({});
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSuccess, setProfileSuccess] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -85,8 +102,45 @@ export default function AccountPage() {
     }
     if (user) {
       fetchData();
+      fetchProfile();
     }
   }, [user, loading]);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await apiFetch('/api/user/profile');
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data.profile || {});
+      }
+    } catch (err) {
+      console.error('Failed to fetch profile:', err);
+    }
+  };
+
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    setProfile(prev => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }));
+  };
+
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    setProfileSuccess('');
+    try {
+      const res = await apiFetch('/api/user/profile', {
+        method: 'PUT',
+        body: JSON.stringify(profile),
+      });
+      if (res.ok) {
+        setProfileSuccess('Profilen sparad!');
+        setTimeout(() => setProfileSuccess(''), 3000);
+      }
+    } catch (err) {
+      console.error('Failed to save profile:', err);
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -182,38 +236,125 @@ export default function AccountPage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === 'orders'
-                ? 'bg-primary-900 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            Ordrar ({orders.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('returns')}
-            className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === 'returns'
-                ? 'bg-primary-900 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            Returer ({returns.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('support')}
-            className={`px-6 py-3 rounded-xl font-semibold transition ${
-              activeTab === 'support'
-                ? 'bg-primary-900 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            Support-statistik
-          </button>
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+          {[
+            { key: 'profile', label: 'Min profil' },
+            { key: 'orders', label: `Ordrar (${orders.length})` },
+            { key: 'returns', label: `Returer (${returns.length})` },
+            { key: 'support', label: 'Support-statistik' },
+          ].map(tab => (
+            <button key={tab.key} onClick={() => setActiveTab(tab.key as any)}
+              className={`px-6 py-3 rounded-xl font-semibold transition whitespace-nowrap ${
+                activeTab === tab.key ? 'bg-primary-900 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+              }`}>
+              {tab.label}
+            </button>
+          ))}
         </div>
+
+        {/* Profile Tab */}
+        {activeTab === 'profile' && (
+          <div className="bg-white rounded-2xl shadow-sm p-8 space-y-8">
+            {profileSuccess && (
+              <div className="p-4 bg-green-50 border border-green-300 rounded-xl text-green-700 font-semibold">{profileSuccess}</div>
+            )}
+
+            {/* Basic info */}
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Personuppgifter</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Namn</label>
+                  <input name="full_name" value={profile.full_name || ''} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">E-post</label>
+                  <input value={user?.email || ''} disabled
+                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl bg-gray-50 text-gray-400 cursor-not-allowed" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Telefon</label>
+                  <input name="phone" value={profile.phone || ''} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Födelsedatum</label>
+                  <input name="date_of_birth" type="date" value={profile.date_of_birth || ''} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Personnummer</label>
+                  <input name="personal_id_number" value={profile.personal_id_number || ''} onChange={handleProfileChange}
+                    placeholder="YYYYMMDD-XXXX"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                  <p className="text-xs text-gray-400 mt-1">Krävs för BankID-verifiering och skatteändamål</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Address */}
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Leveransadress</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Gatuadress</label>
+                  <input name="address_line1" value={profile.address_line1 || ''} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none mb-2" />
+                  <input name="address_line2" value={profile.address_line2 || ''} onChange={handleProfileChange}
+                    placeholder="Adressrad 2 (valfritt)"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Postnummer</label>
+                  <input name="postal_code" value={profile.postal_code || ''} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Ort</label>
+                  <input name="city" value={profile.city || ''} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Land</label>
+                  <select name="country" value={profile.country || 'SE'} onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none">
+                    <option value="SE">Sverige</option>
+                    <option value="NO">Norge</option>
+                    <option value="DK">Danmark</option>
+                    <option value="FI">Finland</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Notifications */}
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Notifikationer</h2>
+              <div className="space-y-3">
+                {[
+                  { name: 'email_notifications', label: 'E-postnotifikationer' },
+                  { name: 'sms_notifications', label: 'SMS-notifikationer' },
+                ].map(({ name, label }) => (
+                  <label key={name} className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name={name}
+                      checked={(profile as any)[name] ?? true}
+                      onChange={handleProfileChange}
+                      className="w-5 h-5 rounded accent-primary-900" />
+                    <span className="text-gray-700 font-medium">{label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button onClick={handleSaveProfile} disabled={savingProfile}
+                className="px-8 py-3 bg-primary-900 text-white rounded-xl font-bold hover:bg-primary-700 transition disabled:opacity-50">
+                {savingProfile ? 'Sparar...' : 'Spara profil'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tab Content */}
         {activeTab === 'orders' && (
