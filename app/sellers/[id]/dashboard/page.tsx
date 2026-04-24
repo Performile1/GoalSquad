@@ -280,6 +280,9 @@ export default function SellerDashboard() {
                 <Link href="/leaderboard" className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
                   🎯 Leaderboard
                 </Link>
+                <Link href={`/sellers/${sellerId}/settings`} className="border-2 border-primary-900 text-primary-900 py-4 rounded-xl font-semibold hover:bg-primary-50 transition text-center">
+                  ⚙️ Inställningar
+                </Link>
               </div>
             </div>
           </motion.div>
