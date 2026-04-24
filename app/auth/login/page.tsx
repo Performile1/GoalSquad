@@ -80,9 +80,31 @@ export default function LoginPage() {
         } else if (profile?.role === 'gs_admin') {
           router.push('/admin/dashboard');
         } else if (profile?.role === 'merchant') {
-          router.push('/merchants/dashboard');
+          // Fetch merchant_id and redirect to merchant dashboard
+          const { data: merchant } = await supabase
+            .from('merchants')
+            .select('id')
+            .eq('user_id', data.user.id)
+            .single();
+          
+          if (merchant?.id) {
+            router.push(`/merchants/${merchant.id}/dashboard`);
+          } else {
+            router.push('/merchants/onboard');
+          }
         } else if (profile?.role === 'warehouse') {
-          router.push('/warehouses/dashboard');
+          // Fetch warehouse_id and redirect to warehouse dashboard
+          const { data: warehouse } = await supabase
+            .from('warehouse_partners')
+            .select('id')
+            .eq('user_id', data.user.id)
+            .single();
+          
+          if (warehouse?.id) {
+            router.push(`/warehouses/${warehouse.id}/dashboard`);
+          } else {
+            router.push('/warehouses/onboard');
+          }
         } else if (profile?.role === 'seller') {
           // Fetch seller_id and redirect to seller dashboard
           const { data: seller } = await supabase

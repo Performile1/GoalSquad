@@ -23,9 +23,31 @@ export async function GET(request: NextRequest) {
       if (profile?.role === 'gs_admin') {
         redirectPath = '/admin/dashboard';
       } else if (profile?.role === 'merchant') {
-        redirectPath = '/merchants/dashboard';
+        // Fetch merchant_id and redirect to merchant dashboard
+        const { data: merchant } = await supabase
+          .from('merchants')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (merchant?.id) {
+          redirectPath = `/merchants/${merchant.id}/dashboard`;
+        } else {
+          redirectPath = '/merchants/onboard';
+        }
       } else if (profile?.role === 'warehouse') {
-        redirectPath = '/warehouses/dashboard';
+        // Fetch warehouse_id and redirect to warehouse dashboard
+        const { data: warehouse } = await supabase
+          .from('warehouse_partners')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (warehouse?.id) {
+          redirectPath = `/warehouses/${warehouse.id}/dashboard`;
+        } else {
+          redirectPath = '/warehouses/onboard';
+        }
       } else if (profile?.role === 'seller') {
         // Fetch seller_id and redirect to seller dashboard
         const { data: seller } = await supabase
