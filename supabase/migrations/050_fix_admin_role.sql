@@ -45,6 +45,17 @@ BEGIN
   END IF;
 END $$;
 
+-- Final check if admin user exists after all operations
+SELECT 
+  'Admin User Final Check' as check_type,
+  id,
+  email,
+  role,
+  is_active,
+  is_verified
+FROM profiles
+WHERE id = '4413b038-d4a9-4916-93c0-c6959a0b8d1c';
+
 -- Check all users and their current status
 SELECT 
   'All Users Status' as check_type,
