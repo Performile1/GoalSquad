@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { ShopIcon, OrdersIcon, CommunityIcon, MessageIcon, LeaderboardIcon, MerchantIcon } from '@/app/components/BrandIcons';
 import Notifications from '@/app/components/Notifications';
 import SalesAnalytics from '@/app/components/SalesAnalytics';
@@ -17,8 +18,47 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
+      return;
     }
-  }, [user, loading, router]);
+
+    if (!loading && user && profile) {
+      const supabase = createClientComponentClient();
+
+      if (profile.role === 'gs_admin') {
+        router.replace('/admin/dashboard');
+      } else if (profile.role === 'merchant') {
+        supabase
+          .from('merchants')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+          .then(({ data }) => {
+            if (data?.id) router.replace(`/merchants/${data.id}/dashboard`);
+            else router.replace('/merchants/onboard');
+          });
+      } else if (profile.role === 'warehouse') {
+        supabase
+          .from('warehouse_partners')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+          .then(({ data }) => {
+            if (data?.id) router.replace(`/warehouses/${data.id}/dashboard`);
+            else router.replace('/warehouses/onboard');
+          });
+      } else if (profile.role === 'seller') {
+        supabase
+          .from('seller_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+          .then(({ data }) => {
+            if (data?.id) router.replace(`/sellers/${data.id}/dashboard`);
+            else router.replace('/sellers/join');
+          });
+      }
+    }
+  }, [user, profile, loading, router]);
 
   if (loading) {
     return (
