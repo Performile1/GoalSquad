@@ -86,6 +86,7 @@ FROM (VALUES
   -- merchants
   ('merchants', 'user_id'),
   ('merchants', 'merchant_name'),
+  ('merchants', 'business_name'),
   ('merchants', 'email'),
   ('merchants', 'phone'),
   ('merchants', 'address_line1'),
