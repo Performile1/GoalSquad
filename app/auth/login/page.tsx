@@ -118,6 +118,19 @@ export default function LoginPage() {
           } else {
             router.push('/sellers/join');
           }
+        } else if (profile?.role === 'community') {
+          // Fetch community_id and redirect to community dashboard
+          const { data: community } = await supabase
+            .from('communities')
+            .select('id')
+            .eq('owner_id', data.user.id)
+            .single();
+          
+          if (community?.id) {
+            router.push(`/communities/${community.id}/dashboard`);
+          } else {
+            router.push('/communities');
+          }
         } else {
           router.push('/dashboard');
         }

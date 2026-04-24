@@ -2,6 +2,18 @@
 
 -- Fix all test user roles based on their email
 UPDATE profiles
+SET role = 'community',
+    is_active = true,
+    is_verified = true
+WHERE email = 'club@gamesquad.se';
+
+UPDATE profiles
+SET role = 'user',
+    is_active = true,
+    is_verified = true
+WHERE email = 'consumer@gamesquad.se';
+
+UPDATE profiles
 SET role = 'merchant',
     is_active = true,
     is_verified = true

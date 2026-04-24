@@ -56,6 +56,16 @@ export default function DashboardPage() {
             if (data?.id) router.replace(`/sellers/${data.id}/dashboard`);
             else router.replace('/sellers/join');
           });
+      } else if (profile.role === 'community') {
+        supabase
+          .from('communities')
+          .select('id')
+          .eq('owner_id', user.id)
+          .single()
+          .then(({ data }) => {
+            if (data?.id) router.replace(`/communities/${data.id}/dashboard`);
+            else router.replace('/communities');
+          });
       }
     }
   }, [user, profile, loading, router]);

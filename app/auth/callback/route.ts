@@ -61,6 +61,19 @@ export async function GET(request: NextRequest) {
         } else {
           redirectPath = '/sellers/join';
         }
+      } else if (profile?.role === 'community') {
+        // Fetch community_id and redirect to community dashboard
+        const { data: community } = await supabase
+          .from('communities')
+          .select('id')
+          .eq('owner_id', user.id)
+          .single();
+        
+        if (community?.id) {
+          redirectPath = `/communities/${community.id}/dashboard`;
+        } else {
+          redirectPath = '/communities';
+        }
       }
 
       return NextResponse.redirect(new URL(redirectPath, requestUrl.origin));
