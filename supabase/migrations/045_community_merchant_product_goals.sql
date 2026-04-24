@@ -117,7 +117,7 @@ SELECT
   cm.community_id,
   c.name as community_name,
   cm.merchant_id,
-  m.merchant_name,
+  m.business_name as merchant_name,
   m.company_description,
   cm.status,
   cm.commission_percent,
