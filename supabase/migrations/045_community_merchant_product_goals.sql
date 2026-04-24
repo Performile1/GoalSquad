@@ -149,7 +149,7 @@ SELECT
   eg.status,
   eg.start_date,
   eg.end_date,
-  eg.metadata,
+  COALESCE(eg.metadata, '{}'::jsonb) as metadata,
   eg.created_at,
   eg.updated_at
 FROM entity_goals eg
