@@ -137,7 +137,7 @@ SELECT
   eg.entity_id as community_id,
   eg.entity_type,
   eg.goal_type,
-  eg.title,
+  COALESCE(eg.title, eg.goal_title) as title,
   eg.description,
   eg.product_id,
   p.name as product_name,
