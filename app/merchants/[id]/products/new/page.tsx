@@ -22,7 +22,7 @@ export default function NewProduct() {
     basePrice: '',
     retailPrice: '',
     
-    // GS1 Dimensions
+    // Shipping Dimensions
     weightGrams: '',
     lengthMm: '',
     widthMm: '',
