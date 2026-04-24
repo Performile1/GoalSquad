@@ -84,8 +84,18 @@ export default function LoginPage() {
         } else if (profile?.role === 'warehouse') {
           router.push('/warehouses/dashboard');
         } else if (profile?.role === 'seller') {
-          // Redirect to seller dashboard (need seller_id)
-          router.push('/dashboard');
+          // Fetch seller_id and redirect to seller dashboard
+          const { data: seller } = await supabase
+            .from('seller_profiles')
+            .select('id')
+            .eq('user_id', data.user.id)
+            .single();
+          
+          if (seller?.id) {
+            router.push(`/sellers/${seller.id}/dashboard`);
+          } else {
+            router.push('/sellers/join');
+          }
         } else {
           router.push('/dashboard');
         }

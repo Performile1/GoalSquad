@@ -26,6 +26,19 @@ export async function GET(request: NextRequest) {
         redirectPath = '/merchants/dashboard';
       } else if (profile?.role === 'warehouse') {
         redirectPath = '/warehouses/dashboard';
+      } else if (profile?.role === 'seller') {
+        // Fetch seller_id and redirect to seller dashboard
+        const { data: seller } = await supabase
+          .from('seller_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (seller?.id) {
+          redirectPath = `/sellers/${seller.id}/dashboard`;
+        } else {
+          redirectPath = '/sellers/join';
+        }
       }
 
       return NextResponse.redirect(new URL(redirectPath, requestUrl.origin));
