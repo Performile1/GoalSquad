@@ -1,19 +1,19 @@
 -- Fix admin role and verify all users
 
--- Create or update admin user
+-- Update admin user with specific UUID
+UPDATE profiles
+SET role = 'gs_admin',
+    is_active = true,
+    is_verified = true
+WHERE id = '4413b038-d4a9-4916-93c0-c6959a0b8d1c';
+
+-- If admin user doesn't exist, create with specific UUID
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM profiles WHERE email = 'admin@goalsquad.se') THEN
-    -- Update existing admin user
-    UPDATE profiles
-    SET role = 'gs_admin',
-        is_active = true,
-        is_verified = true
-    WHERE email = 'admin@goalsquad.se';
-  ELSE
-    -- Create admin user
-    INSERT INTO profiles (email, full_name, role, is_active, is_verified)
+  IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = '4413b038-d4a9-4916-93c0-c6959a0b8d1c') THEN
+    INSERT INTO profiles (id, email, full_name, role, is_active, is_verified)
     VALUES (
+      '4413b038-d4a9-4916-93c0-c6959a0b8d1c',
       'admin@goalsquad.se',
       'GoalSquad Admin',
       'gs_admin',
