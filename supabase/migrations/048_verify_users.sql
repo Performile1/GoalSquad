@@ -68,12 +68,12 @@ JOIN profiles p ON m.user_id = p.id;
 SELECT 
   'Sellers' as check_type,
   COUNT(*) as count
-FROM sellers;
+FROM seller_profiles;
 
 SELECT 
   'Sellers with profiles' as check_type,
   COUNT(*) as count
-FROM sellers s
+FROM seller_profiles s
 JOIN profiles p ON s.user_id = p.id;
 
 -- Check warehouse-specific tables
