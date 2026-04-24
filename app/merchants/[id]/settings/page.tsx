@@ -40,6 +40,7 @@ export default function MerchantSettingsPage() {
     bank_account: '',
     iban: '',
     bic: '',
+    verification_status: '',
   });
 
   useEffect(() => {
