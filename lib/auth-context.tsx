@@ -12,6 +12,7 @@ interface Profile {
   role: string;
   is_active: boolean;
   is_verified: boolean;
+  metadata?: Record<string, any>;
 }
 
 interface AuthContextType {
@@ -25,6 +26,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   extendSession: () => void; // Extend session timeout
+  showWarning: boolean; // Show timeout warning
+  isLocked: boolean; // Session is locked due to timeout
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [warningTimeout, setWarningTimeout] = useState<number>(60 * 1000); // Warning 1 minute before logout
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const [showWarning, setShowWarning] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   const supabase = createClientComponentClient();
 
@@ -81,21 +85,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const now = Date.now();
       const inactiveTime = now - lastActivity;
 
-      // Show warning 1 minute before timeout
-      if (inactiveTime >= sessionTimeout - warningTimeout && inactiveTime < sessionTimeout) {
-        setShowWarning(true);
-      }
-
-      // Logout if timeout exceeded
+      // Show warning and lock when timeout exceeded
       if (inactiveTime >= sessionTimeout) {
-        handleSignOut();
+        setShowWarning(true);
+        setIsLocked(true);
       }
     };
 
     const interval = setInterval(checkTimeout, 1000); // Check every second
 
     return () => clearInterval(interval);
-  }, [user, lastActivity, sessionTimeout, warningTimeout]);
+  }, [user, lastActivity, sessionTimeout]);
 
   useEffect(() => {
     // Get initial session
@@ -187,6 +187,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const extendSession = () => {
     setLastActivity(Date.now());
     setShowWarning(false);
+    setIsLocked(false);
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
@@ -215,6 +216,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     updateProfile,
     extendSession,
     showWarning,
+    isLocked,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
