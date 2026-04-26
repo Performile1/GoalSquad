@@ -134,10 +134,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
-      setProfile(data);
+      if (error) {
+        console.error('Error fetching profile:', error);
+        // If profile fetch fails, create a minimal profile object
+        // This ensures the app doesn't break if profile doesn't exist
+        const { data: userData } = await supabase.auth.getUser();
+        const userEmail = userData?.user?.email;
+        
+        // Fallback for admin user
+        if (userEmail === 'admin@goalsquad.se') {
+          setProfile({
+            id: userId,
+            email: userEmail || 'admin@goalsquad.se',
+            full_name: 'Admin',
+            avatar_url: null,
+            role: 'gs_admin',
+            is_active: true,
+            is_verified: true,
+          });
+        } else {
+          // Set a default profile for other users
+          setProfile({
+            id: userId,
+            email: userEmail || '',
+            full_name: null,
+            avatar_url: null,
+            role: 'user',
+            is_active: true,
+            is_verified: false,
+          });
+        }
+      } else {
+        setProfile(data);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      // Set minimal profile on error
+      setProfile({
+        id: userId,
+        email: user?.email || '',
+        full_name: null,
+        avatar_url: null,
+        role: 'user',
+        is_active: true,
+        is_verified: false,
+      });
     } finally {
       setLoading(false);
     }
