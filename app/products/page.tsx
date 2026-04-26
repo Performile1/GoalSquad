@@ -232,7 +232,7 @@ export default function ProductsPage() {
                   onClick={() => setSelectedCategory(null)}
                   className="text-primary-900 hover:text-primary-600 font-semibold"
                 >
-                  ✕ Rensa filter
+                  Rensa filter
                 </button>
               )}
             </div>
@@ -313,7 +313,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
         {/* Merchant / Seller */}
         <p className="text-xs text-gray-500 mb-4">
-          {product.source === 'community' ? '🤝 Säljs av' : 'Från'} {product.merchantName}
+          {product.source === 'community' ? 'Säljs av' : 'Från'} {product.merchantName}
         </p>
 
         {/* Tags */}

@@ -54,7 +54,7 @@ export default function CommunityBanner() {
     <div className="bg-gradient-to-r from-primary-900 via-primary-600 to-primary-900 py-12 overflow-hidden">
       <div className="container mx-auto px-4 mb-6">
         <h2 className="text-3xl font-bold text-white text-center mb-2">
-          Stöd Lokala Föreningar 🏆
+          Stöd Lokala Föreningar
         </h2>
         <p className="text-primary-100 text-center">
           Över {communities.length} skolor och klubbar använder GoalSquad

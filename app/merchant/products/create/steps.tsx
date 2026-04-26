@@ -13,7 +13,7 @@ export function Step1BasicInfo({
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        📝 Grundläggande Information
+        Grundläggande Information
       </h2>
 
       {/* Product Name */}
@@ -55,7 +55,7 @@ export function Step1BasicInfo({
         {categorySuggestions.length > 0 && (
           <div className="mb-3 p-4 bg-primary-50 rounded-lg">
             <p className="text-sm font-semibold text-primary-900 mb-2">
-              💡 Föreslagna kategorier:
+              Föreslagna kategorier:
             </p>
             <div className="flex flex-wrap gap-2">
               {categorySuggestions.map((suggestion: any) => (
@@ -137,7 +137,7 @@ export function Step2Identifiers({
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        🔖 Identifiering & Varumärke
+        Identifiering & Varumärke
       </h2>
 
       {/* EAN */}
@@ -162,7 +162,7 @@ export function Step2Identifiers({
           />
           {eanValid !== null && (
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl">
-              {eanValid ? '✅' : '❌'}
+              {eanValid ? '✓' : 'X'}
             </span>
           )}
         </div>
@@ -248,7 +248,7 @@ export function Step3Dimensions({
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        📏 Mått & Vikt
+        Mått & Vikt
       </h2>
 
       <p className="text-gray-600 mb-6">
@@ -321,7 +321,7 @@ export function Step3Dimensions({
       {lengthMm && widthMm && heightMm && (
         <div className="p-4 bg-primary-50 rounded-lg">
           <p className="text-sm text-primary-900">
-            📦 Förpackningsstorlek: {lengthMm} × {widthMm} × {heightMm} mm
+            Förpackningsstorlek: {lengthMm} × {widthMm} × {heightMm} mm
             <br />
             = {(parseFloat(lengthMm) / 10).toFixed(1)} × {(parseFloat(widthMm) / 10).toFixed(1)} × {(parseFloat(heightMm) / 10).toFixed(1)} cm
           </p>
@@ -395,7 +395,7 @@ export function Step4Details({
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        📋 Produktdetaljer
+        Produktdetaljer
       </h2>
 
       {/* Ingredients */}
@@ -429,7 +429,7 @@ export function Step4Details({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {allergens.includes(allergen) && '⚠️ '}
+              {allergens.includes(allergen) && ''}
               {allergen}
             </button>
           ))}
@@ -472,13 +472,13 @@ export function Step4Details({
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"
           >
             <option value="">Välj typ...</option>
-            <option value="box">📦 Låda</option>
-            <option value="bag">👜 Påse</option>
-            <option value="bottle">🍾 Flaska</option>
-            <option value="can">🥫 Burk</option>
-            <option value="jar">🫙 Glasburk</option>
-            <option value="carton">📦 Kartong</option>
-            <option value="wrapper">🎁 Omslag</option>
+            <option value="box">Låda</option>
+            <option value="bag">Påse</option>
+            <option value="bottle">Flaska</option>
+            <option value="can">Burk</option>
+            <option value="jar">Glasburk</option>
+            <option value="carton">Kartong</option>
+            <option value="wrapper">Omslag</option>
           </select>
         </div>
         <div>
@@ -505,7 +505,7 @@ export function Step4Details({
             className="w-5 h-5 text-green-600 rounded"
           />
           <span className="font-semibold text-gray-900">
-            ♻️ Återvinningsbar förpackning
+            Återvinningsbar förpackning
           </span>
         </label>
         <label className="flex items-center gap-3 cursor-pointer">
@@ -516,7 +516,7 @@ export function Step4Details({
             className="w-5 h-5 text-green-600 rounded"
           />
           <span className="font-semibold text-gray-900">
-            🌱 Miljövänlig produkt
+            Miljövänlig produkt
           </span>
         </label>
       </div>
@@ -538,7 +538,7 @@ export function Step4Details({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {certifications.includes(cert) && '✓ '}
+              {certifications.includes(cert) && ''}
               {cert}
             </button>
           ))}
@@ -582,7 +582,7 @@ export function Step5Images({
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        📸 Produktbilder
+        Produktbilder
       </h2>
 
       <p className="text-gray-600 mb-6">
@@ -600,7 +600,7 @@ export function Step5Images({
           id="image-upload"
         />
         <label htmlFor="image-upload" className="cursor-pointer">
-          <div className="text-6xl mb-4">📸</div>
+          <div className="mb-4 text-xl font-bold text-gray-400">Ladda upp</div>
           <p className="text-lg font-semibold text-gray-900 mb-2">
             Klicka för att ladda upp bilder
           </p>
@@ -633,7 +633,7 @@ export function Step5Images({
                     onClick={() => removeImage(index)}
                     className="absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition"
                   >
-                    ✕
+                    X
                   </button>
                 </div>
 

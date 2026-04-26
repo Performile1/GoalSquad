@@ -55,10 +55,7 @@ export default function PublicLeaderboardPage() {
     }
   };
 
-  const getMedalEmoji = (rank: number) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
+  const getMedalLabel = (rank: number) => {
     return `#${rank}`;
   };
 
@@ -302,7 +299,7 @@ export default function PublicLeaderboardPage() {
                   >
                     {/* Rank */}
                     <div className="text-2xl font-bold text-gray-400 w-16 text-center">
-                      {getMedalEmoji(entry.rank)}
+                      {getMedalLabel(entry.rank)}
                     </div>
 
                     {/* Avatar */}

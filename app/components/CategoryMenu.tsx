@@ -37,7 +37,6 @@ export default function CategoryMenu() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-6 py-3 bg-white rounded-xl shadow-lg hover:shadow-xl transition font-semibold text-gray-900"
       >
-        <span className="text-2xl">📦</span>
         <span>Kategorier</span>
         <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>
           ▼
@@ -76,7 +75,7 @@ export default function CategoryMenu() {
                   className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition border-b border-gray-100"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">🌐</span>
+                    <span className="text-sm font-bold">Alla</span>
                     <span className="font-semibold text-gray-900">
                       Alla produkter
                     </span>
@@ -156,7 +155,6 @@ export function CategoryBar() {
             className="flex-shrink-0 flex flex-col items-center gap-2 px-4 py-3 rounded-xl hover:bg-gray-50 transition group"
           >
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-              🌐
             </div>
             <span className="text-sm font-semibold text-gray-900">Alla</span>
           </Link>

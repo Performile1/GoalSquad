@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { DashboardIcon, ShoppingBagIcon, MoneyIcon, UserIcon, MessageIcon } from '@/app/components/BrandIcons';
+import { DashboardIcon, ShoppingBagIcon, MoneyIcon, UserIcon, MessageIcon, CheckIcon, AlertIcon, SettingsIcon, BoxIcon, LogisticsIcon, TruckIcon, BarcodeIcon } from '@/app/components/BrandIcons';
 import MerchantShippingPreferences from '@/app/components/MerchantShippingPreferences';
 
 interface MerchantStats {
@@ -162,8 +162,8 @@ export default function MerchantDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Stripe</h3>
-              <div className={`text-4xl ${stats.stripeAccountConnected ? 'text-green-600' : 'text-yellow-600'}`}>
-                {stats.stripeAccountConnected ? '✓' : '⚠️'}
+              <div className={`${stats.stripeAccountConnected ? 'text-green-600' : 'text-yellow-600'}`}>
+                {stats.stripeAccountConnected ? <CheckIcon size={32} /> : <AlertIcon size={32} />}
               </div>
             </div>
             <div className={`text-xl font-bold mb-2 ${
@@ -204,31 +204,36 @@ export default function MerchantDashboard() {
               onClick={() => router.push(`/merchants/${merchantId}/settings`)}
               className="border-2 border-primary-900 text-primary-900 py-4 rounded-xl font-semibold hover:bg-primary-50 transition flex items-center justify-center gap-2"
             >
-              ⚙️ Inställningar
+              <SettingsIcon size={20} />
+              Inställningar
             </button>
             <button
               onClick={() => router.push(`/merchants/${merchantId}/moq-rules`)}
               className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
             >
-              📦 MOQ-regler
+              <BoxIcon size={20} />
+              MOQ-regler
             </button>
             <button
               onClick={() => router.push(`/merchants/${merchantId}/warehouse-assignments`)}
               className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
             >
-              🏭 Lagertilldelning
+              <LogisticsIcon size={20} />
+              Lagertilldelning
             </button>
             <button
               onClick={() => router.push(`/merchants/${merchantId}/asn`)}
               className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
             >
-              🚛 ASN
+              <TruckIcon size={20} />
+              ASN
             </button>
             <button
               onClick={() => router.push(`/merchants/${merchantId}/barcodes`)}
               className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
             >
-              🔢 Streckkoder
+              <BarcodeIcon size={20} />
+              Streckkoder
             </button>
             {!stats.stripeAccountConnected && (
               <button className="bg-yellow-500 text-white py-4 rounded-xl font-semibold hover:bg-yellow-600 transition">

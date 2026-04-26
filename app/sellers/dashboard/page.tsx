@@ -174,7 +174,7 @@ export default function SellerDashboardPage() {
 
         {/* Warehouse Partner Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">📦 Bli lagerpartner</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Bli lagerpartner</h2>
           <p className="text-gray-600 mb-6">Tjäna extra pengar genom att erbjuda lagerhållning, hantering och frakt av produkter.</p>
 
           <label className="flex items-center gap-4 cursor-pointer mb-6">

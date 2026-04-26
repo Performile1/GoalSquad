@@ -63,7 +63,7 @@ export default function CartPage() {
                   {item.imageUrl ? (
                     <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover rounded-xl" />
                   ) : (
-                    '📦'
+                    ''
                   )}
                 </div>
                 <div className="flex-1 min-w-0">

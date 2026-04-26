@@ -25,7 +25,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4 animate-bounce">💌</div>
+          <div className="text-6xl mb-4 animate-bounce"></div>
           <p className="text-xl text-gray-600">Laddar...</p>
         </div>
       </div>
@@ -36,7 +36,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4">🔒</div>
+          <div className="text-6xl mb-4"></div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Ingen behörighet
           </h2>
@@ -111,7 +111,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
 
       if (response.ok) {
         const data = await response.json();
-        alert(`✅ ${data.sent} inbjudningar skickade!`);
+        alert(`${data.sent} inbjudningar skickade!`);
         setBulkEmails('');
       } else {
         const data = await response.json();
@@ -128,7 +128,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-3xl">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          💌 Bjud in medlemmar
+          Bjud in medlemmar
         </h1>
 
         {/* Mode Toggle */}
@@ -142,7 +142,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              👤 Enskild inbjudan
+              Enskild inbjudan
             </button>
             <button
               onClick={() => setBulkMode(true)}
@@ -152,7 +152,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              👥 Massinbjudan
+              Massinbjudan
             </button>
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
         {success && (
           <div className="mb-6 p-4 bg-green-50 border-2 border-green-500 rounded-lg">
             <p className="text-green-700 font-semibold">
-              ✅ Inbjudan skickad!
+              Inbjudan skickad!
             </p>
           </div>
         )}
@@ -170,7 +170,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
         {error && (
           <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg">
             <p className="text-red-700 font-semibold">
-              ❌ {error}
+              {error}
             </p>
           </div>
         )}
@@ -243,7 +243,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
               disabled={sending}
               className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              {sending ? 'Skickar...' : '📧 Skicka inbjudan'}
+              {sending ? 'Skickar...' : 'Skicka inbjudan'}
             </button>
           </form>
         ) : (
@@ -301,7 +301,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
               disabled={sending}
               className="w-full bg-primary-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              {sending ? 'Skickar...' : '📧 Skicka alla inbjudningar'}
+              {sending ? 'Skickar...' : 'Skicka alla inbjudningar'}
             </button>
           </form>
         )}
@@ -309,7 +309,7 @@ export default function InviteMemberPage({ params }: { params: { id: string } })
         {/* Info Box */}
         <div className="mt-8 bg-primary-50 rounded-xl p-6">
           <h3 className="font-bold text-primary-900 mb-2">
-            💡 Så fungerar inbjudningar
+            Så fungerar inbjudningar
           </h3>
           <ul className="text-sm text-primary-800 space-y-2">
             <li>• Inbjudningar skickas via e-post</li>

@@ -310,7 +310,7 @@ function SellerJoinContent() {
           {/* Step: Done */}
           {step === 'done' && (
             <div className="text-center py-4">
-              <div className="text-6xl mb-6">🎉</div>
+              <div className="mb-6 text-4xl font-bold text-green-600">Klart!</div>
               <h2 className="text-2xl font-extrabold text-gray-900 mb-3">Välkommen till GoalSquad!</h2>
               <p className="text-gray-500 mb-8 leading-relaxed">
                 Ditt konto är skapat. Kontrollera din e-post för att bekräfta kontot och börja sälja.

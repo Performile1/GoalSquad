@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
+import { UserIcon, SettingsIcon, MoneyIcon, DashboardIcon } from '@/app/components/BrandIcons';
 
 interface GuardianData {
   fullName: string;
@@ -102,7 +103,7 @@ export default function GuardianDashboard() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-600 to-primary-400 flex items-center justify-center text-3xl">
-                    👤
+                    <UserIcon size={32} className="text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900">{child.fullName}</h2>
@@ -187,16 +188,16 @@ export default function GuardianDashboard() {
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Parental Controls</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-semibold transition">
-                    🔒 Privacy Settings
+                    <span className="flex items-center gap-1.5"><SettingsIcon size={16} /> Privacy Settings</span>
                   </button>
                   <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-semibold transition">
-                    💰 Payout Settings
+                    <span className="flex items-center gap-1.5"><MoneyIcon size={16} /> Payout Settings</span>
                   </button>
                   <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-semibold transition">
-                    📊 View Activity
+                    <span className="flex items-center gap-1.5"><DashboardIcon size={16} /> View Activity</span>
                   </button>
                   <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-semibold transition">
-                    ⚙️ Account Settings
+                    <span className="flex items-center gap-1.5"><SettingsIcon size={16} /> Account Settings</span>
                   </button>
                 </div>
               </div>
@@ -205,7 +206,7 @@ export default function GuardianDashboard() {
 
           {data.children.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
+              <div className="mb-4 flex justify-center"><UserIcon size={64} className="text-gray-300" /></div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 No children registered
               </h3>

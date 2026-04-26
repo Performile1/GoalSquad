@@ -90,7 +90,7 @@ function RegisterForm() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-900 to-primary-600 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
-          <div className="text-6xl mb-4">✅</div>
+          <div className="mb-4 text-4xl font-bold text-green-600">Välkommen!</div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Välkommen!
           </h2>
@@ -124,7 +124,7 @@ function RegisterForm() {
         {inviteToken && (
           <div className="mb-6 p-4 bg-primary-50 border-2 border-primary-500 rounded-lg">
             <p className="text-primary-700 text-sm font-semibold">
-              💌 Du har blivit inbjuden! Skapa ett konto för att acceptera.
+              Du har blivit inbjuden! Skapa ett konto för att acceptera.
             </p>
           </div>
         )}
@@ -133,7 +133,7 @@ function RegisterForm() {
         {error && (
           <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg">
             <p className="text-red-700 text-sm font-semibold">
-              ❌ {error}
+              {error}
             </p>
           </div>
         )}

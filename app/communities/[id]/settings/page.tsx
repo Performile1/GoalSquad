@@ -44,7 +44,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
       if (response.ok) {
         const data = await response.json();
         setLogos((prev) => ({ ...prev, [type]: data.logoUrl }));
-        alert('Logga uppladdad! ✅');
+        alert('Logga uppladdad!');
       } else {
         alert('Uppladdning misslyckades');
       }
@@ -77,7 +77,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
       });
 
       if (response.ok) {
-        alert('Inställningar sparade! ✅');
+        alert('Inställningar sparade!');
       } else {
         alert('Kunde inte spara');
       }
@@ -91,13 +91,13 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          ⚙️ Föreningsinställningar
+          Föreningsinställningar
         </h1>
 
         {/* Logo Upload Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            📸 Loggor
+            Loggor
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -152,7 +152,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
 
           <div className="mt-6 p-4 bg-primary-50 rounded-lg">
             <p className="text-sm text-primary-800">
-              💡 <strong>Tips:</strong> Använd PNG eller SVG för bästa kvalitet. Max 5MB per fil.
+              <strong>Tips:</strong> Använd PNG eller SVG för bästa kvalitet. Max 5MB per fil.
             </p>
           </div>
         </div>
@@ -160,7 +160,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
         {/* Brand Colors */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            🎨 Varumärkesfärger
+            Varumärkesfärger
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -226,7 +226,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
         {/* Homepage Feature */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            ⭐ Visning på Startsidan
+            Visning på Startsidan
           </h2>
 
           <label className="flex items-center gap-4 cursor-pointer">
@@ -249,7 +249,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
           {showOnHomepage && (
             <div className="mt-4 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-lg">
               <p className="text-sm text-yellow-800">
-                ⚠️ <strong>Obs:</strong> Endast föreningar med uppladdad primär logga visas på startsidan.
+                <strong>Obs:</strong> Endast föreningar med uppladdad primär logga visas på startsidan.
               </p>
             </div>
           )}
@@ -258,7 +258,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
         {/* Warehouse Partner */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            📦 Lagerpartner
+            Lagerpartner
           </h2>
 
           <label className="flex items-center gap-4 cursor-pointer mb-6">
@@ -281,7 +281,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
           {isWarehousePartner && (
             <div className="space-y-6 p-6 bg-primary-50 rounded-xl">
               <p className="text-sm text-primary-800 mb-4">
-                💡 Sätt dina kostnader för lagertjänster. Dessa avgifter kommer att debiteras per enhet som lagras och hanteras hos er.
+                Sätt dina kostnader för lagertjänster. Dessa avgifter kommer att debiteras per enhet som lagras och hanteras hos er.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -357,7 +357,7 @@ export default function CommunitySettingsPage({ params }: { params: { id: string
             onClick={updateBranding}
             className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-700 transition shadow-lg"
           >
-            💾 Spara Inställningar
+            Spara Inställningar
           </button>
         </div>
       </div>
@@ -393,7 +393,7 @@ function LogoUploadBox({
         </div>
       ) : (
         <div className="h-32 flex items-center justify-center text-6xl mb-4">
-          📸
+          Logotyp
         </div>
       )}
 

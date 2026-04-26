@@ -58,7 +58,7 @@ export default function MOQProgress({ productId, postalCode, onStatusChange }: M
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="font-bold text-lg mb-1">
-            {isReady ? '✅ Minsta beställning uppnådd!' : '📦 Sambeställning pågår'}
+            {isReady ? 'Minsta beställning uppnådd!' : 'Sambeställning pågår'}
           </h3>
           <p className="text-sm text-gray-600">
             {isReady
@@ -100,7 +100,7 @@ export default function MOQProgress({ productId, postalCode, onStatusChange }: M
         
         {moqStatus.estimatedShipDate && (
           <div className="flex items-center gap-2 text-gray-700">
-            <span>📅</span>
+            <span></span>
             <span>
               Beräknad leverans: <strong>{moqStatus.estimatedShipDate}</strong>
             </span>
@@ -110,7 +110,7 @@ export default function MOQProgress({ productId, postalCode, onStatusChange }: M
         {!isReady && (
           <div className="mt-4 p-3 bg-white rounded-lg">
             <p className="text-xs text-gray-600">
-              💡 <strong>Så fungerar det:</strong> När tillräckligt många beställer samma produkt
+              <strong>Så fungerar det:</strong> När tillräckligt många beställer samma produkt
               till ditt område skickas alla beställningar tillsammans. Detta ger lägre pris och
               mindre miljöpåverkan!
             </p>
@@ -130,7 +130,7 @@ export function MOQBadge({ current, target }: { current: number; target: number 
     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
       isReady ? 'bg-green-100 text-green-700' : 'bg-primary-100 text-primary-900'
     }`}>
-      <span>{isReady ? '✅' : '📦'}</span>
+      <span>{isReady ? 'Klar' : ''}</span>
       <span>{current}/{target}</span>
       <span className="text-[10px]">({percentage}%)</span>
     </div>
@@ -146,7 +146,7 @@ export function WarehouseAssignment({ warehouseName, city, processingDays }: {
   return (
     <div className="bg-gray-50 rounded-lg p-4">
       <div className="flex items-center gap-3">
-        <div className="text-3xl">🏭</div>
+        <div className="font-bold text-primary-900 text-sm">Lager</div>
         <div>
           <div className="font-semibold text-gray-900">{warehouseName}</div>
           <div className="text-sm text-gray-600">{city}</div>

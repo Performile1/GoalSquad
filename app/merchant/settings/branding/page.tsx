@@ -169,7 +169,7 @@ export default function MerchantBrandingPage() {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4 animate-bounce">🎨</div>
+          <div className="mb-4 text-xl font-bold text-gray-400 animate-bounce">Varumärke</div>
           <p className="text-xl text-gray-600">Laddar varumärkesinställningar...</p>
         </div>
       </div>
@@ -180,13 +180,13 @@ export default function MerchantBrandingPage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-5xl">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          🎨 Varumärke & Företagsinformation
+          Varumärke & Företagsinformation
         </h1>
 
         {/* Logos */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            📸 Logotyper
+            Logotyper
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -247,7 +247,7 @@ export default function MerchantBrandingPage() {
 
           <div className="mt-6 p-4 bg-primary-50 rounded-lg">
             <p className="text-sm text-primary-800">
-              💡 <strong>Tips:</strong> Loggor kan beskäras och bakgrund kan tas bort automatiskt efter uppladdning!
+              <strong>Tips:</strong> Loggor kan beskäras och bakgrund kan tas bort automatiskt efter uppladdning!
             </p>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function MerchantBrandingPage() {
         {/* Brand Colors */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            🎨 Varumärkesfärger
+            Varumärkesfärger
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -313,7 +313,7 @@ export default function MerchantBrandingPage() {
         {/* Company Info */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            🏢 Företagsinformation
+            Företagsinformation
           </h2>
 
           <div className="space-y-6">
@@ -394,7 +394,7 @@ export default function MerchantBrandingPage() {
         {/* Social Media */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            📱 Webbplats & Sociala Medier
+            Webbplats & Sociala Medier
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -459,7 +459,7 @@ export default function MerchantBrandingPage() {
             disabled={saving}
             className="bg-primary-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 shadow-lg"
           >
-            {saving ? 'Sparar...' : '💾 Spara Inställningar'}
+            {saving ? 'Sparar...' : 'Spara Inställningar'}
           </button>
         </div>
       </div>
@@ -494,8 +494,8 @@ function LogoUploadBox({ title, description, currentLogo, onUpload }: any) {
           />
         </div>
       ) : (
-        <div className="h-32 flex items-center justify-center text-6xl mb-4">
-          📸
+        <div className="h-32 flex items-center justify-center text-4xl font-bold text-gray-300 mb-4">
+          Logotyp
         </div>
       )}
 

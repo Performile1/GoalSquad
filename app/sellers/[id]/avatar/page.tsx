@@ -77,12 +77,12 @@ export default function AvatarCustomizer() {
   };
 
   const categories = [
-    { id: 'hat', name: 'Hats', emoji: '🎩' },
-    { id: 'shirt', name: 'Shirts', emoji: '👕' },
-    { id: 'pants', name: 'Pants', emoji: '👖' },
-    { id: 'shoes', name: 'Shoes', emoji: '👟' },
-    { id: 'accessory', name: 'Accessories', emoji: '🎒' },
-    { id: 'background', name: 'Backgrounds', emoji: '🌄' },
+    { id: 'hat', name: 'Hats', emoji: '' },
+    { id: 'shirt', name: 'Shirts', emoji: '' },
+    { id: 'pants', name: 'Pants', emoji: '' },
+    { id: 'shoes', name: 'Shoes', emoji: '' },
+    { id: 'accessory', name: 'Accessories', emoji: '' },
+    { id: 'background', name: 'Backgrounds', emoji: '' },
   ];
 
   const filteredItems = availableItems.filter((item) => item.itemType === selectedCategory);
@@ -105,7 +105,7 @@ export default function AvatarCustomizer() {
           className="text-center mb-8"
         >
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            🎨 Customize Your Avatar
+            Customize Your Avatar
           </h1>
           <p className="text-xl text-gray-600">
             Express yourself! Unlock items by leveling up and completing achievements.
@@ -130,7 +130,7 @@ export default function AvatarCustomizer() {
                 }}
               >
                 {/* Base Avatar */}
-                <div className="text-9xl">👤</div>
+                <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-4xl font-bold">?</div>
                 
                 {/* Equipped Gear (simplified visualization) */}
                 {avatarData?.gear.map((itemId) => {
@@ -146,7 +146,7 @@ export default function AvatarCustomizer() {
                              item.itemType === 'accessory' ? '50%' : '70%',
                       }}
                     >
-                      {item.imageUrl || '✨'}
+                      {item.imageUrl || ''}
                     </div>
                   );
                 })}
@@ -206,7 +206,7 @@ export default function AvatarCustomizer() {
                     >
                       {/* Lock Icon */}
                       {item.isLocked && (
-                        <div className="absolute top-2 right-2 text-2xl">🔒</div>
+                        <div className="absolute top-2 right-2 text-xs font-bold bg-gray-800 text-white px-2 py-1 rounded">Låst</div>
                       )}
 
                       {/* Equipped Badge */}
@@ -218,7 +218,7 @@ export default function AvatarCustomizer() {
 
                       {/* Item Preview */}
                       <div className="text-6xl mb-2 text-center">
-                        {item.imageUrl || '✨'}
+                        {item.imageUrl || ''}
                       </div>
 
                       {/* Item Info */}
@@ -238,7 +238,7 @@ export default function AvatarCustomizer() {
                       {/* Unlock Requirement */}
                       {item.isLocked && item.unlockRequirement && (
                         <div className="mt-2 text-xs text-gray-500">
-                          🔓 {item.unlockRequirement}
+                          {item.unlockRequirement}
                         </div>
                       )}
                     </motion.div>
@@ -248,7 +248,7 @@ export default function AvatarCustomizer() {
 
               {filteredItems.length === 0 && (
                 <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🎨</div>
+                  <div className="mb-4 text-4xl font-bold text-gray-300">#</div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     No items in this category yet
                   </h3>

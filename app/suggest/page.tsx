@@ -78,7 +78,7 @@ export default function SuggestProductPage() {
 
           {success ? (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">✅</div>
+              <div className="mb-4 text-4xl font-bold text-green-600">Tack!</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Tack för ditt förslag!</h2>
               <p className="text-gray-500 mb-6">Vi kommer att granska det och återkomma.</p>
               <button
@@ -104,10 +104,10 @@ export default function SuggestProductPage() {
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      { id: 'product_url', label: 'Produkt från annan sida', icon: '🔗' },
-                      { id: 'company', label: 'Nytt företag/varumärke', icon: '🏢' },
-                      { id: 'product_info', label: 'Ny produktbeskrivning', icon: '📦' },
-                      { id: 'category', label: 'Ny kategori', icon: '📂' },
+                      { id: 'product_url', label: 'Produkt från annan sida', icon: '' },
+                      { id: 'company', label: 'Nytt företag/varumärke', icon: '' },
+                      { id: 'product_info', label: 'Ny produktbeskrivning', icon: '' },
+                      { id: 'category', label: 'Ny kategori', icon: '' },
                     ].map((type) => (
                       <button
                         key={type.id}

@@ -242,7 +242,7 @@ export default function CommunityTeamsPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>{team.team_type === 'sports_team' ? '🏆 Sportlag' : team.team_type === 'class' ? '📚 Klass' : team.team_type === 'group' ? '👥 Grupp' : 'Annat'}</span>
+                        <span>{team.team_type === 'sports_team' ? 'Sportlag' : team.team_type === 'class' ? 'Klass' : team.team_type === 'group' ? 'Grupp' : 'Annat'}</span>
                         {team.age_group && <span>{team.age_group}</span>}
                         {team.gender && <span>{team.gender === 'male' ? 'Pojkar' : team.gender === 'female' ? 'Flickor' : 'Mixad'}</span>}
                       </div>
@@ -251,7 +251,7 @@ export default function CommunityTeamsPage() {
 
                   {team.is_warehouse_partner && (
                     <div className="bg-orange-50 rounded-xl p-4 mb-4">
-                      <h4 className="font-bold text-orange-900 mb-3">📦 Lagerpartner-inställningar</h4>
+                      <h4 className="font-bold text-orange-900 mb-3">Lagerpartner-inställningar</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <span className="text-orange-700">Lagring:</span>

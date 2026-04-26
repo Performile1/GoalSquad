@@ -193,7 +193,7 @@ export default function MOQRulesPage() {
         {/* Rules List */}
         {rules.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <p className="text-4xl mb-4">📦</p>
+            <p className="text-lg font-bold text-gray-400 mb-4">MOQ</p>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Inga MOQ-regler ännu</h2>
             <p className="text-gray-500">Lägg till regionala MOQ-regler för att styra minsta orderkvantitet per postnummerområde.</p>
           </div>
@@ -209,7 +209,7 @@ export default function MOQRulesPage() {
                     {rule.products?.sku && <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">SKU: {rule.products.sku}</span>}
                   </div>
                   <p className="text-sm text-gray-600">
-                    📍 {rule.postal_code_from}–{rule.postal_code_to}
+                    {rule.postal_code_from}–{rule.postal_code_to}
                     {rule.warehouse_partners?.partner_name && <span className="ml-2 text-gray-400">· {rule.warehouse_partners.partner_name}</span>}
                   </p>
                   {rule.description && <p className="text-xs text-gray-400 mt-1">{rule.description}</p>}

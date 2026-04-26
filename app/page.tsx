@@ -497,7 +497,7 @@ export default function Home() {
                     {[
                       { label: 'Sålt idag', value: '3 st' },
                       { label: 'Intäkt', value: '255 kr' },
-                      { label: 'XP', value: '+120 🏆' },
+                      { label: 'XP', value: '+120' },
                     ].map((s) => (
                       <div key={s.label} className="flex justify-between items-center mb-2 px-2 py-1.5 rounded-lg" style={{ background: '#2A2A2A' }}>
                         <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{s.label}</span>

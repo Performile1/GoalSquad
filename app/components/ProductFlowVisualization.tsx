@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { DashboardIcon, ShopIcon, TruckIcon, BoxIcon } from '@/app/components/BrandIcons';
 
 interface ProductFlowProps {
   productId: string;
@@ -33,7 +34,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
   if (loading) {
     return (
       <div className="bg-gray-100 rounded-xl p-8 text-center">
-        <div className="text-4xl mb-2 animate-bounce">📊</div>
+        <div className="mb-2 flex justify-center"><DashboardIcon size={36} className="text-primary-900 animate-bounce" /></div>
         <p className="text-gray-600">Laddar produktflöde...</p>
       </div>
     );
@@ -59,7 +60,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
     <div className="bg-white rounded-2xl shadow-lg p-8">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-2xl font-bold text-gray-900">
-          📊 Produktflöde (Real-time)
+          Produktflöde (Real-time)
         </h3>
         <div className="text-xs text-gray-500">
           Uppdateras automatiskt
@@ -73,7 +74,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
           <FlowStep
             number={1}
             title="Väntande Beställningar"
-            icon="🛒"
+            icon="order"
             color="yellow"
             active={true}
           >
@@ -132,7 +133,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
           <FlowStep
             number={2}
             title="På väg från Företag → Lager"
-            icon="🚛"
+            icon="truck"
             color="blue"
             active={true}
           >
@@ -160,7 +161,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
                   </div>
                   {shipment.estimated_arrival && (
                     <div className="text-xs text-primary-900">
-                      📅 Beräknad ankomst: {shipment.estimated_arrival}
+                      Beräknad ankomst: {shipment.estimated_arrival}
                     </div>
                   )}
                 </motion.div>
@@ -181,7 +182,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
           <FlowStep
             number={3}
             title="På Konsolideringslager"
-            icon="🏭"
+            icon="warehouse"
             color="green"
             active={true}
           >
@@ -237,7 +238,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
           <FlowStep
             number={4}
             title="Allokerat till Kunder"
-            icon="📦"
+            icon="box"
             color="purple"
             active={true}
           >
@@ -292,7 +293,7 @@ export default function ProductFlowVisualization({ productId }: ProductFlowProps
         {/* No Data Message */}
         {!hasPendingOrders && !hasInTransit && !hasInventory && !hasAllocated && (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">📭</div>
+            <div className="mb-4 flex justify-center"><BoxIcon size={52} className="text-gray-300" /></div>
             <p className="text-xl font-bold text-gray-900 mb-2">
               Ingen produktaktivitet än
             </p>
@@ -376,7 +377,7 @@ export function ProductFlowBadge({ productId }: { productId: string }) {
 
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-100 text-primary-900 rounded-full text-xs font-semibold">
-      <span>📊</span>
+      <DashboardIcon size={14} />
       <span>{total} st i flöde</span>
     </div>
   );

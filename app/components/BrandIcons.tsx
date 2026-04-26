@@ -853,3 +853,140 @@ export function GoldenHoodieIcon({ size = 48, className = '' }: IconProps) {
     </svg>
   );
 }
+
+export function SettingsIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="6" fill={P} />
+      <path d="M24 4v4M24 40v4M4 24h4M40 24h4M8.686 8.686l2.828 2.828M36.486 36.486l2.828 2.828M8.686 39.314l2.828-2.828M36.486 11.514l2.828-2.828" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="10" stroke={P} strokeWidth="2.5" fill={A} />
+      <circle cx="24" cy="24" r="4" fill={P} />
+    </svg>
+  );
+}
+
+export function BarcodeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="4" y="8" width="40" height="32" rx="3" fill={A} stroke={P} strokeWidth="2" />
+      <line x1="10" y1="14" x2="10" y2="34" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <line x1="15" y1="14" x2="15" y2="34" stroke={P} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="19" y1="14" x2="19" y2="34" stroke={P} strokeWidth="3" strokeLinecap="round" />
+      <line x1="24" y1="14" x2="24" y2="34" stroke={P} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="28" y1="14" x2="28" y2="34" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <line x1="32" y1="14" x2="32" y2="34" stroke={P} strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="36" y1="14" x2="36" y2="34" stroke={P} strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function VerifiedIcon({ size = 20, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 2l2.4 3.2L18 4l.8 3.8L22 10l-2 3.2 2 3.2-3.2 2.2L18 22l-3.6-1.2L12 24l-2.4-2.8L6 22l-.8-3.6L2 16.4l2-3.2L2 10l3.2-2.2L6 4l3.6 1.2L12 2z" fill={A} stroke={P} strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M8.5 12l2.5 2.5 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function SellerIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="14" r="8" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M10 40c0-7.732 6.268-14 14-14s14 6.268 14 14" fill={A} stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="36" cy="12" r="8" fill={P} />
+      <path d="M33 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Certification Icons
+export function CertificationIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 4l4 8h8l-6 6 2 8-8-4-8 4 2-8-6-6h8z" fill={A} stroke={P} strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="24" cy="24" r="12" stroke={P} strokeWidth="2.5" fill="none" />
+    </svg>
+  );
+}
+
+export function OrganicIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 8c-8 0-14 6-14 14 0 8 6 14 14 14s14-6 14-14c0-8-6-14-14-14z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 16v8M20 20h8" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M24 12l-4 4M24 12l4 4" stroke={P} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function EcoIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 6c-4 0-8 2-10 6-2 4-2 8 0 12l10 14 10-14c2-4 2-8 0-12-2-4-6-6-10-6z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M24 14v10M20 18h8" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function RecycledIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 8l-6 10 6 4 6-4-6-10z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M18 18l-6 4 6 10 6-4-6-10z" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M30 18l6 4-6 10-6-4 6-10z" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="24" cy="24" r="4" fill={P} />
+    </svg>
+  );
+}
+
+export function FairTradeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="16" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M16 24l6 6 10-10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M24 8v4M24 36v4M8 24h4M36 24h4" stroke={P} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Allergen Icons
+export function AllergenIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="16" fill="#FEE2E2" stroke="#DC2626" strokeWidth="2.5" />
+      <path d="M20 18l8 12M28 18l-8 12" stroke="#DC2626" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function WarningIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M24 8l-18 32h36z" fill="#FEF3C7" stroke="#D97706" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M24 20v10M24 34v2" stroke="#D97706" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function GlutenFreeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="16" fill="#D1FAE5" stroke="#059669" strokeWidth="2.5" />
+      <path d="M18 24l6 6 10-10" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M24 12v4M24 32v4" stroke="#059669" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function VeganIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="16" fill="#DCFCE7" stroke="#22C55E" strokeWidth="2.5" />
+      <path d="M16 28c0-6 4-10 8-10s8 4 8 10" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <path d="M20 28v4M28 28v4" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="16" r="4" fill="#22C55E" />
+    </svg>
+  );
+}
+

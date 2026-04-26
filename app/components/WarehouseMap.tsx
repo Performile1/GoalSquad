@@ -68,7 +68,7 @@ export default function WarehouseMap({
     return (
       <div className="bg-gray-100 rounded-2xl h-[600px] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">🗺️</div>
+          <div className="mb-4 animate-bounce text-primary-900 text-xl font-bold">Laddar...</div>
           <p className="text-gray-600">Laddar karta...</p>
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function WarehouseMap({
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">
-          🗺️ Konsolideringslager i Sverige
+          Konsolideringslager i Sverige
         </h2>
         <div className="flex gap-2 text-sm">
           <div className="flex items-center gap-2">
@@ -207,13 +207,13 @@ export default function WarehouseMap({
               </div>
               
               <div className="text-xs text-gray-600 space-y-1">
-                <div>📮 {warehouse.postalCode}</div>
-                <div>📍 Täcker: {warehouse.postalCodeRanges.join(', ')}</div>
-                <div>📏 Radie: {warehouse.coverageRadiusKm} km</div>
+                <div>Postnr: {warehouse.postalCode}</div>
+                <div>Täcker: {warehouse.postalCodeRanges.join(', ')}</div>
+                <div>Radie: {warehouse.coverageRadiusKm} km</div>
                 {warehouse.pendingOrders !== undefined && (
                   <div className="mt-2 pt-2 border-t border-gray-200">
                     <div className="font-semibold text-primary-900">
-                      📦 {warehouse.pendingOrders} väntande order
+                      {warehouse.pendingOrders} väntande order
                     </div>
                   </div>
                 )}
@@ -267,7 +267,7 @@ export function WarehouseSelector({
   return (
     <div className="bg-primary-50 rounded-lg p-3 text-sm">
       <div className="flex items-center gap-2 mb-1">
-        <span className="text-2xl">🏭</span>
+        <span className="font-bold text-primary-900">Lager:</span>
         <span className="font-bold text-primary-900">{warehouse.name}</span>
       </div>
       <div className="text-primary-900">

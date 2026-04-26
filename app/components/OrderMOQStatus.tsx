@@ -40,7 +40,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
 
       if (response.ok) {
         const data = await response.json();
-        alert(`✅ Delleverans skapad! Extra kostnad: ${data.additional_cost} kr`);
+        alert(`Delleverans skapad! Extra kostnad: ${data.additional_cost} kr`);
         if (onStrategyChange) {
           onStrategyChange('split_shipment');
         }
@@ -66,7 +66,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
     return (
       <div className="bg-green-50 border-2 border-green-500 rounded-xl p-6">
         <div className="flex items-center gap-3">
-          <div className="text-4xl">✅</div>
+          <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold text-xl">✓</div>
           <div>
             <h3 className="font-bold text-green-900 text-lg">
               Alla produkter redo att skickas!
@@ -130,7 +130,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
                   </div>
                   {item.moq_status?.tracking_scope === 'global' && (
                     <div className="text-xs text-primary-900 mt-1">
-                      🌍 Global räkning
+                      Global räkning
                     </div>
                   )}
                 </div>
@@ -148,7 +148,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
             <div className="space-y-2">
               {readyItems.map((item: any) => (
                 <div key={item.item_id} className="flex items-center justify-between text-sm">
-                  <span className="text-green-800">✓ {item.product_name}</span>
+                  <span className="text-green-800">{item.product_name}</span>
                   <span className="text-green-600">{item.quantity} st</span>
                 </div>
               ))}
@@ -161,7 +161,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
       {showSplitOption && (
         <div className="bg-white border-2 border-primary-600 rounded-xl p-6">
           <h3 className="font-bold text-primary-900 text-lg mb-4">
-            💡 Vill du ha delleverans?
+            Vill du ha delleverans?
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -178,11 +178,11 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
                 <h4 className="font-bold text-gray-900">Vänta på allt</h4>
               </div>
               <div className="text-sm text-gray-600 space-y-1">
-                <p>✓ Allt skickas tillsammans</p>
-                <p>✓ Lägre fraktkostnad (89 kr)</p>
-                <p>✓ Färre paket</p>
+                <p>Allt skickas tillsammans</p>
+                <p>Lägre fraktkostnad (89 kr)</p>
+                <p>Färre paket</p>
                 <p className="text-yellow-700 font-semibold mt-2">
-                  ⏱️ Leverans: 5-10 dagar
+                  Leverans: 5-10 dagar
                 </p>
               </div>
             </div>
@@ -199,10 +199,10 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
                 <h4 className="font-bold text-primary-900">Delleverans</h4>
               </div>
               <div className="text-sm text-primary-800 space-y-1">
-                <p>✓ Få redo produkter nu</p>
-                <p>✓ Resten kommer senare</p>
+                <p>Få redo produkter nu</p>
+                <p>Resten kommer senare</p>
                 <p className="text-red-700 font-semibold">
-                  ⚠️ Extra kostnad: +49 kr
+                  Extra kostnad: +49 kr
                 </p>
                 <div className="mt-2 pt-2 border-t border-primary-200">
                   <p className="font-semibold">Leverans 1: 2-3 dagar</p>
@@ -223,7 +223,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
               disabled={processing}
               className="bg-primary-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-800 transition disabled:opacity-50"
             >
-              {processing ? 'Skapar...' : '📦 Välj delleverans'}
+              {processing ? 'Skapar...' : 'Välj delleverans'}
             </button>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function OrderMOQStatus({ orderId, onStrategyChange }: OrderMOQSt
       {/* Progress Info */}
       <div className="bg-gray-50 rounded-lg p-4">
         <h4 className="font-semibold text-gray-900 mb-3">
-          📊 Hur fungerar det?
+          Hur fungerar det?
         </h4>
         <div className="text-sm text-gray-700 space-y-2">
           <p>
@@ -258,7 +258,6 @@ export function MOQBlockingBadge({ hasBlocking, blockingCount }: { hasBlocking: 
   if (!hasBlocking) {
     return (
       <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
-        <span>✓</span>
         <span>Redo</span>
       </span>
     );
@@ -266,7 +265,7 @@ export function MOQBlockingBadge({ hasBlocking, blockingCount }: { hasBlocking: 
 
   return (
     <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
-      <span>⏳</span>
+      <span>Väntar</span>
       <span>{blockingCount} väntar MOQ</span>
     </span>
   );

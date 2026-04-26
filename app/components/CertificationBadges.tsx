@@ -1,11 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import {
+  CertificationIcon,
+  OrganicIcon,
+  EcoIcon,
+  RecycledIcon,
+  FairTradeIcon,
+  VeganIcon,
+  GlutenFreeIcon,
+} from './BrandIcons';
 
 export interface Certification {
   id: string;
   name: string;
-  icon: string; // Emoji or image URL
+  icon?: string; // Emoji or image URL (deprecated)
+  iconComponent?: React.ComponentType<{ size?: number; className?: string }>; // BrandIcon component
   color: string;
   description: string;
   category: 'food' | 'environmental' | 'ethical' | 'quality' | 'material';
@@ -16,7 +26,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'organic',
     name: 'Ekologisk',
-    icon: '🌿',
+    iconComponent: OrganicIcon,
     color: '#10b981',
     description: 'EU-ekologisk certifiering',
     category: 'food',
@@ -24,7 +34,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'krav',
     name: 'KRAV',
-    icon: '🇸🇪',
+    iconComponent: OrganicIcon,
     color: '#059669',
     description: 'KRAV-märkt ekologisk',
     category: 'food',
@@ -32,7 +42,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'gluten_free',
     name: 'Glutenfri',
-    icon: '🌾',
+    iconComponent: GlutenFreeIcon,
     color: '#f59e0b',
     description: 'Fri från gluten',
     category: 'food',
@@ -40,7 +50,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'vegan',
     name: 'Vegansk',
-    icon: '🌱',
+    iconComponent: VeganIcon,
     color: '#22c55e',
     description: '100% växtbaserad',
     category: 'food',
@@ -48,7 +58,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'vegetarian',
     name: 'Vegetarisk',
-    icon: '🥗',
+    iconComponent: VeganIcon,
     color: '#84cc16',
     description: 'Vegetarisk produkt',
     category: 'food',
@@ -56,7 +66,6 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'lactose_free',
     name: 'Laktosfri',
-    icon: '🥛',
     color: '#3b82f6',
     description: 'Fri från laktos',
     category: 'food',
@@ -64,7 +73,6 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'sugar_free',
     name: 'Sockerfri',
-    icon: '🍬',
     color: '#8b5cf6',
     description: 'Utan tillsatt socker',
     category: 'food',
@@ -74,7 +82,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'fairtrade',
     name: 'Fairtrade',
-    icon: '🤝',
+    iconComponent: FairTradeIcon,
     color: '#0ea5e9',
     description: 'Rättvis handel',
     category: 'ethical',
@@ -82,7 +90,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'rainforest_alliance',
     name: 'Rainforest Alliance',
-    icon: '🐸',
+    iconComponent: EcoIcon,
     color: '#059669',
     description: 'Hållbart jordbruk',
     category: 'ethical',
@@ -90,7 +98,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'utz',
     name: 'UTZ',
-    icon: '☕',
+    iconComponent: EcoIcon,
     color: '#92400e',
     description: 'Hållbar odling',
     category: 'ethical',
@@ -100,7 +108,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'msc',
     name: 'MSC',
-    icon: '🐟',
+    iconComponent: EcoIcon,
     color: '#0284c7',
     description: 'Hållbart fiske',
     category: 'environmental',
@@ -108,7 +116,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'asc',
     name: 'ASC',
-    icon: '🦐',
+    iconComponent: EcoIcon,
     color: '#06b6d4',
     description: 'Hållbar vattenbruk',
     category: 'environmental',
@@ -116,7 +124,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'fsc',
     name: 'FSC',
-    icon: '🌲',
+    iconComponent: EcoIcon,
     color: '#16a34a',
     description: 'Hållbart skogsbruk',
     category: 'environmental',
@@ -124,7 +132,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'svanen',
     name: 'Svanen',
-    icon: '🦢',
+    iconComponent: EcoIcon,
     color: '#0ea5e9',
     description: 'Nordisk miljömärkning',
     category: 'environmental',
@@ -132,7 +140,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'eu_ecolabel',
     name: 'EU Ecolabel',
-    icon: '🇪🇺',
+    iconComponent: EcoIcon,
     color: '#3b82f6',
     description: 'EU:s miljömärke',
     category: 'environmental',
@@ -142,7 +150,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'swedish',
     name: 'Svenskt',
-    icon: '🇸🇪',
+    iconComponent: CertificationIcon,
     color: '#0ea5e9',
     description: 'Producerat i Sverige',
     category: 'quality',
@@ -150,7 +158,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'norwegian',
     name: 'Norskt',
-    icon: '🇳🇴',
+    iconComponent: CertificationIcon,
     color: '#dc2626',
     description: 'Producerat i Norge',
     category: 'quality',
@@ -158,7 +166,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'keyhole',
     name: 'Nyckelhålet',
-    icon: '🔑',
+    iconComponent: CertificationIcon,
     color: '#22c55e',
     description: 'Hälsosamt val',
     category: 'quality',
@@ -168,7 +176,6 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'cotton_100',
     name: '100% Bomull',
-    icon: '🌸',
     color: '#f3f4f6',
     description: 'Ren bomull',
     category: 'material',
@@ -176,7 +183,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'organic_cotton',
     name: 'Ekologisk Bomull',
-    icon: '🌿',
+    iconComponent: OrganicIcon,
     color: '#10b981',
     description: 'GOTS-certifierad bomull',
     category: 'material',
@@ -184,7 +191,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'recycled',
     name: 'Återvunnet',
-    icon: '♻️',
+    iconComponent: RecycledIcon,
     color: '#059669',
     description: 'Återvunna material',
     category: 'material',
@@ -192,7 +199,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'oeko_tex',
     name: 'OEKO-TEX',
-    icon: '🧵',
+    iconComponent: CertificationIcon,
     color: '#6366f1',
     description: 'Testade textilier',
     category: 'material',
@@ -202,7 +209,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'halal',
     name: 'Halal',
-    icon: '☪️',
+    iconComponent: CertificationIcon,
     color: '#10b981',
     description: 'Halal-certifierad',
     category: 'food',
@@ -210,7 +217,7 @@ export const CERTIFICATION_LIBRARY: Certification[] = [
   {
     id: 'kosher',
     name: 'Kosher',
-    icon: '✡️',
+    iconComponent: CertificationIcon,
     color: '#3b82f6',
     description: 'Kosher-certifierad',
     category: 'food',
@@ -267,7 +274,13 @@ export default function CertificationBadges({
             }}
             title={showTooltip ? cert.description : undefined}
           >
-            <span className="text-2xl">{cert.icon}</span>
+            <span className="text-2xl">
+              {cert.iconComponent ? (
+                <cert.iconComponent size={20} />
+              ) : cert.icon ? (
+                cert.icon
+              ) : null}
+            </span>
           </div>
 
           {/* Tooltip */}
@@ -312,7 +325,11 @@ export function CertificationBadgesCompact({
           }}
           title={cert.name}
         >
-          {cert.icon}
+          {cert.iconComponent ? (
+            <cert.iconComponent size={16} />
+          ) : cert.icon ? (
+            cert.icon
+          ) : null}
         </div>
       ))}
       {selectedCerts.length > maxShow && (
@@ -349,11 +366,11 @@ export function CertificationSelector({
       {categories.map((category) => {
         const certs = CERTIFICATION_LIBRARY.filter((c) => c.category === category);
         const categoryNames = {
-          food: '🍽️ Mat & Kost',
-          environmental: '🌍 Miljö',
-          ethical: '🤝 Etik',
-          quality: '⭐ Kvalitet',
-          material: '🧵 Material',
+          food: 'Mat & Kost',
+          environmental: 'Miljö',
+          ethical: 'Etik',
+          quality: 'Kvalitet',
+          material: 'Material',
         };
 
         return (
@@ -382,7 +399,11 @@ export function CertificationSelector({
                         color: cert.color === '#f3f4f6' ? '#1f2937' : '#ffffff',
                       }}
                     >
-                      {cert.icon}
+                      {cert.iconComponent ? (
+            <cert.iconComponent size={16} />
+          ) : cert.icon ? (
+            cert.icon
+          ) : null}
                     </div>
                     <div className="text-xs font-semibold text-gray-900 text-center">
                       {cert.name}
@@ -425,7 +446,11 @@ export function CertificationList({ certifications }: { certifications: string[]
               color: cert.color === '#f3f4f6' ? '#1f2937' : '#ffffff',
             }}
           >
-            {cert.icon}
+            {cert.iconComponent ? (
+            <cert.iconComponent size={16} />
+          ) : cert.icon ? (
+            cert.icon
+          ) : null}
           </div>
           <div className="flex-1">
             <div className="font-bold text-gray-900">{cert.name}</div>

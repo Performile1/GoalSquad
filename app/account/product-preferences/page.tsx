@@ -82,7 +82,7 @@ export default function ProductPreferences() {
           className="bg-blue-100 border-2 border-blue-200 rounded-2xl p-6 mb-8"
         >
           <p className="text-blue-900">
-            <strong>💡 Hur det fungerar:</strong> När du köper en produkt kan du välja vilken förening, klass eller klubb som ska tjäna på försäljningen. 
+            <strong>Hur det fungerar:</strong> När du köper en produkt kan du välja vilken förening, klass eller klubb som ska tjäna på försäljningen. 
             Välj en närliggande förening eller en som du vill stödja extra.
           </p>
         </motion.div>
@@ -183,7 +183,7 @@ export default function ProductPreferences() {
                       )}
                     </div>
                     <div className="text-right">
-                      <span className="text-3xl">🏆</span>
+                      <span className="text-lg font-bold text-primary-900">#1</span>
                     </div>
                   </div>
                 </div>

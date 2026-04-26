@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { WarehouseSelector } from '@/app/components/WarehouseMap';
+import { BoxIcon, ShopIcon, TruckIcon, CheckIcon, MoneyIcon, CommunityIcon, DashboardIcon } from '@/app/components/BrandIcons';
 
 export default function OrderFlowPage({ params }: { params: { id: string } }) {
   const [order, setOrder] = useState<any>(null);
@@ -35,7 +36,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4 animate-bounce">📦</div>
+          <div className="mb-4 animate-bounce flex justify-center"><BoxIcon size={52} className="text-primary-900" /></div>
           <p className="text-xl text-gray-600">Laddar orderflöde...</p>
         </div>
       </div>
@@ -46,7 +47,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4">😕</div>
+          <div className="mb-4 flex justify-center"><BoxIcon size={52} className="text-gray-300" /></div>
           <p className="text-2xl font-bold text-gray-900">Order hittades inte</p>
         </div>
       </div>
@@ -58,14 +59,14 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
       number: 1,
       title: 'Beställning mottagen',
       description: 'Din beställning har registrerats',
-      icon: '🛒',
+      icon: 'order',
       status: 'completed',
     },
     {
       number: 2,
       title: 'Väntar på MOQ',
       description: 'Samlar beställningar för att nå minsta antal',
-      icon: '⏳',
+      icon: 'wait',
       status: currentStep >= 2 ? 'active' : 'pending',
       details: order.moq_items?.map((item: any) => ({
         product: item.product_name,
@@ -78,7 +79,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
       number: 3,
       title: 'Konsolideringslager',
       description: 'Produkter plockas och förpackas',
-      icon: '🏭',
+      icon: 'warehouse',
       status: currentStep >= 3 ? 'active' : 'pending',
       warehouse: order.warehouse,
     },
@@ -86,7 +87,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
       number: 4,
       title: 'På väg',
       description: 'Paketet är skickat',
-      icon: '🚚',
+      icon: 'truck',
       status: currentStep >= 4 ? 'active' : 'pending',
       tracking: order.tracking_number,
     },
@@ -94,7 +95,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
       number: 5,
       title: 'Levererat',
       description: 'Paketet har anlänt',
-      icon: '✅',
+      icon: 'check',
       status: currentStep >= 5 ? 'completed' : 'pending',
     },
   ];
@@ -105,7 +106,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            📦 Ditt Orderflöde
+            Ditt Orderflöde
           </h1>
           <p className="text-gray-600">
             Order #{order.order_number} • {order.items?.length || 0} produkter
@@ -115,7 +116,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
         {/* Visual Flow */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">
-            🔄 Så här fungerar det
+            Så här fungerar det
           </h2>
 
           {/* Flow Diagram */}
@@ -230,12 +231,12 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
           {/* Left: How it works */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              💡 Så fungerar sambeställning
+              Så fungerar sambeställning
             </h3>
 
             <div className="space-y-6">
               <div className="flex gap-4">
-                <div className="text-4xl">1️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-primary-900 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">1</div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Du beställer
@@ -248,7 +249,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
               </div>
 
               <div className="flex gap-4">
-                <div className="text-4xl">2️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-primary-900 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">2</div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Andra beställer också
@@ -261,7 +262,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
               </div>
 
               <div className="flex gap-4">
-                <div className="text-4xl">3️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-primary-900 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">3</div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Företaget skickar till lager
@@ -274,7 +275,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
               </div>
 
               <div className="flex gap-4">
-                <div className="text-4xl">4️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-primary-900 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">4</div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Lagret förpackar
@@ -287,7 +288,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
               </div>
 
               <div className="flex gap-4">
-                <div className="text-4xl">5️⃣</div>
+                <div className="w-10 h-10 rounded-full bg-primary-900 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">5</div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Leverans till dig
@@ -305,12 +306,12 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg p-8 text-white">
               <h3 className="text-2xl font-bold mb-6">
-                ✨ Fördelar med sambeställning
+                Fördelar med sambeställning
               </h3>
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="text-3xl">💰</div>
+                  <MoneyIcon size={28} />
                   <div>
                     <h4 className="font-bold mb-1">Lägre priser</h4>
                     <p className="text-sm text-green-50">
@@ -320,7 +321,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="text-3xl">🌍</div>
+                  <CommunityIcon size={28} />
                   <div>
                     <h4 className="font-bold mb-1">Mindre miljöpåverkan</h4>
                     <p className="text-sm text-green-50">
@@ -330,7 +331,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="text-3xl">📦</div>
+                  <BoxIcon size={28} />
                   <div>
                     <h4 className="font-bold mb-1">Effektiv logistik</h4>
                     <p className="text-sm text-green-50">
@@ -340,7 +341,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="text-3xl">🤝</div>
+                  <CommunityIcon size={28} />
                   <div>
                     <h4 className="font-bold mb-1">Stödjer lokalt</h4>
                     <p className="text-sm text-green-50">
@@ -353,7 +354,7 @@ export default function OrderFlowPage({ params }: { params: { id: string } }) {
 
             <div className="bg-primary-50 rounded-2xl border-2 border-primary-600 p-6">
               <h4 className="font-bold text-primary-900 mb-3">
-                📊 Din beställning
+                Din beställning
               </h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">

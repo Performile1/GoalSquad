@@ -249,7 +249,7 @@ export default function AdminMerchantsPage() {
                                 ? 'bg-green-100 text-green-700'
                                 : 'bg-yellow-100 text-yellow-700'
                             }`}>
-                              {merchant.stripe_account_connected ? '✓ Ansluten' : '⚠ Ej ansluten'}
+                              {merchant.stripe_account_connected ? 'Ansluten' : 'Ej ansluten'}
                             </span>
                           </td>
 
@@ -260,7 +260,7 @@ export default function AdminMerchantsPage() {
                                 ? 'bg-green-100 text-green-700'
                                 : 'bg-gray-100 text-gray-700'
                             }`}>
-                              {merchant.is_verified ? '✓ Ja' : 'Nej'}
+                              {merchant.is_verified ? 'Ja' : 'Nej'}
                             </span>
                           </td>
 

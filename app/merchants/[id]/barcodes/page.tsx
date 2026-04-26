@@ -158,7 +158,7 @@ export default function BarcodesPage() {
 
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <p className="text-4xl mb-4">🔢</p>
+            <p className="text-lg font-bold text-gray-400 mb-4">Streckkoder</p>
             <h2 className="text-xl font-bold text-gray-900 mb-2">{search ? 'Inga träffar' : 'Inga streckkoder ännu'}</h2>
             <p className="text-gray-500">{search ? 'Prova ett annat sökord.' : 'Lägg till EAN, UPC eller QR-koder för dina produkter.'}</p>
           </div>

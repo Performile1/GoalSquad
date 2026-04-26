@@ -96,7 +96,7 @@ export default function TeamDetailPage() {
       });
 
       if (response.ok) {
-        alert('Inställningar sparade! ✅');
+        alert('Inställningar sparade!');
         fetchTeam();
       } else {
         alert('Kunde inte spara');
@@ -143,7 +143,7 @@ export default function TeamDetailPage() {
             <div>
               <h1 className="text-3xl font-bold mb-2">{team.name}</h1>
               <p className="text-primary-100">
-                {team.team_type === 'sports_team' ? '🏆 Sportlag' : team.team_type === 'class' ? '📚 Klass' : team.team_type === 'group' ? '👥 Grupp' : 'Annat'}
+                {team.team_type === 'sports_team' ? 'Sportlag' : team.team_type === 'class' ? 'Klass' : team.team_type === 'group' ? 'Grupp' : 'Annat'}
                 {team.age_group && ` • ${team.age_group}`}
                 {team.gender && ` • ${team.gender === 'male' ? 'Pojkar' : team.gender === 'female' ? 'Flickor' : 'Mixad'}`}
               </p>
@@ -166,7 +166,7 @@ export default function TeamDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-green-50 rounded-2xl shadow-lg p-6 mb-8"
           >
-            <h2 className="text-2xl font-bold text-green-900 mb-4">💰 Intäkter</h2>
+            <h2 className="text-2xl font-bold text-green-900 mb-4">Intäkter</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white rounded-xl p-4 text-center">
                 <div className="text-sm text-green-700 mb-1">Lagring</div>
@@ -203,7 +203,7 @@ export default function TeamDetailPage() {
           transition={{ delay: 0.1 }}
           className="bg-white rounded-2xl shadow-lg p-6 mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">📦 Lagerpartner-konfiguration</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Lagerpartner-konfiguration</h2>
 
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -279,7 +279,7 @@ export default function TeamDetailPage() {
           transition={{ delay: 0.2 }}
           className="bg-white rounded-2xl shadow-lg p-6 mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">📞 Kontaktinformation</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Kontaktinformation</h2>
 
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -332,7 +332,7 @@ export default function TeamDetailPage() {
           transition={{ delay: 0.3 }}
           className="bg-white rounded-2xl shadow-lg p-6 mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">📍 Plats och Kapacitet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Plats och Kapacitet</h2>
 
           <div className="space-y-6">
             <div>

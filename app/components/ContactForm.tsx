@@ -102,7 +102,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
       });
 
       if (response.ok) {
-        alert('Kontaktinformation sparad! ✅');
+        alert('Kontaktinformation sparad!');
         if (onSave) onSave();
       } else {
         alert('Kunde inte spara');
@@ -118,7 +118,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="text-4xl mb-4 animate-bounce">📞</div>
+        <div className="text-xl mb-4 animate-bounce">Laddar...</div>
         <p className="text-gray-600">Laddar kontaktinformation...</p>
       </div>
     );
@@ -129,7 +129,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
       {/* Contact Details */}
       <div className="bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          📞 Kontaktuppgifter
+          Kontaktuppgifter
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -190,7 +190,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
       {/* Address */}
       <div className="bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          📍 Adress
+          Adress
         </h2>
 
         <div className="space-y-6">
@@ -269,7 +269,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
       {/* Social Media */}
       <div className="bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          📱 Sociala Medier
+          Sociala Medier
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -330,7 +330,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
       {/* Contact Person */}
       <div className="bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          👤 Kontaktperson
+          Kontaktperson
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -388,7 +388,7 @@ export default function ContactForm({ entityType, entityId, onSave }: ContactFor
           disabled={saving}
           className="bg-primary-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
-          {saving ? 'Sparar...' : '💾 Spara Kontaktinformation'}
+          {saving ? 'Sparar...' : 'Spara Kontaktinformation'}
         </button>
       </div>
     </div>

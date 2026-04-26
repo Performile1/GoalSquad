@@ -122,12 +122,12 @@ export default function CommunitiesPage() {
                     </div>
                     {community.city && (
                       <p className="text-sm text-gray-500 mb-3">
-                        📍 {community.city}{community.country ? `, ${community.country}` : ''}
+                        {community.city}{community.country ? `, ${community.country}` : ''}
                       </p>
                     )}
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm text-gray-500">
-                        👥 {community.totalMembers} medlemmar
+                        {community.totalMembers} medlemmar
                       </span>
                       {community.communityType && (
                         <span className="text-xs bg-primary-50 text-primary-900 px-2 py-1 rounded-full font-medium capitalize">
@@ -149,7 +149,7 @@ export default function CommunitiesPage() {
                       )}
                       {community.totalRevenue !== undefined && community.totalRevenue > 0 && (
                         <span className="flex items-center gap-1 text-xs text-gray-600">
-                          💰 {community.totalRevenue.toLocaleString()} kr
+                          {community.totalRevenue.toLocaleString()} kr
                         </span>
                       )}
                     </div>

@@ -76,7 +76,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4 animate-bounce">📦</div>
+          <div className="mb-4 text-xl font-bold text-gray-400 animate-bounce">MOQ</div>
           <p className="text-xl text-gray-600">Laddar...</p>
         </div>
       </div>
@@ -94,7 +94,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
             ← Tillbaka
           </button>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            📦 MOQ-inställningar
+            MOQ-inställningar
           </h1>
           <p className="text-gray-600">{productName}</p>
         </div>
@@ -163,7 +163,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
 
               <div className="mt-6 p-4 bg-primary-50 rounded-lg">
                 <p className="text-sm text-primary-800">
-                  💡 Produkten skickas först när <strong>{minimumOrderQuantity} {moqUnit}</strong> har beställts
+                  Produkten skickas först när <strong>{minimumOrderQuantity} {moqUnit}</strong> har beställts
                   till samma konsolideringslager (baserat på postnummer).
                 </p>
               </div>
@@ -248,7 +248,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
             {/* Example Calculation */}
             <div className="bg-primary-50 rounded-2xl p-8 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
-                📊 Exempel
+                Exempel
               </h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -287,7 +287,7 @@ export default function MOQSettingsPage({ params }: { params: { id: string } }) 
             disabled={saving}
             className="bg-primary-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-800 transition disabled:opacity-50 shadow-lg"
           >
-            {saving ? 'Sparar...' : '💾 Spara inställningar'}
+            {saving ? 'Sparar...' : 'Spara inställningar'}
           </button>
         </div>
       </div>

@@ -1,11 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import {
+  AllergenIcon,
+  WarningIcon,
+} from './BrandIcons';
 
 export interface Allergen {
   id: string;
   name: string;
-  emoji: string;
+  emoji?: string;
   severity: 'contains' | 'may_contain' | 'free';
   description?: string;
 }
@@ -17,20 +21,20 @@ interface AllergenCardsProps {
 }
 
 export const COMMON_ALLERGENS: Omit<Allergen, 'severity'>[] = [
-  { id: 'milk', name: 'Mjölk', emoji: '🥛', description: 'Mjölkprotein och laktos' },
-  { id: 'eggs', name: 'Ägg', emoji: '🥚', description: 'Äggprotein' },
-  { id: 'fish', name: 'Fisk', emoji: '🐟', description: 'Fiskprotein' },
-  { id: 'shellfish', name: 'Skaldjur', emoji: '🦐', description: 'Räkor, krabba, hummer' },
-  { id: 'nuts', name: 'Nötter', emoji: '🥜', description: 'Trädnötter (valnöt, mandel, etc)' },
-  { id: 'peanuts', name: 'Jordnötter', emoji: '🥜', description: 'Jordnötsprotein' },
-  { id: 'soy', name: 'Soja', emoji: '🫘', description: 'Sojaprotein' },
-  { id: 'wheat', name: 'Vete', emoji: '🌾', description: 'Vetegluten' },
-  { id: 'gluten', name: 'Gluten', emoji: '🌾', description: 'Gluten från spannmål' },
-  { id: 'celery', name: 'Selleri', emoji: '🥬', description: 'Selleri och selleriprodukter' },
-  { id: 'mustard', name: 'Senap', emoji: '🌭', description: 'Senap och senapsprodukter' },
-  { id: 'sesame', name: 'Sesam', emoji: '🌰', description: 'Sesamfrön' },
-  { id: 'lupin', name: 'Lupin', emoji: '🌱', description: 'Lupinfrön' },
-  { id: 'sulfites', name: 'Svaveldioxid', emoji: '⚗️', description: 'Konserveringsmedel E220-E228' },
+  { id: 'milk', name: 'Mjölk', emoji: '', description: 'Mjölkprotein och laktos' },
+  { id: 'eggs', name: 'Ägg', emoji: '', description: 'Äggprotein' },
+  { id: 'fish', name: 'Fisk', emoji: '', description: 'Fiskprotein' },
+  { id: 'shellfish', name: 'Skaldjur', emoji: '', description: 'Räkor, krabba, hummer' },
+  { id: 'nuts', name: 'Nötter', emoji: '', description: 'Trädnötter (valnöt, mandel, etc)' },
+  { id: 'peanuts', name: 'Jordnötter', emoji: '', description: 'Jordnötsprotein' },
+  { id: 'soy', name: 'Soja', emoji: '', description: 'Sojaprotein' },
+  { id: 'wheat', name: 'Vete', emoji: '', description: 'Vetegluten' },
+  { id: 'gluten', name: 'Gluten', emoji: '', description: 'Gluten från spannmål' },
+  { id: 'celery', name: 'Selleri', emoji: '', description: 'Selleri och selleriprodukter' },
+  { id: 'mustard', name: 'Senap', emoji: '', description: 'Senap och senapsprodukter' },
+  { id: 'sesame', name: 'Sesam', emoji: '', description: 'Sesamfrön' },
+  { id: 'lupin', name: 'Lupin', emoji: '', description: 'Lupinfrön' },
+  { id: 'sulfites', name: 'Svaveldioxid', emoji: '', description: 'Konserveringsmedel E220-E228' },
 ];
 
 export default function AllergenCards({ allergens, mode = 'display', onToggle }: AllergenCardsProps) {
@@ -55,7 +59,7 @@ function DisplayMode({ allergens }: { allergens: Allergen[] }) {
       {contains.length > 0 && (
         <div>
           <h3 className="text-lg font-bold text-red-900 mb-3 flex items-center gap-2">
-            ⚠️ Innehåller
+            Innehåller
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {contains.map((allergen, index) => (
@@ -66,7 +70,9 @@ function DisplayMode({ allergens }: { allergens: Allergen[] }) {
                 transition={{ delay: index * 0.05 }}
                 className="bg-red-50 border-2 border-red-500 rounded-xl p-4 text-center"
               >
-                <div className="text-4xl mb-2">{allergen.emoji}</div>
+                <div className="text-4xl mb-2 flex justify-center">
+                  <AllergenIcon size={32} />
+                </div>
                 <div className="font-bold text-red-900 text-sm">{allergen.name}</div>
                 {allergen.description && (
                   <div className="text-xs text-red-700 mt-1">{allergen.description}</div>
@@ -81,7 +87,7 @@ function DisplayMode({ allergens }: { allergens: Allergen[] }) {
       {mayContain.length > 0 && (
         <div>
           <h3 className="text-lg font-bold text-yellow-900 mb-3 flex items-center gap-2">
-            ⚠️ Kan innehålla spår av
+            Kan innehålla spår av
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {mayContain.map((allergen, index) => (
@@ -92,7 +98,9 @@ function DisplayMode({ allergens }: { allergens: Allergen[] }) {
                 transition={{ delay: index * 0.05 }}
                 className="bg-yellow-50 border-2 border-yellow-500 rounded-xl p-4 text-center"
               >
-                <div className="text-4xl mb-2">{allergen.emoji}</div>
+                <div className="text-4xl mb-2 flex justify-center">
+                  <AllergenIcon size={32} />
+                </div>
                 <div className="font-bold text-yellow-900 text-sm">{allergen.name}</div>
                 {allergen.description && (
                   <div className="text-xs text-yellow-700 mt-1">{allergen.description}</div>
@@ -128,7 +136,7 @@ function SelectMode({ allergens, onToggle }: { allergens: Allergen[]; onToggle?:
     <div>
       <div className="mb-4 p-4 bg-primary-50 rounded-lg">
         <p className="text-sm text-primary-900 font-semibold mb-2">
-          💡 Klicka på allergener för att markera:
+          Klicka på allergener för att markera:
         </p>
         <div className="flex gap-4 text-sm">
           <div className="flex items-center gap-2">
@@ -171,11 +179,13 @@ function SelectMode({ allergens, onToggle }: { allergens: Allergen[]; onToggle?:
               onClick={() => handleClick(allergen.id)}
               className={`${bgColor} border-2 ${borderColor} rounded-xl p-4 text-center hover:shadow-lg transition cursor-pointer`}
             >
-              <div className="text-4xl mb-2">{allergen.emoji}</div>
+              <div className="text-4xl mb-2 flex justify-center">
+                <AllergenIcon size={32} />
+              </div>
               <div className={`font-bold text-sm ${textColor}`}>{allergen.name}</div>
               {severity !== 'free' && (
                 <div className="text-xs mt-2 font-semibold">
-                  {severity === 'contains' ? '⚠️ Innehåller' : '⚠️ Spår'}
+                  {severity === 'contains' ? 'Innehåller' : 'Spår'}
                 </div>
               )}
             </button>
@@ -202,7 +212,7 @@ export function AllergenBadges({ allergens }: { allergens: Allergen[] }) {
           className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
           title={allergen.description}
         >
-          <span>{allergen.emoji}</span>
+          <AllergenIcon size={16} />
           <span>{allergen.name}</span>
         </div>
       ))}
@@ -237,8 +247,6 @@ export function FreeFromBadges({ allergens }: { allergens: Allergen[] }) {
           key={allergen.id}
           className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1"
         >
-          <span>✓</span>
-          <span>{allergen.emoji}</span>
           <span>Fri från {allergen.name.toLowerCase()}</span>
         </div>
       ))}

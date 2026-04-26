@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { CheckIcon } from '@/app/components/BrandIcons';
 
 type Step = 'delivery' | 'payment' | 'confirm';
 
@@ -60,7 +61,7 @@ export default function CheckoutPage() {
                     : 'bg-gray-200 text-gray-500'
                 }`}
               >
-                {i < stepIndex ? '✓' : i + 1}
+                {i < stepIndex ? <CheckIcon size={16} /> : i + 1}
               </div>
               <span className={`text-sm font-medium ${i <= stepIndex ? 'text-primary-900' : 'text-gray-400'}`}>
                 {s.label}
@@ -155,7 +156,7 @@ export default function CheckoutPage() {
               {warehouse && (
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-green-700 font-semibold text-sm">
-                    ✓ Levereras från {warehouse.name} ({warehouse.city})
+                    Levereras från {warehouse.name} ({warehouse.city})
                   </p>
                   <p className="text-green-600 text-xs mt-1">
                     Leveranstid: 2–4 vardagar
@@ -185,9 +186,9 @@ export default function CheckoutPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Betalning</h2>
             <div className="space-y-4">
               {[
-                { id: 'card', label: 'Kort (Visa / Mastercard)', icon: '💳' },
-                { id: 'swish', label: 'Swish', icon: '📱' },
-                { id: 'invoice', label: 'Faktura (Klarna)', icon: '📄' },
+                { id: 'card', label: 'Kort (Visa / Mastercard)', icon: '' },
+                { id: 'swish', label: 'Swish', icon: '' },
+                { id: 'invoice', label: 'Faktura (Klarna)', icon: '' },
               ].map((method) => (
                 <label
                   key={method.id}
@@ -219,7 +220,7 @@ export default function CheckoutPage() {
         {/* Step: Confirm */}
         {step === 'confirm' && (
           <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
-            <div className="text-7xl mb-4">✅</div>
+            <div className="mb-4 flex justify-center"><CheckIcon size={64} className="text-green-600" /></div>
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Order lagd!</h2>
             <p className="text-gray-500 mb-8">
               Tack {name}! Du får en bekräftelse till {email}.

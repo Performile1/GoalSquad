@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
-        iconEmoji: cat.icon_emoji || '📦',
+        iconEmoji: cat.icon_emoji || '',
         parentId: cat.parent_id,
         productCount: 0, // Would need separate query
       }));
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
-      iconEmoji: cat.icon_emoji || '📦',
+      iconEmoji: cat.icon_emoji || '',
       parentId: cat.parent_id,
       productCount: parseInt(cat.product_count || 0),
     }));

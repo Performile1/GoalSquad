@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { TrophyIcon, UserIcon, DashboardIcon } from '@/app/components/BrandIcons';
+import {
+  TrophyIcon, UserIcon, DashboardIcon, RunnerIcon, MoneyIcon,
+  ShoppingBagIcon, LeaderboardIcon, SettingsIcon, ArrowRightIcon,
+} from '@/app/components/BrandIcons';
 import { apiFetch } from '@/lib/api-client';
 
 interface SellerStats {
@@ -143,8 +146,8 @@ export default function SellerDashboard() {
             className="bg-white rounded-2xl shadow-lg p-6 border-2 border-orange-200"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Streak 🔥</h3>
-              <div className="text-4xl">🔥</div>
+              <h3 className="text-lg font-semibold text-gray-700">Streak</h3>
+              <RunnerIcon size={36} className="text-orange-600" />
             </div>
             <div className="text-5xl font-bold text-orange-600 mb-2">
               {stats.streakDays}
@@ -163,7 +166,7 @@ export default function SellerDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Total försäljning</h3>
-              <div className="text-4xl">💰</div>
+              <MoneyIcon size={36} className="text-primary-900" />
             </div>
             <div className="text-3xl font-bold text-primary-900 mb-2">
               {stats.totalSales.toLocaleString()} kr
@@ -180,7 +183,7 @@ export default function SellerDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Lagets ranking</h3>
-              <div className="text-4xl">🏆</div>
+              <TrophyIcon size={36} className="text-primary-900" />
             </div>
             <div className="text-5xl font-bold text-primary-900 mb-2">
               #{stats.rank || '-'}
@@ -202,7 +205,7 @@ export default function SellerDashboard() {
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Din avatar</h3>
               <div className="relative w-full aspect-square bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center mb-4">
-                <div className="text-8xl">👤</div>
+                <UserIcon size={80} className="text-primary-300" />
               </div>
               <button className="w-full bg-primary-900 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition">
                 Anpassa avatar
@@ -211,7 +214,7 @@ export default function SellerDashboard() {
 
             {/* Treasury Card */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Mitt kassavalv 💎</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Mitt kassavalv</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Tillgängligt</span>
@@ -256,7 +259,7 @@ export default function SellerDashboard() {
                     whileHover={{ scale: 1.05 }}
                     className={`p-4 rounded-xl border-2 ${getRarityColor(achievement.rarity)}`}
                   >
-                    <div className="text-4xl mb-2">{achievement.iconUrl || '🏅'}</div>
+                    <div className="mb-2"><TrophyIcon size={32} /></div>
                     <h4 className="font-bold text-sm mb-1">{achievement.name}</h4>
                     <p className="text-xs text-gray-600">{achievement.description}</p>
                   </motion.div>
@@ -269,19 +272,19 @@ export default function SellerDashboard() {
               <h3 className="text-xl font-bold text-gray-900 mb-4">Snabbåtgärder</h3>
               <div className="grid grid-cols-2 gap-4">
                 <Link href={`/sellers/${sellerId}/products`} className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
-                  📦 Mina produkter
+                  <span className="flex items-center justify-center gap-2"><ShoppingBagIcon size={20} /> Mina produkter</span>
                 </Link>
                 <Link href={`/sellers/${sellerId}/orders`} className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
-                  📊 Se ordrar
+                  <span className="flex items-center justify-center gap-2"><DashboardIcon size={20} /> Se ordrar</span>
                 </Link>
                 <Link href={`/sellers/${sellerId}/returns`} className="bg-red-600 text-white py-4 rounded-xl font-semibold hover:bg-red-700 transition text-center">
-                  ↩️ Returer
+                  <span className="flex items-center justify-center gap-2"><ArrowRightIcon size={20} /> Returer</span>
                 </Link>
                 <Link href="/leaderboard" className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition text-center">
-                  🎯 Leaderboard
+                  <span className="flex items-center justify-center gap-2"><LeaderboardIcon size={20} /> Leaderboard</span>
                 </Link>
                 <Link href={`/sellers/${sellerId}/settings`} className="border-2 border-primary-900 text-primary-900 py-4 rounded-xl font-semibold hover:bg-primary-50 transition text-center">
-                  ⚙️ Inställningar
+                  <span className="flex items-center justify-center gap-2"><SettingsIcon size={20} /> Inställningar</span>
                 </Link>
               </div>
             </div>

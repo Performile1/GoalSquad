@@ -334,20 +334,20 @@ export default function WarehousesPage() {
                   selectedWarehouse.entityType === 'team' ? 'bg-orange-100 text-orange-700' :
                   'bg-gray-100 text-gray-700'
                 }`}>
-                  {selectedWarehouse.entityType === 'warehouse' ? '📦 Lager' :
-                   selectedWarehouse.entityType === 'community' ? '🤝 Förening' :
-                   selectedWarehouse.entityType === 'seller' ? '👤 Säljare' :
-                   selectedWarehouse.entityType === 'team' ? '🏆 Lag' :
+                  {selectedWarehouse.entityType === 'warehouse' ? 'Lager' :
+                   selectedWarehouse.entityType === 'community' ? 'Förening' :
+                   selectedWarehouse.entityType === 'seller' ? 'Säljare' :
+                   selectedWarehouse.entityType === 'team' ? 'Lag' :
                    selectedWarehouse.entityType}
                 </span>
               )}
             </div>
             
             {selectedWarehouse.communityName && (
-              <p className="text-green-600 font-semibold mb-4">🤝 {selectedWarehouse.communityName}</p>
+              <p className="text-green-600 font-semibold mb-4">{selectedWarehouse.communityName}</p>
             )}
             {selectedWarehouse.teamName && (
-              <p className="text-orange-600 font-semibold mb-4">🏆 {selectedWarehouse.teamName}</p>
+              <p className="text-orange-600 font-semibold mb-4">{selectedWarehouse.teamName}</p>
             )}
 
             <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -373,7 +373,7 @@ export default function WarehousesPage() {
 
             {selectedWarehouse.earnings && (
               <div className="bg-green-50 rounded-xl p-6 mb-6">
-                <h3 className="text-lg font-bold text-green-900 mb-4">💰 Intäkter</h3>
+                <h3 className="text-lg font-bold text-green-900 mb-4">Intäkter</h3>
                 <div className="grid md:grid-cols-4 gap-4">
                   <div>
                     <div className="text-sm text-green-700 mb-1">Lagring</div>

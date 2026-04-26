@@ -195,7 +195,7 @@ export default function SellerSettingsPage() {
                 </div>
               </div>
               <div className={`p-4 rounded-xl flex items-center gap-3 ${form.bank_account_verified ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'}`}>
-                <span className="text-xl">{form.bank_account_verified ? '✅' : '⏳'}</span>
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${form.bank_account_verified ? 'bg-green-500 text-white' : 'bg-yellow-400 text-white'}`}>{form.bank_account_verified ? '✓' : '...'}</span>
                 <div>
                   <p className="font-semibold text-gray-900">
                     {form.bank_account_verified ? 'Bankkonto verifierat' : 'Bankkonto ej verifierat'}

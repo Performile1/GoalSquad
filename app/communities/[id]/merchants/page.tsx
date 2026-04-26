@@ -198,7 +198,7 @@ export default function CommunityMerchants() {
                             ? 'bg-green-100 text-green-700'
                             : 'bg-gray-100 text-gray-600'
                         }`}>
-                          {rm.terms_accepted ? '✓ Godkända' : 'Ej godkända'}
+                          {rm.terms_accepted ? 'Godkända' : 'Ej godkända'}
                         </span>
                       </td>
                     </motion.tr>

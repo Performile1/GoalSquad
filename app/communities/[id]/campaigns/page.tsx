@@ -132,9 +132,9 @@ export default function CampaignManagement() {
                     <h3 className="text-2xl font-bold text-gray-900">{campaign.name}</h3>
                     <p className="text-gray-600 mt-1">{campaign.Beskrivning}</p>
                     <div className="flex gap-4 mt-2 text-sm text-gray-500">
-                      <span>📅 {new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}</span>
-                      <span>💰 F\u00f6rening: {campaign.communityCommissionPercent}%</span>
-                      <span>👤 S\u00e4ljare: {campaign.sellerCommissionPercent}%</span>
+                      <span>{new Date(campaign.startDate).toLocaleDateString()} - {new Date(campaign.endDate).toLocaleDateString()}</span>
+                      <span>Förening: {campaign.communityCommissionPercent}%</span>
+                      <span>Säljare: {campaign.sellerCommissionPercent}%</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -219,7 +219,7 @@ export default function CampaignManagement() {
 
           {campaigns.length === 0 && (
             <div className="text-center py-12 bg-white rounded-2xl shadow-lg">
-              <div className="text-6xl mb-4">📊</div>
+              <div className="mb-4 text-4xl font-bold text-gray-300">#</div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 Inga kampanjer \u00e4n
               </h3>

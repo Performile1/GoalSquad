@@ -126,7 +126,7 @@ export default function AvatarCreator() {
       });
 
       if (response.ok) {
-        alert('Avatar sparad! 🎉');
+        alert('Avatar sparad!');
         router.push(`/sellers/${sellerId}/avatar`);
       } else {
         throw new Error('Failed to save avatar');
@@ -147,7 +147,7 @@ export default function AvatarCreator() {
           className="text-center mb-8"
         >
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            📸 Skapa Din Avatar
+            Skapa Din Avatar
           </h1>
           <p className="text-xl text-gray-600">
             Ta ett foto så skapar vi en cool cartoon-version!
@@ -204,7 +204,7 @@ export default function AvatarCreator() {
                   onClick={capturePhoto}
                   className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-lg transition transform hover:scale-105"
                 >
-                  📸 Ta Foto
+                  Ta Foto
                 </button>
               </div>
             </motion.div>
@@ -230,14 +230,14 @@ export default function AvatarCreator() {
                   onClick={retakePhoto}
                   className="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-semibold hover:bg-gray-300 transition"
                 >
-                  🔄 Ta Om
+                  Ta Om
                 </button>
                 <button
                   onClick={cartoonizeImage}
                   disabled={isProcessing}
                   className="bg-gradient-to-r from-primary-900 to-primary-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50"
                 >
-                  {isProcessing ? '⏳ Skapar...' : '✨ Cartoonify!'}
+                  {isProcessing ? 'Skapar...' : 'Cartoonify!'}
                 </button>
               </div>
             </motion.div>
@@ -252,7 +252,7 @@ export default function AvatarCreator() {
             >
               <div className="text-center mb-4">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  🎨 Din Cartoon Avatar!
+                  Din Cartoon Avatar!
                 </h2>
                 <p className="text-gray-600">Så här coolt ser du ut!</p>
               </div>
@@ -288,13 +288,13 @@ export default function AvatarCreator() {
                   onClick={retakePhoto}
                   className="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-semibold hover:bg-gray-300 transition"
                 >
-                  🔄 Ta Nytt Foto
+                  Ta Nytt Foto
                 </button>
                 <button
                   onClick={saveAvatar}
                   className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition"
                 >
-                  💾 Spara Avatar
+                  Spara Avatar
                 </button>
               </div>
             </motion.div>

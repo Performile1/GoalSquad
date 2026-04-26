@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { apiFetch } from '@/lib/api-client';
+import { MessageIcon, SendIcon } from '@/app/components/BrandIcons';
 
 interface Conversation {
   id: string;
@@ -101,7 +102,10 @@ export default function MessagesPage() {
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-900">Meddelanden 💬</h1>
+          <div className="flex items-center gap-2">
+            <MessageIcon size={28} className="text-primary-900" />
+            <h1 className="text-2xl font-bold text-gray-900">Meddelanden</h1>
+          </div>
         </div>
 
         {/* Conversations */}
@@ -224,8 +228,9 @@ export default function MessagesPage() {
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim()}
-                  className="bg-primary-900 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary-900 text-white px-5 py-3 rounded-xl font-semibold hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
+                  <SendIcon size={18} className="text-white" />
                   Skicka
                 </button>
               </div>
@@ -234,8 +239,8 @@ export default function MessagesPage() {
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-500">
             <div className="text-center">
-              <div className="text-6xl mb-4">💬</div>
-              <p className="text-xl">Välj en konversation för att börja chatta</p>
+              <div className="mb-4 flex justify-center text-gray-300"><MessageIcon size={64} /></div>
+              <p className="text-xl">Välj en konversation för att börja läsa</p>
             </div>
           </div>
         )}

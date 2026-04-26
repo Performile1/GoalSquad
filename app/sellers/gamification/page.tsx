@@ -229,7 +229,7 @@ export default function SellerGamificationPage() {
             <div className="flex items-center gap-4">
               <FireModeIcon size={48} />
               <div>
-                <h3 className="text-2xl font-bold mb-1">🔥 FIRE MODE AKTIVERAT!</h3>
+                <h3 className="text-2xl font-bold mb-1">FIRE MODE AKTIVERAT!</h3>
                 <p className="text-white/90">All XP fördubblas tills {sellerXP.multiplier_expires_at ? new Date(sellerXP.multiplier_expires_at).toLocaleTimeString('sv-SE') : 'snart'}</p>
               </div>
             </div>
@@ -378,7 +378,7 @@ export default function SellerGamificationPage() {
             <div className="p-4 bg-primary-50 rounded-lg">
               <h3 className="font-semibold text-gray-900 mb-2">Aktuell Skin</h3>
               <p className="text-gray-600">
-                {avatarEquipment.current_skin === 'golden_hoodie' ? 'Golden Hoodie 🏆' : 'Standard Skin'}
+                {avatarEquipment.current_skin === 'golden_hoodie' ? 'Golden Hoodie' : 'Standard Skin'}
               </p>
             </div>
 
@@ -433,7 +433,7 @@ export default function SellerGamificationPage() {
                       <div className="flex justify-between text-sm text-gray-600">
                         <span>{quest.progress.current_value} / {quest.target_value}</span>
                         {quest.progress.is_completed && (
-                          <span className="text-green-600 font-semibold">✓ Slutförd!</span>
+                          <span className="text-green-600 font-semibold">Slutförd!</span>
                         )}
                       </div>
                     </>
@@ -470,7 +470,7 @@ export default function SellerGamificationPage() {
                     <p className="text-center text-sm text-gray-500">Öppnad</p>
                   ) : (
                     <button className="w-full py-2 bg-primary-900 text-white rounded-lg font-semibold hover:bg-primary-600 transition">
-                      Öppna 🎁
+                      Öppna
                     </button>
                   )}
                 </div>

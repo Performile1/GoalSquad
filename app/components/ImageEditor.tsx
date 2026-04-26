@@ -120,13 +120,13 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-900">
-              📸 Redigera Bild
+              Redigera Bild
             </h2>
             <button
               onClick={onCancel}
               className="text-gray-500 hover:text-gray-700 text-2xl"
             >
-              ✕
+              X
             </button>
           </div>
 
@@ -140,7 +140,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              ✂️ Beskär
+              Beskär
             </button>
             <button
               onClick={() => setMode('remove-bg')}
@@ -150,7 +150,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              🎨 Ta bort bakgrund
+              Ta bort bakgrund
             </button>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
                     disabled={processing}
                     className="bg-primary-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-primary-800 transition disabled:opacity-50"
                   >
-                    {processing ? 'Bearbetar...' : '🎨 Ta bort bakgrund'}
+                    {processing ? 'Bearbetar...' : 'Ta bort bakgrund'}
                   </button>
                   <p className="text-xs text-gray-500 mt-3">
                     Använder AI för att automatiskt detektera och ta bort bakgrund
@@ -244,7 +244,7 @@ export default function ImageEditor({ imageUrl, onSave, onCancel }: ImageEditorP
             disabled={processing || (mode === 'crop' && !completedCrop) || (mode === 'remove-bg' && !previewUrl)}
             className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {processing ? 'Sparar...' : '✓ Spara'}
+            {processing ? 'Sparar...' : 'Spara'}
           </button>
         </div>
       </div>
@@ -303,7 +303,7 @@ export function SimpleImageCrop({ imageUrl, onSave, onCancel }: ImageEditorProps
     <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-2xl w-full p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          ✂️ Beskär Bild
+          Beskär Bild
         </h2>
 
         <div className="mb-6">
@@ -343,7 +343,7 @@ export function SimpleImageCrop({ imageUrl, onSave, onCancel }: ImageEditorProps
             disabled={processing}
             className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50"
           >
-            {processing ? 'Bearbetar...' : '✓ Beskär'}
+            {processing ? 'Bearbetar...' : 'Beskär'}
           </button>
         </div>
       </div>

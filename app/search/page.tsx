@@ -145,7 +145,7 @@ function SearchContent() {
             {groupedResults.sellers.length > 0 && (
               <ResultSection
                 title="Säljare"
-                emoji="👤"
+                emoji=""
                 results={groupedResults.sellers}
                 renderResult={renderSellerResult}
               />
@@ -155,7 +155,7 @@ function SearchContent() {
             {groupedResults.communities.length > 0 && (
               <ResultSection
                 title="Föreningar"
-                emoji="👥"
+                emoji=""
                 results={groupedResults.communities}
                 renderResult={renderCommunityResult}
               />
@@ -165,7 +165,7 @@ function SearchContent() {
             {groupedResults.products.length > 0 && (
               <ResultSection
                 title="Produkter"
-                emoji="📦"
+                emoji=""
                 results={groupedResults.products}
                 renderResult={renderProductResult}
               />
@@ -271,7 +271,7 @@ function renderCommunityResult(result: SearchResult, index: number) {
           <p className="text-sm text-gray-600 mb-2">{result.description}</p>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-gray-600">
-              👤 {result.metadata.totalMembers} medlemmar
+              {result.metadata.totalMembers} medlemmar
             </span>
           </div>
         </div>
@@ -318,11 +318,11 @@ function renderProductResult(result: SearchResult, index: number) {
         </div>
         {result.metadata.stock > 0 ? (
           <div className="mt-3 bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold inline-block">
-            ✓ I lager
+            I lager
           </div>
         ) : (
           <div className="mt-3 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold inline-block">
-            ✗ Slut i lager
+            Slut i lager
           </div>
         )}
       </div>

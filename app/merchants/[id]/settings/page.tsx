@@ -283,7 +283,7 @@ export default function MerchantSettingsPage() {
                     form.verification_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                     'bg-red-100 text-red-700'
                   }`}>
-                    {form.verification_status === 'approved' ? '✓ Godkänd' :
+                    {form.verification_status === 'approved' ? 'Godkänd' :
                      form.verification_status === 'pending' ? 'Väntar' : 'Ej verifierad'}
                   </span>
                 </div>

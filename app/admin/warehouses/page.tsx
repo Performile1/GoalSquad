@@ -11,7 +11,7 @@ export default function WarehousesAdminPage() {
       <div className="container mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🏭 Lagerpartners
+            Lagerpartners
           </h1>
           <p className="text-gray-600">
             Hantera konsolideringslager och täckningsområden
@@ -28,25 +28,25 @@ export default function WarehousesAdminPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-4xl mb-2">🏭</div>
+            <div className="text-sm font-semibold text-gray-500 mb-2">Lager</div>
             <div className="text-3xl font-bold text-gray-900">8</div>
             <div className="text-sm text-gray-600">Aktiva lager</div>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-4xl mb-2">📦</div>
+            <div className="text-sm font-semibold text-gray-500 mb-2">Order</div>
             <div className="text-3xl font-bold text-primary-900">247</div>
             <div className="text-sm text-gray-600">Väntande order</div>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-4xl mb-2">📍</div>
+            <div className="text-sm font-semibold text-gray-500 mb-2">Täckning</div>
             <div className="text-3xl font-bold text-green-600">100%</div>
             <div className="text-sm text-gray-600">Täckning Sverige</div>
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="text-4xl mb-2">⚡</div>
+            <div className="text-sm font-semibold text-gray-500 mb-2">Hastighet</div>
             <div className="text-3xl font-bold text-primary-900">2</div>
             <div className="text-sm text-gray-600">Dagar bearbetning</div>
           </div>

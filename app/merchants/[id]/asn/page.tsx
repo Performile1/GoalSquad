@@ -183,7 +183,7 @@ export default function ASNPage() {
 
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <p className="text-4xl mb-4">🚛</p>
+            <p className="text-lg font-bold text-gray-400 mb-4">ASN</p>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Inga ASN-meddelanden</h2>
             <p className="text-gray-500">Skicka en förhandsavisering till lagret innan du skickar gods.</p>
           </div>
@@ -200,7 +200,7 @@ export default function ASNPage() {
                     </span>
                   </div>
                   <p className="text-sm text-gray-600">
-                    🏭 {notice.warehouse_partners?.partner_name}{notice.warehouse_partners?.city && ` – ${notice.warehouse_partners.city}`}
+                    {notice.warehouse_partners?.partner_name}{notice.warehouse_partners?.city && ` – ${notice.warehouse_partners.city}`}
                   </p>
                   {notice.expected_arrival_date && (
                     <p className="text-xs text-gray-400 mt-1">Förväntat: {new Date(notice.expected_arrival_date).toLocaleDateString('sv-SE')}</p>

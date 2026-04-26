@@ -232,7 +232,7 @@ export default function CreateProductPage() {
       });
 
       if (response.ok) {
-        alert('Produkt skapad! ✅');
+        alert('Produkt skapad!');
         // Redirect to products list
         window.location.href = '/merchant/products';
       } else {
@@ -247,11 +247,11 @@ export default function CreateProductPage() {
   };
 
   const steps = [
-    { number: 1, title: 'Grundinfo', icon: '📝' },
-    { number: 2, title: 'Identifiering', icon: '🔖' },
-    { number: 3, title: 'Mått & Vikt', icon: '📏' },
-    { number: 4, title: 'Detaljer', icon: '📋' },
-    { number: 5, title: 'Bilder', icon: '📸' },
+    { number: 1, title: 'Grundinfo', icon: '1' },
+    { number: 2, title: 'Identifiering', icon: '2' },
+    { number: 3, title: 'Mått & Vikt', icon: '3' },
+    { number: 4, title: 'Detaljer', icon: '4' },
+    { number: 5, title: 'Bilder', icon: '5' },
   ];
 
   return (
@@ -260,7 +260,7 @@ export default function CreateProductPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            📦 Skapa Ny Produkt
+            Skapa Ny Produkt
           </h1>
           <p className="text-gray-600">
             Fyll i produktinformation. Vi hjälper dig undvika dubbletter!
@@ -291,7 +291,7 @@ export default function CreateProductPage() {
                         : 'bg-gray-100'
                     }`}
                   >
-                    {currentStep > step.number ? '✓' : step.icon}
+                    {currentStep > step.number ? '✓' : step.number}
                   </div>
                   <span className="text-sm font-semibold hidden md:block">
                     {step.title}
@@ -319,7 +319,7 @@ export default function CreateProductPage() {
               className="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-6 mb-8"
             >
               <h3 className="text-xl font-bold text-yellow-900 mb-4 flex items-center gap-2">
-                ⚠️ Liknande produkter hittades!
+                Liknande produkter hittades!
               </h3>
               <p className="text-yellow-800 mb-4">
                 Vi hittade {similarProducts.length} liknande produkt(er). Vill du använda en befintlig produkt istället?
@@ -475,7 +475,7 @@ export default function CreateProductPage() {
                 disabled={loading}
                 className="bg-primary-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50"
               >
-                {loading ? 'Skapar...' : '✓ Skapa Produkt'}
+                {loading ? 'Skapar...' : 'Skapa Produkt'}
               </button>
             )}
           </div>

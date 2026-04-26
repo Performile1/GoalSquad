@@ -40,13 +40,8 @@ export default function Leaderboard() {
     }
   };
 
-  const getMedalEmoji = (rank: number) => {
-    switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return `#${rank}`;
-    }
+  const getMedalLabel = (rank: number) => {
+    return `#${rank}`;
   };
 
   const getRankColor = (rank: number) => {
@@ -68,7 +63,7 @@ export default function Leaderboard() {
           className="text-center mb-8"
         >
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            🏆 Leaderboard
+            Leaderboard
           </h1>
           <p className="text-xl text-gray-600">
             See who's crushing it in your community!
@@ -112,7 +107,7 @@ export default function Leaderboard() {
                 <div className="flex items-center gap-6">
                   {/* Rank */}
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${getRankColor(entry.rank)} flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
-                    {entry.rank <= 3 ? getMedalEmoji(entry.rank) : `#${entry.rank}`}
+                    {entry.rank <= 3 ? getMedalLabel(entry.rank) : `#${entry.rank}`}
                   </div>
 
                   {/* Avatar */}
@@ -120,7 +115,7 @@ export default function Leaderboard() {
                     {entry.avatarUrl ? (
                       <img src={entry.avatarUrl} alt={entry.fullName} className="w-full h-full rounded-full" />
                     ) : (
-                      '👤'
+                      ''
                     )}
                   </div>
 
@@ -156,7 +151,7 @@ export default function Leaderboard() {
                     transition={{ delay: index * 0.05 + 0.2, type: 'spring' }}
                     className="absolute -top-2 -right-2 text-4xl"
                   >
-                    {getMedalEmoji(entry.rank)}
+                    {getMedalLabel(entry.rank)}
                   </motion.div>
                 )}
               </motion.div>
@@ -164,7 +159,7 @@ export default function Leaderboard() {
 
             {leaderboard.length === 0 && (
               <div className="text-center py-12">
-                <div className="text-6xl mb-4">🏆</div>
+                <div className="mb-4 text-4xl font-bold text-gray-300">#</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   No rankings yet
                 </h3>

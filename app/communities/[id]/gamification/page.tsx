@@ -258,13 +258,13 @@ export default function CommunityGamificationPage() {
                         <h3 className="font-bold text-gray-900 mb-1">{milestone.name}</h3>
                         <p className="text-sm text-gray-600">{milestone.description}</p>
                         {milestone.reward_description && (
-                          <p className="text-sm text-primary-700 mt-1">🎁 {milestone.reward_description}</p>
+                          <p className="text-sm text-primary-700 mt-1">{milestone.reward_description}</p>
                         )}
                       </div>
                     </div>
                     {milestone.is_achieved && (
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                        ✓ Uppnådd {milestone.achieved_at ? new Date(milestone.achieved_at).toLocaleDateString('sv-SE') : ''}
+                        Uppnådd {milestone.achieved_at ? new Date(milestone.achieved_at).toLocaleDateString('sv-SE') : ''}
                       </span>
                     )}
                   </div>
@@ -316,7 +316,7 @@ export default function CommunityGamificationPage() {
                     </div>
                     {tier.achieved_at && (
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">
-                        ✓ Uppnådd {new Date(tier.achieved_at).toLocaleDateString('sv-SE')}
+                        Uppnådd {new Date(tier.achieved_at).toLocaleDateString('sv-SE')}
                       </span>
                     )}
                   </div>
@@ -386,7 +386,7 @@ export default function CommunityGamificationPage() {
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     badge.awarded_at ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
                   }`}>
-                    {badge.awarded_at ? '✓ Uppnådd' : 'Låst'}
+                    {badge.awarded_at ? 'Uppnådd' : 'Låst'}
                   </span>
                   {badge.awarded_at && (
                     <p className="text-xs text-gray-500 mt-2">

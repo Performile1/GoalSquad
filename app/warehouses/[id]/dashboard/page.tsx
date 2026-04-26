@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
-import { DashboardIcon, ShoppingBagIcon, TruckIcon, BoxIcon } from '@/app/components/BrandIcons';
+import { DashboardIcon, ShoppingBagIcon, TruckIcon, BoxIcon, CheckIcon, AlertIcon, SettingsIcon } from '@/app/components/BrandIcons';
 import { apiFetch } from '@/lib/api-client';
 
 interface WarehouseStats {
@@ -142,8 +142,8 @@ export default function WarehouseDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Partnerstatus</h3>
-              <div className={`text-4xl ${stats.isPartner ? 'text-green-600' : 'text-yellow-600'}`}>
-                {stats.isPartner ? '✓' : '⚠️'}
+              <div className={`${stats.isPartner ? 'text-green-600' : 'text-yellow-600'}`}>
+                {stats.isPartner ? <CheckIcon size={32} /> : <AlertIcon size={32} />}
               </div>
             </div>
             <div className={`text-xl font-bold mb-2 ${
@@ -191,7 +191,8 @@ export default function WarehouseDashboard() {
               onClick={() => router.push(`/warehouses/${warehouseId}/settings`)}
               className="border-2 border-primary-900 text-primary-900 py-4 rounded-xl font-semibold hover:bg-primary-50 transition flex items-center justify-center gap-2"
             >
-              ⚙️ Inställningar
+              <SettingsIcon size={20} />
+              Inställningar
             </button>
           </div>
         </motion.div>

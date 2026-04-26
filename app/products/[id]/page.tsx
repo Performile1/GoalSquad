@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import CertificationBadges, { CertificationList } from '@/app/components/CertificationBadges';
 import AllergenCards from '@/app/components/AllergenCards';
+import { ShoppingBagIcon, BoxIcon, AlertIcon, CartIcon, CheckIcon } from '@/app/components/BrandIcons';
 
 interface Product {
   id: string;
@@ -46,7 +47,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4 animate-bounce">📦</div>
+          <div className="mb-4 animate-bounce flex justify-center"><ShoppingBagIcon size={52} className="text-primary-900" /></div>
           <p className="text-xl text-gray-600">Laddar produkt...</p>
         </div>
       </div>
@@ -57,7 +58,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="text-6xl mb-4">😕</div>
+          <div className="mb-4 flex justify-center"><ShoppingBagIcon size={52} className="text-gray-300" /></div>
           <p className="text-2xl font-bold text-gray-900">Produkt hittades inte</p>
         </div>
       </div>
@@ -147,7 +148,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
               {/* Add to Cart */}
               <button className="w-full bg-gradient-to-r from-primary-900 to-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-700 transition shadow-lg">
-                🛒 Lägg i varukorg
+                Lägg i varukorg
               </button>
             </div>
 
@@ -155,12 +156,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {(!product.canConsolidate || product.shippingRestrictions.length > 0) && (
               <div className="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-6 mb-6">
                 <h3 className="text-lg font-bold text-yellow-900 mb-3 flex items-center gap-2">
-                  📦 Fraktinformation
+                  Fraktinformation
                 </h3>
                 
                 {!product.canConsolidate && (
                   <div className="mb-3 flex items-start gap-3">
-                    <span className="text-2xl">⚠️</span>
+                    <span><AlertIcon size={24} className="text-yellow-600" /></span>
                     <div>
                       <p className="font-semibold text-yellow-900">
                         Kan inte kombineras med andra produkter
@@ -174,7 +175,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
                 {product.requiresFrozen && (
                   <div className="mb-3 flex items-start gap-3">
-                    <span className="text-2xl">❄️</span>
+                    <span><BoxIcon size={24} className="text-blue-500" /></span>
                     <div>
                       <p className="font-semibold text-yellow-900">
                         Kräver fryst frakt
@@ -188,7 +189,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
                 {product.requiresColdChain && !product.requiresFrozen && (
                   <div className="mb-3 flex items-start gap-3">
-                    <span className="text-2xl">🧊</span>
+                    <span><BoxIcon size={24} className="text-blue-400" /></span>
                     <div>
                       <p className="font-semibold text-yellow-900">
                         Kräver kylkedja
@@ -202,7 +203,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
                 {product.isFragile && (
                   <div className="mb-3 flex items-start gap-3">
-                    <span className="text-2xl">📦</span>
+                    <span><BoxIcon size={24} className="text-yellow-600" /></span>
                     <div>
                       <p className="font-semibold text-yellow-900">
                         Ömtålig produkt
@@ -246,7 +247,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {product.allergens && product.allergens.length > 0 && (
               <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">
-                  ⚠️ Allergiinformation
+                  Allergiinformation
                 </h3>
                 <AllergenCards allergens={product.allergens} mode="display" />
               </div>
@@ -256,7 +257,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {product.certifications && product.certifications.length > 0 && (
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">
-                  ✓ Certifieringar i detalj
+                  Certifieringar i detalj
                 </h3>
                 <CertificationList certifications={product.certifications} />
               </div>

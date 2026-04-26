@@ -39,14 +39,14 @@ function getBotResponse(text: string): string {
   if (lower.includes('leverans') || lower.includes('frakt') || lower.includes('leveranstid'))
     return 'Leveranstiden är 2–5 arbetsdagar. Kunden får automatisk spårningsinformation via e-post.';
   if (lower.includes('hej') || lower.includes('hallå') || lower.includes('hi'))
-    return 'Hej! 👋 Hur kan jag hjälpa dig idag? Fråga gärna om föreningar, leverantörer eller hur plattformen fungerar.';
+    return 'Hej! Hur kan jag hjälpa dig idag? Fråga gärna om föreningar, leverantörer eller hur plattformen fungerar.';
   return 'Tack för din fråga! För mer detaljerad hjälp, kontakta oss på support@goalsquad.se eller besök vår kontaktsida.';
 }
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { id: '0', role: 'bot', text: 'Hej! 👋 Välkommen till GoalSquad. Hur kan jag hjälpa dig?' },
+    { id: '0', role: 'bot', text: 'Hej! Välkommen till GoalSquad. Hur kan jag hjälpa dig?' },
   ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);

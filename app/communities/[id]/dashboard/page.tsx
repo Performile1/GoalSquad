@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { MessageIcon, UserIcon, OrdersIcon, AlertIcon } from '@/app/components/BrandIcons';
+import { MessageIcon, UserIcon, OrdersIcon, AlertIcon, CommunityIcon, MoneyIcon, TargetIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 interface CommunityStats {
   name: string;
@@ -171,7 +171,7 @@ export default function CommunityDashboard() {
             transition={{ delay: 0.1 }}
             className="bg-white rounded-2xl shadow-lg p-6"
           >
-            <div className="text-4xl mb-2">👥</div>
+            <div className="mb-2"><CommunityIcon size={36} className="text-primary-900" /></div>
             <div className="text-3xl font-bold text-primary-900">{stats.totalMembers}</div>
             <div className="text-sm text-gray-600">Active Members</div>
           </motion.div>
@@ -182,7 +182,7 @@ export default function CommunityDashboard() {
             transition={{ delay: 0.2 }}
             className="bg-white rounded-2xl shadow-lg p-6"
           >
-            <div className="text-4xl mb-2">💰</div>
+            <div className="mb-2"><MoneyIcon size={36} className="text-green-600" /></div>
             <div className="text-3xl font-bold text-green-600">
               {stats.totalSales.toLocaleString()} NOK
             </div>
@@ -195,7 +195,7 @@ export default function CommunityDashboard() {
             transition={{ delay: 0.3 }}
             className="bg-white rounded-2xl shadow-lg p-6"
           >
-            <div className="text-4xl mb-2">🎯</div>
+            <div className="mb-2"><TargetIcon size={36} className="text-primary-900" /></div>
             <div className="text-3xl font-bold text-primary-900">
               {stats.totalCommission.toLocaleString()} NOK
             </div>
@@ -208,7 +208,7 @@ export default function CommunityDashboard() {
             transition={{ delay: 0.4 }}
             className="bg-white rounded-2xl shadow-lg p-6"
           >
-            <div className="text-4xl mb-2">📊</div>
+            <div className="mb-2"><DashboardIcon size={36} className="text-orange-600" /></div>
             <div className="text-3xl font-bold text-orange-600">
               {stats.activeCampaigns.length}
             </div>
@@ -225,7 +225,7 @@ export default function CommunityDashboard() {
             transition={{ delay: 0.5 }}
             className="bg-white rounded-2xl shadow-lg p-6"
           >
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Treasury 💎</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Treasury</h3>
             <div className="space-y-4">
               <div>
                 <div className="text-sm text-gray-600 mb-1">Available for Payout</div>
@@ -304,7 +304,7 @@ export default function CommunityDashboard() {
               })}
               {stats.activeCampaigns.length === 0 && (
                 <div className="text-center py-8">
-                  <div className="text-4xl mb-2">📊</div>
+                  <div className="mb-2"><DashboardIcon size={36} className="text-gray-400 mx-auto" /></div>
                   <p className="text-gray-600">No active campaigns</p>
                 </div>
               )}
@@ -319,13 +319,18 @@ export default function CommunityDashboard() {
           transition={{ delay: 0.7 }}
           className="mt-6 bg-white rounded-2xl shadow-lg p-6"
         >
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Top Sellers 🏆</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <TrophyIcon size={28} className="text-primary-900" />
+            <h3 className="text-xl font-bold text-gray-900">Top Sellers</h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {stats.topSellers.slice(0, 3).map((seller, index) => (
               <div key={seller.id} className="border rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="text-3xl">
-                    {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-lg ${
+                    index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-amber-700'
+                  }`}>
+                    {index + 1}
                   </div>
                   <div>
                     <h4 className="font-bold">{seller.fullName}</h4>
