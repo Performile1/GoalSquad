@@ -166,80 +166,59 @@ export default function AdminDashboard() {
               icon: UserIcon,
               title: 'Användare',
               desc: 'Hantera profiler, roller och konton',
-              accent: 'rgba(0,59,61,0.08)',
-              border: 'rgba(0,59,61,0.2)',
             },
             {
               href: '/admin/sellers',
               icon: UserIcon,
               title: 'Säljare',
               desc: 'Översikt över alla säljare',
-              accent: 'rgba(59,130,246,0.08)',
-              border: 'rgba(59,130,246,0.2)',
             },
             {
               href: '/admin/merchants',
               icon: ShoppingBagIcon,
               title: 'Företag',
               desc: 'Översikt över alla merchants',
-              accent: 'rgba(234,179,8,0.08)',
-              border: 'rgba(234,179,8,0.2)',
             },
             {
               href: '/admin/communities',
               icon: CommunityIcon,
               title: 'Föreningar & Klubbar',
               desc: 'Översikt över alla communities',
-              accent: 'rgba(16,185,129,0.08)',
-              border: 'rgba(16,185,129,0.2)',
             },
             {
               href: '/admin/warehouses',
               icon: TruckIcon,
               title: 'Lagerpartners',
               desc: 'Översikt över alla lager',
-              accent: 'rgba(168,85,247,0.08)',
-              border: 'rgba(168,85,247,0.2)',
             },
             {
               href: '/admin/orders',
               icon: DashboardIcon,
               title: 'Ordrar',
               desc: 'Översikt över alla ordrar',
-              accent: 'rgba(0,59,61,0.05)',
-              border: 'rgba(0,59,61,0.12)',
             },
             {
               href: '/admin/returns',
               icon: AlertIcon,
               title: 'Returer',
               desc: 'Översikt över alla returer',
-              accent: 'rgba(239,68,68,0.08)',
-              border: 'rgba(239,68,68,0.2)',
             },
             {
               href: '/messages',
               icon: MessageIcon,
               title: 'Community Meddelanden',
               desc: 'Kommunicera med säljare, föreningar och företag',
-              accent: 'rgba(0,59,61,0.05)',
-              border: 'rgba(0,59,61,0.12)',
             },
             {
               href: '/admin/blog',
               icon: DashboardIcon,
               title: 'Blogg',
               desc: 'Hantera blogginlägg',
-              accent: 'rgba(0,59,61,0.05)',
-              border: 'rgba(0,59,61,0.12)',
             },
           ].map((item) => (
             <Link key={item.href} href={item.href} className="block">
-              <div
-                className="rounded-2xl p-6 hover:shadow-md transition cursor-pointer flex items-center gap-4"
-                style={{ background: item.accent, border: `2px solid ${item.border}` }}
-              >
-                <div className="p-3 rounded-xl bg-white elevation-petrol">
+              <div className="rounded-2xl p-6 hover:shadow-md transition cursor-pointer flex items-center gap-4 bg-white border-2 border-gray-200">
+                <div className="p-3 rounded-xl bg-primary-50 elevation-petrol">
                   <item.icon size={28} className="icon-brand" />
                 </div>
                 <div className="flex-1">
@@ -254,32 +233,28 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Consolidated Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
-            { label: 'Föreningar', value: stats?.totalCommunities || 0, icon: CommunityIcon, color: 'primary' },
-            { label: 'Klubbar', value: stats?.totalClubs || 0, icon: CommunityIcon, color: 'primary' },
-            { label: 'Klasser', value: stats?.totalClasses || 0, icon: UserIcon, color: 'primary' },
-            { label: 'Säljare', value: stats?.totalSellers || 0, icon: UserIcon, color: 'primary' },
-            { label: 'Företag', value: stats?.totalCompanies || 0, icon: ShoppingBagIcon, color: 'orange' },
-            { label: 'Lagerpartner', value: stats?.totalWarehouses || 0, icon: TruckIcon, color: 'orange' },
-            { label: 'Försäljning', value: `${(stats?.totalSales || 0).toLocaleString()} kr`, icon: MoneyIcon, color: 'green' },
-            { label: 'Ordrar', value: stats?.totalOrders || 0, icon: DashboardIcon, color: 'green' },
+            { label: 'Föreningar', value: stats?.totalCommunities || 0, icon: CommunityIcon },
+            { label: 'Klubbar', value: stats?.totalClubs || 0, icon: CommunityIcon },
+            { label: 'Klasser', value: stats?.totalClasses || 0, icon: UserIcon },
+            { label: 'Säljare', value: stats?.totalSellers || 0, icon: UserIcon },
+            { label: 'Företag', value: stats?.totalCompanies || 0, icon: ShoppingBagIcon },
+            { label: 'Lagerpartner', value: stats?.totalWarehouses || 0, icon: TruckIcon },
+            { label: 'Försäljning', value: `${(stats?.totalSales || 0).toLocaleString()} kr`, icon: MoneyIcon },
+            { label: 'Ordrar', value: stats?.totalOrders || 0, icon: DashboardIcon },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              className={`bg-white rounded-2xl shadow-lg p-6 border-2 ${
-                stat.color === 'primary' ? 'border-primary-200' :
-                stat.color === 'orange' ? 'border-orange-200' :
-                'border-green-200'
-              }`}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={36} className="text-primary-900" />
+                <stat.icon size={36} className="icon-brand" />
               </div>
               <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
             </motion.div>
@@ -287,24 +262,24 @@ export default function AdminDashboard() {
         </div>
 
         {/* Alert Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
           {[
-            { label: 'Aktiva användare', value: stats?.activeUsers || 0, icon: UserIcon },
-            { label: 'Väntande rapporter', value: stats?.pendingReports || 0, icon: AlertIcon, alert: true },
-            { label: 'Inaktiva entiteter', value: stats?.inactiveEntities || 0, icon: AlertIcon, alert: true },
+            { label: 'Aktiva användare', value: stats?.activeUsers || 0, icon: UserIcon, color: 'blue' },
+            { label: 'Väntande rapporter', value: stats?.pendingReports || 0, icon: AlertIcon, color: 'red' },
+            { label: 'Inaktiva entiteter', value: stats?.inactiveEntities || 0, icon: AlertIcon, color: 'red' },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8 + index * 0.1 }}
-              className={`bg-white rounded-2xl shadow-lg p-6 border-2 ${
-                stat.alert ? 'border-red-200' : 'border-blue-200'
+              transition={{ delay: 0.4 + index * 0.05 }}
+              className={`bg-white rounded-2xl shadow-sm p-6 border-2 ${
+                stat.color === 'red' ? 'border-red-200' : 'border-blue-200'
               }`}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={36} className={stat.alert ? 'text-red-600' : 'text-blue-600'} />
+                <stat.icon size={36} className={stat.color === 'red' ? 'text-red-600' : 'text-blue-600'} />
               </div>
               <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
             </motion.div>
@@ -312,19 +287,19 @@ export default function AdminDashboard() {
         </div>
 
         {/* Gamification Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
-            { label: 'Totalt XP', value: `${(stats?.totalXP || 0).toLocaleString()}`, icon: XPIcon, color: 'purple' },
-            { label: 'Genomsnittlig Level', value: stats?.totalLevels ? (stats.totalLevels / (stats.totalSellers || 1)).toFixed(1) : '0', icon: LevelIcon, color: 'purple' },
-            { label: 'Totala Märken', value: stats?.totalBadges || 0, icon: BadgeIcon, color: 'purple' },
-            { label: 'Loot Boxes', value: stats?.totalLootBoxes || 0, icon: TrophyIcon, color: 'purple' },
+            { label: 'Totalt XP', value: `${(stats?.totalXP || 0).toLocaleString()}`, icon: XPIcon },
+            { label: 'Genomsnittlig Level', value: stats?.totalLevels ? (stats.totalLevels / (stats.totalSellers || 1)).toFixed(1) : '0', icon: LevelIcon },
+            { label: 'Totala Märken', value: stats?.totalBadges || 0, icon: BadgeIcon },
+            { label: 'Loot Boxes', value: stats?.totalLootBoxes || 0, icon: TrophyIcon },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.1 + index * 0.1 }}
-              className="bg-white rounded-2xl shadow-lg p-6 border-2 border-purple-200"
+              transition={{ delay: 0.55 + index * 0.05 }}
+              className="bg-white rounded-2xl shadow-sm p-6 border-2 border-purple-200"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
@@ -339,8 +314,8 @@ export default function AdminDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="bg-white rounded-2xl shadow-lg p-6 mb-6"
+          transition={{ delay: 0.6 }}
+          className="bg-white rounded-2xl shadow-sm p-6 mb-6"
         >
           <div className="flex gap-4 mb-6">
             {['overview', 'entities', 'reports', 'messages'].map((tab) => (
@@ -376,10 +351,10 @@ export default function AdminDashboard() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl"
+                        className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl bg-white"
                       >
-                        <div className="bg-primary-100 rounded-lg p-3">
-                          <ActivityIcon size={24} className="text-primary-900" />
+                        <div className="bg-primary-50 rounded-lg p-3">
+                          <ActivityIcon size={24} className="icon-brand" />
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-gray-900">{activity.entity}</p>
