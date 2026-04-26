@@ -7,6 +7,7 @@ import { AuthProvider } from '@/lib/auth-context'
 import Navbar from '@/app/components/Navbar'
 import Footer from '@/app/components/Footer'
 import ChatWidget from '@/app/components/ChatWidget'
+import SessionTimeoutWarning from '@/app/components/SessionTimeoutWarning'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -45,6 +46,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <ChatWidget />
+          <SessionTimeoutWarning />
         </AuthProvider>
       </body>
     </html>

@@ -24,6 +24,7 @@ interface AuthContextType {
   signInWithOAuth: (provider: 'google' | 'facebook') => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
+  extendSession: () => void; // Extend session timeout
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +35,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Session timeout
+  const [sessionTimeout, setSessionTimeout] = useState<number>(30 * 60 * 1000); // Default 30 minutes
+  const [warningTimeout, setWarningTimeout] = useState<number>(60 * 1000); // Warning 1 minute before logout
+  const [lastActivity, setLastActivity] = useState<number>(Date.now());
+  const [showWarning, setShowWarning] = useState(false);
+
   const supabase = createClientComponentClient();
+
+  // Load user's timeout preference from profile metadata
+  useEffect(() => {
+    if (profile?.metadata?.session_timeout) {
+      setSessionTimeout(profile.metadata.session_timeout * 60 * 1000); // Convert minutes to ms
+    }
+  }, [profile]);
+
+  // Activity detection
+  useEffect(() => {
+    if (!user) return;
+
+    const handleActivity = () => {
+      setLastActivity(Date.now());
+      setShowWarning(false);
+    };
+
+    // Listen for user activity
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('keydown', handleActivity);
+    window.addEventListener('scroll', handleActivity);
+    window.addEventListener('click', handleActivity);
+
+    return () => {
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('click', handleActivity);
+    };
+  }, [user]);
+
+  // Session timeout check
+  useEffect(() => {
+    if (!user) return;
+
+    const checkTimeout = () => {
+      const now = Date.now();
+      const inactiveTime = now - lastActivity;
+
+      // Show warning 1 minute before timeout
+      if (inactiveTime >= sessionTimeout - warningTimeout && inactiveTime < sessionTimeout) {
+        setShowWarning(true);
+      }
+
+      // Logout if timeout exceeded
+      if (inactiveTime >= sessionTimeout) {
+        handleSignOut();
+      }
+    };
+
+    const interval = setInterval(checkTimeout, 1000); // Check every second
+
+    return () => clearInterval(interval);
+  }, [user, lastActivity, sessionTimeout, warningTimeout]);
 
   useEffect(() => {
     // Get initial session
@@ -119,6 +180,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
+  const extendSession = () => {
+    setLastActivity(Date.now());
+    setShowWarning(false);
+  };
+
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return;
 
@@ -143,6 +213,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signInWithOAuth,
     signOut,
     updateProfile,
+    extendSession,
+    showWarning,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
