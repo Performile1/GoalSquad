@@ -137,7 +137,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         console.error('Error fetching profile:', error);
         // If profile fetch fails, create a minimal profile object
-        // This ensures the app doesn't break if profile doesn't exist
         const { data: userData } = await supabase.auth.getUser();
         const userEmail = userData?.user?.email;
         
@@ -165,7 +164,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } else {
-        setProfile(data);
+        // Check entity tables to determine correct role
+        const [merchant, seller, warehouse, community] = await Promise.all([
+          supabase.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
+        ]);
+
+        // Determine correct role based on entity associations
+        let correctRole = data.role;
+        if (warehouse.data?.id) {
+          correctRole = 'warehouse';
+        } else if (merchant.data?.id) {
+          correctRole = 'merchant';
+        } else if (seller.data?.id) {
+          correctRole = 'seller';
+        } else if (community.data?.id) {
+          correctRole = 'community';
+        } else if (data.role === 'gs_admin' || data.role === 'admin') {
+          correctRole = 'gs_admin';
+        }
+
+        // Update profile with correct role if different
+        setProfile({
+          ...data,
+          role: correctRole,
+        });
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
