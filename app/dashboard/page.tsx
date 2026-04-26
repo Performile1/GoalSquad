@@ -32,65 +32,69 @@ export default function DashboardPage() {
   }>({ merchant: null, seller: null, warehouse: null, community: null });
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/login');
-      return;
-    }
-
-    if (!loading && user && profile) {
-      const supabase = createClientComponentClient();
-
-      // Special handling for admin email
-      if (user.email === 'admin@goalsquad.se' || profile.role === 'gs_admin') {
-        router.replace('/admin/dashboard');
+    const checkRoles = async () => {
+      if (!loading && !user) {
+        router.push('/auth/login');
         return;
       }
 
-      // Check for multiple roles by querying all role tables
-      const [merchant, seller, warehouse, community] = await Promise.all([
-        supabase.from('merchants').select('id').eq('user_id', user.id).maybeSingle(),
-        supabase.from('seller_profiles').select('id').eq('user_id', user.id).maybeSingle(),
-        supabase.from('warehouse_partners').select('id').eq('user_id', user.id).maybeSingle(),
-        supabase.from('communities').select('id').eq('owner_id', user.id).maybeSingle(),
-      ]);
+      if (!loading && user && profile) {
+        const supabase = createClientComponentClient();
 
-      // Store roles in state for role switcher
-      setUserRoles({
-        merchant: merchant.data,
-        seller: seller.data,
-        warehouse: warehouse.data,
-        community: community.data,
-      });
+        // Special handling for admin email
+        if (user.email === 'admin@goalsquad.se' || profile.role === 'gs_admin') {
+          router.replace('/admin/dashboard');
+          return;
+        }
 
-      // Priority order: warehouse > merchant > seller > community > consumer
-      if (warehouse.data?.id) {
-        router.replace(`/warehouses/${warehouse.data.id}/dashboard`);
-      } else if (profile.role === 'merchant' && merchant.data?.id) {
-        router.replace(`/merchants/${merchant.data.id}/dashboard`);
-      } else if (profile.role === 'merchant') {
-        router.replace('/merchants/onboard');
-      } else if (profile.role === 'seller' && seller.data?.id) {
-        router.replace(`/sellers/${seller.data.id}/dashboard`);
-      } else if (profile.role === 'seller') {
-        router.replace('/sellers/join');
-      } else if (profile.role === 'community' && community.data?.id) {
-        router.replace(`/communities/${community.data.id}/dashboard`);
-      } else if (profile.role === 'community') {
-        router.replace('/communities');
-      } else if (merchant.data?.id) {
-        // User is merchant but profile.role not set correctly
-        router.replace(`/merchants/${merchant.data.id}/dashboard`);
-      } else if (seller.data?.id) {
-        // User is seller but profile.role not set correctly
-        router.replace(`/sellers/${seller.data.id}/dashboard`);
-      } else if (community.data?.id) {
-        // User is community owner but profile.role not set correctly
-        router.replace(`/communities/${community.data.id}/dashboard`);
-      } else {
-        // Consumer - stay on dashboard
-        setCheckingRole(false);
+        // Check for multiple roles by querying all role tables
+        const [merchant, seller, warehouse, community] = await Promise.all([
+          supabase.from('merchants').select('id').eq('user_id', user.id).maybeSingle(),
+          supabase.from('seller_profiles').select('id').eq('user_id', user.id).maybeSingle(),
+          supabase.from('warehouse_partners').select('id').eq('user_id', user.id).maybeSingle(),
+          supabase.from('communities').select('id').eq('owner_id', user.id).maybeSingle(),
+        ]);
+
+        // Store roles in state for role switcher
+        setUserRoles({
+          merchant: merchant.data,
+          seller: seller.data,
+          warehouse: warehouse.data,
+          community: community.data,
+        });
+
+        // Priority order: warehouse > merchant > seller > community > consumer
+        if (warehouse.data?.id) {
+          router.replace(`/warehouses/${warehouse.data.id}/dashboard`);
+        } else if (profile.role === 'merchant' && merchant.data?.id) {
+          router.replace(`/merchants/${merchant.data.id}/dashboard`);
+        } else if (profile.role === 'merchant') {
+          router.replace('/merchants/onboard');
+        } else if (profile.role === 'seller' && seller.data?.id) {
+          router.replace(`/sellers/${seller.data.id}/dashboard`);
+        } else if (profile.role === 'seller') {
+          router.replace('/sellers/join');
+        } else if (profile.role === 'community' && community.data?.id) {
+          router.replace(`/communities/${community.data.id}/dashboard`);
+        } else if (profile.role === 'community') {
+          router.replace('/communities');
+        } else if (merchant.data?.id) {
+          // User is merchant but profile.role not set correctly
+          router.replace(`/merchants/${merchant.data.id}/dashboard`);
+        } else if (seller.data?.id) {
+          // User is seller but profile.role not set correctly
+          router.replace(`/sellers/${seller.data.id}/dashboard`);
+        } else if (community.data?.id) {
+          // User is community owner but profile.role not set correctly
+          router.replace(`/communities/${community.data.id}/dashboard`);
+        } else {
+          // Consumer - stay on dashboard
+          setCheckingRole(false);
+        }
       }
-    }
+    };
+
+    checkRoles();
   }, [user, profile, loading, router]);
 
   if (loading || checkingRole) {
