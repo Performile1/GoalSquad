@@ -24,6 +24,12 @@ export default function DashboardPage() {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
   const [checkingRole, setCheckingRole] = useState(false);
+  const [userRoles, setUserRoles] = useState<{
+    merchant: { id: string } | null;
+    seller: { id: string } | null;
+    warehouse: { id: string } | null;
+    community: { id: string } | null;
+  }>({ merchant: null, seller: null, warehouse: null, community: null });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -40,44 +46,49 @@ export default function DashboardPage() {
         return;
       }
 
-      if (profile.role === 'merchant') {
-        supabase.from('merchants').select('id').eq('user_id', user.id).single()
-          .then(({ data }) => {
-            if (data?.id) router.replace(`/merchants/${data.id}/dashboard`);
-            else router.replace('/merchants/onboard');
-          });
-      } else if (profile.role === 'warehouse') {
-        supabase.from('warehouse_partners').select('id').eq('user_id', user.id).single()
-          .then(({ data }) => {
-            if (data?.id) router.replace(`/warehouses/${data.id}/dashboard`);
-            else router.replace('/warehouses/onboard');
-          });
+      // Check for multiple roles by querying all role tables
+      const [merchant, seller, warehouse, community] = await Promise.all([
+        supabase.from('merchants').select('id').eq('user_id', user.id).maybeSingle(),
+        supabase.from('seller_profiles').select('id').eq('user_id', user.id).maybeSingle(),
+        supabase.from('warehouse_partners').select('id').eq('user_id', user.id).maybeSingle(),
+        supabase.from('communities').select('id').eq('owner_id', user.id).maybeSingle(),
+      ]);
+
+      // Store roles in state for role switcher
+      setUserRoles({
+        merchant: merchant.data,
+        seller: seller.data,
+        warehouse: warehouse.data,
+        community: community.data,
+      });
+
+      // Priority order: warehouse > merchant > seller > community > consumer
+      if (warehouse.data?.id) {
+        router.replace(`/warehouses/${warehouse.data.id}/dashboard`);
+      } else if (profile.role === 'merchant' && merchant.data?.id) {
+        router.replace(`/merchants/${merchant.data.id}/dashboard`);
+      } else if (profile.role === 'merchant') {
+        router.replace('/merchants/onboard');
+      } else if (profile.role === 'seller' && seller.data?.id) {
+        router.replace(`/sellers/${seller.data.id}/dashboard`);
       } else if (profile.role === 'seller') {
-        supabase.from('seller_profiles').select('id').eq('user_id', user.id).single()
-          .then(({ data }) => {
-            if (data?.id) router.replace(`/sellers/${data.id}/dashboard`);
-            else router.replace('/sellers/join');
-          });
+        router.replace('/sellers/join');
+      } else if (profile.role === 'community' && community.data?.id) {
+        router.replace(`/communities/${community.data.id}/dashboard`);
       } else if (profile.role === 'community') {
-        supabase.from('communities').select('id').eq('owner_id', user.id).single()
-          .then(({ data }) => {
-            if (data?.id) router.replace(`/communities/${data.id}/dashboard`);
-            else router.replace('/communities');
-          });
+        router.replace('/communities');
+      } else if (merchant.data?.id) {
+        // User is merchant but profile.role not set correctly
+        router.replace(`/merchants/${merchant.data.id}/dashboard`);
+      } else if (seller.data?.id) {
+        // User is seller but profile.role not set correctly
+        router.replace(`/sellers/${seller.data.id}/dashboard`);
+      } else if (community.data?.id) {
+        // User is community owner but profile.role not set correctly
+        router.replace(`/communities/${community.data.id}/dashboard`);
       } else {
-        setCheckingRole(true);
-        Promise.all([
-          supabase.from('merchants').select('id').eq('user_id', user.id).maybeSingle(),
-          supabase.from('seller_profiles').select('id').eq('user_id', user.id).maybeSingle(),
-          supabase.from('warehouse_partners').select('id').eq('user_id', user.id).maybeSingle(),
-          supabase.from('communities').select('id').eq('owner_id', user.id).maybeSingle(),
-        ]).then(([merchant, seller, warehouse, community]) => {
-          if (merchant.data?.id) router.replace(`/merchants/${merchant.data.id}/dashboard`);
-          else if (seller.data?.id) router.replace(`/sellers/${seller.data.id}/dashboard`);
-          else if (warehouse.data?.id) router.replace(`/warehouses/${warehouse.data.id}/dashboard`);
-          else if (community.data?.id) router.replace(`/communities/${community.data.id}/dashboard`);
-          else setCheckingRole(false);
-        });
+        // Consumer - stay on dashboard
+        setCheckingRole(false);
       }
     }
   }, [user, profile, loading, router]);
@@ -127,6 +138,47 @@ export default function DashboardPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* Role Switcher for users with multiple roles */}
+        {Object.values(userRoles).filter(Boolean).length > 1 && (
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Byt vy</h2>
+            <div className="flex flex-wrap gap-3">
+              {userRoles.warehouse && (
+                <Link
+                  href={`/warehouses/${userRoles.warehouse.id}/dashboard`}
+                  className="px-4 py-2 bg-primary-100 text-primary-900 rounded-lg font-semibold hover:bg-primary-200 transition"
+                >
+                  Lagerpartner
+                </Link>
+              )}
+              {userRoles.merchant && (
+                <Link
+                  href={`/merchants/${userRoles.merchant.id}/dashboard`}
+                  className="px-4 py-2 bg-orange-100 text-orange-900 rounded-lg font-semibold hover:bg-orange-200 transition"
+                >
+                  Merchant
+                </Link>
+              )}
+              {userRoles.seller && (
+                <Link
+                  href={`/sellers/${userRoles.seller.id}/dashboard`}
+                  className="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg font-semibold hover:bg-blue-200 transition"
+                >
+                  Säljare
+                </Link>
+              )}
+              {userRoles.community && (
+                <Link
+                  href={`/communities/${userRoles.community.id}/dashboard`}
+                  className="px-4 py-2 bg-green-100 text-green-900 rounded-lg font-semibold hover:bg-green-200 transition"
+                >
+                  Förening
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
         <h2 className="text-xl font-bold text-gray-900 mb-5">Snabblänkar</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
           {quickLinks.map((link) => (
