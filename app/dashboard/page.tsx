@@ -34,9 +34,13 @@ export default function DashboardPage() {
     if (!loading && user && profile) {
       const supabase = createClientComponentClient();
 
-      if (profile.role === 'gs_admin') {
+      // Special handling for admin email
+      if (user.email === 'admin@goalsquad.se' || profile.role === 'gs_admin') {
         router.replace('/admin/dashboard');
-      } else if (profile.role === 'merchant') {
+        return;
+      }
+
+      if (profile.role === 'merchant') {
         supabase.from('merchants').select('id').eq('user_id', user.id).single()
           .then(({ data }) => {
             if (data?.id) router.replace(`/merchants/${data.id}/dashboard`);

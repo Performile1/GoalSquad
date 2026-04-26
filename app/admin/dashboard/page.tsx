@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 import { DashboardIcon, UserIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, XPIcon, LevelIcon, BadgeIcon, TrophyIcon, MessageIcon } from '@/app/components/BrandIcons';
 
 interface AdminStats {
@@ -45,15 +46,27 @@ interface RecentActivity {
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const { user, profile, loading } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [entities, setEntities] = useState<EntitySummary[]>([]);
   const [activities, setActivities] = useState<RecentActivity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'entities' | 'reports' | 'messages'>('overview');
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!loading) {
+      if (!user) {
+        router.push('/auth/login');
+        return;
+      }
+      // Allow access for gs_admin role or admin@goalsquad.se email
+      if (!profile || (profile.role !== 'gs_admin' && user.email !== 'admin@goalsquad.se')) {
+        router.push('/dashboard');
+        return;
+      }
+      fetchData();
+    }
+  }, [user, profile, loading, router]);
 
   const fetchData = async () => {
     try {
@@ -73,7 +86,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Failed to fetch admin data:', error);
     } finally {
-      setLoading(false);
+      setLoadingData(false);
     }
   };
 
@@ -121,7 +134,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) {
+  if (loading || loadingData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
