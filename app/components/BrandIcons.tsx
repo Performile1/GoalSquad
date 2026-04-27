@@ -99,6 +99,16 @@ export function MerchantIcon({ size = 48, className = '' }: IconProps) {
   );
 }
 
+export function LockIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="12" y="20" width="24" height="20" rx="3" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M16 20v-8a8 8 0 0116 0v8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="30" r="3" fill={P} />
+    </svg>
+  );
+}
+
 export function RunnerIcon({ size = 48, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
