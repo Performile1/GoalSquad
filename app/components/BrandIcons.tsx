@@ -794,15 +794,6 @@ export function TrashIcon({ size = 20, className = '' }: IconProps) {
   );
 }
 
-export function GlobeIcon({ size = 20, className = '' }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <circle cx="12" cy="12" r="10" stroke={P} strokeWidth="2" />
-      <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10M12 2a15.3 15.3 0 00-4 10 15.3 15.3 0 004 10" stroke={P} strokeWidth="2" />
-    </svg>
-  );
-}
-
 export function SaveIcon({ size = 20, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
