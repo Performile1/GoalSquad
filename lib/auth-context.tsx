@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { User, Session } from '@supabase/supabase-js';
+import { createClient, User, Session } from '@supabase/supabase-js';
 
 interface Profile {
   id: string;
