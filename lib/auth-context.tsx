@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { createClient, User, Session } from '@supabase/supabase-js';
+import { User, Session } from '@supabase/supabase-js';
 
 interface Profile {
   id: string;
@@ -164,17 +164,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } else {
-        // Check entity tables to determine correct role using service role
-        const serviceRoleClient = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-        );
-        
+        // Check entity tables to determine correct role using regular client
+        // RLS policies now allow users to read their own entity records
         const [merchant, seller, warehouse, community] = await Promise.all([
-          serviceRoleClient.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
-          serviceRoleClient.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
-          serviceRoleClient.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
-          serviceRoleClient.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
+          supabase.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
+          supabase.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
         ]);
 
         // Determine correct role based on entity associations
