@@ -5,7 +5,6 @@ import { useAuth } from '@/lib/auth-context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AlertIcon } from '@/app/components/BrandIcons';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 function GoogleLogo() {
   return (
@@ -62,76 +61,15 @@ export default function LoginPage() {
 
     try {
       const { data, error } = await signIn(email, password);
-      
+
       if (error) {
         setError(error.message);
       } else if (data.user) {
-        // Fetch profile to determine role-based redirect
-        const supabase = createClientComponentClient();
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
         // Check if redirect is specified, otherwise use role-based routing
         if (redirect !== '/dashboard') {
           router.push(redirect);
-        } else if (profile?.role === 'gs_admin') {
-          router.push('/admin/dashboard');
-        } else if (profile?.role === 'merchant') {
-          // Fetch merchant_id and redirect to merchant dashboard
-          const { data: merchant } = await supabase
-            .from('merchants')
-            .select('id')
-            .eq('user_id', data.user.id)
-            .single();
-          
-          if (merchant?.id) {
-            router.push(`/merchants/${merchant.id}/dashboard`);
-          } else {
-            router.push('/merchants/onboard');
-          }
-        } else if (profile?.role === 'warehouse') {
-          // Fetch warehouse_id and redirect to warehouse dashboard
-          const { data: warehouse } = await supabase
-            .from('warehouse_partners')
-            .select('id')
-            .eq('user_id', data.user.id)
-            .single();
-          
-          if (warehouse?.id) {
-            router.push(`/warehouses/${warehouse.id}/dashboard`);
-          } else {
-            router.push('/warehouses/onboard');
-          }
-        } else if (profile?.role === 'seller') {
-          // Fetch seller_id and redirect to seller dashboard
-          const { data: seller } = await supabase
-            .from('seller_profiles')
-            .select('id')
-            .eq('user_id', data.user.id)
-            .single();
-          
-          if (seller?.id) {
-            router.push(`/sellers/${seller.id}/dashboard`);
-          } else {
-            router.push('/sellers/join');
-          }
-        } else if (profile?.role === 'community') {
-          // Fetch community_id and redirect to community dashboard
-          const { data: community } = await supabase
-            .from('communities')
-            .select('id')
-            .eq('owner_id', data.user.id)
-            .single();
-          
-          if (community?.id) {
-            router.push(`/communities/${community.id}/dashboard`);
-          } else {
-            router.push('/communities');
-          }
         } else {
+          // Use auth-context to handle role-based redirect
           router.push('/dashboard');
         }
       }

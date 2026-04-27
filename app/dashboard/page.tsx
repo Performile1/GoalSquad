@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import {
   ShopIcon, OrdersIcon, CommunityIcon, MessageIcon, LeaderboardIcon,
   MerchantIcon, UserIcon, VerifiedIcon,
@@ -39,54 +38,48 @@ export default function DashboardPage() {
       }
 
       if (!loading && user && profile) {
-        const supabase = createClientComponentClient();
-
         // Special handling for admin email
         if (user.email === 'admin@goalsquad.se' || profile.role === 'gs_admin') {
           router.replace('/admin/dashboard');
           return;
         }
 
-        // Check for multiple roles by querying all role tables
-        const [merchant, seller, warehouse, community] = await Promise.all([
-          supabase.from('merchants').select('id').eq('user_id', user.id).maybeSingle(),
-          supabase.from('seller_profiles').select('id').eq('user_id', user.id).maybeSingle(),
-          supabase.from('warehouse_partners').select('id').eq('user_id', user.id).maybeSingle(),
-          supabase.from('communities').select('id').eq('owner_id', user.id).maybeSingle(),
-        ]);
+        // Check for multiple roles using API endpoint with service role
+        const entityResponse = await fetch(`/api/auth/check-entity-role?userId=${user.id}`);
+        const entityData = await entityResponse.json();
 
         // Store roles in state for role switcher
         setUserRoles({
-          merchant: merchant.data,
-          seller: seller.data,
-          warehouse: warehouse.data,
-          community: community.data,
+          merchant: entityData.merchant ? { id: entityData.merchant } : null,
+          seller: entityData.seller ? { id: entityData.seller } : null,
+          warehouse: entityData.warehouse ? { id: entityData.warehouse } : null,
+          community: entityData.community ? { id: entityData.community } : null,
         });
 
         // Priority order: warehouse > merchant > seller > community > consumer
-        if (warehouse.data?.id) {
-          router.replace(`/warehouses/${warehouse.data.id}/dashboard`);
-        } else if (profile.role === 'merchant' && merchant.data?.id) {
-          router.replace(`/merchants/${merchant.data.id}/dashboard`);
+        if (entityData.warehouse) {
+          router.replace(`/warehouses/${entityData.warehouse}/dashboard`);
+        } else if (profile.role === 'merchant' && entityData.merchant) {
+          router.replace(`/merchants/${entityData.merchant}/dashboard`);
         } else if (profile.role === 'merchant') {
           router.replace('/merchants/onboard');
-        } else if (profile.role === 'seller' && seller.data?.id) {
-          router.replace(`/sellers/${seller.data.id}/dashboard`);
+        } else if (profile.role === 'seller' && entityData.seller) {
+          router.replace(`/sellers/${entityData.seller}/dashboard`);
         } else if (profile.role === 'seller') {
           router.replace('/sellers/join');
-        } else if (profile.role === 'community' && community.data?.id) {
-          router.replace(`/communities/${community.data.id}/dashboard`);
+        } else if (profile.role === 'community' && entityData.community) {
+          router.replace(`/communities/${entityData.community}/dashboard`);
         } else if (profile.role === 'community') {
           router.replace('/communities');
-        } else if (merchant.data?.id) {
+        } else if (entityData.merchant) {
           // User is merchant but profile.role not set correctly
-          router.replace(`/merchants/${merchant.data.id}/dashboard`);
-        } else if (seller.data?.id) {
+          router.replace(`/merchants/${entityData.merchant}/dashboard`);
+        } else if (entityData.seller) {
           // User is seller but profile.role not set correctly
-          router.replace(`/sellers/${seller.data.id}/dashboard`);
-        } else if (community.data?.id) {
+          router.replace(`/sellers/${entityData.seller}/dashboard`);
+        } else if (entityData.community) {
           // User is community owner but profile.role not set correctly
-          router.replace(`/communities/${community.data.id}/dashboard`);
+          router.replace(`/communities/${entityData.community}/dashboard`);
         } else {
           // Consumer - stay on dashboard
           setCheckingRole(false);
