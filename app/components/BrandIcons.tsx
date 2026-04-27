@@ -109,6 +109,45 @@ export function LockIcon({ size = 48, className = '' }: IconProps) {
   );
 }
 
+export function BuildingIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="8" y="16" width="32" height="26" rx="2" fill={A} stroke={P} strokeWidth="2.5" />
+      <rect x="8" y="16" width="32" height="6" fill={P} />
+      <rect x="12" y="26" width="6" height="6" fill={P} />
+      <rect x="20" y="26" width="6" height="6" fill={P} />
+      <rect x="28" y="26" width="6" height="6" fill={P} />
+      <rect x="12" y="34" width="6" height="6" fill={P} />
+      <rect x="20" y="34" width="6" height="6" fill={P} />
+      <rect x="28" y="34" width="6" height="6" fill={P} />
+    </svg>
+  );
+}
+
+export function UsersIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="14" r="6" fill={A} stroke={P} strokeWidth="2" />
+      <circle cx="10" cy="18" r="5" fill={A} stroke={P} strokeWidth="2" />
+      <circle cx="38" cy="18" r="5" fill={A} stroke={P} strokeWidth="2" />
+      <path d="M14 38c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke={P} strokeWidth="2.5" strokeLinecap="round" fill={A} />
+      <path d="M2 40c0-4 3.134-7 7-7" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M46 40c0-4-3.134-7-7-7" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function GlobeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="24" r="18" fill={A} stroke={P} strokeWidth="2.5" />
+      <ellipse cx="24" cy="24" rx="18" ry="8" stroke={P} strokeWidth="2" />
+      <line x1="24" y1="6" x2="24" y2="42" stroke={P} strokeWidth="2" />
+      <line x1="6" y1="24" x2="42" y2="24" stroke={P} strokeWidth="2" />
+    </svg>
+  );
+}
+
 export function RunnerIcon({ size = 48, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
