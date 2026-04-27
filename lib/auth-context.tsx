@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 import { User, Session } from '@supabase/supabase-js';
 
 interface Profile {
@@ -167,24 +168,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } else {
-        // Check entity tables to determine correct role using regular client
-        // RLS policies now allow users to read their own entity records
-        const [merchant, seller, warehouse, community] = await Promise.all([
-          supabase.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
-        ]);
+        // Check entity tables to determine correct role using API endpoint with service role
+        // This bypasses RLS for these internal role determination queries
+        const entityResponse = await fetch(`/api/auth/check-entity-role?userId=${userId}`);
+        const entityData = await entityResponse.json();
 
         // Determine correct role based on entity associations
         let correctRole = data.role;
-        if (warehouse.data?.id) {
+        if (entityData.warehouse) {
           correctRole = 'warehouse';
-        } else if (merchant.data?.id) {
+        } else if (entityData.merchant) {
           correctRole = 'merchant';
-        } else if (seller.data?.id) {
+        } else if (entityData.seller) {
           correctRole = 'seller';
-        } else if (community.data?.id) {
+        } else if (entityData.community) {
           correctRole = 'community';
         } else if (data.role === 'gs_admin' || data.role === 'admin') {
           correctRole = 'gs_admin';
