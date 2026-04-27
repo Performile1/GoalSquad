@@ -1,6 +1,8 @@
+import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { getAuthUser } from '@/lib/api-auth';
+
+export const dynamic = 'force-dynamic';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

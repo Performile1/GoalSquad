@@ -6,8 +6,16 @@
  *   page, pageSize, sortField, sortDir, search, role, active
  */
 
+import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+export const dynamic = 'force-dynamic';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,7 +36,7 @@ export async function GET(req: NextRequest) {
     };
     const safeSort = fieldMap[sortField] ?? 'created_at';
 
-    let query = supabaseAdmin
+    let query = supabase
       .from('profiles')
       .select(
         `id, email, full_name, display_name, avatar_url, role, is_active, created_at,
