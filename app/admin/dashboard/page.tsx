@@ -250,18 +250,18 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200"
+              className="bg-white rounded-2xl shadow-sm p-4 border-2 border-gray-200"
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={36} className="icon-brand" />
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-gray-700">{stat.label}</h3>
+                <stat.icon size={24} className="icon-brand" />
               </div>
-              <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
             </motion.div>
           ))}
         </div>
 
-        {/* Alert Stats */}
+        {/* Alert Stats - Dark Petrol Background */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
           {[
             { label: 'Aktiva användare', value: stats?.activeUsers || 0, icon: UserIcon, color: 'blue' },
@@ -273,20 +273,20 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 + index * 0.05 }}
-              className={`bg-white rounded-2xl shadow-sm p-6 border-2 ${
-                stat.color === 'red' ? 'border-red-200' : 'border-blue-200'
+              className={`bg-primary-900 rounded-2xl shadow-sm p-4 border-2 ${
+                stat.color === 'red' ? 'border-red-300' : 'border-blue-300'
               }`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={36} className={stat.color === 'red' ? 'text-red-600' : 'text-blue-600'} />
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-white">{stat.label}</h3>
+                <stat.icon size={24} className={stat.color === 'red' ? 'text-red-300' : 'text-blue-300'} />
               </div>
-              <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-2xl font-bold text-white">{stat.value}</div>
             </motion.div>
           ))}
         </div>
 
-        {/* Gamification Stats */}
+        {/* Gamification Stats - Light Petrol Background */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             { label: 'Totalt XP', value: `${(stats?.totalXP || 0).toLocaleString()}`, icon: XPIcon },
@@ -299,13 +299,13 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.55 + index * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm p-6 border-2 border-purple-200"
+              className="bg-primary-50 rounded-2xl shadow-sm p-4 border-2 border-primary-200"
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={36} className="text-purple-600" />
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-gray-700">{stat.label}</h3>
+                <stat.icon size={24} className="icon-brand" />
               </div>
-              <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
             </motion.div>
           ))}
         </div>
