@@ -132,67 +132,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      // Fetch profile using API endpoint with service role to bypass RLS
+      const profileResponse = await fetch(`/api/auth/get-profile?userId=${userId}`);
+      const data = await profileResponse.json();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        // If profile fetch fails, create a minimal profile object
-        const { data: userData } = await supabase.auth.getUser();
-        const userEmail = userData?.user?.email;
-        
-        // Fallback for admin user
-        if (userEmail === 'admin@goalsquad.se') {
-          setProfile({
-            id: userId,
-            email: userEmail || 'admin@goalsquad.se',
-            full_name: 'Admin',
-            avatar_url: null,
-            role: 'gs_admin',
-            is_active: true,
-            is_verified: true,
-          });
-        } else {
-          // Set a default profile for other users
-          setProfile({
-            id: userId,
-            email: userEmail || '',
-            full_name: null,
-            avatar_url: null,
-            role: 'user',
-            is_active: true,
-            is_verified: false,
-          });
-        }
-      } else {
-        // Check entity tables to determine correct role using API endpoint with service role
-        // This bypasses RLS for these internal role determination queries
-        const entityResponse = await fetch(`/api/auth/check-entity-role?userId=${userId}`);
-        const entityData = await entityResponse.json();
-
-        // Determine correct role based on entity associations
-        let correctRole = data.role;
-        if (entityData.warehouse) {
-          correctRole = 'warehouse';
-        } else if (entityData.merchant) {
-          correctRole = 'merchant';
-        } else if (entityData.seller) {
-          correctRole = 'seller';
-        } else if (entityData.community) {
-          correctRole = 'community';
-        } else if (data.role === 'gs_admin' || data.role === 'admin') {
-          correctRole = 'gs_admin';
-        }
-
-        // Update profile with correct role if different
-        setProfile({
-          ...data,
-          role: correctRole,
-        });
+      if (!profileResponse.ok) {
+        throw new Error(data.error || 'Failed to fetch profile');
       }
+
+      // Check entity tables to determine correct role using API endpoint with service role
+      // This bypasses RLS for these internal role determination queries
+      const entityResponse = await fetch(`/api/auth/check-entity-role?userId=${userId}`);
+      const entityData = await entityResponse.json();
+
+      // Determine correct role based on entity associations
+      let correctRole = data.role;
+      if (entityData.warehouse) {
+        correctRole = 'warehouse';
+      } else if (entityData.merchant) {
+        correctRole = 'merchant';
+      } else if (entityData.seller) {
+        correctRole = 'seller';
+      } else if (entityData.community) {
+        correctRole = 'community';
+      } else if (data.role === 'gs_admin' || data.role === 'admin') {
+        correctRole = 'gs_admin';
+      }
+
+      // Update profile with correct role if different
+      setProfile({
+        ...data,
+        role: correctRole,
+      });
     } catch (error) {
       console.error('Error fetching profile:', error);
       // Set minimal profile on error
