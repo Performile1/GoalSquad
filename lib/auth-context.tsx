@@ -164,12 +164,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } else {
-        // Check entity tables to determine correct role
+        // Check entity tables to determine correct role using service role
+        const serviceRoleClient = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        
         const [merchant, seller, warehouse, community] = await Promise.all([
-          supabase.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
-          supabase.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
+          serviceRoleClient.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
+          serviceRoleClient.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
+          serviceRoleClient.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
+          serviceRoleClient.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
         ]);
 
         // Determine correct role based on entity associations
