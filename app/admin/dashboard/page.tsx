@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { DashboardIcon, UserIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, XPIcon, LevelIcon, BadgeIcon, TrophyIcon, MessageIcon } from '@/app/components/BrandIcons';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface AdminStats {
   totalCommunities: number;
@@ -52,6 +53,65 @@ export default function AdminDashboard() {
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'entities' | 'reports' | 'messages'>('overview');
+  const [selectedMetric, setSelectedMetric] = useState<'sales' | 'users' | 'warehouses' | 'orders' | 'returns'>('sales');
+  const [timeFilter, setTimeFilter] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
+
+  // Mock data for charts - replace with real API data
+  const salesData = [
+    { name: 'Jan', value: 40000 },
+    { name: 'Feb', value: 30000 },
+    { name: 'Mar', value: 20000 },
+    { name: 'Apr', value: 27800 },
+    { name: 'Maj', value: 18900 },
+    { name: 'Jun', value: 23900 },
+    { name: 'Jul', value: 34900 },
+  ];
+
+  const usersData = [
+    { name: 'Jan', value: 400 },
+    { name: 'Feb', value: 300 },
+    { name: 'Mar', value: 200 },
+    { name: 'Apr', value: 278 },
+    { name: 'Maj', value: 189 },
+    { name: 'Jun', value: 239 },
+    { name: 'Jul', value: 349 },
+  ];
+
+  const ordersData = [
+    { name: 'Jan', value: 2400 },
+    { name: 'Feb', value: 1398 },
+    { name: 'Mar', value: 9800 },
+    { name: 'Apr', value: 3908 },
+    { name: 'Maj', value: 4800 },
+    { name: 'Jun', value: 3800 },
+    { name: 'Jul', value: 4300 },
+  ];
+
+  const returnsData = [
+    { name: 'Jan', value: 400 },
+    { name: 'Feb', value: 300 },
+    { name: 'Mar', value: 200 },
+    { name: 'Apr', value: 278 },
+    { name: 'Maj', value: 189 },
+    { name: 'Jun', value: 239 },
+    { name: 'Jul', value: 349 },
+  ];
+
+  const warehouseData = [
+    { name: 'Aktiva', value: 45 },
+    { name: 'Inaktiva', value: 12 },
+    { name: 'Väntande', value: 8 },
+  ];
+
+  const entityDistribution = [
+    { name: 'Föreningar', value: 35 },
+    { name: 'Klubbar', value: 28 },
+    { name: 'Säljare', value: 45 },
+    { name: 'Företag', value: 22 },
+    { name: 'Lager', value: 45 },
+  ];
+
+  const COLORS = ['#1e3a5f', '#2d5a87', '#4a7ba7', '#6b9dc7', '#8bbce8'];
 
   useEffect(() => {
     if (!loading) {
@@ -145,9 +205,44 @@ export default function AdminDashboard() {
     );
   }
 
+  const getChartData = () => {
+    switch (selectedMetric) {
+      case 'sales':
+        return salesData;
+      case 'users':
+        return usersData;
+      case 'orders':
+        return ordersData;
+      case 'returns':
+        return returnsData;
+      case 'warehouses':
+        return warehouseData;
+      default:
+        return salesData;
+    }
+  };
+
+  const getChartTitle = () => {
+    switch (selectedMetric) {
+      case 'sales':
+        return 'Försäljning (kr)';
+      case 'users':
+        return 'Användare';
+      case 'orders':
+        return 'Ordrar';
+      case 'returns':
+        return 'Returer';
+      case 'warehouses':
+        return 'Lagerpartners';
+      default:
+        return 'Försäljning (kr)';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Main Content Area */}
+      <div className="flex-1 p-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -158,320 +253,202 @@ export default function AdminDashboard() {
           <p className="text-gray-600">Översikt över hela plattformen</p>
         </motion.div>
 
-        {/* Quick nav cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            {
-              href: '/admin/users',
-              icon: UserIcon,
-              title: 'Användare',
-              desc: 'Hantera profiler, roller och konton',
-            },
-            {
-              href: '/admin/sellers',
-              icon: UserIcon,
-              title: 'Säljare',
-              desc: 'Översikt över alla säljare',
-            },
-            {
-              href: '/admin/merchants',
-              icon: ShoppingBagIcon,
-              title: 'Företag',
-              desc: 'Översikt över alla merchants',
-            },
-            {
-              href: '/admin/communities',
-              icon: CommunityIcon,
-              title: 'Föreningar & Klubbar',
-              desc: 'Översikt över alla communities',
-            },
-            {
-              href: '/admin/warehouses',
-              icon: TruckIcon,
-              title: 'Lagerpartners',
-              desc: 'Översikt över alla lager',
-            },
-            {
-              href: '/admin/orders',
-              icon: DashboardIcon,
-              title: 'Ordrar',
-              desc: 'Översikt över alla ordrar',
-            },
-            {
-              href: '/admin/returns',
-              icon: AlertIcon,
-              title: 'Returer',
-              desc: 'Översikt över alla returer',
-            },
-            {
-              href: '/messages',
-              icon: MessageIcon,
-              title: 'Community Meddelanden',
-              desc: 'Kommunicera med säljare, föreningar och företag',
-            },
-            {
-              href: '/admin/blog',
-              icon: DashboardIcon,
-              title: 'Blogg',
-              desc: 'Hantera blogginlägg',
-            },
-          ].map((item) => (
-            <Link key={item.href} href={item.href} className="block">
-              <div className="rounded-2xl p-6 hover:shadow-md transition cursor-pointer flex items-center gap-4 bg-white border-2 border-gray-200">
-                <div className="p-3 rounded-xl bg-primary-50 elevation-petrol">
-                  <item.icon size={28} className="icon-brand" />
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-lg font-bold text-gray-900 mb-0.5">{item.title}</h2>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
-                </div>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Consolidated Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[
-            { label: 'Föreningar', value: stats?.totalCommunities || 0, icon: CommunityIcon },
-            { label: 'Klubbar', value: stats?.totalClubs || 0, icon: CommunityIcon },
-            { label: 'Klasser', value: stats?.totalClasses || 0, icon: UserIcon },
-            { label: 'Säljare', value: stats?.totalSellers || 0, icon: UserIcon },
-            { label: 'Företag', value: stats?.totalCompanies || 0, icon: ShoppingBagIcon },
-            { label: 'Lagerpartner', value: stats?.totalWarehouses || 0, icon: TruckIcon },
-            { label: 'Försäljning', value: `${(stats?.totalSales || 0).toLocaleString()} kr`, icon: MoneyIcon },
-            { label: 'Ordrar', value: stats?.totalOrders || 0, icon: DashboardIcon },
+            { label: 'Försäljning', value: `${(stats?.totalSales || 0).toLocaleString()} kr`, icon: MoneyIcon, change: '+12%' },
+            { label: 'Användare', value: stats?.activeUsers || 0, icon: UserIcon, change: '+8%' },
+            { label: 'Lagerpartner', value: stats?.totalWarehouses || 0, icon: TruckIcon, change: '+5%' },
+            { label: 'Ordrar', value: stats?.totalOrders || 0, icon: DashboardIcon, change: '+15%' },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm p-4 border-2 border-gray-200"
+              className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200"
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-semibold text-gray-700">{stat.label}</h3>
                 <stat.icon size={24} className="icon-brand" />
               </div>
-              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
+              <div className="text-sm text-green-600 font-semibold">{stat.change}</div>
             </motion.div>
           ))}
         </div>
 
-        {/* Alert Stats - Dark Petrol Background */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-          {[
-            { label: 'Aktiva användare', value: stats?.activeUsers || 0, icon: UserIcon, color: 'blue' },
-            { label: 'Väntande rapporter', value: stats?.pendingReports || 0, icon: AlertIcon, color: 'red' },
-            { label: 'Inaktiva entiteter', value: stats?.inactiveEntities || 0, icon: AlertIcon, color: 'red' },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 + index * 0.05 }}
-              className={`bg-primary-900 rounded-2xl shadow-sm p-4 border-2 ${
-                stat.color === 'red' ? 'border-red-300' : 'border-blue-300'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-white">{stat.label}</h3>
-                <stat.icon size={24} className={stat.color === 'red' ? 'text-red-300' : 'text-blue-300'} />
-              </div>
-              <div className="text-2xl font-bold text-white">{stat.value}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Gamification Stats - Light Petrol Background */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[
-            { label: 'Totalt XP', value: `${(stats?.totalXP || 0).toLocaleString()}`, icon: XPIcon },
-            { label: 'Genomsnittlig Level', value: stats?.totalLevels ? (stats.totalLevels / (stats.totalSellers || 1)).toFixed(1) : '0', icon: LevelIcon },
-            { label: 'Totala Märken', value: stats?.totalBadges || 0, icon: BadgeIcon },
-            { label: 'Loot Boxes', value: stats?.totalLootBoxes || 0, icon: TrophyIcon },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.55 + index * 0.05 }}
-              className="bg-primary-50 rounded-2xl shadow-sm p-4 border-2 border-primary-200"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={24} className="icon-brand" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-white rounded-2xl shadow-sm p-6 mb-6"
-        >
-          <div className="flex gap-4 mb-6">
-            {['overview', 'entities', 'reports', 'messages'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`px-6 py-3 rounded-xl font-semibold transition ${
-                  activeTab === tab
-                    ? 'bg-primary-900 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+        {/* Filters */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border-2 border-gray-200">
+          <div className="flex flex-wrap gap-4 items-center">
+            <div>
+              <label className="text-sm font-semibold text-gray-700 mb-2 block">Metric</label>
+              <select
+                value={selectedMetric}
+                onChange={(e) => setSelectedMetric(e.target.value as any)}
+                className="px-4 py-2 border-2 border-gray-200 rounded-xl"
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
+                <option value="sales">Försäljning</option>
+                <option value="users">Användare</option>
+                <option value="warehouses">Lagerpartners</option>
+                <option value="orders">Ordrar</option>
+                <option value="returns">Returer</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-700 mb-2 block">Tidsperiod</label>
+              <select
+                value={timeFilter}
+                onChange={(e) => setTimeFilter(e.target.value as any)}
+                className="px-4 py-2 border-2 border-gray-200 rounded-xl"
+              >
+                <option value="7d">Senaste 7 dagar</option>
+                <option value="30d">Senaste 30 dagar</option>
+                <option value="90d">Senaste 90 dagar</option>
+                <option value="1y">Senaste året</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Chart */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border-2 border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{getChartTitle()}</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={getChartData()}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke="#1e3a5f" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Secondary Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Entitetsfördelning</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={entityDistribution}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {entityDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
 
-          {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Senaste aktivitet</h2>
-              <div className="space-y-4">
-                {activities.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    Ingen nyligen aktivitet
-                  </div>
-                ) : (
-                  activities.slice(0, 10).map((activity, index) => {
-                    const ActivityIcon = getActivityIcon(activity.type);
-                    return (
-                      <motion.div
-                        key={activity.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl bg-white"
-                      >
-                        <div className="bg-primary-50 rounded-lg p-3">
-                          <ActivityIcon size={24} className="icon-brand" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-gray-900">{activity.entity}</p>
-                          <p className="text-sm text-gray-600">{activity.description}</p>
-                        </div>
-                        <span className="text-sm text-gray-500">
-                          {new Date(activity.timestamp).toLocaleString('sv-SE')}
-                        </span>
-                      </motion.div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          )}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Lagerpartners Status</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={warehouseData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#1e3a5f" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-          {/* Entities Tab */}
-          {activeTab === 'entities' && (
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Alla entiteter</h2>
-                <select className="px-4 py-2 border-2 border-gray-200 rounded-xl">
-                  <option>Alla typer</option>
-                  <option>Föreningar</option>
-                  <option>Klubbar</option>
-                  <option>Klasser</option>
-                  <option>Säljare</option>
-                  <option>Företag</option>
-                  <option>Lagerpartner</option>
-                </select>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Namn</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Typ</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Försäljning</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Ordrar</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Senast inloggad</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Rapporterad</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Åtgärder</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {entities.length === 0 ? (
-                      <tr>
-                        <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
-                          Inga entiteter hittades
-                        </td>
-                      </tr>
-                    ) : (
-                      entities.map((entity, index) => (
-                        <motion.tr
-                          key={entity.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="border-b border-gray-100 hover:bg-gray-50 transition"
-                        >
-                          <td className="px-6 py-4 font-semibold text-gray-900">{entity.name}</td>
-                          <td className="px-6 py-4 capitalize text-gray-700">{entity.type}</td>
-                          <td className="px-6 py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(entity.status)}`}>
-                              {entity.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-gray-700">{entity.sales.toLocaleString()} kr</td>
-                          <td className="px-6 py-4 text-gray-700">{entity.orders}</td>
-                          <td className="px-6 py-4 text-gray-600">
-                            {new Date(entity.lastLogin).toLocaleDateString('sv-SE')}
-                          </td>
-                          <td className="px-6 py-4">
-                            {entity.reported ? (
-                              <span className="text-red-600 font-semibold">Ja</span>
-                            ) : (
-                              <span className="text-green-600">Nej</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <button className="text-primary-900 font-semibold hover:text-primary-600 transition mr-2">
-                              Visa
-                            </button>
-                            <button className="text-red-600 font-semibold hover:text-red-700 transition">
-                              Ta bort
-                            </button>
-                          </td>
-                        </motion.tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Reports Tab */}
-          {activeTab === 'reports' && (
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Rapporter</h2>
+        {/* Recent Activity */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Senaste aktivitet</h2>
+          <div className="space-y-4">
+            {activities.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                Inga rapporter
+                Ingen nyligen aktivitet
               </div>
-            </div>
-          )}
+            ) : (
+              activities.slice(0, 5).map((activity, index) => {
+                const ActivityIcon = getActivityIcon(activity.type);
+                return (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl bg-white"
+                  >
+                    <div className="bg-primary-50 rounded-lg p-3">
+                      <ActivityIcon size={24} className="icon-brand" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{activity.entity}</p>
+                      <p className="text-sm text-gray-600">{activity.description}</p>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {new Date(activity.timestamp).toLocaleString('sv-SE')}
+                    </span>
+                  </motion.div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
 
-          {/* Messages Tab */}
-          {activeTab === 'messages' && (
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Meddelanden</h2>
-              <div className="text-center py-8 text-gray-500">
-                Inga meddelanden
+      {/* Right Sidebar Menu */}
+      <div className="w-80 bg-white border-l-2 border-gray-200 p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Navigering</h2>
+        <div className="space-y-2">
+          {[
+            { href: '/admin/users', icon: UserIcon, title: 'Användare' },
+            { href: '/admin/sellers', icon: UserIcon, title: 'Säljare' },
+            { href: '/admin/merchants', icon: ShoppingBagIcon, title: 'Företag' },
+            { href: '/admin/communities', icon: CommunityIcon, title: 'Föreningar & Klubbar' },
+            { href: '/admin/warehouses', icon: TruckIcon, title: 'Lagerpartners' },
+            { href: '/admin/orders', icon: DashboardIcon, title: 'Ordrar' },
+            { href: '/admin/returns', icon: AlertIcon, title: 'Returer' },
+            { href: '/messages', icon: MessageIcon, title: 'Community Meddelanden' },
+            { href: '/admin/blog', icon: DashboardIcon, title: 'Blogg' },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} className="block">
+              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
+                <item.icon size={20} className="icon-brand" />
+                <span className="font-semibold text-gray-700">{item.title}</span>
               </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Quick Stats */}
+        <div className="mt-8 pt-8 border-t-2 border-gray-200">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Snabbstatistik</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Föreningar</span>
+              <span className="font-semibold text-gray-900">{stats?.totalCommunities || 0}</span>
             </div>
-          )}
-        </motion.div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Säljare</span>
+              <span className="font-semibold text-gray-900">{stats?.totalSellers || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Företag</span>
+              <span className="font-semibold text-gray-900">{stats?.totalCompanies || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Väntande rapporter</span>
+              <span className="font-semibold text-red-600">{stats?.pendingReports || 0}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

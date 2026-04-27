@@ -26,6 +26,7 @@
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-image-crop": "^11.0.0",
+    "recharts": "^3.8.1",
     "sharp": "^0.33.0",
     "stripe": "^15.0.0",
     "twilio": "^5.0.0",
