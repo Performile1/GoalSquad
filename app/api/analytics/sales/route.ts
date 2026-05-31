@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getProfile } from '@/lib/profile-helpers';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,11 +30,7 @@ export async function GET(request: NextRequest) {
     startDate.setDate(startDate.getDate() - period);
 
     // Get user's role and entity info
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role, entity_type')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfile(user.id, 'role, entity_type');
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });

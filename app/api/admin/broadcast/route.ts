@@ -10,15 +10,15 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { getAuthUser } from '@/lib/api-auth';
+import { requireRole } from '@/lib/api-auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const authUser = await getAuthUser(req);
-    if (!authUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const userId = authUser.id;
+    const auth = await requireRole('gs_admin');
+    if ('error' in auth) return auth.error;
+    const { user } = auth;
+
+    const userId = user.id;
     const {
       targetType,
       targetId,
@@ -27,17 +27,6 @@ export async function POST(req: NextRequest) {
       content,
       priority,
     } = await req.json();
-
-    // Verify user is gs_admin
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', userId)
-      .single();
-
-    if (profile?.role !== 'gs_admin') {
-      return NextResponse.json({ error: 'Forbidden: Admin only' }, { status: 403 });
-    }
 
     // Create broadcast
     const { data: broadcast, error: broadcastError } = await supabaseAdmin

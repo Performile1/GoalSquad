@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { getProfileWithStripeId } from '@/lib/profile-helpers';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10',
@@ -27,11 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get Stripe customer ID
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfileWithStripeId(user.id);
 
     if (!profile?.stripe_customer_id) {
       return NextResponse.json({ error: 'No Stripe customer found' }, { status: 400 });
@@ -72,11 +69,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get Stripe customer ID
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfileWithStripeId(user.id);
 
     if (!profile?.stripe_customer_id) {
       return NextResponse.json({ paymentMethods: [] });

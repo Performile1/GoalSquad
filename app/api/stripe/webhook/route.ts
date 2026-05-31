@@ -39,6 +39,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
+  // Idempotency: record the event id first. A duplicate (Stripe retry)
+  // hits the PK unique violation and we ack immediately without reprocessing.
+  const { error: dedupError } = await supabaseAdmin
+    .from('stripe_events')
+    .insert({ id: event.id, type: event.type });
+
+  if (dedupError) {
+    // 23505 = unique_violation → already processed; ack so Stripe stops retrying.
+    if ((dedupError as any).code === '23505') {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+    console.error('Failed to record stripe event:', dedupError);
+    // Fall through and still attempt processing (handlers are idempotent).
+  }
+
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
@@ -89,43 +104,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     })
     .eq('id', orderId);
 
-    // 2. Run split engine — creates ledger entries & treasury holds
+    // 2. Run the atomic split engine (Postgres RPC). It creates ledger entries
+    //    AND the seller/warehouse treasury holds in a single transaction, and is
+    //    idempotent — safe even if this handler runs more than once.
     try {
       const splitResult = await SplitEngine.processOrderSplit(orderId);
       console.log(`Split processed for order ${orderId}:`, splitResult.splits);
-
-      // Fetch order to get seller_id and warehouse_id
-      const { data: order } = await supabaseAdmin
-        .from('orders')
-        .select('seller_id, warehouse_id')
-        .eq('id', orderId)
-        .single();
-
-      // 3. Create treasury hold for seller share (30-day escrow)
-      if (splitResult.splits.sellerShare > 0 && order?.seller_id) {
-        await Treasury.createHold({
-          orderId,
-          transactionId: splitResult.transactionId,
-          holderType: 'seller',
-          holderId: order.seller_id,
-          amount: splitResult.splits.sellerShare,
-          currency: 'SEK',
-          holdDays: 30,
-        });
-      }
-
-      // 4. Create treasury hold for warehouse share (30-day escrow)
-      if (splitResult.splits.warehouseShare > 0 && order?.warehouse_id) {
-        await Treasury.createHold({
-          orderId,
-          transactionId: splitResult.transactionId,
-          holderType: 'warehouse',
-          holderId: order.warehouse_id,
-          amount: splitResult.splits.warehouseShare,
-          currency: 'SEK',
-          holdDays: 30,
-        });
-      }
     } catch (splitError) {
       console.error(`Split engine failed for order ${orderId}:`, splitError);
       // Do not re-throw — order is still paid, split can be retried manually

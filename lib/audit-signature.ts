@@ -7,6 +7,11 @@
 import { createHash, randomBytes } from 'crypto';
 import { supabaseAdmin } from './supabase';
 
+/** Max incorrect attempts before a pending OTP is invalidated (brute-force guard). */
+const MAX_OTP_ATTEMPTS = 3;
+/** How long a pending OTP stays valid. */
+const OTP_TTL_MS = 5 * 60 * 1000;
+
 export interface SignatureData {
   entityType: 'merchant' | 'order' | 'shipment' | 'payment';
   entityId: string;
@@ -43,10 +48,13 @@ export class AuditSignature {
   }
 
   /**
-   * Hash an OTP for secure storage
+   * Hash an OTP for secure storage. Peppered with OTP_SECRET (if set) so a
+   * leaked DB row alone cannot be reversed/brute-forced offline.
    */
   static hashOTP(otp: string): string {
-    return createHash('sha256').update(otp).digest('hex');
+    return createHash('sha256')
+      .update(otp + (process.env.OTP_SECRET ?? ''))
+      .digest('hex');
   }
 
   /**
@@ -66,9 +74,10 @@ export class AuditSignature {
    * Send OTP via SMS (using Twilio)
    */
   static async sendOTPSMS(phone: string, otp: string): Promise<boolean> {
-    // TODO: Implement Twilio integration
-    // For now, just log it (in production, send via Twilio)
-    console.log(`[OTP SMS] Sending to ${phone}: ${otp}`);
+    // TODO: Implement Twilio integration.
+    // SECURITY: never log the clear-text OTP — only that a code was dispatched.
+    void otp;
+    console.log(`[OTP SMS] dispatched to ${phone}`);
     
     // In production:
     // const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -85,9 +94,10 @@ export class AuditSignature {
    * Send OTP via Email (using Nodemailer)
    */
   static async sendOTPEmail(email: string, otp: string): Promise<boolean> {
-    // TODO: Implement email integration
-    // For now, just log it (in production, send via Nodemailer/SendGrid)
-    console.log(`[OTP Email] Sending to ${email}: ${otp}`);
+    // TODO: Implement email integration.
+    // SECURITY: never log the clear-text OTP — only that a code was dispatched.
+    void otp;
+    console.log(`[OTP Email] dispatched to ${email}`);
     
     // In production:
     // const nodemailer = require('nodemailer');
@@ -104,16 +114,24 @@ export class AuditSignature {
   }
 
   /**
-   * Initiate signature process - send OTP
+   * Initiate signature process — generate an OTP, store ONLY its hash + TTL
+   * server-side, and deliver the clear-text code to the user.
+   *
+   * SECURITY: the OTP and its hash are NEVER returned to the caller/client.
    */
   static async initiateSignature(
     data: SignatureData
-  ): Promise<{ success: boolean; otp?: string; error?: string }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
+      if (!data.userId) {
+        return { success: false, error: 'Missing userId' };
+      }
+
       const otp = this.generateOTP();
       const otpHash = this.hashOTP(otp);
+      const expiresAt = new Date(Date.now() + OTP_TTL_MS);
 
-      // Send OTP based on verification method
+      // Deliver the code (never the hash) to the user.
       if (data.verificationMethod === 'otp_sms' && data.phone) {
         await this.sendOTPSMS(data.phone, otp);
       } else if (data.verificationMethod === 'otp_email' && data.email) {
@@ -122,9 +140,29 @@ export class AuditSignature {
         return { success: false, error: 'Invalid verification method or missing contact info' };
       }
 
-      // Store OTP hash temporarily (you might want a separate table for pending signatures)
-      // For now, we'll return it for verification
-      return { success: true, otp: otpHash };
+      // One active OTP per (user, action): clear any previous pending code first.
+      await supabaseAdmin
+        .from('audit_otps')
+        .delete()
+        .eq('user_id', data.userId)
+        .eq('action_type', data.action);
+
+      const { error } = await supabaseAdmin
+        .from('audit_otps')
+        .insert({
+          user_id: data.userId,
+          action_type: data.action,
+          hashed_otp: otpHash,
+          expires_at: expiresAt.toISOString(),
+        });
+
+      if (error) {
+        console.error('Failed to store OTP:', error);
+        return { success: false, error: 'Failed to generate verification code' };
+      }
+
+      // SECURITY: only a status flag leaves the server.
+      return { success: true };
     } catch (error) {
       console.error('Failed to initiate signature:', error);
       return { success: false, error: 'Failed to send verification code' };
@@ -132,24 +170,62 @@ export class AuditSignature {
   }
 
   /**
-   * Complete signature - verify OTP and create immutable record
+   * Complete signature — verify the user-supplied clear-text OTP against the
+   * server-held hash (with TTL + attempt limit), burn it on success, then write
+   * the immutable signature record.
+   *
+   * SECURITY: the caller supplies ONLY the clear-text code — never a hash.
    */
   static async completeSignature(
     data: SignatureData,
-    providedOTP: string,
-    storedOTPHash: string
+    providedOTP: string
   ): Promise<{ success: boolean; signatureId?: string; error?: string }> {
     try {
-      // Verify OTP
-      const providedOTPHash = this.hashOTP(providedOTP);
-      if (providedOTPHash !== storedOTPHash) {
+      if (!data.userId) {
+        return { success: false, error: 'Missing userId' };
+      }
+
+      // Look up the active pending OTP for this user + action.
+      const { data: record, error: lookupError } = await supabaseAdmin
+        .from('audit_otps')
+        .select('*')
+        .eq('user_id', data.userId)
+        .eq('action_type', data.action)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (lookupError || !record) {
+        return { success: false, error: 'No active verification session found' };
+      }
+
+      // Expired? Burn and reject.
+      if (new Date() > new Date(record.expires_at)) {
+        await supabaseAdmin.from('audit_otps').delete().eq('id', record.id);
+        return { success: false, error: 'Code has expired' };
+      }
+
+      // Brute-force guard.
+      if ((record.attempts ?? 0) >= MAX_OTP_ATTEMPTS) {
+        await supabaseAdmin.from('audit_otps').delete().eq('id', record.id);
+        return { success: false, error: 'Too many incorrect attempts. Code invalidated.' };
+      }
+
+      // Verify — the server holds the truth.
+      if (this.hashOTP(providedOTP) !== record.hashed_otp) {
+        await supabaseAdmin
+          .from('audit_otps')
+          .update({ attempts: (record.attempts ?? 0) + 1 })
+          .eq('id', record.id);
         return { success: false, error: 'Invalid verification code' };
       }
 
-      // Create signature hash
-      const signatureHash = this.createSignatureHash(data, storedOTPHash);
+      // Success → burn the code (one-time use) before doing anything else.
+      await supabaseAdmin.from('audit_otps').delete().eq('id', record.id);
 
-      // Insert immutable signature record
+      // Write the immutable signature record.
+      const signatureHash = this.createSignatureHash(data, record.hashed_otp);
+
       const { data: signature, error } = await supabaseAdmin
         .from('signatures')
         .insert({
@@ -160,7 +236,7 @@ export class AuditSignature {
           email: data.email,
           phone: data.phone,
           verification_method: data.verificationMethod,
-          otp_hash: storedOTPHash,
+          otp_hash: record.hashed_otp,
           signature_hash: signatureHash,
           ip_address: data.ipAddress,
           user_agent: data.userAgent,

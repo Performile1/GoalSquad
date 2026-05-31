@@ -1,26 +1,37 @@
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { requireUser } from '@/lib/api-auth';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const url = new URL(request.url);
-    const userId = url.searchParams.get('userId');
+    // 1. Require an authenticated session.
+    const auth = await requireUser();
+    if ('error' in auth) return auth.error;
+    const { user, supabase } = auth;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+    // 2. Resolve target. Default to the caller's own id.
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId') ?? user.id;
+
+    // 3. Ownership check — only your own entity roles, unless you are gs_admin.
+    if (userId !== user.id) {
+      const { data: me } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (me?.role !== 'gs_admin') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
     }
 
-    // Check entity tables using service role to bypass RLS
+    // 4. Check entity tables (service role; access already authorized above).
     const [merchant, seller, warehouse, community] = await Promise.all([
-      supabase.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
-      supabase.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
-      supabase.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
-      supabase.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
+      supabaseAdmin.from('merchants').select('id').eq('user_id', userId).maybeSingle(),
+      supabaseAdmin.from('seller_profiles').select('id').eq('user_id', userId).maybeSingle(),
+      supabaseAdmin.from('warehouse_partners').select('id').eq('user_id', userId).maybeSingle(),
+      supabaseAdmin.from('communities').select('id').eq('owner_id', userId).maybeSingle(),
     ]);
 
     const result = {

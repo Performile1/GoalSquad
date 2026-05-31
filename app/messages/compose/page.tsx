@@ -71,9 +71,9 @@ export default function ComposeMessagePage() {
           .single();
         if (warehouse) recipients = [warehouse.user_id];
       } else if (formData.targetType === 'merchant' && formData.targetId) {
-        // Send to merchant
+        // Send to merchant (use safe public view)
         const { data: merchant } = await supabase
-          .from('merchants')
+          .from('public_merchants')
           .select('user_id')
           .eq('id', formData.targetId)
           .single();

@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
         organizationId: organization.id,
       },
       verification: {
-        otpHash: signatureResult.otp,
+        // SECURITY: the OTP/hash is held server-side only and is never returned.
         method: validatedData.verificationMethod,
       },
     });

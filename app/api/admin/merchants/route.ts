@@ -1,4 +1,4 @@
-import { getAuthUser } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -11,10 +11,8 @@ const supabase = createClient(
 
 export async function GET(req: NextRequest) {
   try {
-    const authUser = await getAuthUser(req);
-    if (!authUser || authUser.role !== 'gs_admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');

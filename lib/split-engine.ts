@@ -9,9 +9,6 @@
  * Money NEVER lands in a single account - it's split virtually at checkout.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { Treasury } from './treasury';
-import { GamificationEngine } from './gamification-engine';
 import { supabaseAdmin as supabase } from './supabase';
 
 export interface SplitConfiguration {
@@ -90,248 +87,55 @@ export class SplitEngine {
   }
 
   /**
-   * Process order payment and split funds
-   * This is called when Stripe checkout completes
-   * Uses 4-way percentage split: platform% + community% + seller% + warehouse%
+   * Process order payment and split funds.
+   * Called when Stripe checkout completes.
+   *
+   * The actual splitting now runs inside the atomic Postgres function
+   * `process_order_split` (migration 063): single transaction, row-locked,
+   * exact DECIMAL math, idempotent, residual platform share, and real escrow
+   * (seller/warehouse go to treasury_holds). This wrapper just invokes it.
    */
   static async processOrderSplit(orderId: string): Promise<OrderSplitResult> {
-    // Fetch order with items
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        order_items (
-          *,
-          merchant:merchants (id, organization_id)
-        )
-      `)
-      .eq('id', orderId)
-      .single();
-
-    if (orderError || !order) {
-      throw new Error(`Order not found: ${orderId}`);
-    }
-
-    const transactionId = uuidv4();
-    const ledgerEntries: any[] = [];
-
-    // Get platform wallet
-    const { data: platformWallet } = await supabase
-      .from('wallets')
-      .select('*')
-      .eq('owner_type', 'platform')
-      .eq('owner_id', '00000000-0000-0000-0000-000000000001')
-      .single();
-
-    if (!platformWallet) {
-      throw new Error('Platform wallet not found');
-    }
-
-    // Calculate total order amount (excluding shipping)
-    const totalOrderAmount = parseFloat(order.total_amount ?? order.total ?? '0');
-    const handlingFee = 25.0; // Default handling fee
-
-    // Get split configuration
-    const config = await this.getSplitConfig();
-
-    // Calculate splits (4-way percentage split)
-    const platformAmount = (totalOrderAmount * config.platformPercent) / 100 - handlingFee;
-    const communityAmount = (totalOrderAmount * config.communityPercent) / 100;
-    const sellerAmount = (totalOrderAmount * config.sellerPercent) / 100;
-    const warehouseAmount = (totalOrderAmount * config.warehousePercent) / 100;
-
-    // Record platform share (after handling fee deduction)
-    ledgerEntries.push({
-      transaction_id: transactionId,
-      wallet_id: platformWallet.id,
-      entry_type: 'credit',
-      amount: Math.max(0, platformAmount),
-      currency: order.currency,
-      reference_type: 'order',
-      reference_id: orderId,
-      description: `Platform share for order ${order.order_number}`,
-      metadata: { category: 'platform_share', percent: config.platformPercent },
+    const { data, error } = await supabase.rpc('process_order_split', {
+      p_order_id: orderId,
     });
 
-    // Record handling fee
-    ledgerEntries.push({
-      transaction_id: transactionId,
-      wallet_id: platformWallet.id,
-      entry_type: 'credit',
-      amount: handlingFee,
-      currency: order.currency,
-      reference_type: 'order',
-      reference_id: orderId,
-      description: `Handling fee for order ${order.order_number}`,
-      metadata: { category: 'handling_fee' },
-    });
-
-    // Record community share (if community_id exists on order)
-    if (order.community_id) {
-      // Get or create community wallet
-      let { data: communityWallet } = await supabase
-        .from('wallets')
-        .select('*')
-        .eq('owner_type', 'community')
-        .eq('owner_id', order.community_id)
-        .single();
-
-      if (!communityWallet) {
-        const { data: newWallet } = await supabase
-          .from('wallets')
-          .insert({
-            owner_type: 'community',
-            owner_id: order.community_id,
-            currency: order.currency,
-            balance: 0,
-          })
-          .select()
-          .single();
-        communityWallet = newWallet;
-      }
-
-      if (communityWallet) {
-        ledgerEntries.push({
-          transaction_id: transactionId,
-          wallet_id: communityWallet.id,
-          entry_type: 'credit',
-          amount: communityAmount,
-          currency: order.currency,
-          reference_type: 'order',
-          reference_id: orderId,
-          description: `Community share for order ${order.order_number}`,
-          metadata: { category: 'community_share', percent: config.communityPercent },
-        });
-
-        await supabase
-          .from('wallets')
-          .update({
-            balance: parseFloat(communityWallet.balance) + communityAmount,
-          })
-          .eq('id', communityWallet.id);
-      }
+    if (error) {
+      throw new Error(`Split failed for order ${orderId}: ${error.message}`);
     }
 
-    // Record seller share (if seller_id exists on order)
-    if (order.seller_id) {
-      let { data: sellerWallet } = await supabase
-        .from('wallets')
-        .select('*')
-        .eq('owner_type', 'seller')
-        .eq('owner_id', order.seller_id)
-        .single();
+    const result = (data ?? {}) as {
+      status?: string;
+      transaction_id?: string;
+      total?: number | string;
+      splits?: {
+        platform?: number | string;
+        handling?: number | string;
+        community?: number | string;
+        seller?: number | string;
+        warehouse?: number | string;
+      };
+    };
 
-      if (!sellerWallet) {
-        const { data: newWallet } = await supabase
-          .from('wallets')
-          .insert({
-            owner_type: 'seller',
-            owner_id: order.seller_id,
-            currency: order.currency,
-            balance: 0,
-          })
-          .select()
-          .single();
-        sellerWallet = newWallet;
-      }
+    const num = (v: number | string | undefined) =>
+      typeof v === 'string' ? parseFloat(v) : v ?? 0;
 
-      if (sellerWallet) {
-        ledgerEntries.push({
-          transaction_id: transactionId,
-          wallet_id: sellerWallet.id,
-          entry_type: 'credit',
-          amount: sellerAmount,
-          currency: order.currency,
-          reference_type: 'order',
-          reference_id: orderId,
-          description: `Seller share for order ${order.order_number}`,
-          metadata: { category: 'seller_share', percent: config.sellerPercent },
-        });
-
-        await supabase
-          .from('wallets')
-          .update({
-            balance: parseFloat(sellerWallet.balance) + sellerAmount,
-          })
-          .eq('id', sellerWallet.id);
-      }
-    }
-
-    // Record warehouse share (if warehouse_id exists on order)
-    if (order.warehouse_id) {
-      let { data: warehouseWallet } = await supabase
-        .from('wallets')
-        .select('*')
-        .eq('owner_type', 'warehouse')
-        .eq('owner_id', order.warehouse_id)
-        .single();
-
-      if (!warehouseWallet) {
-        const { data: newWallet } = await supabase
-          .from('wallets')
-          .insert({
-            owner_type: 'warehouse',
-            owner_id: order.warehouse_id,
-            currency: order.currency,
-            balance: 0,
-          })
-          .select()
-          .single();
-        warehouseWallet = newWallet;
-      }
-
-      if (warehouseWallet) {
-        ledgerEntries.push({
-          transaction_id: transactionId,
-          wallet_id: warehouseWallet.id,
-          entry_type: 'credit',
-          amount: warehouseAmount,
-          currency: order.currency,
-          reference_type: 'order',
-          reference_id: orderId,
-          description: `Warehouse share for order ${order.order_number}`,
-          metadata: { category: 'warehouse_share', percent: config.warehousePercent },
-        });
-
-        await supabase
-          .from('wallets')
-          .update({
-            balance: parseFloat(warehouseWallet.balance) + warehouseAmount,
-          })
-          .eq('id', warehouseWallet.id);
-      }
-    }
-
-    // Insert all ledger entries
-    const { error: ledgerError } = await supabase
-      .from('ledger_entries')
-      .insert(ledgerEntries);
-
-    if (ledgerError) {
-      throw new Error(`Failed to create ledger entries: ${ledgerError.message}`);
-    }
-
-    // Update platform wallet balance
-    const totalPlatformAmount = Math.max(0, platformAmount) + handlingFee;
-    await supabase
-      .from('wallets')
-      .update({
-        balance: parseFloat(platformWallet.balance) + totalPlatformAmount,
-      })
-      .eq('id', platformWallet.id);
+    const splits = result.splits ?? {};
+    const platformShare = num(splits.platform);
+    const handlingFee = num(splits.handling);
 
     return {
-      transactionId,
-      totalAmount: totalOrderAmount,
+      transactionId: result.transaction_id ?? '',
+      totalAmount: num(result.total),
       splits: {
-        platformShare: Math.max(0, platformAmount),
-        communityShare: communityAmount,
-        sellerShare: sellerAmount,
-        warehouseShare: warehouseAmount,
+        platformShare,
+        communityShare: num(splits.community),
+        sellerShare: num(splits.seller),
+        warehouseShare: num(splits.warehouse),
         handlingFee,
-        platformRevenue: totalPlatformAmount,
+        platformRevenue: platformShare + handlingFee,
       },
-      ledgerEntries,
+      ledgerEntries: [],
     };
   }
 

@@ -1,15 +1,21 @@
 /**
  * Treasury System - 30-Day Escrow Logic
- * 
+ *
  * Handles:
  * - Holding funds for 30 days after sale
  * - Automatic release after hold period
  * - Dispute management
- * - Refund processing
+ * - Refund processing (Stripe refunds)
+ * - Payout requests (Stripe Connect - not yet implemented)
  */
 
 import { supabaseAdmin } from './supabase';
 import { v4 as uuidv4 } from 'uuid';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-04-10' as any,
+});
 
 export interface TreasuryHold {
   orderId: string;
@@ -94,94 +100,26 @@ export class Treasury {
   }
 
   /**
-   * Release a specific hold
+   * Release a specific hold.
+   *
+   * Delegates to the atomic Postgres function `release_treasury_hold`
+   * (migration 063): it claims the hold with a conditional UPDATE
+   * (status='held' → 'released') so only the winning caller credits the
+   * wallet — eliminating the previous read-modify-write double-release race.
    */
   static async releaseHold(holdId: string): Promise<boolean> {
     try {
-      // Get hold details
-      const { data: hold, error: holdError } = await supabaseAdmin
-        .from('treasury_holds')
-        .select('*')
-        .eq('id', holdId)
-        .single();
+      const { data, error } = await supabaseAdmin.rpc('release_treasury_hold', {
+        p_hold_id: holdId,
+      });
 
-      if (holdError || !hold) {
-        console.error('Hold not found:', holdId);
+      if (error) {
+        console.error('Failed to release hold:', holdId, error.message);
         return false;
       }
 
-      if (hold.status !== 'held') {
-        console.log('Hold already processed:', holdId);
-        return false;
-      }
-
-      // Get or create wallet for holder
-      let { data: wallet } = await supabaseAdmin
-        .from('wallets')
-        .select('*')
-        .eq('owner_type', hold.holder_type)
-        .eq('owner_id', hold.holder_id)
-        .single();
-
-      if (!wallet) {
-        // Create wallet if it doesn't exist
-        const { data: newWallet } = await supabaseAdmin
-          .from('wallets')
-          .insert({
-            owner_type: hold.holder_type,
-            owner_id: hold.holder_id,
-            currency: hold.currency,
-            balance: 0,
-          })
-          .select()
-          .single();
-
-        wallet = newWallet;
-      }
-
-      if (!wallet) {
-        console.error('Failed to get/create wallet');
-        return false;
-      }
-
-      // Update wallet balance
-      const newBalance = parseFloat(wallet.balance) + hold.amount;
-      await supabaseAdmin
-        .from('wallets')
-        .update({ balance: newBalance })
-        .eq('id', wallet.id);
-
-      // Create ledger entry
-      await supabaseAdmin
-        .from('ledger_entries')
-        .insert({
-          transaction_id: uuidv4(),
-          wallet_id: wallet.id,
-          entry_type: 'credit',
-          amount: hold.amount,
-          currency: hold.currency,
-          reference_type: 'order',
-          reference_id: hold.order_id,
-          description: `Treasury release for order ${hold.order_id}`,
-          metadata: {
-            category: hold.holder_type === 'merchant' ? 'merchant_payout' : 'platform_revenue',
-            holder_type: hold.holder_type,
-            holder_id: hold.holder_id,
-          },
-        });
-
-      // Update hold status
-      await supabaseAdmin
-        .from('treasury_holds')
-        .update({
-          status: 'released',
-          released_at: new Date().toISOString(),
-          released_to_wallet_id: wallet.id,
-        })
-        .eq('id', holdId);
-
-      console.log(`Released hold ${holdId}: ${hold.amount} ${hold.currency} to ${hold.holder_type} ${hold.holder_id}`);
-      return true;
+      // RPC returns true only if THIS call transitioned the hold.
+      return data === true;
     } catch (error) {
       console.error('Failed to release hold:', error);
       return false;
@@ -215,24 +153,66 @@ export class Treasury {
   }
 
   /**
-   * Refund a hold (returns money to customer)
+   * Refund a hold (returns money to customer via Stripe)
    */
   static async refundHold(holdId: string): Promise<boolean> {
     try {
-      const { error } = await supabaseAdmin
+      // Fetch the hold with order details
+      const { data: hold, error: fetchError } = await supabaseAdmin
+        .from('treasury_holds')
+        .select('*, orders!inner(stripe_payment_intent_id)')
+        .eq('id', holdId)
+        .single();
+
+      if (fetchError || !hold) {
+        console.error('Failed to fetch hold for refund:', fetchError);
+        return false;
+      }
+
+      if (hold.status !== 'held') {
+        console.error('Hold is not in held status:', hold.status);
+        return false;
+      }
+
+      const paymentIntentId = hold.orders?.stripe_payment_intent_id;
+      if (!paymentIntentId) {
+        console.error('No payment intent ID found for order:', hold.order_id);
+        return false;
+      }
+
+      // Trigger Stripe refund
+      const refund = await stripe.refunds.create({
+        payment_intent: paymentIntentId,
+        amount: Math.round(parseFloat(hold.amount) * 100), // Convert to cents
+        metadata: {
+          hold_id: holdId,
+          order_id: hold.order_id,
+        },
+      });
+
+      if (refund.status !== 'succeeded') {
+        console.error('Stripe refund failed:', refund);
+        return false;
+      }
+
+      // Update hold status after successful refund
+      const { error: updateError } = await supabaseAdmin
         .from('treasury_holds')
         .update({
           status: 'refunded',
           released_at: new Date().toISOString(),
+          metadata: {
+            ...(hold.metadata || {}),
+            stripe_refund_id: refund.id,
+            refunded_at: new Date().toISOString(),
+          },
         })
         .eq('id', holdId);
 
-      if (error) {
-        console.error('Failed to refund hold:', error);
+      if (updateError) {
+        console.error('Failed to update hold status after refund:', updateError);
         return false;
       }
-
-      // TODO: Trigger Stripe refund here
 
       return true;
     } catch (error) {
@@ -320,6 +300,13 @@ export class Treasury {
 
   /**
    * Request payout (for community treasurer)
+   *
+   * NOTE: This is NOT YET IMPLEMENTED. It requires Stripe Connect setup:
+   * - Communities must have connected accounts
+   * - Platform must have Connect integration configured
+   * - Bank account verification flow needed
+   *
+   * Current behavior: returns error indicating not in production.
    */
   static async requestPayout(
     communityId: string,
@@ -337,14 +324,12 @@ export class Treasury {
         };
       }
 
-      // TODO: Integrate with Stripe Connect for actual payout
-      // For now, just log the request
-
-      console.log(`Payout requested: ${amount} SEK to ${bankAccount} for community ${communityId}`);
+      // NOT YET IMPLEMENTED: Requires Stripe Connect integration
+      console.error(`Payout requested but not implemented: ${amount} SEK to ${bankAccount} for community ${communityId}`);
 
       return {
-        success: true,
-        payoutId: uuidv4(),
+        success: false,
+        error: 'Payout functionality not yet implemented. Requires Stripe Connect setup.',
       };
     } catch (error) {
       console.error('Payout request error:', error);

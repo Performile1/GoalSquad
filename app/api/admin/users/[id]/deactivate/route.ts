@@ -5,12 +5,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
+
     const { data: current, error: fetchErr } = await supabaseAdmin
       .from('profiles')
       .select('is_active')

@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
 import { Treasury } from '@/lib/treasury';
+import { getProfile } from '@/lib/profile-helpers';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,11 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify gs_admin role
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfile(user.id, 'role');
 
     if (!profile || profile.role !== 'gs_admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

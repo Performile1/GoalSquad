@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/api-auth';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -8,6 +9,9 @@ const supabase = createClient(
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
+
     // Fetch recent activities from various tables
     const [orders, users, communities] = await Promise.all([
       supabase.from('orders').select('id, created_at, total_amount').order('created_at', { ascending: false }).limit(10),

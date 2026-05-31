@@ -1,19 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/api-auth';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+const ALLOWED_ROLES = ['user', 'seller', 'merchant', 'community', 'warehouse', 'gs_admin'];
+
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
+
     const body = await request.json();
     const { email, password, fullName, role } = body;
 
     if (!email || !password || !fullName) {
       return NextResponse.json(
         { error: 'Alla fält är obligatoriska' },
+        { status: 400 }
+      );
+    }
+
+    if (!role || !ALLOWED_ROLES.includes(role)) {
+      return NextResponse.json(
+        { error: 'Ogiltig roll' },
         { status: 400 }
       );
     }

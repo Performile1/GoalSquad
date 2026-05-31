@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { apiFetch } from '@/lib/api-client';
 import { UserIcon, MailIcon, LockIcon, ShieldIcon } from '@/app/components/BrandIcons';
 
 export default function AdminCreateUser() {
@@ -40,11 +41,8 @@ export default function AdminCreateUser() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/admin/users/create', {
+      const response = await apiFetch('/api/admin/users/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(formData),
       });
 

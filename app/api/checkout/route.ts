@@ -11,9 +11,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { z } from 'zod';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10' as any,
+});
+
+// Zod validation schema for checkout request
+const checkoutSchema = z.object({
+  items: z.array(
+    z.object({
+      productId: z.string().uuid('Invalid product ID format'),
+      communityProductId: z.string().uuid('Invalid community product ID format').optional().nullable(),
+      quantity: z.number().int('Quantity must be an integer').min(1, 'Quantity must be at least 1'),
+    })
+  ).min(1, 'At least one item is required'),
+  shippingAddress: z.object({
+    name: z.string().min(1, 'Name is required'),
+    email: z.string().email('Invalid email address'),
+    phone: z.string().min(1, 'Phone is required'),
+    address: z.string().min(1, 'Address is required'),
+    city: z.string().min(1, 'City is required'),
+    postalCode: z.string().min(3, 'Postal code is too short').max(10, 'Postal code is too long'),
+    country: z.string().length(2, 'Country code must be 2 characters (ISO format)'),
+  }),
+  warehouseId: z.string().uuid('Invalid warehouse ID format').optional().nullable(),
 });
 
 export async function POST(req: NextRequest) {
@@ -24,15 +46,25 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { items, shippingAddress, warehouseId } = body;
-
-    if (!items?.length || !shippingAddress) {
-      return NextResponse.json({ error: 'Missing items or shipping address' }, { status: 400 });
+    
+    // Validate request body with Zod
+    const validatedData = checkoutSchema.safeParse(body);
+    
+    if (!validatedData.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid request data', 
+          details: validatedData.error.format() 
+        },
+        { status: 400 }
+      );
     }
+    
+    const { items, shippingAddress, warehouseId } = validatedData.data;
 
     // --- Fetch products ---
-    const productIds = items.map((i: any) => i.productId).filter(Boolean);
-    const communityProductIds = items.map((i: any) => i.communityProductId).filter(Boolean);
+    const productIds = items.map((i) => i.productId).filter(Boolean);
+    const communityProductIds = items.map((i) => i.communityProductId).filter(Boolean);
 
     const { data: products, error: productError } = await supabaseAdmin
       .from('products')
@@ -43,7 +75,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Products not found' }, { status: 404 });
     }
 
-    const productMap = new Map(products.map((p: any) => [p.id, p]));
+    const productMap = new Map(products.map((p) => [p.id, p]));
 
     // --- Fetch community products if any ---
     let communityProductMap = new Map();
@@ -53,13 +85,20 @@ export async function POST(req: NextRequest) {
         .select('id, title, price, seller_name, community_name')
         .in('id', communityProductIds);
       if (communityProducts) {
-        communityProductMap = new Map(communityProducts.map((p: any) => [p.id, p]));
+        communityProductMap = new Map(communityProducts.map((p) => [p.id, p]));
       }
     }
 
     // --- Build order items & Stripe line items ---
     let orderTotal = 0;
-    const orderItems: any[] = [];
+    const orderItems: Array<{
+      product_id: string;
+      community_product_id: string | null;
+      quantity: number;
+      unit_price: number;
+      subtotal: number;
+      sku: string;
+    }> = [];
     const stripeLineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     let orderCommunityId: string | null = null;
     let orderSellerId: string | null = null;

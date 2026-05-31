@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { getAuthUser } from '@/lib/api-auth';
+import { requireAdmin } from '@/lib/api-auth';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -12,10 +12,8 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const authUser = await getAuthUser(req);
-    if (!authUser || authUser.role !== 'gs_admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const { id } = params;
 

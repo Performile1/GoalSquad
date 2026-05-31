@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { apiFetch } from '@/lib/api-client';
 import { DashboardIcon, UserIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, XPIcon, LevelIcon, BadgeIcon, TrophyIcon, MessageIcon } from '@/app/components/BrandIcons';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -131,9 +132,9 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     try {
       const [statsRes, entitiesRes, activitiesRes] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/admin/entities'),
-        fetch('/api/admin/activities'),
+        apiFetch('/api/admin/stats'),
+        apiFetch('/api/admin/entities'),
+        apiFetch('/api/admin/activities'),
       ]);
 
       const statsData = await statsRes.json();

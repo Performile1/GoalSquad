@@ -1,10 +1,13 @@
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const searchParams = request.nextUrl.searchParams;
     const filter = searchParams.get('filter') || 'all';

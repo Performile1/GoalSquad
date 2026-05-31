@@ -1,22 +1,33 @@
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { requireUser } from '@/lib/api-auth';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const url = new URL(request.url);
-    const userId = url.searchParams.get('userId');
+    // 1. Require an authenticated session.
+    const auth = await requireUser();
+    if ('error' in auth) return auth.error;
+    const { user, supabase } = auth;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+    // 2. Resolve target. Default to the caller's own id.
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId') ?? user.id;
+
+    // 3. Ownership check — only your own profile, unless you are gs_admin.
+    if (userId !== user.id) {
+      const { data: me } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (me?.role !== 'gs_admin') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
     }
 
-    // Fetch profile using service role to bypass RLS
-    const { data, error } = await supabase
+    // 4. Fetch the profile (service role; access already authorized above).
+    const { data, error } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .eq('id', userId)

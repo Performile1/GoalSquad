@@ -12,7 +12,6 @@ import { z } from 'zod';
 const verificationSchema = z.object({
   merchantId: z.string().uuid(),
   otp: z.string().length(6),
-  otpHash: z.string(),
   userId: z.string().uuid(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
@@ -53,8 +52,7 @@ export async function POST(req: NextRequest) {
         ipAddress: validatedData.ipAddress,
         userAgent: validatedData.userAgent,
       },
-      validatedData.otp,
-      validatedData.otpHash
+      validatedData.otp
     );
 
     if (!signatureResult.success) {

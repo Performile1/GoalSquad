@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getProfile } from '@/lib/profile-helpers';
 
 
 export async function GET(request: NextRequest) {
@@ -14,11 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfile(user.id, 'role');
 
     if (!profile || profile.role !== 'merchant') {
       return NextResponse.json({ error: 'Only merchants can access shipping preferences' }, { status: 403 });
@@ -53,11 +50,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfile(user.id, 'role');
 
     if (!profile || profile.role !== 'merchant') {
       return NextResponse.json({ error: 'Only merchants can set shipping preferences' }, { status: 403 });
