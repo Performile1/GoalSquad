@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAuthUser } from '@/lib/api-auth';
+import { getProfile } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -20,11 +18,7 @@ export async function POST(
     const { reason, rejectAd } = body;
 
     // Check if user is admin
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfile(user.id, 'role');
 
     if (!profile || profile.role !== 'gs_admin') {
       return NextResponse.json({ error: 'Only admins can process refunds' }, { status: 403 });
@@ -110,7 +104,7 @@ export async function POST(
       adminFee: ad.discounted_price - refundAmount,
     });
   } catch (error) {
-    console.error('Error processing refund:', error);
+    logger.apiError('POST', `/api/ads/${params.id}/refund`, error as Error, { userId: user?.id, adId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,13 +43,13 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Failed to create suggestion:', error);
+      logger.dbError('INSERT', 'suggestions', error, { userId: user.id, suggestionType });
       return NextResponse.json({ error: 'Failed to create suggestion' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, suggestion: data });
   } catch (error) {
-    console.error('Suggestion error:', error);
+    logger.apiError('POST', '/api/suggestions', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -19,7 +15,7 @@ export async function GET(
 
     const { id } = params;
 
-    const { data: returns, error } = await supabase
+    const { data: returns, error } = await supabaseAdmin
       .from('returns')
       .select(`
         id,
@@ -51,7 +47,7 @@ export async function GET(
 
     return NextResponse.json({ returns: formattedReturns });
   } catch (error) {
-    console.error('Community returns API error:', error);
+    logger.apiError('GET', '/api/communities/[id]/returns', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

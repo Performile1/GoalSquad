@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 const campaignSchema = z.object({
   name: z.string().min(2).max(255),
@@ -33,7 +34,7 @@ export async function GET(
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Failed to fetch campaigns:', error);
+      logger.dbError('SELECT', 'campaigns', error, { communityId: params.id });
       return NextResponse.json(
         { error: 'Failed to fetch campaigns' },
         { status: 500 }
@@ -42,7 +43,7 @@ export async function GET(
 
     return NextResponse.json({ campaigns });
   } catch (error) {
-    console.error('Campaigns fetch error:', error);
+    logger.apiError('GET', '/api/communities/[id]/campaigns', error as Error, { communityId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -92,7 +93,7 @@ export async function POST(
       .single();
 
     if (error) {
-      console.error('Failed to create campaign:', error);
+      logger.dbError('INSERT', 'campaigns', error, { communityId: params.id });
       return NextResponse.json(
         { error: 'Failed to create campaign' },
         { status: 500 }
@@ -108,7 +109,7 @@ export async function POST(
       );
     }
 
-    console.error('Campaign creation error:', error);
+    logger.apiError('POST', '/api/communities/[id]/campaigns', error as Error, { communityId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

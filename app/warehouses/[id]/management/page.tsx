@@ -31,6 +31,23 @@ interface Shipment {
   createdAt: string;
 }
 
+interface Product {
+  id: string;
+  name: string;
+  sku: string;
+  price: number;
+}
+
+interface InventoryItem {
+  id: string;
+  quantity: number;
+  reserved_quantity: number;
+  available_quantity: number;
+  last_restocked_at: string;
+  updated_at: string;
+  products: Product;
+}
+
 export default function WarehouseManagement() {
   const params = useParams();
   const router = useRouter();
@@ -39,8 +56,11 @@ export default function WarehouseManagement() {
   const [incomingPallets, setIncomingPallets] = useState<IncomingPallet[]>([]);
   const [consolidationGroups, setConsolidationGroups] = useState<ConsolidationGroup[]>([]);
   const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'incoming' | 'consolidate' | 'ship'>('incoming');
+  const [activeTab, setActiveTab] = useState<'incoming' | 'consolidate' | 'ship' | 'inventory'>('incoming');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -48,23 +68,48 @@ export default function WarehouseManagement() {
 
   const fetchData = async () => {
     try {
-      const [palletsRes, groupsRes, shipmentsRes] = await Promise.all([
+      const [palletsRes, groupsRes, shipmentsRes, inventoryRes] = await Promise.all([
         apiFetch(`/api/warehouses/${warehouseId}/incoming-pallets`),
         apiFetch(`/api/warehouses/${warehouseId}/consolidation-groups`),
         apiFetch(`/api/warehouses/${warehouseId}/shipments`),
+        apiFetch(`/api/warehouses/${warehouseId}/inventory`),
       ]);
 
       const palletsData = await palletsRes.json();
       const groupsData = await groupsRes.json();
       const shipmentsData = await shipmentsRes.json();
+      const inventoryData = await inventoryRes.json();
 
       setIncomingPallets(palletsData.pallets || []);
       setConsolidationGroups(groupsData.groups || []);
       setShipments(shipmentsData.shipments || []);
+      setInventory(inventoryData.inventory || []);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStockAdjust = async (productId: string, delta: number) => {
+    try {
+      setUpdatingId(productId);
+      const response = await fetch(`/api/warehouses/${warehouseId}/inventory`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, stockDelta: delta }),
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Kunde inte uppdatera lagret');
+      }
+      
+      await fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -165,6 +210,17 @@ export default function WarehouseManagement() {
             >
               <TruckIcon size={20} className="inline mr-2" />
               Sändningar
+            </button>
+            <button
+              onClick={() => setActiveTab('inventory')}
+              className={`px-6 py-3 rounded-xl font-semibold transition ${
+                activeTab === 'inventory'
+                  ? 'bg-primary-900 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <ShoppingBagIcon size={20} className="inline mr-2" />
+              Lagersaldo
             </button>
           </div>
 
@@ -326,6 +382,91 @@ export default function WarehouseManagement() {
                     </motion.div>
                   ))
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Inventory Tab */}
+          {activeTab === 'inventory' && (
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-900">Lagersaldo</h2>
+                <button
+                  onClick={fetchData}
+                  className="text-sm text-primary-900 hover:text-primary-700 font-semibold"
+                >
+                  Uppdatera
+                </button>
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Sök på produktnamn eller SKU..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent outline-none"
+                />
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Produkt</th>
+                      <th className="py-3 px-4 text-xs font-semibold text-gray-600 uppercase">SKU</th>
+                      <th className="py-3 px-4 text-xs font-semibold text-gray-600 uppercase text-center">Totalt</th>
+                      <th className="py-3 px-4 text-xs font-semibold text-gray-600 uppercase text-center">Reserverat</th>
+                      <th className="py-3 px-4 text-xs font-semibold text-gray-600 uppercase text-center">Tillgängligt</th>
+                      <th className="py-3 px-4 text-xs font-semibold text-gray-600 uppercase text-right">Åtgärder</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {inventory.filter(item => 
+                      item.products.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      item.products.sku.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-gray-500">
+                          Inga produkter matchar sökningen
+                        </td>
+                      </tr>
+                    ) : (
+                      inventory.filter(item => 
+                        item.products.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.products.sku.toLowerCase().includes(searchQuery.toLowerCase())
+                      ).map((item) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="py-3 px-4 font-medium text-gray-900">{item.products.name}</td>
+                          <td className="py-3 px-4 text-gray-600 font-mono text-sm">{item.products.sku}</td>
+                          <td className="py-3 px-4 text-center font-semibold text-gray-900">{item.quantity}</td>
+                          <td className="py-3 px-4 text-center text-gray-600">{item.reserved_quantity}</td>
+                          <td className="py-3 px-4 text-center font-semibold text-green-600">{item.available_quantity}</td>
+                          <td className="py-3 px-4 text-right">
+                            <div className="inline-flex items-center gap-1">
+                              <button
+                                onClick={() => handleStockAdjust(item.products.id, -1)}
+                                disabled={updatingId === item.products.id || item.quantity === 0}
+                                className="p-1 text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-gray-200 rounded transition disabled:opacity-50"
+                              >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => handleStockAdjust(item.products.id, 1)}
+                                disabled={updatingId === item.products.id}
+                                className="p-1 text-gray-500 hover:text-green-600 bg-gray-100 hover:bg-gray-200 rounded transition disabled:opacity-50"
+                              >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
+                                </svg>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

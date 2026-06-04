@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -71,7 +72,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error tracking ad:', error);
+    logger.apiError('POST', '/api/ads/[id]/track', error as Error, { adId: params.id, type });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

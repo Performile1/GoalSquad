@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 async function verifyMerchant(merchantId: string, userId: string) {
-  const { data } = await supabase.from('merchants').select('user_id').eq('id', merchantId).single();
+  const { data } = await supabaseAdmin.from('merchants').select('user_id').eq('id', merchantId).single();
   return data?.user_id === userId;
 }
 
@@ -21,7 +17,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const url = new URL(req.url);
     const status = url.searchParams.get('status');
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('asn_notices')
       .select(`
         *,
@@ -37,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ notices });
   } catch (error) {
-    console.error('Error fetching ASN notices:', error);
+    logger.apiError('GET', '/api/merchants/[id]/asn', error as Error, { merchantId: params.id });
     return NextResponse.json({ error: 'Failed to fetch ASN notices' }, { status: 500 });
   }
 }
@@ -52,7 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const asn_number = `ASN-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 
-    const { data: notice, error } = await supabase
+    const { data: notice, error } = await supabaseAdmin
       .from('asn_notices')
       .insert({
         ...body,
@@ -66,7 +62,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (error) throw error;
     return NextResponse.json({ notice }, { status: 201 });
   } catch (error) {
-    console.error('Error creating ASN notice:', error);
+    logger.apiError('POST', '/api/merchants/[id]/asn', error as Error, { merchantId: params.id });
     return NextResponse.json({ error: 'Failed to create ASN notice' }, { status: 500 });
   }
 }

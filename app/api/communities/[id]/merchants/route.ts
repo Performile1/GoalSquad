@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -17,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const communityId = params.id;
 
     // Verify user is a member of the community
-    const { data: member, error: memberError } = await supabase
+    const { data: member, error: memberError } = await supabaseAdmin
       .from('community_members')
       .select('role')
       .eq('community_id', communityId)
@@ -29,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Get community-merchant relationships
-    const { data: relationships, error } = await supabase
+    const { data: relationships, error } = await supabaseAdmin
       .from('community_merchants')
       .select(`
         *,
@@ -45,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ relationships });
   } catch (error) {
-    console.error('Error fetching community merchants:', error);
+    logger.apiError('GET', '/api/communities/[id]/merchants', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to fetch merchants' }, { status: 500 });
   }
 }
@@ -66,7 +62,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     // Verify user is admin of the community
-    const { data: member, error: memberError } = await supabase
+    const { data: member, error: memberError } = await supabaseAdmin
       .from('community_members')
       .select('role')
       .eq('community_id', communityId)
@@ -78,7 +74,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     // Create community-merchant relationship
-    const { data: relationship, error } = await supabase
+    const { data: relationship, error } = await supabaseAdmin
       .from('community_merchants')
       .insert({
         community_id: communityId,
@@ -94,7 +90,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ relationship });
   } catch (error) {
-    console.error('Error creating community merchant:', error);
+    logger.apiError('POST', '/api/communities/[id]/merchants', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to create relationship' }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
       });
 
       if (error) {
-        console.error('Leaderboard query error:', error);
+        logger.dbError('SELECT', 'leaderboards', error, { type, period });
         // Fallback to manual query
         const { data: sellers } = await supabaseAdmin
           .from('seller_profiles')
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest) {
         .limit(limit);
 
       if (error) {
-        console.error('Community leaderboard error:', error);
+        logger.dbError('SELECT', 'leaderboards', error, { type, period });
         return NextResponse.json(
           { error: 'Failed to fetch leaderboard' },
           { status: 500 }
@@ -133,7 +134,7 @@ export async function GET(req: NextRequest) {
         .limit(limit);
 
       if (error) {
-        console.error('Merchants leaderboard error:', error);
+        logger.dbError('SELECT', 'leaderboards', error, { type, period });
         return NextResponse.json(
           { error: 'Failed to fetch leaderboard' },
           { status: 500 }
@@ -154,7 +155,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ leaderboard });
     }
   } catch (error) {
-    console.error('Leaderboard API error:', error);
+    logger.apiError('GET', '/api/leaderboard', error as Error, { type, period });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

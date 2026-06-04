@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { GamificationEngine } from '@/lib/gamification-engine';
 import { Treasury } from '@/lib/treasury';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -98,7 +99,7 @@ export async function GET(
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Failed to fetch seller stats:', error);
+    logger.apiError('GET', '/api/sellers/[id]/stats', error as Error, { sellerId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

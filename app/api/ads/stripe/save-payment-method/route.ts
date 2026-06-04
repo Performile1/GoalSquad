@@ -1,7 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { getAuthUser } from '@/lib/api-auth';
 import { getProfileWithStripeId } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10',
@@ -9,13 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -50,20 +46,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error saving payment method:', error);
+    logger.paymentError('save_payment_method', user.id, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -83,7 +73,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ paymentMethods: paymentMethods.data });
   } catch (error: any) {
-    console.error('Error fetching payment methods:', error);
+    logger.paymentError('fetch_payment_methods', user.id, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

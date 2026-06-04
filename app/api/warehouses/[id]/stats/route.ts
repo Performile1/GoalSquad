@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: warehouse } = await supabase
+    const { data: warehouse } = await supabaseAdmin
       .from('warehouse_partners')
       .select('user_id')
       .eq('id', params.id)
@@ -57,7 +53,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       pendingReturns: returnsRes.count ?? 0,
     });
   } catch (error) {
-    console.error('Error fetching warehouse stats:', error);
+    logger.apiError('GET', '/api/warehouses/[id]/stats', error as Error, { warehouseId: params.id });
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }

@@ -10,6 +10,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
 import { Treasury } from '@/lib/treasury';
 import { getProfile } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
       message: `Released ${releasedCount} expired holds`,
     });
   } catch (error) {
-    console.error('Treasury release error:', error);
+    logger.paymentError('treasury_release', 'admin', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

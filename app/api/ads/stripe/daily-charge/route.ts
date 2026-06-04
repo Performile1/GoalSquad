@@ -1,7 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { getAuthUser } from '@/lib/api-auth';
 import { getProfile } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10',
@@ -9,13 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -87,7 +83,7 @@ export async function POST(request: NextRequest) {
 
       chargeRecordId = chargeRecord.id;
     } catch (error) {
-      console.error('Failed to insert charge record:', error);
+      logger.dbError('INSERT', 'ad_daily_charges', error, { adId, userId: user?.id });
       return NextResponse.json({ error: 'Failed to lock charge record' }, { status: 500 });
     }
 
@@ -182,7 +178,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (stripeError: any) {
       // If Stripe fails completely, clean up pending record so it can be retried
-      console.error('Stripe payment failed:', stripeError);
+      logger.paymentError('daily_charge', adId, stripeError, { userId: user?.id });
       await supabaseAdmin.from('ad_daily_charges').delete().eq('id', chargeRecordId);
 
       // If it's an idempotency error, the charge already succeeded
@@ -193,7 +189,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Payment failed' }, { status: 500 });
     }
   } catch (error) {
-    console.error('Error processing daily charge:', error);
+    logger.apiError('POST', '/api/ads/stripe/daily-charge', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ placements: placementsWithPricing });
   } catch (error: any) {
-    console.error('Error fetching placements:', error);
+    logger.apiError('GET', '/api/ads/placements', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

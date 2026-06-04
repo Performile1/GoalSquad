@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error('Category suggestion error:', error);
+      logger.apiError('POST', '/api/products/suggest-category', error, { name });
       return NextResponse.json({ suggestions: [] });
     }
 
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ suggestions });
   } catch (error) {
-    console.error('Suggest category error:', error);
+    logger.apiError('POST', '/api/products/suggest-category', error as Error, { name });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

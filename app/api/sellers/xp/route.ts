@@ -1,7 +1,7 @@
 import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(xp);
   } catch (error) {
-    console.error('Error fetching seller XP:', error);
+    logger.apiError('GET', '/api/sellers/xp', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Failed to fetch seller XP' }, { status: 500 });
   }
 }

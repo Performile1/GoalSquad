@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 const ALLOWED_ROLES = ['user', 'seller', 'merchant', 'community', 'warehouse', 'gs_admin'];
 
@@ -32,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -42,7 +38,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError) {
-      console.error('Auth error:', authError);
+      logger.apiError('POST', '/api/admin/users/create', authError, { email });
       return NextResponse.json(
         { error: authError.message || 'Misslyckades att skapa användare' },
         { status: 400 }
@@ -51,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     // Update profile with role
     if (authData.user) {
-      const { error: profileError } = await supabase
+      const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .update({
           role,
@@ -62,7 +58,7 @@ export async function POST(request: NextRequest) {
         .eq('id', authData.user.id);
 
       if (profileError) {
-        console.error('Profile update error:', profileError);
+        logger.dbError('UPDATE', 'profiles', profileError, { email });
         return NextResponse.json(
           { error: 'Användare skapad men kunde inte uppdatera profil' },
           { status: 500 }
@@ -75,7 +71,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Create user error:', error);
+    logger.apiError('POST', '/api/admin/users/create', error as Error, { email });
     return NextResponse.json(
       { error: 'Internt serverfel' },
       { status: 500 }

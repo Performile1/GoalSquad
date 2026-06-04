@@ -297,5 +297,7 @@ samtidiga anrop för samma annons kan dubbeldebitera. Ingen hantering av `requir
 | 3b.1 | Checkout-validering | Medel | ✅ Zod-validering implementerad (UUID, quantity >= 1, email, postal code, ISO country code) |
 | 3b.2 | Audit-OTP bruten/osäker | Hög | ✅ Server-side `audit_otps` (TTL 5min, 3 försök, burn); klient får aldrig hash. Migration 064 |
 | 3b.3 | Daily-charge dubbelkörning | Medel | ✅ Idempotens via `ad_daily_charges` (unique constraint) + Stripe idempotency key. Migration 070 |
+| 3b.4 | IDOR-sårbarhet i warehouses/[id]/flow | Hög | ✅ Lade till auth + access control (warehouse_assignments, community membership, gs_admin) |
 | --- | SECURITY DEFINER RPC-härda | Hög | ✅ Migration 068: `use_discount_code` validerar caller=customer, `notify_*` begränsade till service_role |
 | --- | messages/compose data-läcka | Låg | ✅ Uppdaterad att använda `public_merchants`-vy (säker) |
+| --- | Profile lookup duplicering | Medel | ✅ Skapad `lib/profile-helpers.ts`, 8 API-rutter refaktorerade |

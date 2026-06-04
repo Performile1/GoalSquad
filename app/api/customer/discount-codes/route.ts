@@ -1,7 +1,7 @@
 import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(codes || []);
   } catch (error) {
-    console.error('Error fetching customer discount codes:', error);
+    logger.apiError('GET', '/api/customer/discount-codes', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Failed to fetch discount codes' }, { status: 500 });
   }
 }

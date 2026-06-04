@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
       .select('*');
 
     if (error) {
-      console.error('Failed to fetch communities:', error);
+      logger.dbError('SELECT', 'communities', error, { lat, lng, radius });
       return NextResponse.json(
         { error: 'Failed to fetch communities' },
         { status: 500 }
@@ -68,7 +69,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ communities: nearbyCommunities });
   } catch (error) {
-    console.error('Nearby communities error:', error);
+    logger.apiError('GET', '/api/communities/nearby', error as Error, { lat, lng, radius });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

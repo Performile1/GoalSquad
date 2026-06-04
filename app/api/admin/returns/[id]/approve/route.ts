@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function POST(
   req: NextRequest,
@@ -17,7 +13,7 @@ export async function POST(
 
     const { id } = params;
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('returns')
       .update({ status: 'approved' })
       .eq('id', id);
@@ -26,7 +22,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Admin return approve API error:', error);
+    logger.apiError('POST', '/api/admin/returns/[id]/approve', error as Error, { returnId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

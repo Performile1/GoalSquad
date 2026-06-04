@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(avatar);
   } catch (error) {
-    console.error('Error fetching seller avatar:', error);
+    logger.apiError('GET', '/api/sellers/avatar', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Failed to fetch seller avatar' }, { status: 500 });
   }
 }

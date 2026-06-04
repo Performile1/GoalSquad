@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -21,7 +22,7 @@ export async function GET(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('MOQ status check error:', error);
+    logger.apiError('GET', '/api/orders/[id]/moq-status', error as Error, { orderId: params.id });
     return NextResponse.json(
       { error: 'Failed to check MOQ status' },
       { status: 500 }

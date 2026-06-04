@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: merchant } = await supabase
+    const { data: merchant } = await supabaseAdmin
       .from('merchants')
       .select('user_id')
       .eq('id', params.id)
@@ -26,23 +22,23 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     // Run all stat queries in parallel
     const [productsRes, ordersRes, revenueRes, pendingRes] = await Promise.all([
-      supabase
+      supabaseAdmin
         .from('products')
         .select('id, status', { count: 'exact' })
         .eq('merchant_id', merchantId),
 
-      supabase
+      supabaseAdmin
         .from('orders')
         .select('id, status, total', { count: 'exact' })
         .eq('merchant_id', merchantId),
 
-      supabase
+      supabaseAdmin
         .from('orders')
         .select('total')
         .eq('merchant_id', merchantId)
         .in('status', ['completed', 'delivered']),
 
-      supabase
+      supabaseAdmin
         .from('orders')
         .select('id', { count: 'exact' })
         .eq('merchant_id', merchantId)
@@ -63,7 +59,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       totalRevenue,
     });
   } catch (error) {
-    console.error('Error fetching merchant stats:', error);
+    logger.apiError('GET', '/api/merchants/[id]/stats', error as Error, { merchantId: params.id });
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }

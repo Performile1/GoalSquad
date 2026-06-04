@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       method: 'canvas_filter',
     });
   } catch (error) {
-    console.error('Cartoonization error:', error);
+    logger.apiError('POST', '/api/avatar/cartoonize', error as Error, { userId });
     return NextResponse.json(
       { error: 'Failed to cartoonize image' },
       { status: 500 }

@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -28,7 +29,7 @@ export async function GET(
       allocated_to_customers: { total_quantity: 0, allocation_count: 0, by_warehouse: [] },
     });
   } catch (error) {
-    console.error('Product flow API error:', error);
+    logger.apiError('GET', '/api/products/[id]/flow', error as Error, { productId: params.id });
     return NextResponse.json(
       { error: 'Failed to fetch product flow' },
       { status: 500 }

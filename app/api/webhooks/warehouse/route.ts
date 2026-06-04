@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import crypto from 'crypto';
 
 /**
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
       });
 
     if (queueError) {
-      console.error('Failed to enqueue webhook event:', queueError);
+      logger.webhookError('enqueue_webhook_event', queueError, { eventType, partnerId });
       return NextResponse.json(
         { error: 'Failed to queue event' },
         { status: 500 }
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
       message: 'Event queued for processing',
     });
   } catch (error) {
-    console.error('Warehouse webhook error:', error);
+    logger.webhookError('warehouse_webhook', error as Error, { partnerId, eventType });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -145,7 +146,7 @@ async function handleInboundReceived(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle inbound_received:', error);
+    logger.webhookError('inbound_received', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }
@@ -173,7 +174,7 @@ async function handleInboundVerified(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle inbound_verified:', error);
+    logger.webhookError('inbound_verified', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }
@@ -191,7 +192,7 @@ async function handleLinehaulReady(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle linehaul_ready:', error);
+    logger.webhookError('linehaul_ready', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }
@@ -210,7 +211,7 @@ async function handleLinehaulDispatched(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle linehaul_dispatched:', error);
+    logger.webhookError('linehaul_dispatched', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }
@@ -228,7 +229,7 @@ async function handleSplitCompleted(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle split_completed:', error);
+    logger.webhookError('split_completed', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }
@@ -256,7 +257,7 @@ async function handleOutboundScanned(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle outbound_scanned:', error);
+    logger.webhookError('outbound_scanned', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }
@@ -275,7 +276,7 @@ async function handleDamageReported(eventId: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to handle damage_reported:', error);
+    logger.webhookError('damage_reported', error as Error, { eventId });
     return { success: false, error: String(error) };
   }
 }

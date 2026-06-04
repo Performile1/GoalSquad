@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -119,6 +120,11 @@ export async function POST(req: NextRequest) {
       const product = productMap.get(item.productId);
       const communityProduct = communityProductMap.get(item.communityProductId);
 
+      // Kontrollera att produkten faktiskt existerar innan vi beräknar pris
+      if (!communityProduct && !product) {
+        return NextResponse.json({ error: 'Product not found in database' }, { status: 400 });
+      }
+
       // Use community product if available, otherwise regular product
       const unitPrice = communityProduct ? parseFloat(communityProduct.price) : parseFloat(product.price);
       const productName = communityProduct ? communityProduct.title : (product.title ?? product.name);
@@ -190,7 +196,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orderError || !order) {
-      console.error('Failed to create order:', orderError);
+      logger.dbError('INSERT', 'orders', orderError, { userId: user?.id });
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 
@@ -231,7 +237,7 @@ export async function POST(req: NextRequest) {
       orderId: order.id,
     });
   } catch (error) {
-    console.error('Checkout error:', error);
+    logger.apiError('POST', '/api/checkout', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

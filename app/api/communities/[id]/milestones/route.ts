@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   request: NextRequest,
@@ -19,7 +20,7 @@ export async function GET(
 
     return NextResponse.json(milestones || []);
   } catch (error) {
-    console.error('Error fetching community milestones:', error);
+    logger.apiError('GET', '/api/communities/[id]/milestones', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to fetch community milestones' }, { status: 500 });
   }
 }

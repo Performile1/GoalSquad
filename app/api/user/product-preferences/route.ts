@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get user's product preferences
-    const { data: preferences, error } = await supabase
+    const { data: preferences, error } = await supabaseAdmin
       .from('consumer_product_preferences')
       .select(`
         *,
@@ -38,7 +34,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ preferences });
   } catch (error) {
-    console.error('Error fetching product preferences:', error);
+    logger.apiError('GET', '/api/user/product-preferences', error as Error, { userId: authUser?.id });
     return NextResponse.json({ error: 'Failed to fetch preferences' }, { status: 500 });
   }
 }
@@ -58,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create or update product preference
-    const { data: preference, error } = await supabase
+    const { data: preference, error } = await supabaseAdmin
       .from('consumer_product_preferences')
       .upsert({
         user_id: authUser.id,
@@ -86,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ preference });
   } catch (error) {
-    console.error('Error saving product preference:', error);
+    logger.apiError('POST', '/api/user/product-preferences', error as Error, { userId: authUser?.id });
     return NextResponse.json({ error: 'Failed to save preference' }, { status: 500 });
   }
 }
@@ -106,7 +102,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Delete product preference
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('consumer_product_preferences')
       .delete()
       .eq('user_id', authUser.id)
@@ -116,7 +112,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting product preference:', error);
+    logger.apiError('DELETE', '/api/user/product-preferences', error as Error, { userId: authUser?.id });
     return NextResponse.json({ error: 'Failed to delete preference' }, { status: 500 });
   }
 }

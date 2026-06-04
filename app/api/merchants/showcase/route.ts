@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
       `);
 
     if (error) {
-      console.error('Failed to fetch merchants:', error);
+      logger.dbError('SELECT', 'merchants', error);
       return NextResponse.json(
         { error: 'Failed to fetch merchants' },
         { status: 500 }
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ merchants: enrichedMerchants });
   } catch (error) {
-    console.error('Merchant showcase error:', error);
+    logger.apiError('GET', '/api/merchants/showcase', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

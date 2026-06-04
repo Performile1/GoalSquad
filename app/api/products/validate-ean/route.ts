@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,13 +29,13 @@ export async function GET(req: NextRequest) {
     });
 
     if (error) {
-      console.error('EAN validation error:', error);
+      logger.apiError('GET', '/api/products/validate-ean', error, { ean });
       return NextResponse.json({ valid: false });
     }
 
     return NextResponse.json({ valid: data });
   } catch (error) {
-    console.error('Validate EAN error:', error);
+    logger.apiError('GET', '/api/products/validate-ean', error as Error, { ean });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

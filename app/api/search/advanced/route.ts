@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,14 +34,14 @@ export async function GET(req: NextRequest) {
     });
 
     if (error) {
-      console.error('Search error:', error);
+      logger.apiError('GET', '/api/search/advanced', error, { query, type, usingFunction: true });
       // Fallback to basic search if function fails
       return fallbackSearch(query, type, limit);
     }
 
     return NextResponse.json({ results: data || [] });
   } catch (error) {
-    console.error('Advanced search error:', error);
+    logger.apiError('GET', '/api/search/advanced', error as Error, { query, type });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -162,7 +163,7 @@ async function fallbackSearch(query: string, type: string, limit: number) {
 
     return NextResponse.json({ results });
   } catch (error) {
-    console.error('Fallback search error:', error);
+    logger.apiError('GET', '/api/search/advanced/fallback', error as Error, { query, type });
     return NextResponse.json(
       { error: 'Search failed' },
       { status: 500 }

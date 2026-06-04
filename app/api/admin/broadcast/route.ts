@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireRole } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (broadcastError) {
-      console.error('Failed to create broadcast:', broadcastError);
+      logger.dbError('INSERT', 'broadcasts', broadcastError, { userId: user.id });
       return NextResponse.json(
         { error: 'Failed to create broadcast' },
         { status: 500 }
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
       recipientCount: recipients?.length || 0,
     });
   } catch (error) {
-    console.error('Broadcast error:', error);
+    logger.apiError('POST', '/api/admin/broadcast', error as Error, { userId: user?.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

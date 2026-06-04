@@ -8,6 +8,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ imageUrl });
   } catch (error) {
-    console.error('Crop error:', error);
+    logger.apiError('POST', '/api/images/crop', error as Error);
     return NextResponse.json(
       { error: 'Failed to crop image' },
       { status: 500 }

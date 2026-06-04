@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error('Similar products search error:', error);
+      logger.apiError('POST', '/api/products/check-similar', error, { name, ean, brand });
       return NextResponse.json({ similar: [] });
     }
 
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ similar });
   } catch (error) {
-    console.error('Check similar products error:', error);
+    logger.apiError('POST', '/api/products/check-similar', error as Error, { name, ean, brand });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

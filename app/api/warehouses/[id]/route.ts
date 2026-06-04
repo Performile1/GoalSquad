@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: warehouse, error } = await supabase
+    const { data: warehouse, error } = await supabaseAdmin
       .from('warehouse_partners')
       .select('*')
       .eq('id', params.id)
@@ -26,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ warehouse });
   } catch (error) {
-    console.error('Error fetching warehouse:', error);
+    logger.apiError('GET', '/api/warehouses/[id]', error as Error, { warehouseId: params.id });
     return NextResponse.json({ error: 'Failed to fetch warehouse' }, { status: 500 });
   }
 }
@@ -36,7 +32,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: warehouse } = await supabase
+    const { data: warehouse } = await supabaseAdmin
       .from('warehouse_partners')
       .select('user_id')
       .eq('id', params.id)
@@ -47,7 +43,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const body = await req.json();
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await supabaseAdmin
       .from('warehouse_partners')
       .update({ ...body, updated_at: new Date().toISOString() })
       .eq('id', params.id)
@@ -58,7 +54,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ warehouse: updated });
   } catch (error) {
-    console.error('Error updating warehouse:', error);
+    logger.apiError('PATCH', '/api/warehouses/[id]', error as Error, { warehouseId: params.id });
     return NextResponse.json({ error: 'Failed to update warehouse' }, { status: 500 });
   }
 }

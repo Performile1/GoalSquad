@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,7 +24,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ posts });
   } catch (error) {
-    console.error('Blog GET error:', error);
+    logger.apiError('GET', '/api/blog', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -60,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ post });
   } catch (error) {
-    console.error('Blog POST error:', error);
+    logger.apiError('POST', '/api/blog', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

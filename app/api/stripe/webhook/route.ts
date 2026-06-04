@@ -16,6 +16,7 @@ import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { SplitEngine } from '@/lib/split-engine';
 import { Treasury } from '@/lib/treasury';
+import { logger } from '@/lib/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10' as any,
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
+    logger.webhookError('signature_verification', err, { message: err.message });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
     if ((dedupError as any).code === '23505') {
       return NextResponse.json({ received: true, duplicate: true });
     }
-    console.error('Failed to record stripe event:', dedupError);
+    logger.dbError('INSERT', 'stripe_events', dedupError, { eventId: event.id });
     // Fall through and still attempt processing (handlers are idempotent).
   }
 
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error(`Webhook handler error for ${event.type}:`, error);
+    logger.webhookError(event.type, error as Error, { eventId: event.id });
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
   }
 }
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const orderId = session.metadata?.order_id;
   if (!orderId) {
-    console.warn('checkout.session.completed: missing order_id in metadata');
+    logger.warn('checkout.session.completed: missing order_id in metadata', { sessionId: session.id });
     return;
   }
 
@@ -109,9 +110,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     //    idempotent — safe even if this handler runs more than once.
     try {
       const splitResult = await SplitEngine.processOrderSplit(orderId);
-      console.log(`Split processed for order ${orderId}:`, splitResult.splits);
+      logger.info('Split processed for order', { orderId, splits: splitResult.splits });
     } catch (splitError) {
-      console.error(`Split engine failed for order ${orderId}:`, splitError);
+      logger.paymentError('split_engine', orderId, splitError as Error, { sessionId: session.id });
       // Do not re-throw — order is still paid, split can be retried manually
     }
 }

@@ -8,14 +8,10 @@
 
 import { requireAdmin } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET(req: NextRequest) {
   try {
@@ -39,7 +35,7 @@ export async function GET(req: NextRequest) {
     };
     const safeSort = fieldMap[sortField] ?? 'created_at';
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('profiles')
       .select(
         `id, email, full_name, display_name, avatar_url, role, is_active, created_at,
@@ -62,7 +58,7 @@ export async function GET(req: NextRequest) {
     const { data, count, error } = await query;
 
     if (error) {
-      console.error('Admin users query error:', error);
+      logger.dbError('SELECT', 'profiles', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -73,7 +69,7 @@ export async function GET(req: NextRequest) {
       pageSize,
     });
   } catch (err) {
-    console.error('Admin users error:', err);
+    logger.apiError('GET', '/api/admin/users', err as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

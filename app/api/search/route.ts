@@ -10,6 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -120,7 +121,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ results });
   } catch (error) {
-    console.error('Search error:', error);
+    logger.apiError('GET', '/api/search', error as Error, { query, type });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

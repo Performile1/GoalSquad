@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ post });
   } catch (error) {
-    console.error('Blog GET by ID error:', error);
+    logger.apiError('GET', '/api/blog/[id]', error as Error, { postId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -45,7 +46,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ post });
   } catch (error) {
-    console.error('Blog PUT error:', error);
+    logger.apiError('PUT', '/api/blog/[id]', error as Error, { postId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -63,7 +64,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Blog DELETE error:', error);
+    logger.apiError('DELETE', '/api/blog/[id]', error as Error, { postId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

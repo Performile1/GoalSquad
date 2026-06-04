@@ -10,6 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
 // Maps form values → valid DB community_type CHECK values
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orgError || !organization) {
-      console.error('Failed to create organization:', orgError);
+      logger.dbError('INSERT', 'organizations', orgError, { name: validatedData.name });
       return NextResponse.json({ error: 'Kunde inte skapa organisation' }, { status: 500 });
     }
 
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (communityError || !community) {
-      console.error('Failed to create community:', communityError);
+      logger.dbError('INSERT', 'communities', communityError, { name: validatedData.name });
       // Rollback organization
       await supabaseAdmin.from('organizations').delete().eq('id', organization.id);
       return NextResponse.json({ error: 'Kunde inte skapa förening/klass' }, { status: 500 });
@@ -131,7 +132,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.error('Community creation error:', error);
+    logger.apiError('POST', '/api/communities/create', error as Error, { name: validatedData.name });
     return NextResponse.json({ error: 'Internt serverfel' }, { status: 500 });
   }
 }

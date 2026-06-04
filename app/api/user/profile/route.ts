@@ -1,20 +1,16 @@
 import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET(req: NextRequest) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: profile, error } = await supabase
+    const { data: profile, error } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .eq('id', authUser.id)
@@ -24,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    logger.apiError('GET', '/api/user/profile', error as Error, { userId: authUser?.id });
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
   }
 }
@@ -53,7 +49,7 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    const { data: profile, error } = await supabase
+    const { data: profile, error } = await supabaseAdmin
       .from('profiles')
       .update(updateData)
       .eq('id', authUser.id)
@@ -64,7 +60,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Error updating profile:', error);
+    logger.apiError('PATCH', '/api/user/profile', error as Error, { userId: authUser?.id });
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 }

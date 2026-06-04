@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireRole } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -29,7 +30,7 @@ export async function POST(
 
     return NextResponse.json({ success: true, ad: data });
   } catch (error) {
-    console.error('Error approving ad:', error);
+    logger.apiError('POST', '/api/admin/ads/[id]/approve', error as Error, { adId: params.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

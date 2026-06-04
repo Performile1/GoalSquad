@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   req: NextRequest,
@@ -49,7 +50,7 @@ export async function POST(
       .single();
 
     if (error) {
-      console.error('Failed to send message:', error);
+      logger.dbError('INSERT', 'messages', error, { conversationId, userId });
       return NextResponse.json(
         { error: 'Failed to send message' },
         { status: 500 }
@@ -66,7 +67,7 @@ export async function POST(
 
     return NextResponse.json({ success: true, message });
   } catch (error) {
-    console.error('Send message error:', error);
+    logger.apiError('POST', '/api/messages/[conversationId]/send', error as Error, { conversationId, userId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

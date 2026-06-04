@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 const PLATFORM_FEE_PERCENT = 12;
 
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('community-products GET error:', error);
+      logger.dbError('SELECT', 'community_products', error);
       return NextResponse.json({ products: [] });
     }
 
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ products });
   } catch (error) {
-    console.error('community-products GET error:', error);
+    logger.apiError('GET', '/api/community-products', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -132,7 +133,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      console.error('community-products POST error:', error);
+      logger.dbError('INSERT', 'community_products', error, { userId: user?.id });
       return NextResponse.json(
         { error: 'Failed to create listing', details: error.message },
         { status: 500 }
@@ -150,7 +151,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.error('community-products POST error:', error);
+    logger.apiError('POST', '/api/community-products', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

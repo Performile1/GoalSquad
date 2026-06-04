@@ -1,15 +1,11 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
-
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -157,7 +153,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, ad });
   } catch (error: any) {
-    console.error('Error creating ad:', error);
+    logger.apiError('POST', '/api/ads/purchase', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

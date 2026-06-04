@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   request: NextRequest,
@@ -19,7 +20,7 @@ export async function GET(
 
     return NextResponse.json(tiers || []);
   } catch (error) {
-    console.error('Error fetching community squad tiers:', error);
+    logger.apiError('GET', '/api/communities/[id]/squad-tiers', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to fetch community squad tiers' }, { status: 500 });
   }
 }

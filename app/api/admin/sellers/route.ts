@@ -1,13 +1,9 @@
 import { requireAdmin } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,7 +19,7 @@ export async function GET(req: NextRequest) {
     const sortDir = searchParams.get('sortDir') || 'desc';
     const offset = (page - 1) * pageSize;
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('sellers')
       .select(`
         id,
@@ -78,7 +74,7 @@ export async function GET(req: NextRequest) {
       pageSize,
     });
   } catch (error) {
-    console.error('Admin sellers API error:', error);
+    logger.apiError('GET', '/api/admin/sellers', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

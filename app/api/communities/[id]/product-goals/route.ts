@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -17,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const communityId = params.id;
 
     // Verify user is a member of the community
-    const { data: member, error: memberError } = await supabase
+    const { data: member, error: memberError } = await supabaseAdmin
       .from('community_members')
       .select('role')
       .eq('community_id', communityId)
@@ -29,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Get product-specific goals for the community
-    const { data: goals, error } = await supabase
+    const { data: goals, error } = await supabaseAdmin
       .from('entity_goals')
       .select(`
         *,
@@ -48,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ goals });
   } catch (error) {
-    console.error('Error fetching product goals:', error);
+    logger.apiError('GET', '/api/communities/[id]/product-goals', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to fetch goals' }, { status: 500 });
   }
 }
@@ -69,7 +65,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     // Verify user is admin of the community
-    const { data: member, error: memberError } = await supabase
+    const { data: member, error: memberError } = await supabaseAdmin
       .from('community_members')
       .select('role')
       .eq('community_id', communityId)
@@ -81,7 +77,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     // Create product-specific goal
-    const { data: goal, error } = await supabase
+    const { data: goal, error } = await supabaseAdmin
       .from('entity_goals')
       .insert({
         entity_id: communityId,
@@ -105,7 +101,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ goal });
   } catch (error) {
-    console.error('Error creating product goal:', error);
+    logger.apiError('POST', '/api/communities/[id]/product-goals', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to create goal' }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   req: NextRequest,
@@ -33,7 +34,7 @@ export async function POST(
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Split shipment error:', error);
+    logger.apiError('POST', '/api/orders/[id]/split-shipment', error as Error, { orderId: params.id });
     return NextResponse.json(
       { error: 'Failed to create split shipment' },
       { status: 500 }

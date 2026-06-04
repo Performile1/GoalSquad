@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkMOQStatus } from '@/lib/moq-handler';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(moqStatus);
   } catch (error) {
-    console.error('Check MOQ error:', error);
+    logger.apiError('POST', '/api/products/check-moq', error as Error, { productId, postalCode });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await supabaseAdmin.rpc('get_category_tree');
 
     if (error) {
-      console.error('Failed to fetch categories:', error);
+      logger.apiError('GET', '/api/products/categories', error, { usingFunction: true });
       // Fallback to basic query
       const { data: categories } = await supabaseAdmin
         .from('product_categories')
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ categories: formattedCategories });
   } catch (error) {
-    console.error('Categories API error:', error);
+    logger.apiError('GET', '/api/products/categories', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

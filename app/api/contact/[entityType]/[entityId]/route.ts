@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -34,7 +35,7 @@ export async function GET(
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Failed to fetch contact:', error);
+      logger.dbError('SELECT', 'contact_information', error, { entityType, entityId });
       return NextResponse.json(
         { error: 'Failed to fetch contact information' },
         { status: 500 }
@@ -43,7 +44,7 @@ export async function GET(
 
     return NextResponse.json({ contact: contact || null });
   } catch (error) {
-    console.error('Contact API error:', error);
+    logger.apiError('GET', '/api/contact/[entityType]/[entityId]', error as Error, { entityType, entityId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -133,7 +134,7 @@ export async function PUT(
 
     return NextResponse.json({ contact: result });
   } catch (error) {
-    console.error('Update contact error:', error);
+    logger.apiError('PUT', '/api/contact/[entityType]/[entityId]', error as Error, { entityType, entityId });
     return NextResponse.json(
       { error: 'Failed to update contact information' },
       { status: 500 }

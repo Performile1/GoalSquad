@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,25 +22,25 @@ export async function GET(request: NextRequest) {
       badges,
       lootBoxes,
     ] = await Promise.all([
-      supabase.from('communities').select('id', { count: 'exact' }),
-      supabase.from('communities').select('id', { count: 'exact' }).eq('type', 'club'),
-      supabase.from('communities').select('id', { count: 'exact' }).eq('type', 'class'),
-      supabase.from('seller_profiles').select('id', { count: 'exact' }),
-      supabase.from('merchants').select('id', { count: 'exact' }),
-      supabase.from('warehouse_partners').select('id', { count: 'exact' }),
-      supabase.from('orders').select('id', { count: 'exact' }),
-      supabase.from('profiles').select('id', { count: 'exact' }),
-      supabase.from('user_achievements').select('id', { count: 'exact' }),
-      supabase.from('user_achievements').select('id', { count: 'exact' }).not('badge_id', 'is', null),
-      supabase.from('user_achievements').select('id', { count: 'exact' }).eq('type', 'loot_box'),
+      supabaseAdmin.from('communities').select('id', { count: 'exact' }),
+      supabaseAdmin.from('communities').select('id', { count: 'exact' }).eq('type', 'club'),
+      supabaseAdmin.from('communities').select('id', { count: 'exact' }).eq('type', 'class'),
+      supabaseAdmin.from('seller_profiles').select('id', { count: 'exact' }),
+      supabaseAdmin.from('merchants').select('id', { count: 'exact' }),
+      supabaseAdmin.from('warehouse_partners').select('id', { count: 'exact' }),
+      supabaseAdmin.from('orders').select('id', { count: 'exact' }),
+      supabaseAdmin.from('profiles').select('id', { count: 'exact' }),
+      supabaseAdmin.from('user_achievements').select('id', { count: 'exact' }),
+      supabaseAdmin.from('user_achievements').select('id', { count: 'exact' }).not('badge_id', 'is', null),
+      supabaseAdmin.from('user_achievements').select('id', { count: 'exact' }).eq('type', 'loot_box'),
     ]);
 
     // Calculate total sales
-    const { data: ordersData } = await supabase.from('orders').select('total_amount');
+    const { data: ordersData } = await supabaseAdmin.from('orders').select('total_amount');
     const totalSales = ordersData?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
 
     // Calculate total XP
-    const { data: xpData } = await supabase.from('user_achievements').select('xp');
+    const { data: xpData } = await supabaseAdmin.from('user_achievements').select('xp');
     const totalXP = xpData?.reduce((sum, achievement) => sum + (achievement.xp || 0), 0) || 0;
 
     // Calculate average level
@@ -71,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Stats error:', error);
+    logger.apiError('GET', '/api/admin/stats', error as Error);
     return NextResponse.json(
       { error: 'Misslyckades att hämta statistik' },
       { status: 500 }

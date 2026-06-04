@@ -187,11 +187,27 @@
 - ✅ Orders saknar `seller_id`/`warehouse_id` - Tillagt (migration 069)
 
 **Öppna (ej kritiska):**
-- ❌ Checkout-validering - Saknar zod-scheman
+- ✅ Checkout-validering - Implementerad med Zod (UUID, quantity >= 1, email, postal code, ISO country)
 - ✅ Daily-charge dubbelkörning - Löst via idempotens (migration 070)
 - ❌ Payout ej implementerad - Kräver Stripe Connect
 
-### 2.6 Anti-Cheat System
+### 2.6 Kodkvalitet & Refaktorering
+
+**Profile Lookup Centralisering:**
+- ✅ Skapad `lib/profile-helpers.ts` med `getProfile()`, `getProfileWithStripeId()`, `hasRole()`, `isUserActive()`
+- ✅ 8 API-rutter refaktorerade att använda helper (treasury, ads, goals, shipping, analytics, coordination)
+- ✅ Eliminerat ~20 rader duplicerad kod
+
+**IDOR-säkerhet:**
+- ✅ `warehouses/[id]/flow/route.ts` - Lade till auth + access control (warehouse_assignments, community membership, gs_admin)
+- ✅ Alla dynamic routes med merchant_id/warehouse_id verifierade
+
+**Kryptografisk säkerhet:**
+- ✅ `audit-signature.ts` använder `crypto.randomBytes` (CSPRNG) för OTP-generering
+
+---
+
+### 2.7 Anti-Cheat System
 
 **Detektioner:**
 - XP velocity anomaly (3x normal rate)

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
 const productSchema = z.object({
@@ -125,7 +126,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (productError || !product) {
-      console.error('Failed to create product:', productError);
+      logger.dbError('INSERT', 'products', productError, { merchantId });
       return NextResponse.json(
         { error: 'Failed to create product' },
         { status: 500 }
@@ -165,7 +166,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error('Product creation error:', error);
+    logger.apiError('POST', '/api/products/create', error as Error, { merchantId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

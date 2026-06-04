@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
       .eq('user_id', userId);
 
     if (error) {
-      console.error('Failed to fetch conversations:', error);
+      logger.dbError('SELECT', 'conversations', error, { userId });
       return NextResponse.json(
         { error: 'Failed to fetch conversations' },
         { status: 500 }
@@ -94,7 +95,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ conversations: enrichedConversations });
   } catch (error) {
-    console.error('Conversations API error:', error);
+    logger.apiError('GET', '/api/messages/conversations', error as Error, { userId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

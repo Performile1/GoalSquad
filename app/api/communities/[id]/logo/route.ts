@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   req: NextRequest,
@@ -77,7 +78,7 @@ export async function POST(
       });
 
     if (uploadError) {
-      console.error('Upload error:', uploadError);
+      logger.dbError('UPLOAD', 'storage', uploadError, { communityId });
       return NextResponse.json(
         { error: 'Failed to upload logo' },
         { status: 500 }
@@ -106,7 +107,7 @@ export async function POST(
       .eq('id', communityId);
 
     if (updateError) {
-      console.error('Update error:', updateError);
+      logger.dbError('UPDATE', 'communities', updateError, { communityId });
       return NextResponse.json(
         { error: 'Failed to update community' },
         { status: 500 }
@@ -119,7 +120,7 @@ export async function POST(
       type: logoType,
     });
   } catch (error) {
-    console.error('Logo upload error:', error);
+    logger.apiError('POST', '/api/communities/[id]/logo', error as Error, { communityId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -166,7 +167,7 @@ export async function PUT(
       .eq('id', communityId);
 
     if (error) {
-      console.error('Update error:', error);
+      logger.dbError('UPDATE', 'communities', error, { communityId });
       return NextResponse.json(
         { error: 'Failed to update branding' },
         { status: 500 }
@@ -175,7 +176,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Branding update error:', error);
+    logger.apiError('PATCH', '/api/communities/[id]/logo', error as Error, { communityId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

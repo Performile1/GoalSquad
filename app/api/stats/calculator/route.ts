@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
       averageProfit: Math.round(averageProfit),
     });
   } catch (error) {
-    console.error('Calculator stats API error:', error);
+    logger.apiError('GET', '/api/stats/calculator', error as Error);
     return NextResponse.json(
       {
         totalCommunities: 0,

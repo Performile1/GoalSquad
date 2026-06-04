@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -77,7 +78,7 @@ export async function GET(
 
     return NextResponse.json({ rankings });
   } catch (error) {
-    console.error('Failed to fetch leaderboard:', error);
+    logger.apiError('GET', '/api/communities/[id]/leaderboard', error as Error, { communityId: params.id, period });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

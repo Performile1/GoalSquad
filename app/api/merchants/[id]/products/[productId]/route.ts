@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 async function verifyMerchantOwner(merchantId: string, userId: string) {
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('merchants')
     .select('user_id')
     .eq('id', merchantId)
@@ -39,7 +35,7 @@ export async function GET(
 
     return NextResponse.json({ product });
   } catch (error) {
-    console.error('Error fetching product:', error);
+    logger.apiError('GET', '/api/merchants/[id]/products/[productId]', error as Error, { merchantId: params.id, productId: params.productId });
     return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
   }
 }
@@ -69,7 +65,7 @@ export async function PUT(
 
     return NextResponse.json({ product });
   } catch (error) {
-    console.error('Error updating product:', error);
+    logger.apiError('PATCH', '/api/merchants/[id]/products/[productId]', error as Error, { merchantId: params.id, productId: params.productId });
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
@@ -86,7 +82,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('products')
       .delete()
       .eq('id', params.productId)
@@ -96,7 +92,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting product:', error);
+    logger.apiError('DELETE', '/api/merchants/[id]/products/[productId]', error as Error, { merchantId: params.id, productId: params.productId });
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }

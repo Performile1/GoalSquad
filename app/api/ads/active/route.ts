@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
     const randomIndex = Math.floor(Math.random() * ads.length);
     return NextResponse.json({ ad: ads[randomIndex] });
   } catch (error: any) {
-    console.error('Error fetching active ads:', error);
+    logger.apiError('GET', '/api/ads/active', error, { placement });
     return NextResponse.json({ ad: null });
   }
 }

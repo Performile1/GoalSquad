@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { Treasury } from '@/lib/treasury';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -85,7 +86,7 @@ export async function GET(
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Failed to fetch community stats:', error);
+    logger.apiError('GET', '/api/communities/[id]/stats', error as Error, { communityId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -83,7 +84,7 @@ export async function GET(req: NextRequest) {
 
         processedCount++;
       } catch (error) {
-        console.error(`Failed to process job ${queue_id}:`, error);
+        logger.webhookError('process_job', error as Error, { queue_id });
 
         // Mark job as failed (will retry with exponential backoff)
         await supabaseAdmin.rpc('fail_webhook_job', {
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Webhook worker error:', error);
+    logger.apiError('GET', '/api/cron/webhook-worker', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

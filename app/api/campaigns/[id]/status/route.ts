@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function PUT(
   req: NextRequest,
@@ -27,7 +28,7 @@ export async function PUT(
       .eq('id', campaignId);
 
     if (error) {
-      console.error('Failed to update campaign status:', error);
+      logger.dbError('UPDATE', 'campaigns', error, { campaignId, status });
       return NextResponse.json(
         { error: 'Failed to update status' },
         { status: 500 }
@@ -36,7 +37,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Campaign status update error:', error);
+    logger.apiError('PUT', '/api/campaigns/[id]/status', error as Error, { campaignId: params.id, status });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

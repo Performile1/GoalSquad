@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,10 +10,10 @@ export async function GET(request: NextRequest) {
 
     // Fetch entities from various tables
     const [communities, sellers, merchants, warehouses] = await Promise.all([
-      supabase.from('communities').select('id, name, type, created_at').limit(50),
-      supabase.from('seller_profiles').select('id, full_name, created_at').limit(50),
-      supabase.from('merchants').select('id, business_name, created_at').limit(50),
-      supabase.from('warehouse_partners').select('id, company_name, created_at').limit(50),
+      supabaseAdmin.from('communities').select('id, name, type, created_at').limit(50),
+      supabaseAdmin.from('seller_profiles').select('id, full_name, created_at').limit(50),
+      supabaseAdmin.from('merchants').select('id, business_name, created_at').limit(50),
+      supabaseAdmin.from('warehouse_partners').select('id, company_name, created_at').limit(50),
     ]);
 
     const entities: any[] = [];
@@ -80,7 +76,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ entities });
   } catch (error) {
-    console.error('Entities error:', error);
+    logger.apiError('GET', '/api/admin/entities', error as Error);
     return NextResponse.json(
       { error: 'Misslyckades att hämta entiteter' },
       { status: 500 }

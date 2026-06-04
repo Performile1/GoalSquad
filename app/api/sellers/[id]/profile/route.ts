@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: seller, error } = await supabase
+    const { data: seller, error } = await supabaseAdmin
       .from('seller_profiles')
       .select('*')
       .eq('id', params.id)
@@ -21,7 +17,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     if (error || !seller) return NextResponse.json({ error: 'Seller not found' }, { status: 404 });
     if (seller.user_id !== authUser.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('full_name, email, phone, address_line1, city, postal_code, country')
       .eq('id', authUser.id)
@@ -29,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ seller, profile });
   } catch (error) {
-    console.error('Error fetching seller profile:', error);
+    logger.apiError('GET', '/api/sellers/[id]/profile', error as Error, { sellerId: params.id });
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
   }
 }
@@ -39,7 +35,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: seller } = await supabase
+    const { data: seller } = await supabaseAdmin
       .from('seller_profiles')
       .select('user_id')
       .eq('id', params.id)
@@ -52,13 +48,13 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const { seller: sellerData, profile: profileData } = await req.json();
 
     const [sellerUpdate, profileUpdate] = await Promise.all([
-      supabase
+      supabaseAdmin
         .from('seller_profiles')
         .update({ ...sellerData, updated_at: new Date().toISOString() })
         .eq('id', params.id)
         .select()
         .single(),
-      supabase
+      supabaseAdmin
         .from('profiles')
         .update({ ...profileData, updated_at: new Date().toISOString() })
         .eq('id', authUser.id)
@@ -71,7 +67,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ seller: sellerUpdate.data, profile: profileUpdate.data });
   } catch (error) {
-    console.error('Error updating seller profile:', error);
+    logger.apiError('PATCH', '/api/sellers/[id]/profile', error as Error, { sellerId: params.id });
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 }

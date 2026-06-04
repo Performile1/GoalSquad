@@ -1,9 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { apiFetch } from '@/lib/api-client';
 import { MessageIcon, SendIcon } from '@/app/components/BrandIcons';
+import RealtimeChat from '@/app/components/RealtimeChat';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 interface Conversation {
   id: string;
@@ -15,37 +22,27 @@ interface Conversation {
   conversationType: 'direct' | 'community' | 'broadcast';
 }
 
-interface Message {
-  id: string;
-  senderId: string;
-  senderName: string;
-  content: string;
-  messageType: 'text' | 'image' | 'system';
-  createdAt: string;
-  isOwn: boolean;
-}
-
 export default function MessagesPage() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchConversations();
+    getCurrentUser();
   }, []);
 
-  useEffect(() => {
-    if (selectedConversation) {
-      fetchMessages(selectedConversation);
+  const getCurrentUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    } catch (error) {
+      console.error('Failed to get current user:', error);
     }
-  }, [selectedConversation]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  };
 
   const fetchConversations = async () => {
     try {
@@ -57,41 +54,6 @@ export default function MessagesPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchMessages = async (conversationId: string) => {
-    try {
-      const response = await apiFetch(`/api/messages/${conversationId}`);
-      const data = await response.json();
-      setMessages(data.messages || []);
-      
-      // Mark as read
-      await apiFetch(`/api/messages/${conversationId}/read`, { method: 'POST' });
-    } catch (error) {
-      console.error('Failed to fetch messages:', error);
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedConversation) return;
-
-    try {
-      const response = await apiFetch(`/api/messages/${selectedConversation}/send`, {
-        method: 'POST',
-        body: JSON.stringify({ content: newMessage }),
-      });
-
-      if (response.ok) {
-        setNewMessage('');
-        fetchMessages(selectedConversation);
-      }
-    } catch (error) {
-      console.error('Failed to send message:', error);
-    }
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const selectedConv = conversations.find(c => c.id === selectedConversation);
@@ -166,7 +128,7 @@ export default function MessagesPage() {
 
       {/* Messages Area */}
       <div className="flex-1 flex flex-col">
-        {selectedConv ? (
+        {selectedConv && currentUserId ? (
           <>
             {/* Chat Header */}
             <div className="bg-white border-b border-gray-200 p-4">
@@ -183,57 +145,12 @@ export default function MessagesPage() {
               </div>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-md ${msg.isOwn ? 'order-2' : 'order-1'}`}>
-                    {!msg.isOwn && (
-                      <p className="text-xs text-gray-500 mb-1 ml-2">{msg.senderName}</p>
-                    )}
-                    <div
-                      className={`rounded-2xl px-4 py-2 ${
-                        msg.isOwn
-                          ? 'bg-primary-900 text-white'
-                          : 'bg-gray-200 text-gray-900'
-                      }`}
-                    >
-                      <p>{msg.content}</p>
-                      <p className={`text-xs mt-1 ${msg.isOwn ? 'text-primary-100' : 'text-gray-500'}`}>
-                        {formatTime(msg.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Message Input */}
-            <div className="bg-white border-t border-gray-200 p-4">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  placeholder="Skriv ett meddelande..."
-                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary-600 focus:outline-none"
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={!newMessage.trim()}
-                  className="bg-primary-900 text-white px-5 py-3 rounded-xl font-semibold hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  <SendIcon size={18} className="text-white" />
-                  Skicka
-                </button>
-              </div>
+            {/* Realtime Chat Component */}
+            <div className="flex-1 p-4">
+              <RealtimeChat 
+                conversationId={selectedConversation!} 
+                currentUserId={currentUserId} 
+              />
             </div>
           </>
         ) : (
@@ -247,20 +164,4 @@ export default function MessagesPage() {
       </div>
     </div>
   );
-}
-
-function formatTime(timestamp: string): string {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return 'Just nu';
-  if (diffMins < 60) return `${diffMins}m`;
-  if (diffHours < 24) return `${diffHours}h`;
-  if (diffDays < 7) return `${diffDays}d`;
-  
-  return date.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' });
 }

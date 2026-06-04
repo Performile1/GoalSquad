@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +55,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Find warehouse error:', error);
+    logger.apiError('GET', '/api/warehouses/find', error as Error, { postalCode, country });
     return NextResponse.json(
       { error: 'Failed to find warehouse' },
       { status: 500 }

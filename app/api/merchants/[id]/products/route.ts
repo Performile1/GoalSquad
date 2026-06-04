@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -17,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const merchantId = params.id;
 
     // Verify user is the merchant
-    const { data: merchant, error: merchantError } = await supabase
+    const { data: merchant, error: merchantError } = await supabaseAdmin
       .from('merchants')
       .select('user_id')
       .eq('id', merchantId)
@@ -28,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Get merchant's products
-    const { data: products, error } = await supabase
+    const { data: products, error } = await supabaseAdmin
       .from('products')
       .select('*')
       .eq('merchant_id', merchantId)
@@ -38,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ products });
   } catch (error) {
-    console.error('Error fetching merchant products:', error);
+    logger.apiError('GET', '/api/merchants/[id]/products', error as Error, { merchantId: params.id });
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }

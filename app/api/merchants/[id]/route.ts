@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: merchant, error } = await supabase
+    const { data: merchant, error } = await supabaseAdmin
       .from('merchants')
       .select('*')
       .eq('id', params.id)
@@ -22,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ merchant });
   } catch (error) {
-    console.error('Error fetching merchant:', error);
+    logger.apiError('GET', '/api/merchants/[id]', error as Error, { merchantId: params.id });
     return NextResponse.json({ error: 'Failed to fetch merchant' }, { status: 500 });
   }
 }
@@ -32,7 +28,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: merchant } = await supabase
+    const { data: merchant } = await supabaseAdmin
       .from('merchants')
       .select('user_id')
       .eq('id', params.id)
@@ -43,7 +39,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const body = await req.json();
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await supabaseAdmin
       .from('merchants')
       .update({ ...body, updated_at: new Date().toISOString() })
       .eq('id', params.id)
@@ -54,7 +50,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ merchant: updated });
   } catch (error) {
-    console.error('Error updating merchant:', error);
+    logger.apiError('PATCH', '/api/merchants/[id]', error as Error, { merchantId: params.id });
     return NextResponse.json({ error: 'Failed to update merchant' }, { status: 500 });
   }
 }

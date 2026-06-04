@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ warehouses });
   } catch (error) {
-    console.error('Warehouses API error:', error);
+    logger.apiError('GET', '/api/warehouses', error as Error);
     return NextResponse.json(
       { error: 'Failed to fetch warehouses' },
       { status: 500 }

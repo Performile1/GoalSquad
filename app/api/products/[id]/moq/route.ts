@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function PUT(
   req: NextRequest,
@@ -43,7 +44,7 @@ export async function PUT(
 
     return NextResponse.json({ product: data });
   } catch (error) {
-    console.error('Update MOQ error:', error);
+    logger.apiError('PUT', '/api/products/[id]/moq', error as Error, { productId: params.id });
     return NextResponse.json(
       { error: 'Failed to update MOQ settings' },
       { status: 500 }

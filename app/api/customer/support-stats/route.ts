@@ -1,7 +1,7 @@
 import { getAuthUser } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error('Error fetching customer support stats:', error);
+    logger.apiError('GET', '/api/customer/support-stats', error as Error, { userId: user?.id });
     return NextResponse.json({ error: 'Failed to fetch support stats' }, { status: 500 });
   }
 }

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,9 +10,9 @@ export async function GET(request: NextRequest) {
 
     // Fetch recent activities from various tables
     const [orders, users, communities] = await Promise.all([
-      supabase.from('orders').select('id, created_at, total_amount').order('created_at', { ascending: false }).limit(10),
-      supabase.from('profiles').select('id, email, full_name, created_at').order('created_at', { ascending: false }).limit(10),
-      supabase.from('communities').select('id, name, created_at').order('created_at', { ascending: false }).limit(10),
+      supabaseAdmin.from('orders').select('id, created_at, total_amount').order('created_at', { ascending: false }).limit(10),
+      supabaseAdmin.from('profiles').select('id, email, full_name, created_at').order('created_at', { ascending: false }).limit(10),
+      supabaseAdmin.from('communities').select('id, name, created_at').order('created_at', { ascending: false }).limit(10),
     ]);
 
     const activities: any[] = [];
@@ -59,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ activities: activities.slice(0, 20) });
   } catch (error) {
-    console.error('Activities error:', error);
+    logger.apiError('GET', '/api/admin/activities', error as Error);
     return NextResponse.json(
       { error: 'Misslyckades att hämta aktiviteter' },
       { status: 500 }

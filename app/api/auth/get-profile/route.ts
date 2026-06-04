@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    logger.apiError('GET', '/api/auth/get-profile', error as Error, { userId });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

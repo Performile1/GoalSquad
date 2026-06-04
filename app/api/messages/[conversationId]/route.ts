@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -48,7 +49,7 @@ export async function GET(
       .limit(100);
 
     if (error) {
-      console.error('Failed to fetch messages:', error);
+      logger.dbError('SELECT', 'messages', error, { conversationId, userId });
       return NextResponse.json(
         { error: 'Failed to fetch messages' },
         { status: 500 }
@@ -67,7 +68,7 @@ export async function GET(
 
     return NextResponse.json({ messages: formattedMessages });
   } catch (error) {
-    console.error('Messages API error:', error);
+    logger.apiError('GET', '/api/messages/[conversationId]', error as Error, { conversationId, userId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

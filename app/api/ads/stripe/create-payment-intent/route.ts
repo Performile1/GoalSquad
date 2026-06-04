@@ -1,5 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUser } from '@/lib/api-auth';
+import { getProfileWithStripeId } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -8,13 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -28,11 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Get or create Stripe customer
     let customerId;
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfileWithStripeId(user.id);
 
     if (profile?.stripe_customer_id) {
       customerId = profile.stripe_customer_id;
@@ -69,7 +62,7 @@ export async function POST(request: NextRequest) {
       paymentIntentId: paymentIntent.id,
     });
   } catch (error: any) {
-    console.error('Error creating payment intent:', error);
+    logger.paymentError('create_payment_intent', paymentIntentId || 'unknown', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

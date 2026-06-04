@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { AuditSignature } from '@/lib/audit-signature';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
 
 const verificationSchema = z.object({
   merchantId: z.string().uuid(),
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
       .eq('id', validatedData.merchantId);
 
     if (updateError) {
-      console.error('Failed to update merchant:', updateError);
+      logger.dbError('UPDATE', 'merchants', updateError, { merchantId, userId });
       return NextResponse.json(
         { error: 'Failed to update merchant status' },
         { status: 500 }
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error('Verification error:', error);
+    logger.apiError('POST', '/api/merchants/verify', error as Error, { merchantId, userId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -9,6 +9,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
 const sellerSchema = z.object({
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
       .eq('id', userId);
 
     if (updateError) {
-      console.error('Failed to update seller profile:', updateError);
+      logger.dbError('UPDATE', 'profiles', updateError, { email: data.email });
       return NextResponse.json({ error: 'Kunde inte uppdatera profil' }, { status: 500 });
     }
 
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.error('Seller registration error:', error);
+    logger.apiError('POST', '/api/sellers/register', error as Error, { email: data.email });
     return NextResponse.json({ error: 'Internt serverfel' }, { status: 500 });
   }
 }

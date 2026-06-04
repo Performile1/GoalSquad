@@ -1,15 +1,12 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -34,19 +31,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ notifications });
   } catch (error: any) {
-    console.error('Error fetching notifications:', error);
+    logger.apiError('GET', '/api/notifications', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function PATCH(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -71,7 +63,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error updating notifications:', error);
+    logger.apiError('PATCH', '/api/notifications', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

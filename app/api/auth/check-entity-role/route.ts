@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireUser } from '@/lib/api-auth';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error checking entity role:', error);
+    logger.apiError('GET', '/api/auth/check-entity-role', error as Error, { userId, entityType, entityId });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

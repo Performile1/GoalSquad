@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -20,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const featured = searchParams.get('featured');
 
     // Verify user is a member of the community
-    const { data: member, error: memberError } = await supabase
+    const { data: member, error: memberError } = await supabaseAdmin
       .from('community_members')
       .select('role')
       .eq('community_id', communityId)
@@ -32,7 +28,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 
     // Get community selected products
-    let query = supabase
+    let query = supabaseAdmin
       .from('community_selected_products')
       .select(`
         *,
@@ -68,7 +64,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ products });
   } catch (error) {
-    console.error('Error fetching community products:', error);
+    logger.apiError('GET', '/api/communities/[id]/products', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
@@ -89,7 +85,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     // Verify user is admin or moderator of the community
-    const { data: member, error: memberError } = await supabase
+    const { data: member, error: memberError } = await supabaseAdmin
       .from('community_members')
       .select('role')
       .eq('community_id', communityId)
@@ -101,7 +97,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     // Create community-product selection
-    const { data: product, error } = await supabase
+    const { data: product, error } = await supabaseAdmin
       .from('community_selected_products')
       .insert({
         community_id: communityId,
@@ -134,7 +130,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ product });
   } catch (error) {
-    console.error('Error adding community product:', error);
+    logger.apiError('POST', '/api/communities/[id]/products', error as Error, { communityId: params.id });
     return NextResponse.json({ error: 'Failed to add product' }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
     const { data: products, error } = await query;
 
     if (error) {
-      console.error('Failed to fetch products:', error);
+      logger.dbError('SELECT', 'products', error);
       return NextResponse.json(
         { error: 'Failed to fetch products' },
         { status: 500 }
@@ -153,7 +154,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ products: allProducts });
   } catch (error) {
-    console.error('Products API error:', error);
+    logger.apiError('GET', '/api/products', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

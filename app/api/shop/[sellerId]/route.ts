@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -79,7 +80,7 @@ export async function GET(
       products: products || [],
     });
   } catch (error) {
-    console.error('Shop API error:', error);
+    logger.apiError('GET', '/api/shop/[sellerId]', error as Error, { sellerId: params.sellerId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -1,15 +1,13 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUser } from '@/lib/api-auth';
+import { getProfile } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
 
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -38,19 +36,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ messages });
   } catch (error: any) {
-    console.error('Error fetching coordination messages:', error);
+    logger.apiError('GET', '/api/coordination', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -70,11 +63,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await getProfile(user.id, 'role');
 
     if (!profile || (profile.role !== 'community' && profile.role !== 'seller')) {
       return NextResponse.json({ error: 'Only communities and sellers can create coordination messages' }, { status: 403 });
@@ -100,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: newMessage });
   } catch (error: any) {
-    console.error('Error creating coordination message:', error);
+    logger.apiError('POST', '/api/coordination', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -134,7 +123,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error updating coordination message:', error);
+    logger.apiError('PATCH', '/api/coordination', error as Error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

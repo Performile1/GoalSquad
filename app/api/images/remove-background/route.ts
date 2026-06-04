@@ -8,6 +8,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import FormData from 'form-data';
+import { logger } from '@/lib/logger';
 
 // Next.js 14 Route Segment Config
 export const runtime = 'nodejs';
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
     // Option 3: Use local processing (basic)
     return await removeBackgroundLocal(image);
   } catch (error) {
-    console.error('Remove background error:', error);
+    logger.apiError('POST', '/api/images/remove-background', error as Error);
     return NextResponse.json(
       { error: 'Failed to remove background' },
       { status: 500 }

@@ -1,16 +1,13 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthUser } from '@/lib/api-auth';
 import { getProfile } from '@/lib/profile-helpers';
+import { logger } from '@/lib/logger';
 
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -29,19 +26,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ goals });
   } catch (error: any) {
-    console.error('Error fetching goals:', error);
+    logger.apiError('GET', '/api/goals', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -89,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ goal });
   } catch (error: any) {
-    console.error('Error creating goal:', error);
+    logger.apiError('POST', '/api/goals', error, { userId: user?.id });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -127,7 +119,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error updating goal:', error);
+    logger.apiError('PATCH', '/api/goals', error as Error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

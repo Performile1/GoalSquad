@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest) {
       count: calculatorProducts.length,
     });
   } catch (error) {
-    console.error('Calculator products API error:', error);
+    logger.apiError('GET', '/api/products/calculator-products', error as Error);
     return NextResponse.json(
       { error: 'Failed to fetch calculator products', products: [] },
       { status: 500 }

@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -31,7 +32,7 @@ export async function GET(
       allocated_to_customers: 0,
     });
   } catch (error) {
-    console.error('Flow summary API error:', error);
+    logger.apiError('GET', '/api/products/[id]/flow-summary', error as Error, { productId: params.id });
     return NextResponse.json(
       { error: 'Failed to fetch flow summary' },
       { status: 500 }

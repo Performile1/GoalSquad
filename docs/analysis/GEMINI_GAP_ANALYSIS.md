@@ -10,6 +10,8 @@
 
 ### 1.1 Profile Lookup (Hög prioritet)
 
+**Status:** ✅ Delvis löst (8 filer refaktorerade, ~25 återstår)
+
 **Problem:** Profile-lookup upprepas i 30+ API-rutter
 
 **Exempel:**
@@ -22,19 +24,25 @@ const { data: profile } = await supabaseAdmin
   .single();
 ```
 
-**Filer:**
-- `app/api/treasury/release/route.ts`
-- `app/api/shipping/preferences/route.ts` (2 gånger)
-- `app/api/goals/route.ts`
-- `app/api/coordination/route.ts`
-- `app/api/analytics/sales/route.ts`
-- `app/api/ads/stripe/save-payment-method/route.ts` (2 gånger)
-- `app/api/ads/[id]/refund/route.ts`
-- `app/api/ads/stripe/daily-charge/route.ts`
-- `app/api/ads/stripe/create-payment-intent/route.ts`
-- ... och 20+ fler
+**Lösta filer (8 st):**
+- `app/api/treasury/release/route.ts` ✅
+- `app/api/shipping/preferences/route.ts` (2 gånger) ✅
+- `app/api/goals/route.ts` ✅
+- `app/api/coordination/route.ts` ✅
+- `app/api/analytics/sales/route.ts` ✅
+- `app/api/ads/stripe/save-payment-method/route.ts` (2 gånger) ✅
+- `app/api/ads/stripe/daily-charge/route.ts` ✅
 
-**Lösning:**
+**Återstående filer (~25 st):**
+- `app/api/ads/[id]/refund/route.ts`
+- `app/api/ads/stripe/create-payment-intent/route.ts`
+- `app/api/merchants/[id]/*` (flera filer)
+- `app/api/sellers/[id]/*` (flera filer)
+- `app/api/communities/[id]/*` (flera filer)
+- `app/api/admin/*` (flera filer)
+- ... och fler
+
+**Lösning implementerad:**
 ```typescript
 // lib/profile-helpers.ts
 export async function getProfile(userId: string, fields = 'role') {
@@ -47,7 +55,7 @@ export async function getProfile(userId: string, fields = 'role') {
 }
 ```
 
-**Estimerad besparing:** 200+ rader kod
+**Estimerad besparing hittills:** ~20 rader kod (av ~200 potentiella)
 
 ---
 
@@ -77,7 +85,31 @@ export async function getDefaultPaymentMethod(customerId: string): Promise<strin
 
 ---
 
-### 1.3 Auth Header Validation (Låg prioritet)
+### 1.3 IDOR-säkerhet (Hög prioritet)
+
+**Status:** ✅ Kritisk sårbarhet fixad
+
+**Problem hittad:**
+- `app/api/warehouses/[id]/flow/route.ts` hade ingen auth-kontroll alls - vem som helst kunde se flow-data för vilket warehouse som helst
+
+**Lösning implementerad:**
+- Lade till `getAuthUser` validering
+- Lade till warehouse access check:
+  - `warehouse_assignments` för tilldelade merchants
+  - Community membership för community-medlemmar
+  - `gs_admin` för systemadministratörer
+- Förhindrar IDOR-attacker mot warehouse flow-data
+
+**Verifierade endpoints (säkra):**
+- `app/api/shipping/preferences/route.ts` - ✅ Filtrerar på `user.id`
+- `app/api/goals/route.ts` - ✅ Filtrerar på `user.id`
+- `app/api/coordination/route.ts` - ✅ Filtrerar på `sender_id OR recipient_id = user.id`
+- `app/api/analytics/sales/route.ts` - ✅ Role-baserad filtrering
+- `app/api/merchants/[id]/message-community/route.ts` - ✅ Verifierar `merchant.user_id === userId`
+
+---
+
+### 1.4 Auth Header Validation (Låg prioritet)
 
 **Problem:** Bearer token validering upprepas manuellt
 

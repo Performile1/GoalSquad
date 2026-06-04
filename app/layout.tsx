@@ -9,6 +9,7 @@ import Footer from '@/app/components/Footer'
 import ChatWidget from '@/app/components/ChatWidget'
 import SessionTimeoutWarning from '@/app/components/SessionTimeoutWarning'
 import SessionLockedOverlay from '@/app/components/SessionLockedOverlay'
+import ServiceWorkerRegistration from '@/app/components/ServiceWorkerRegistration'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`}>
         <AuthProvider>
           <SessionLockedOverlay />
+          <ServiceWorkerRegistration />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-1">

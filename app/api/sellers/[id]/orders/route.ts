@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { data: seller } = await supabase
+    const { data: seller } = await supabaseAdmin
       .from('seller_profiles')
       .select('user_id')
       .eq('id', params.id)
@@ -27,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const limit = parseInt(url.searchParams.get('limit') || '50');
     const offset = parseInt(url.searchParams.get('offset') || '0');
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('orders')
       .select(`
         id, status, total, total_amount,
@@ -46,7 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ orders, total: count });
   } catch (error) {
-    console.error('Error fetching seller orders:', error);
+    logger.apiError('GET', '/api/sellers/[id]/orders', error as Error, { sellerId: params.id });
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
   }
 }

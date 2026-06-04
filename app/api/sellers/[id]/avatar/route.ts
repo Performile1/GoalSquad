@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   req: NextRequest,
@@ -58,7 +59,7 @@ export async function GET(
       availableItems,
     });
   } catch (error) {
-    console.error('Failed to fetch avatar data:', error);
+    logger.apiError('GET', '/api/sellers/[id]/avatar', error as Error, { sellerId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -82,7 +83,7 @@ export async function PUT(
       .eq('user_id', sellerId);
 
     if (error) {
-      console.error('Failed to update avatar:', error);
+      logger.dbError('UPDATE', 'seller_profiles', error, { sellerId: params.id });
       return NextResponse.json(
         { error: 'Failed to update avatar' },
         { status: 500 }
@@ -91,7 +92,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Avatar update error:', error);
+    logger.apiError('PUT', '/api/sellers/[id]/avatar', error as Error, { sellerId: params.id });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

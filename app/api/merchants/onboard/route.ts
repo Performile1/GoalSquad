@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { AuditSignature } from '@/lib/audit-signature';
+import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
 const onboardingSchema = z.object({
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orgError || !organization) {
-      console.error('Failed to create organization:', orgError);
+      logger.dbError('INSERT', 'organizations', orgError, { merchantName });
       return NextResponse.json(
         { error: 'Failed to create organization' },
         { status: 500 }
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (merchantError || !merchant) {
-      console.error('Failed to create merchant:', merchantError);
+      logger.dbError('INSERT', 'merchants', merchantError, { merchantName });
       
       // Rollback organization
       await supabaseAdmin
@@ -172,7 +173,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error('Onboarding error:', error);
+    logger.apiError('POST', '/api/merchants/onboard', error as Error, { merchantName });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
