@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+
+// Requires live auth cookies — must not be prerendered.
+export const dynamic = 'force-dynamic';
 import { requireUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
