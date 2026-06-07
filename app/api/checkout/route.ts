@@ -129,8 +129,8 @@ export async function POST(req: NextRequest) {
       }
 
       // Use community product if available, otherwise regular product
-      const unitPrice = communityProduct ? parseFloat(communityProduct.price) : parseFloat(product.price);
-      const productName = communityProduct ? communityProduct.title : (product.title ?? product.name);
+      const unitPrice = communityProduct ? parseFloat(communityProduct.price) : parseFloat(product!.price);
+      const productName = communityProduct ? communityProduct.title : (product!.title ?? product!.name);
       const subtotal = unitPrice * item.quantity;
       orderTotal += subtotal;
 

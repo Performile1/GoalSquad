@@ -7,6 +7,7 @@ import { requireUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
+  let userId: string | null = null;
   try {
     // 1. Require an authenticated session.
     const auth = await requireUser();
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     // 2. Resolve target. Default to the caller's own id.
     const url = new URL(request.url);
-    const userId = url.searchParams.get('userId') ?? user.id;
+    userId = url.searchParams.get('userId') ?? user.id;
 
     // 3. Ownership check — only your own profile, unless you are gs_admin.
     if (userId !== user.id) {
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    logger.apiError('GET', '/api/auth/get-profile', error as Error, { userId });
+    logger.apiError('GET', '/api/auth/get-profile', error as Error, { userId: userId ?? 'unknown' });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

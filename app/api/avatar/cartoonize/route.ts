@@ -11,8 +11,11 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  let userId: string | null = null;
   try {
-    const { image, userId } = await req.json();
+    const body = await req.json();
+    const image = body.image;
+    userId = body.userId;
 
     if (!image || !userId) {
       return NextResponse.json(
