@@ -16,6 +16,7 @@ import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { SplitEngine } from '@/lib/split-engine';
 import { Treasury } from '@/lib/treasury';
+import { GamificationEngine } from '@/lib/gamification-engine';
 import { logger } from '@/lib/logger';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -111,10 +112,77 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     try {
       const splitResult = await SplitEngine.processOrderSplit(orderId);
       logger.info('Split processed for order', { orderId, splits: splitResult.splits });
+
+      // 3. Gamification + sales stats — ONLY on the first real split.
+      //    The split RPC returns 'already_processed' on repeats (ledger guard),
+      //    so gating on 'processed' keeps XP / total_sales increments idempotent
+      //    even if Stripe redelivers the webhook.
+      if (splitResult.status === 'processed') {
+        await creditSellerForCompletedOrder(orderId);
+      }
     } catch (splitError) {
       logger.paymentError('split_engine', orderId, splitError as Error, { sessionId: session.id });
       // Do not re-throw — order is still paid, split can be retried manually
     }
+}
+
+/**
+ * Credits the seller for a completed order: bumps seller_profiles
+ * total_sales/total_orders and awards XP via the gamification engine.
+ *
+ * Idempotency: callers must only invoke this when process_order_split
+ * returned 'processed' (first time), so the increments run exactly once.
+ *
+ * NOTE: depends on orders.seller_id being set. Checkout does not yet
+ * populate it (separate bug) — when absent we log and skip rather than guess.
+ */
+async function creditSellerForCompletedOrder(orderId: string) {
+  const { data: order } = await supabaseAdmin
+    .from('orders')
+    .select('id, seller_id, total_amount, total, shipping_country')
+    .eq('id', orderId)
+    .single();
+
+  if (!order?.seller_id) {
+    logger.warn('Order has no seller_id — skipping gamification credit', { orderId });
+    return;
+  }
+
+  // Resolve the seller profile by user_id first, then by profile id.
+  let { data: seller } = await supabaseAdmin
+    .from('seller_profiles')
+    .select('id, user_id, total_sales, total_orders')
+    .eq('user_id', order.seller_id)
+    .maybeSingle();
+
+  if (!seller) {
+    const byId = await supabaseAdmin
+      .from('seller_profiles')
+      .select('id, user_id, total_sales, total_orders')
+      .eq('id', order.seller_id)
+      .maybeSingle();
+    seller = byId.data;
+  }
+
+  if (!seller) {
+    logger.warn('No seller_profile found for order seller_id', { orderId });
+    return;
+  }
+
+  const amount = Number(order.total_amount ?? order.total ?? 0);
+
+  // Bump sales stats (leaderboard sorts on total_sales).
+  await supabaseAdmin
+    .from('seller_profiles')
+    .update({
+      total_sales: Number(seller.total_sales ?? 0) + amount,
+      total_orders: Number(seller.total_orders ?? 0) + 1,
+    })
+    .eq('id', seller.id);
+
+  // Award XP / streak / achievements.
+  const isInternational = (order.shipping_country ?? 'SE') !== 'SE';
+  await GamificationEngine.processSaleCompletion(seller.user_id, orderId, amount, isInternational);
 }
 
 async function handlePaymentFailed(pi: Stripe.PaymentIntent) {

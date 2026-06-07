@@ -21,6 +21,9 @@ export interface SplitConfiguration {
 }
 
 export interface OrderSplitResult {
+  /** 'processed' on the first (real) split, 'already_processed' when the
+   *  Postgres idempotency guard short-circuits a repeat call. */
+  status: 'processed' | 'already_processed' | string;
   transactionId: string;
   totalAmount: number;
   splits: {
@@ -125,6 +128,7 @@ export class SplitEngine {
     const handlingFee = num(splits.handling);
 
     return {
+      status: result.status ?? 'processed',
       transactionId: result.transaction_id ?? '',
       totalAmount: num(result.total),
       splits: {

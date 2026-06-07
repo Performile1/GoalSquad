@@ -37,6 +37,9 @@ const checkoutSchema = z.object({
     country: z.string().length(2, 'Country code must be 2 characters (ISO format)'),
   }),
   warehouseId: z.string().uuid('Invalid warehouse ID format').optional().nullable(),
+  // The seller_profile.id (UUID) that should be credited for this order.
+  sellerId: z.string().uuid('Invalid seller ID format').optional().nullable(),
+  campaignId: z.string().uuid('Invalid campaign ID format').optional().nullable(),
 });
 
 export async function POST(req: NextRequest) {
@@ -61,7 +64,7 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    const { items, shippingAddress, warehouseId } = validatedData.data;
+    const { items, shippingAddress, warehouseId, sellerId, campaignId } = validatedData.data;
 
     // --- Fetch products ---
     const productIds = items.map((i) => i.productId).filter(Boolean);
@@ -189,7 +192,7 @@ export async function POST(req: NextRequest) {
         shipping_address: shippingAddress,
         warehouse_id: warehouseId ?? null,
         community_id: orderCommunityId,
-        seller_id: orderSellerId,
+        seller_id: sellerId ?? orderSellerId,
         metadata: {},
       })
       .select()
@@ -220,6 +223,8 @@ export async function POST(req: NextRequest) {
         order_id: order.id,
         order_number: orderNumber,
         user_id: user.id,
+        seller_id: sellerId ?? '',
+        campaign_id: campaignId ?? '',
       },
       success_url: `${baseUrl}/orders?session_id={CHECKOUT_SESSION_ID}&order=${order.id}`,
       cancel_url: `${baseUrl}/cart`,

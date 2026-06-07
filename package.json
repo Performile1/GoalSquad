@@ -12,7 +12,8 @@
     "db:migrate": "node scripts/migrate.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "vitest run tests/e2e/campaign-ecosystem.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.0",
