@@ -44,6 +44,10 @@ export default function MarketplacePage() {
   const [search, setSearch] = useState('');
   const { count, addItem } = useCart();
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
+  const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc' | 'popular'>('popular');
+  const [priceMin, setPriceMin] = useState('');
+  const [priceMax, setPriceMax] = useState('');
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const handleAddToCart = (product: CommunityProduct) => {
     // For community products, sellerId is not directly available.
@@ -70,12 +74,24 @@ export default function MarketplacePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filtered = products.filter((p) => {
-    const matchCat = category === 'all' || p.category === category;
-    const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.sellerName.toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const filtered = products
+    .filter((p) => {
+      const matchCat = category === 'all' || p.category === category;
+      const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.sellerName.toLowerCase().includes(search.toLowerCase());
+      const matchPrice = (!priceMin || p.price >= parseFloat(priceMin)) &&
+        (!priceMax || p.price <= parseFloat(priceMax));
+      const matchStock = !inStockOnly || p.stock > 0;
+      return matchCat && matchSearch && matchPrice && matchStock;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price_asc': return a.price - b.price;
+        case 'price_desc': return b.price - a.price;
+        case 'newest': return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        default: return 0;
+      }
+    });
 
   return (
     <div className="min-h-screen bg-white">
@@ -132,18 +148,61 @@ export default function MarketplacePage() {
 
       {/* Search + Filter */}
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-              <SearchIcon size={20} />
-            </span>
-            <input
-              type="text"
-              placeholder="Sök produkt eller säljare..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none"
-            />
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                <SearchIcon size={20} />
+              </span>
+              <input
+                type="text"
+                placeholder="Sök produkt eller säljare..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none"
+              />
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none bg-white text-gray-700 font-medium"
+            >
+              <option value="popular">Popularitet</option>
+              <option value="newest">Senaste</option>
+              <option value="price_asc">Pris: Lågt till högt</option>
+              <option value="price_desc">Pris: Högt till lågt</option>
+            </select>
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Pris:</span>
+              <input
+                type="number"
+                placeholder="Min"
+                value={priceMin}
+                onChange={(e) => setPriceMin(e.target.value)}
+                className="w-20 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-primary-600 focus:outline-none"
+              />
+              <span className="text-gray-400">-</span>
+              <input
+                type="number"
+                placeholder="Max"
+                value={priceMax}
+                onChange={(e) => setPriceMax(e.target.value)}
+                className="w-20 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-primary-600 focus:outline-none"
+              />
+              <span className="text-sm text-gray-500">kr</span>
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={inStockOnly}
+                onChange={(e) => setInStockOnly(e.target.checked)}
+                className="w-5 h-5 text-primary-900 rounded focus:ring-primary-600"
+              />
+              <span className="text-sm text-gray-700 font-medium">Endast i lager</span>
+            </label>
+            <span className="text-sm text-gray-400 ml-auto">{filtered.length} produkt{filtered.length !== 1 ? 'er' : ''}</span>
           </div>
         </div>
 

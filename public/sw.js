@@ -1,9 +1,13 @@
-// GoalSquad Service Worker for PWA Push Notifications
+// GoalSquad Service Worker for PWA Offline Support
 
-const CACHE_NAME = 'goalsquad-v1';
+const CACHE_NAME = 'goalsquad-v2';
+const STATIC_CACHE = 'goalsquad-static-v2';
 const urlsToCache = [
   '/',
-  '/messages',
+  '/marketplace',
+  '/products',
+  '/cart',
+  '/leaderboard',
   '/sellers/dashboard',
   '/manifest.json',
 ];
@@ -15,16 +19,85 @@ self.addEventListener('install', (event) => {
       return cache.addAll(urlsToCache);
     })
   );
+  self.skipWaiting();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - network-first for APIs, cache-first for static assets
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // API calls: network-first, cache fallback
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Static assets: cache-first, network fallback
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    caches.match(request).then((response) => {
+      if (response) return response;
+      return fetch(request).then((res) => {
+        if (res.status === 200) {
+          const clone = res.clone();
+          caches.open(STATIC_CACHE).then((cache) => cache.put(request, clone));
+        }
+        return res;
+      });
     })
   );
 });
+
+// Background sync for offline cart actions
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-cart') {
+    event.waitUntil(syncCartData());
+  }
+});
+
+async function syncCartData() {
+  try {
+    const db = await openIndexedDB('goalsquad-offline', 1);
+    const tx = db.transaction('cart-actions', 'readonly');
+    const store = tx.objectStore('cart-actions');
+    const actions = await store.getAll();
+    // Replay actions when back online
+    for (const action of actions) {
+      try {
+        await fetch(action.url, { method: action.method, body: JSON.stringify(action.body) });
+      } catch (e) {
+        console.error('Failed to replay cart action:', e);
+      }
+    }
+    // Clear replayed actions
+    const clearTx = db.transaction('cart-actions', 'readwrite');
+    clearTx.objectStore('cart-actions').clear();
+  } catch (e) {
+    console.error('Sync failed:', e);
+  }
+}
+
+function openIndexedDB(name, version) {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(name, version);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('cart-actions')) {
+        db.createObjectStore('cart-actions', { keyPath: 'id', autoIncrement: true });
+      }
+    };
+  });
+}
 
 // Push notification event
 self.addEventListener('push', (event) => {

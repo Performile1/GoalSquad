@@ -3,7 +3,10 @@
 import React, { useState } from 'react';
 
 export default function UnifiedDashboard() {
-  const [activeTab, setActiveTab] = useState<'merchant' | 'warehouse' | 'e2e'>('merchant');
+  const [activeTab, setActiveTab] = useState<'merchant' | 'warehouse' | 'orders' | 'e2e'>('merchant');
+  const [adminOrders, setAdminOrders] = useState<any[]>([]);
+  const [orderFilter, setOrderFilter] = useState('all');
+  const [orderLoading, setOrderLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [log, setLog] = useState<string[]>([]);
 
@@ -89,6 +92,59 @@ export default function UnifiedDashboard() {
     }
   };
 
+  const fetchOrders = async (status?: string) => {
+    setOrderLoading(true);
+    try {
+      const url = status && status !== 'all'
+        ? `/api/admin/orders?status=${status}&limit=50`
+        : '/api/admin/orders?limit=50';
+      const res = await fetch(url);
+      const data = await res.json();
+      setAdminOrders(data.orders || []);
+      addLog(`Hämtade ${(data.orders || []).length} ordrar`);
+    } catch {
+      addLog('❌ Kunde inte hämta ordrar');
+    } finally {
+      setOrderLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, status: string) => {
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        addLog(`Order ${orderId.slice(-6)} uppdaterad till ${status}`);
+        if (status === 'ready_for_pickup') {
+          addLog(`QR-kod genererad: /pickup/${orderId}`);
+        }
+        fetchOrders(orderFilter);
+      }
+    } catch {
+      addLog('❌ Kunde inte uppdatera order');
+    }
+  };
+
+  const bulkUpdateStatus = async (status: string) => {
+    const selected = adminOrders.filter((o) => o._selected);
+    if (selected.length === 0) {
+      addLog('Välj minst en order först');
+      return;
+    }
+    for (const order of selected) {
+      await updateOrderStatus(order.id, status);
+    }
+  };
+
+  const toggleSelectOrder = (orderId: string) => {
+    setAdminOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, _selected: !o._selected } : o))
+    );
+  };
+
   const idInput = (
     label: string,
     value: string,
@@ -133,6 +189,14 @@ export default function UnifiedDashboard() {
             }`}
           >
             Warehouse Picking
+          </button>
+          <button
+            onClick={() => { setActiveTab('orders'); fetchOrders(); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              activeTab === 'orders' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400'
+            }`}
+          >
+            Ordrar
           </button>
           <button
             onClick={() => setActiveTab('e2e')}
@@ -188,6 +252,118 @@ export default function UnifiedDashboard() {
               >
                 Skapa Idempotent Plocklista
               </button>
+            </div>
+          )}
+
+          {activeTab === 'orders' && (
+            <div className="bg-slate-950 border border-slate-800 p-5 rounded-2xl space-y-4">
+              <div>
+                <h2 className="text-sm font-bold text-white uppercase mb-1">Orderhantering</h2>
+                <p className="text-xs text-slate-400">Filtrera, uppdatera status och generera QR-koder.</p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {['all', 'paid', 'processing', 'ready_for_pickup', 'completed'].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => { setOrderFilter(s); fetchOrders(s); }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition ${
+                      orderFilter === s ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {s === 'all' ? 'Alla' : s}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => bulkUpdateStatus('processing')}
+                  className="px-3 py-1.5 bg-blue-700 text-white rounded-lg text-[10px] font-bold hover:bg-blue-600 transition"
+                >
+                  Bulk: Processing
+                </button>
+                <button
+                  onClick={() => bulkUpdateStatus('ready_for_pickup')}
+                  className="px-3 py-1.5 bg-green-700 text-white rounded-lg text-[10px] font-bold hover:bg-green-600 transition"
+                >
+                  Bulk: Klar för hämtning
+                </button>
+                <button
+                  onClick={() => bulkUpdateStatus('completed')}
+                  className="px-3 py-1.5 bg-emerald-700 text-white rounded-lg text-[10px] font-bold hover:bg-emerald-600 transition"
+                >
+                  Bulk: Avslutad
+                </button>
+              </div>
+              {orderLoading ? (
+                <div className="text-xs text-slate-500">Laddar ordrar...</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[10px]">
+                    <thead>
+                      <tr className="text-left text-slate-500 border-b border-slate-800">
+                        <th className="pb-2 pr-2"></th>
+                        <th className="pb-2 pr-4">Order</th>
+                        <th className="pb-2 pr-4">Status</th>
+                        <th className="pb-2 pr-4">Summa</th>
+                        <th className="pb-2 pr-4">Säljare</th>
+                        <th className="pb-2">Åtgärder</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-900">
+                      {adminOrders.map((order) => (
+                        <tr key={order.id} className="text-slate-300">
+                          <td className="py-2 pr-2">
+                            <input
+                              type="checkbox"
+                              checked={!!order._selected}
+                              onChange={() => toggleSelectOrder(order.id)}
+                              className="rounded bg-slate-800 border-slate-700"
+                            />
+                          </td>
+                          <td className="py-2 pr-4 font-mono">{order.id?.slice(-8)}</td>
+                          <td className="py-2 pr-4">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                              order.status === 'completed' ? 'bg-green-900 text-green-300' :
+                              order.status === 'paid' ? 'bg-blue-900 text-blue-300' :
+                              order.status === 'ready_for_pickup' ? 'bg-yellow-900 text-yellow-300' :
+                              order.status === 'processing' ? 'bg-purple-900 text-purple-300' :
+                              'bg-slate-800 text-slate-400'
+                            }`}>
+                              {order.status}
+                            </span>
+                          </td>
+                          <td className="py-2 pr-4">{order.total?.toLocaleString()} kr</td>
+                          <td className="py-2 pr-4">{order.seller_id?.slice(-8) || '-'}</td>
+                          <td className="py-2 flex gap-1">
+                            <button
+                              onClick={() => updateOrderStatus(order.id, 'processing')}
+                              className="px-2 py-1 bg-blue-800 text-blue-200 rounded text-[9px] hover:bg-blue-700"
+                            >
+                              Process
+                            </button>
+                            <button
+                              onClick={() => updateOrderStatus(order.id, 'ready_for_pickup')}
+                              className="px-2 py-1 bg-green-800 text-green-200 rounded text-[9px] hover:bg-green-700"
+                            >
+                              QR
+                            </button>
+                            <a
+                              href={`/pickup/${order.id}`}
+                              target="_blank"
+                              className="px-2 py-1 bg-slate-800 text-slate-300 rounded text-[9px] hover:bg-slate-700"
+                            >
+                              Visa
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {adminOrders.length === 0 && (
+                    <p className="text-slate-600 text-xs mt-4 text-center">Inga ordrar hittades</p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
-import { ShareIcon, MessageIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
+import { motion } from 'framer-motion';
+import {
+  ShareIcon, MessageIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, ShoppingBagIcon,
+  MoneyIcon, TrophyIcon, XPIcon, OrdersIcon, UserIcon, LeaderboardIcon, CartIcon
+} from '@/app/components/BrandIcons';
 import { apiFetch } from '@/lib/api-client';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +31,14 @@ export default function SellerDashboardPage() {
     shippingCostPerUnit: 0,
   });
 
+  // Stats
+  const [stats, setStats] = useState<any>(null);
+  const [xpData, setXpData] = useState<any>(null);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [payoutRequested, setPayoutRequested] = useState(false);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login?redirect=/sellers/dashboard');
@@ -36,8 +49,78 @@ export default function SellerDashboardPage() {
     if (user) {
       setSellerLink(`https://goal-squad.vercel.app/seller/${user.id}`);
       fetchProducts();
+      fetchSellerStats();
     }
   }, [user]);
+
+  const fetchSellerStats = async () => {
+    if (!user) return;
+    setStatsLoading(true);
+    try {
+      // Get seller profile id from user_id
+      const { data: profile } = await supabaseAdmin
+        .from('seller_profiles')
+        .select('id, community_id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!profile) {
+        setStatsLoading(false);
+        return;
+      }
+
+      const sellerProfileId = profile.id;
+
+      // Stats
+      const statsRes = await apiFetch(`/api/sellers/${sellerProfileId}/stats`);
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData);
+      }
+
+      // XP
+      const xpRes = await apiFetch(`/api/sellers/xp`);
+      if (xpRes.ok) {
+        const xpJson = await xpRes.json();
+        setXpData(xpJson);
+      }
+
+      // Orders
+      const ordersRes = await apiFetch(`/api/sellers/${sellerProfileId}/orders?limit=5`);
+      if (ordersRes.ok) {
+        const ordersJson = await ordersRes.json();
+        setOrders(ordersJson.orders || []);
+      }
+
+      // Campaigns
+      if (profile.community_id) {
+        const campRes = await apiFetch(`/api/communities/${profile.community_id}/campaigns`);
+        if (campRes.ok) {
+          const campJson = await campRes.json();
+          setCampaigns(campJson.campaigns || []);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to fetch seller stats:', e);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  const handleRequestPayout = async () => {
+    try {
+      const res = await apiFetch('/api/stripe/connect/request-payout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: stats?.availableBalance || 0 }),
+      });
+      if (res.ok) {
+        setPayoutRequested(true);
+      }
+    } catch (e) {
+      console.error('Payout request failed:', e);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -153,6 +236,134 @@ export default function SellerDashboardPage() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">Säljar-dashboard</h1>
+
+        {/* Stats Overview */}
+        {statsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-2xl h-32 animate-pulse" />
+            ))}
+          </div>
+        ) : stats ? (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <MoneyIcon size={24} className="text-green-600" />
+                <span className="text-sm text-gray-500 font-medium">Total försäljning</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{(stats.totalSales || 0).toLocaleString()} kr</p>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <OrdersIcon size={24} className="text-primary-600" />
+                <span className="text-sm text-gray-500 font-medium">Ordrar</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalOrders || 0}</p>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <TrophyIcon size={24} className="text-yellow-600" />
+                <span className="text-sm text-gray-500 font-medium">Level</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{xpData?.currentLevel || stats?.level || 1}</p>
+              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-yellow-500 h-2 rounded-full" style={{ width: `${Math.min(100, ((xpData?.currentXp || 0) % 100))}%` }} />
+              </div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <XPIcon size={24} className="text-purple-600" />
+                <span className="text-sm text-gray-500 font-medium">XP</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{xpData?.currentXp || stats?.xp || 0}</p>
+            </motion.div>
+          </div>
+        ) : null}
+
+        {/* Payout + Quick Actions */}
+        {stats && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Tillgängligt för utbetalning</p>
+                <p className="text-3xl font-bold text-green-600">{(stats.availableBalance || 0).toLocaleString()} kr</p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleRequestPayout}
+                  disabled={payoutRequested || (stats.availableBalance || 0) <= 0}
+                  className={`px-6 py-3 rounded-xl font-bold transition ${
+                    payoutRequested
+                      ? 'bg-green-100 text-green-700'
+                      : (stats.availableBalance || 0) <= 0
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                >
+                  {payoutRequested ? 'Utbetalning begärd ✓' : 'Begär utbetalning'}
+                </button>
+                <Link href="/sellers/orders" className="px-6 py-3 bg-primary-100 text-primary-900 rounded-xl font-bold hover:bg-primary-200 transition">
+                  Se alla ordrar
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Recent Orders */}
+        {orders.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <CartIcon size={22} className="text-primary-900" />
+              Senaste ordrar
+            </h2>
+            <div className="divide-y divide-gray-100">
+              {orders.slice(0, 5).map((order: any) => (
+                <div key={order.id} className="py-3 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">Order #{order.id?.slice(-6)}</p>
+                    <p className="text-sm text-gray-500">{new Date(order.created_at).toLocaleDateString('sv-SE')}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      order.status === 'completed' ? 'bg-green-100 text-green-700' :
+                      order.status === 'paid' ? 'bg-blue-100 text-blue-700' :
+                      order.status === 'processing' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {order.status}
+                    </span>
+                    <span className="font-bold text-gray-900">{order.total?.toLocaleString()} kr</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Active Campaigns */}
+        {campaigns.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <LeaderboardIcon size={22} className="text-primary-900" />
+              Aktiva kampanjer
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {campaigns.filter((c: any) => c.status === 'active').slice(0, 4).map((campaign: any) => (
+                <Link key={campaign.id} href={`/campaign/${campaign.id}`} className="block border-2 border-gray-100 rounded-xl p-4 hover:border-primary-300 transition">
+                  <h3 className="font-bold text-gray-900">{campaign.title}</h3>
+                  <p className="text-sm text-gray-500 mb-2">{campaign.description?.slice(0, 60)}...</p>
+                  {campaign.moq_target && (
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-primary-600 h-2 rounded-full" style={{ width: `${Math.min(100, ((campaign.moq_current || 0) / campaign.moq_target) * 100)}%` }} />
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-400 mt-1">MOQ-mål: {campaign.moq_target}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Community Messaging Card */}
         <Link href="/messages" className="block mb-8">

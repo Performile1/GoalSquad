@@ -10,6 +10,8 @@ import ChatWidget from '@/app/components/ChatWidget'
 import SessionTimeoutWarning from '@/app/components/SessionTimeoutWarning'
 import SessionLockedOverlay from '@/app/components/SessionLockedOverlay'
 import ServiceWorkerRegistration from '@/app/components/ServiceWorkerRegistration'
+import NotificationProvider from '@/app/components/NotificationProvider'
+import PwaInstallPrompt from '@/app/components/PwaInstallPrompt'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -51,6 +53,8 @@ export default function RootLayout({
           </div>
           <ChatWidget />
           <SessionTimeoutWarning />
+          <NotificationProvider />
+          <PwaInstallPrompt />
         </AuthProvider>
       </body>
     </html>
