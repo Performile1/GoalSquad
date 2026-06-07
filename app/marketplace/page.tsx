@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { NoImagePlaceholder, ShoppingBagIcon, JerseyIcon, HandmadeIcon, EquipmentIcon, FoodIcon, CameraIcon, MoneyIcon, SearchIcon, TrophyIcon } from '@/app/components/BrandIcons';
+import { useCart } from '@/app/hooks/useCart';
+import { NoImagePlaceholder, ShoppingBagIcon, JerseyIcon, HandmadeIcon, EquipmentIcon, FoodIcon, CameraIcon, MoneyIcon, SearchIcon, TrophyIcon, CartIcon, CheckIcon } from '@/app/components/BrandIcons';
 
 const PLATFORM_FEE = 12;
 
@@ -41,6 +42,25 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
+  const { count, addItem } = useCart();
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
+
+  const handleAddToCart = (product: CommunityProduct) => {
+    // For community products, sellerId is not directly available.
+    // We use a deterministic mapping: sellerName -> seller_profile lookup will happen at checkout.
+    // For now we store sellerName and a placeholder that checkout can resolve.
+    addItem({
+      productId: product.id,
+      name: product.title,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      sellerId: product.sellerName, // temporary: checkout will resolve to real UUID
+      sellerName: product.sellerName,
+      campaignId: undefined,
+    });
+    setAddedIds((prev) => new Set(prev).add(product.id));
+    setTimeout(() => setAddedIds((prev) => { const n = new Set(prev); n.delete(product.id); return n; }), 2000);
+  };
 
   useEffect(() => {
     fetch('/api/community-products?status=approved')
@@ -68,15 +88,24 @@ export default function MarketplacePage() {
             </span>
             <h1 className="text-5xl font-extrabold mb-4">Köp direkt från föreningar</h1>
             <p className="text-xl text-white/75 max-w-2xl mx-auto mb-8">
-              Här säljer föreningar, klasser och säljare sina egna produkter — matchställ, hantverk, 
+              Här säljer föreningar, klasser och säljare sina egna produkter — matchställ, hantverk,
               utrustning och mycket mer.
             </p>
-            <Link
-              href="/marketplace/new"
-              className="inline-block px-8 py-4 bg-white text-primary-900 rounded-xl font-bold text-lg hover:bg-primary-50 transition shadow-xl"
-            >
-              + Lägg upp din produkt
-            </Link>
+            <div className="flex gap-4 justify-center">
+              <Link
+                href="/marketplace/new"
+                className="inline-block px-8 py-4 bg-white text-primary-900 rounded-xl font-bold text-lg hover:bg-primary-50 transition shadow-xl"
+              >
+                + Lägg upp din produkt
+              </Link>
+              <Link
+                href="/cart"
+                className="inline-flex items-center gap-2 px-6 py-4 bg-primary-700 text-white rounded-xl font-bold text-lg hover:bg-primary-600 transition shadow-xl"
+              >
+                <CartIcon size={22} />
+                Varukorg {count > 0 && <span className="bg-white text-primary-900 text-sm px-2 py-0.5 rounded-full">{count}</span>}
+              </Link>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -189,7 +218,13 @@ export default function MarketplacePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {filtered.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                index={i}
+                onAdd={() => handleAddToCart(product)}
+                added={addedIds.has(product.id)}
+              />
             ))}
           </div>
         )}
@@ -223,7 +258,17 @@ export default function MarketplacePage() {
   );
 }
 
-function ProductCard({ product, index }: { product: CommunityProduct; index: number }) {
+function ProductCard({
+  product,
+  index,
+  onAdd,
+  added,
+}: {
+  product: CommunityProduct;
+  index: number;
+  onAdd: () => void;
+  added: boolean;
+}) {
   const sellerReceives = product.price * (1 - PLATFORM_FEE / 100);
 
   return (
@@ -292,8 +337,18 @@ function ProductCard({ product, index }: { product: CommunityProduct; index: num
               Säljaren får: {sellerReceives.toFixed(0)} kr
             </p>
           </div>
-          <button className="px-4 py-2 bg-primary-900 text-white rounded-xl text-sm font-bold hover:bg-primary-700 transition">
-            Köp →
+          <button
+            onClick={onAdd}
+            disabled={added || product.stock === 0}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
+              added
+                ? 'bg-green-600 text-white'
+                : product.stock === 0
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-primary-900 text-white hover:bg-primary-700'
+            }`}
+          >
+            {added ? <><CheckIcon size={16} /> Tillagd</> : 'Köp →'}
           </button>
         </div>
       </div>

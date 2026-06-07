@@ -41,12 +41,27 @@ export default function PublicLeaderboardPage() {
       );
       const data = await response.json();
       
+      const normalized = (data.leaderboard || []).map((e: any) => ({
+        rank: e.rank || 0,
+        id: e.id,
+        name: e.name || 'Okänd',
+        avatarUrl: e.avatarUrl,
+        communityName: e.communityName || '',
+        totalSales: e.totalSales || 0,
+        totalOrders: e.totalOrders || 0,
+        level: e.level || 1,
+        xp: e.xp || 0,
+        badges: e.badges || 0,
+        fireModeActive: e.fireModeActive || false,
+        dailyStreak: e.dailyStreak || 0,
+      }));
+
       if (activeTab === 'sellers') {
-        setSellers(data.leaderboard || []);
+        setSellers(normalized);
       } else if (activeTab === 'communities') {
-        setCommunities(data.leaderboard || []);
+        setCommunities(normalized);
       } else if (activeTab === 'merchants') {
-        setMerchants(data.leaderboard || []);
+        setMerchants(normalized);
       }
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error);
@@ -131,9 +146,10 @@ export default function PublicLeaderboardPage() {
         </div>
 
         {/* Top 3 Podium */}
-        {!loading && leaderboardData.length >= 3 && (
+        {!loading && leaderboardData.length > 0 && (
           <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto mb-12">
             {/* 2nd Place */}
+            {leaderboardData.length >= 2 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -177,6 +193,7 @@ export default function PublicLeaderboardPage() {
                 )}
               </div>
             </motion.div>
+            )}
 
             {/* 1st Place */}
             <motion.div
@@ -230,6 +247,7 @@ export default function PublicLeaderboardPage() {
             </motion.div>
 
             {/* 3rd Place */}
+            {leaderboardData.length >= 3 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -273,6 +291,7 @@ export default function PublicLeaderboardPage() {
                 )}
               </div>
             </motion.div>
+            )}
           </div>
         )}
 
