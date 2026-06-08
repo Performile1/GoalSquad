@@ -61,7 +61,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     // Hämta nuvarande status för audit log
     const { data: currentInventory } = await supabaseAdmin
       .from('warehouse_inventory')
-      .select('quantity, reserved_quantity, available_quantity')
+      .select('quantity, reserved_quantity, available_quantity, last_restocked_at')
       .eq('warehouse_id', warehouseId)
       .eq('product_id', productId)
       .single();

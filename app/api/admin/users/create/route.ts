@@ -6,12 +6,14 @@ import { logger } from '@/lib/logger';
 const ALLOWED_ROLES = ['user', 'seller', 'merchant', 'community', 'warehouse', 'gs_admin'];
 
 export async function POST(request: NextRequest) {
+  let email = '';
   try {
     const auth = await requireAdmin();
     if ('error' in auth) return auth.error;
 
     const body = await request.json();
-    const { email, password, fullName, role } = body;
+    email = body.email;
+    const { password, fullName, role } = body;
 
     if (!email || !password || !fullName) {
       return NextResponse.json(

@@ -21,25 +21,25 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const warehouseId = params.id;
 
     const [inboundRes, outboundRes, pendingRes, returnsRes] = await Promise.all([
-      supabase
+      supabaseAdmin
         .from('warehouse_events')
         .select('id', { count: 'exact' })
         .eq('warehouse_id', warehouseId)
         .eq('event_type', 'inbound'),
 
-      supabase
+      supabaseAdmin
         .from('warehouse_events')
         .select('id', { count: 'exact' })
         .eq('warehouse_id', warehouseId)
         .eq('event_type', 'outbound'),
 
-      supabase
+      supabaseAdmin
         .from('orders')
         .select('id', { count: 'exact' })
         .eq('warehouse_id', warehouseId)
         .in('status', ['pending', 'processing']),
 
-      supabase
+      supabaseAdmin
         .from('returns')
         .select('id', { count: 'exact' })
         .eq('warehouse_id', warehouseId)

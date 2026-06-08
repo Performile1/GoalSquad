@@ -104,7 +104,7 @@ export default function CampaignDetailPage() {
   }
 
   const moqProgress = campaign.moq_target
-    ? Math.min(100, ((campaign.moq_current || 0) / campaign.moq_target) * 100)
+    ? Math.min(100, (((campaign as any).moq_current || 0) / campaign.moq_target) * 100)
     : 0;
 
   const daysLeft = campaign.end_date
@@ -147,7 +147,7 @@ export default function CampaignDetailPage() {
                 Försäljningsmål (MOQ)
               </h2>
               <span className="text-2xl font-bold text-primary-900">
-                {campaign.moq_current || 0} / {campaign.moq_target}
+                {(campaign as any).moq_current || 0} / {campaign.moq_target}
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 mb-2">

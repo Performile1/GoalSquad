@@ -10,8 +10,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
+  let paymentIntentId: string | undefined = undefined;
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -56,6 +58,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
       },
     });
+    paymentIntentId = paymentIntent.id;
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,

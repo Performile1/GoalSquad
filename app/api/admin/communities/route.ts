@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     const sortDir = searchParams.get('sortDir') || 'desc';
     const offset = (page - 1) * pageSize;
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('communities')
       .select(`
         id,

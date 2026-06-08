@@ -12,11 +12,14 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let lat = 0;
+  let lng = 0;
+  let radius = 50;
   try {
     const searchParams = req.nextUrl.searchParams;
-    const lat = parseFloat(searchParams.get('lat') || '0');
-    const lng = parseFloat(searchParams.get('lng') || '0');
-    const radius = parseFloat(searchParams.get('radius') || '50'); // km
+    lat = parseFloat(searchParams.get('lat') || '0');
+    lng = parseFloat(searchParams.get('lng') || '0');
+    radius = parseFloat(searchParams.get('radius') || '50'); // km
 
     if (!lat || !lng) {
       return NextResponse.json(

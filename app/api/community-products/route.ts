@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      logger.dbError('INSERT', 'community_products', error, { userId: user?.id });
+      logger.dbError('INSERT', 'community_products', error);
       return NextResponse.json(
         { error: 'Failed to create listing', details: error.message },
         { status: 500 }
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    logger.apiError('POST', '/api/community-products', error as Error, { userId: user?.id });
+    logger.apiError('POST', '/api/community-products', error as Error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -4,8 +4,9 @@ import { getAuthUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
+  let authUser: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const authUser = await getAuthUser(req);
+    authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -40,8 +41,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  let authUser: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const authUser = await getAuthUser(req);
+    authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -88,8 +90,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  let authUser: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const authUser = await getAuthUser(req);
+    authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

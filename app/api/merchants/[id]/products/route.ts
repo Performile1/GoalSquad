@@ -5,6 +5,7 @@ import { logger } from '@/lib/logger';
 import { validateParams, idParamSchema } from '@/lib/validation';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  let merchantId = params.id;
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) {
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const paramCheck = validateParams(params, idParamSchema);
     if ('error' in paramCheck) return paramCheck.error;
-    const merchantId = paramCheck.data.id;
+    merchantId = paramCheck.data.id;
 
     // Verify user is the merchant
     const { data: merchant, error: merchantError } = await supabaseAdmin

@@ -10,8 +10,12 @@ import { checkMOQStatus } from '@/lib/moq-handler';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  let productId = '';
+  let postalCode = '';
   try {
-    const { productId, postalCode } = await req.json();
+    const body = await req.json();
+    productId = body.productId;
+    postalCode = body.postalCode;
 
     if (!productId || !postalCode) {
       return NextResponse.json(

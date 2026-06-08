@@ -6,8 +6,9 @@ import { logger } from '@/lib/logger';
 
 
 export async function GET(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -36,8 +37,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -86,13 +88,15 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  let user: { id: string } | null = null;
   try {
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: { user } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    const { data: { user: authUser } } = await supabaseAdmin.auth.getUser(authHeader.replace('Bearer ', ''));
+    user = authUser;
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       method: 'canvas_filter',
     });
   } catch (error) {
-    logger.apiError('POST', '/api/avatar/cartoonize', error as Error, { userId });
+    logger.apiError('POST', '/api/avatar/cartoonize', error as Error, { userId: userId ?? undefined });
     return NextResponse.json(
       { error: 'Failed to cartoonize image' },
       { status: 500 }

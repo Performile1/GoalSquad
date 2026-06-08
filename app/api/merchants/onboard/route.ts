@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orgError || !organization) {
-      logger.dbError('INSERT', 'organizations', orgError, { merchantName });
+      logger.dbError('INSERT', 'organizations', orgError ?? new Error('Unknown org error'), { merchantName: validatedData.merchantName });
       return NextResponse.json(
         { error: 'Failed to create organization' },
         { status: 500 }
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (merchantError || !merchant) {
-      logger.dbError('INSERT', 'merchants', merchantError, { merchantName });
+      logger.dbError('INSERT', 'merchants', merchantError ?? new Error('Unknown merchant error'), { merchantName: validatedData.merchantName });
       
       // Rollback organization
       await supabaseAdmin
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    logger.apiError('POST', '/api/merchants/onboard', error as Error, { merchantName });
+    logger.apiError('POST', '/api/merchants/onboard', error as Error, { merchantName: (error as any).merchantName || 'unknown' });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

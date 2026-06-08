@@ -10,6 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  let event: Stripe.Event | undefined = undefined;
   try {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verifiera webhook signature
-    const event = stripe.webhooks.constructEvent(
+    event = stripe.webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    logger.webhookError(event.type || 'unknown', error);
+    logger.webhookError(event?.type || 'unknown', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -147,13 +148,13 @@ async function handlePayoutEvent(payout: Stripe.Payout, status: 'created' | 'pai
     const { data: stripePayout, error: findError } = await supabaseAdmin
       .from('stripe_payouts')
       .select('*')
-      .eq('stripe_transfer_id', payout.transfer_id)
+      .eq('stripe_payout_id', payout.id)
       .single();
 
     if (findError || !stripePayout) {
       logger.warn('Stripe payout not found in database', { 
         stripePayoutId: payout.id,
-        transferId: payout.transfer_id 
+        payoutId: payout.id 
       });
       return;
     }

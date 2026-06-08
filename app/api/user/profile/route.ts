@@ -6,8 +6,9 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let authUser: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const authUser = await getAuthUser(req);
+    authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { data: profile, error } = await supabaseAdmin
@@ -26,8 +27,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  let authUser: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const authUser = await getAuthUser(req);
+    authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();

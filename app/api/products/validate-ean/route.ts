@@ -12,9 +12,10 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let ean: string | null = null;
   try {
     const searchParams = req.nextUrl.searchParams;
-    const ean = searchParams.get('ean');
+    ean = searchParams.get('ean');
 
     if (!ean) {
       return NextResponse.json(

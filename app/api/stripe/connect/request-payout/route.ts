@@ -10,8 +10,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    logger.paymentError('MANUAL_PAYOUT_FAILED', error, { userId: user?.id });
+    logger.paymentError('MANUAL_PAYOUT_FAILED', 'manual', error, { userId: user?.id });
     return NextResponse.json({ error: 'Internal server error during transfer' }, { status: 500 });
   }
 }

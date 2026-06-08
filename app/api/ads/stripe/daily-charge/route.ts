@@ -10,8 +10,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
 
       chargeRecordId = chargeRecord.id;
     } catch (error) {
-      logger.dbError('INSERT', 'ad_daily_charges', error, { adId, userId: user?.id });
+      logger.dbError('INSERT', 'ad_daily_charges', error as Error, { adId, userId: user?.id });
       return NextResponse.json({ error: 'Failed to lock charge record' }, { status: 500 });
     }
 

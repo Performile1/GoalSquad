@@ -10,11 +10,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(request: NextRequest) {
+  let userId = 'unknown';
   try {
     const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    userId = user.id;
 
     const body = await request.json();
     const { paymentMethodId, setAsDefault } = body;
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get Stripe customer ID
-    const profile = await getProfileWithStripeId(user.id);
+    const profile = await getProfileWithStripeId(userId);
 
     if (!profile?.stripe_customer_id) {
       return NextResponse.json({ error: 'No Stripe customer found' }, { status: 400 });
@@ -46,20 +48,22 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    logger.paymentError('save_payment_method', user.id, error);
+    logger.paymentError('save_payment_method', userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function GET(request: NextRequest) {
+  let userId = 'unknown';
   try {
     const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    userId = user.id;
 
     // Get Stripe customer ID
-    const profile = await getProfileWithStripeId(user.id);
+    const profile = await getProfileWithStripeId(userId);
 
     if (!profile?.stripe_customer_id) {
       return NextResponse.json({ paymentMethods: [] });
@@ -73,7 +77,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ paymentMethods: paymentMethods.data });
   } catch (error: any) {
-    logger.paymentError('fetch_payment_methods', user.id, error);
+    logger.paymentError('fetch_payment_methods', userId, error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

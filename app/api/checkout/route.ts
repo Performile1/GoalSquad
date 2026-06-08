@@ -200,7 +200,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orderError || !order) {
-      logger.dbError('INSERT', 'orders', orderError, { userId: user?.id });
+      logger.dbError('INSERT', 'orders', orderError ?? new Error('Unknown order error'), { userId: user?.id });
       return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 

@@ -5,13 +5,14 @@ import { logger } from '@/lib/logger';
 import { validateParams, idParamSchema } from '@/lib/validation';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  let warehouseId = params.id;
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const paramCheck = validateParams(params, idParamSchema);
     if ('error' in paramCheck) return paramCheck.error;
-    const warehouseId = paramCheck.data.id;
+    warehouseId = paramCheck.data.id;
 
     const { data: warehouse, error } = await supabaseAdmin
       .from('warehouse_partners')
@@ -33,13 +34,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  let warehouseId = params.id;
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const paramCheck = validateParams(params, idParamSchema);
     if ('error' in paramCheck) return paramCheck.error;
-    const warehouseId = paramCheck.data.id;
+    warehouseId = paramCheck.data.id;
 
     const { data: warehouse } = await supabaseAdmin
       .from('warehouse_partners')

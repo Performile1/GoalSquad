@@ -14,19 +14,21 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  let merchantId = params.id;
+  let communityId = '';
   try {
-    const merchantId = params.id;
     const authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const userId = authUser.id;
+    const body = await req.json();
+    communityId = body.communityId;
     const {
-      communityId,
       subject,
       content,
       messageType,
-    } = await req.json();
+    } = body;
 
     // Verify user owns this merchant
     const { data: merchant } = await supabaseAdmin

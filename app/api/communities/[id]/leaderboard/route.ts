@@ -11,10 +11,11 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  let period = 'all_time';
   try {
     const communityId = params.id;
     const searchParams = req.nextUrl.searchParams;
-    const period = searchParams.get('period') || 'all_time';
+    period = searchParams.get('period') || 'all_time';
 
     // Get leaderboard from cache
     const { data: leaderboard } = await supabaseAdmin

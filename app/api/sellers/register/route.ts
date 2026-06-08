@@ -21,9 +21,11 @@ const sellerSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let email = '';
   try {
     const body = await req.json();
     const data = sellerSchema.parse(body);
+    email = data.email;
 
     // Look up user by email in profiles
     const { data: profile, error: profileLookupError } = await supabaseAdmin
@@ -85,7 +87,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    logger.apiError('POST', '/api/sellers/register', error as Error, { email: data.email });
+    logger.apiError('POST', '/api/sellers/register', error as Error, { email });
     return NextResponse.json({ error: 'Internt serverfel' }, { status: 500 });
   }
 }

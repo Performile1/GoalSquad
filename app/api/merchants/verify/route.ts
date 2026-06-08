@@ -22,9 +22,10 @@ const verificationSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let validatedData: z.infer<typeof verificationSchema> | null = null;
   try {
     const body = await req.json();
-    const validatedData = verificationSchema.parse(body);
+    validatedData = verificationSchema.parse(body);
 
     // Fetch merchant
     const { data: merchant, error: merchantError } = await supabaseAdmin
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
       .eq('id', validatedData.merchantId);
 
     if (updateError) {
-      logger.dbError('UPDATE', 'merchants', updateError, { merchantId, userId });
+      logger.dbError('UPDATE', 'merchants', updateError, { merchantId: validatedData!.merchantId, userId: validatedData!.userId });
       return NextResponse.json(
         { error: 'Failed to update merchant status' },
         { status: 500 }
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    logger.apiError('POST', '/api/merchants/verify', error as Error, { merchantId, userId });
+    logger.apiError('POST', '/api/merchants/verify', error as Error, { merchantId: validatedData?.merchantId, userId: validatedData?.userId });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

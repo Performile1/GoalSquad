@@ -12,10 +12,12 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let type = 'sellers';
+  let period = 'month';
   try {
     const searchParams = req.nextUrl.searchParams;
-    const type = searchParams.get('type') || 'sellers'; // 'sellers', 'communities', or 'merchants'
-    const period = searchParams.get('period') || 'month'; // 'week', 'month', 'all_time'
+    type = searchParams.get('type') || 'sellers';
+    period = searchParams.get('period') || 'month';
     const limit = parseInt(searchParams.get('limit') || '50');
 
     let dateFilter = '';

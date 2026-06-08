@@ -15,10 +15,12 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let query: string | null = null;
+  let type: string | null = null;
   try {
     const searchParams = req.nextUrl.searchParams;
-    const query = searchParams.get('q');
-    const type = searchParams.get('type'); // 'user', 'community', 'product', or 'all'
+    query = searchParams.get('q');
+    type = searchParams.get('type'); // 'user', 'community', 'product', or 'all'
 
     if (!query || query.length < 2) {
       return NextResponse.json(

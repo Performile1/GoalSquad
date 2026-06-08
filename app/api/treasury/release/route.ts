@@ -13,8 +13,9 @@ import { getProfile } from '@/lib/profile-helpers';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const user = await getAuthUser(req);
+    user = await getAuthUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

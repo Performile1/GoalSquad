@@ -7,16 +7,19 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
+  let period = 30;
+  let groupBy = 'product';
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
     const rawPeriod = parseInt(searchParams.get('period') || '30', 10);
-    const period = Math.min(Math.max(rawPeriod, 1), 365); // clamp 1–365 days
-    const groupBy = searchParams.get('groupBy') || 'product'; // product, category, date
+    period = Math.min(Math.max(rawPeriod, 1), 365); // clamp 1–365 days
+    groupBy = searchParams.get('groupBy') || 'product'; // product, category, date
 
     // Calculate date range
     const endDate = new Date();

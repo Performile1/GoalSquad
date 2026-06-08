@@ -7,9 +7,11 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  let adId = params.id;
+  let reason = '';
   try {
-    const adId = params.id;
-    const { reason } = await request.json();
+    const body = await request.json();
+    reason = body.reason;
 
     const auth = await requireRole('gs_admin');
     if ('error' in auth) return auth.error;

@@ -13,10 +13,12 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let query: string | null = null;
+  let type = 'all';
   try {
     const searchParams = req.nextUrl.searchParams;
-    const query = searchParams.get('q');
-    const type = searchParams.get('type') || 'all';
+    query = searchParams.get('q');
+    type = searchParams.get('type') || 'all';
     const limit = parseInt(searchParams.get('limit') || '20');
 
     if (!query || query.length < 2) {
@@ -54,6 +56,8 @@ export async function GET(req: NextRequest) {
  */
 async function fallbackSearch(query: string, type: string, limit: number) {
   const results: any[] = [];
+  let fallbackQuery = query;
+  let fallbackType = type;
 
   try {
     // Search sellers
@@ -163,7 +167,7 @@ async function fallbackSearch(query: string, type: string, limit: number) {
 
     return NextResponse.json({ results });
   } catch (error) {
-    logger.apiError('GET', '/api/search/advanced/fallback', error as Error, { query, type });
+    logger.apiError('GET', '/api/search/advanced/fallback', error as Error, { query: fallbackQuery, type: fallbackType });
     return NextResponse.json(
       { error: 'Search failed' },
       { status: 500 }

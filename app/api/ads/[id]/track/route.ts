@@ -6,10 +6,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  let type = '';
   try {
 
     const adId = params.id;
-    const { type } = await request.json();
+    const body = await request.json();
+    type = body.type;
 
     if (type !== 'view' && type !== 'click') {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 });

@@ -11,12 +11,13 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let userId = '';
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const userId = authUser.id;
+    userId = authUser.id;
 
     // Get user's conversations
     const { data: conversations, error } = await supabaseAdmin

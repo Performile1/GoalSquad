@@ -29,10 +29,13 @@ function getPriority(eventType: string): number {
 }
 
 export async function POST(req: NextRequest) {
+  let partnerId: string | null = null;
+  let event_type: string | null = null;
   try {
     const signature = req.headers.get('x-warehouse-signature');
-    const partnerId = req.headers.get('x-partner-id');
+    partnerId = req.headers.get('x-partner-id');
     const body = await req.json();
+    event_type = body.event_type;
 
     if (!signature || !partnerId) {
       return NextResponse.json(
@@ -68,7 +71,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate event data
-    const { event_type, shipment_id, order_id, data } = body;
+    const { shipment_id, order_id, data } = body;
 
     if (!event_type) {
       return NextResponse.json(
@@ -91,7 +94,7 @@ export async function POST(req: NextRequest) {
       });
 
     if (queueError) {
-      logger.webhookError('enqueue_webhook_event', queueError, { eventType, partnerId });
+      logger.webhookError('enqueue_webhook_event', queueError, { eventType: event_type, partnerId });
       return NextResponse.json(
         { error: 'Failed to queue event' },
         { status: 500 }
@@ -117,7 +120,7 @@ export async function POST(req: NextRequest) {
       message: 'Event queued for processing',
     });
   } catch (error) {
-    logger.webhookError('warehouse_webhook', error as Error, { partnerId, eventType });
+    logger.webhookError('warehouse_webhook', error as Error, { partnerId, eventType: event_type });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

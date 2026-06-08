@@ -5,13 +5,14 @@ import { logger } from '@/lib/logger';
 import { validateParams, idParamSchema } from '@/lib/validation';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  let merchantId = params.id;
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const paramCheck = validateParams(params, idParamSchema);
     if ('error' in paramCheck) return paramCheck.error;
-    const merchantId = paramCheck.data.id;
+    merchantId = paramCheck.data.id;
 
     const { data: merchant, error } = await supabaseAdmin
       .from('merchants')
@@ -29,13 +30,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  let merchantId = params.id;
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const paramCheck = validateParams(params, idParamSchema);
     if ('error' in paramCheck) return paramCheck.error;
-    const merchantId = paramCheck.data.id;
+    merchantId = paramCheck.data.id;
 
     const { data: merchant } = await supabaseAdmin
       .from('merchants')

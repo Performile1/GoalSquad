@@ -14,10 +14,11 @@ import { requireRole } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  let user: { id: string } | null = null;
   try {
     const auth = await requireRole('gs_admin');
     if ('error' in auth) return auth.error;
-    const { user } = auth;
+    user = auth.user;
 
     const userId = user.id;
     const {

@@ -12,10 +12,12 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+  let postalCode: string | null = null;
+  let country = 'SE';
   try {
     const searchParams = req.nextUrl.searchParams;
-    const postalCode = searchParams.get('postalCode');
-    const country = searchParams.get('country') || 'SE';
+    postalCode = searchParams.get('postalCode');
+    country = searchParams.get('country') || 'SE';
 
     if (!postalCode) {
       return NextResponse.json(

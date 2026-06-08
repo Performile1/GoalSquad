@@ -8,8 +8,9 @@ import { getProfile } from '@/lib/profile-helpers';
 import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof getAuthUser>> = null;
   try {
-    const user = await getAuthUser(request);
+    user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

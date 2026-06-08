@@ -5,10 +5,11 @@ import { logger } from '@/lib/logger';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  let placement: string | null = null;
   try {
 
     const searchParams = request.nextUrl.searchParams;
-    const placement = searchParams.get('placement');
+    placement = searchParams.get('placement');
 
     if (!placement) {
       return NextResponse.json({ error: 'Missing placement parameter' }, { status: 400 });

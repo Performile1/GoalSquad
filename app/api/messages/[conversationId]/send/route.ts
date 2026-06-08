@@ -12,13 +12,14 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { conversationId: string } }
 ) {
+  let conversationId = params.conversationId;
+  let userId = '';
   try {
-    const conversationId = params.conversationId;
     const authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const userId = authUser.id;
+    userId = authUser.id;
     const { content } = await req.json();
 
     if (!content || !content.trim()) {

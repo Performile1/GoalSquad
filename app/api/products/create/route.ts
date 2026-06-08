@@ -48,9 +48,11 @@ const productSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let merchantId = '';
   try {
     const body = await req.json();
     const validatedData = productSchema.parse(body);
+    merchantId = validatedData.merchantId;
 
     // Verify merchant exists and is verified
     const { data: merchant, error: merchantError } = await supabaseAdmin
@@ -126,7 +128,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (productError || !product) {
-      logger.dbError('INSERT', 'products', productError, { merchantId });
+      logger.dbError('INSERT', 'products', productError ?? new Error('Unknown product error'), { merchantId: validatedData.merchantId });
       return NextResponse.json(
         { error: 'Failed to create product' },
         { status: 500 }
@@ -166,7 +168,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    logger.apiError('POST', '/api/products/create', error as Error, { merchantId });
+    logger.apiError('POST', '/api/products/create', error as Error, { merchantId: merchantId || 'unknown' });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

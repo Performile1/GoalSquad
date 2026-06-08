@@ -10,8 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export const dynamic = 'force-dynamic';
 
-// Exporterad funktion för testning
-export async function processPayouts() {
+// Internal function for processing payouts
+async function processPayouts() {
   const currentYear = getYear(new Date());
   const currentWeek = getWeek(new Date());
 

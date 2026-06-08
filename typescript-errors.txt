@@ -1,0 +1,187 @@
+.next/types/app/api/cron/stripe-payouts/route.ts(8,13): error TS2344: Type 'OmitWithTag<typeof import("C:/Users/ricka/Documents/Develop/Standalone/Goalsquad/app/api/cron/stripe-payouts/route"), "GET" | "HEAD" | "POST" | "PATCH" | "DELETE" | "PUT" | "config" | "generateStaticParams" | ... 7 more ... | "OPTIONS", "">' does not satisfy the constraint '{ [x: string]: never; }'.
+  Property 'processPayouts' is incompatible with index signature.
+    Type '() => Promise<{ processed: number; failed: number; total: number; results: never[]; payoutRun?: undefined; } | { payoutRun: string; processed: number; failed: number; total: number; results: any[]; }>' is not assignable to type 'never'.
+app/api/account/addresses/route.ts(61,22): error TS2304: Cannot find name 'createRouteHandlerClient'.
+app/api/admin/ads/[id]/reject/route.ts(35,94): error TS18004: No value exists in scope for the shorthand property 'reason'. Either declare one or provide an initializer.
+app/api/admin/broadcast/route.ts(101,79): error TS2304: Cannot find name 'user'.
+app/api/admin/communities/route.ts(23,17): error TS2304: Cannot find name 'supabase'.
+app/api/admin/merchants/route.ts(22,17): error TS2304: Cannot find name 'supabase'.
+app/api/admin/merchants/route.ts(58,43): error TS2304: Cannot find name 'supabase'.
+app/api/admin/merchants/route.ts(63,41): error TS2304: Cannot find name 'supabase'.
+app/api/admin/stripe/freeze-account/route.ts(56,82): error TS2304: Cannot find name 'user'.
+app/api/admin/users/create/route.ts(74,74): error TS18004: No value exists in scope for the shorthand property 'email'. Either declare one or provide an initializer.
+app/api/ads/[id]/refund/route.ts(107,87): error TS2304: Cannot find name 'user'.
+app/api/ads/[id]/track/route.ts(75,87): error TS18004: No value exists in scope for the shorthand property 'type'. Either declare one or provide an initializer.
+app/api/ads/active/route.ts(49,56): error TS18004: No value exists in scope for the shorthand property 'placement'. Either declare one or provide an initializer.
+app/api/ads/purchase/route.ts(156,67): error TS2304: Cannot find name 'user'.
+app/api/ads/stripe/create-payment-intent/route.ts(65,50): error TS2304: Cannot find name 'paymentIntentId'.
+app/api/ads/stripe/create-payment-intent/route.ts(65,97): error TS2304: Cannot find name 'user'.
+app/api/ads/stripe/daily-charge/route.ts(86,52): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error'.
+app/api/ads/stripe/daily-charge/route.ts(192,87): error TS2304: Cannot find name 'user'.
+app/api/ads/stripe/save-payment-method/route.ts(49,48): error TS2304: Cannot find name 'user'.
+app/api/ads/stripe/save-payment-method/route.ts(76,50): error TS2304: Cannot find name 'user'.
+app/api/analytics/sales/route.ts(165,78): error TS2304: Cannot find name 'user'.
+app/api/analytics/sales/route.ts(165,88): error TS18004: No value exists in scope for the shorthand property 'period'. Either declare one or provide an initializer.
+app/api/analytics/sales/route.ts(165,96): error TS18004: No value exists in scope for the shorthand property 'groupBy'. Either declare one or provide an initializer.
+app/api/avatar/cartoonize/route.ts(53,73): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+app/api/checkout/route.ts(203,42): error TS2345: Argument of type 'PostgrestError | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+app/api/communities/[id]/leaderboard/route.ts(81,107): error TS18004: No value exists in scope for the shorthand property 'period'. Either declare one or provide an initializer.
+app/api/communities/create/route.ts(80,49): error TS2345: Argument of type 'PostgrestError | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+app/api/communities/create/route.ts(80,67): error TS2304: Cannot find name 'validatedData'.
+app/api/communities/create/route.ts(113,47): error TS2345: Argument of type 'PostgrestError | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+app/api/communities/create/route.ts(113,71): error TS2304: Cannot find name 'validatedData'.
+app/api/communities/create/route.ts(135,80): error TS2304: Cannot find name 'validatedData'.
+app/api/communities/nearby/route.ts(72,73): error TS18004: No value exists in scope for the shorthand property 'lat'. Either declare one or provide an initializer.
+app/api/communities/nearby/route.ts(72,78): error TS18004: No value exists in scope for the shorthand property 'lng'. Either declare one or provide an initializer.
+app/api/communities/nearby/route.ts(72,83): error TS18004: No value exists in scope for the shorthand property 'radius'. Either declare one or provide an initializer.
+app/api/community-products/route.ts(136,71): error TS2304: Cannot find name 'user'.
+app/api/community-products/route.ts(154,82): error TS2304: Cannot find name 'user'.
+app/api/contact/[entityType]/[entityId]/route.ts(47,86): error TS18004: No value exists in scope for the shorthand property 'entityType'. Either declare one or provide an initializer.
+app/api/contact/[entityType]/[entityId]/route.ts(47,98): error TS18004: No value exists in scope for the shorthand property 'entityId'. Either declare one or provide an initializer.
+app/api/contact/[entityType]/[entityId]/route.ts(137,86): error TS18004: No value exists in scope for the shorthand property 'entityType'. Either declare one or provide an initializer.
+app/api/contact/[entityType]/[entityId]/route.ts(137,98): error TS18004: No value exists in scope for the shorthand property 'entityId'. Either declare one or provide an initializer.
+app/api/coordination/route.ts(39,66): error TS2304: Cannot find name 'user'.
+app/api/coordination/route.ts(92,67): error TS2304: Cannot find name 'user'.
+app/api/cron/stripe-payouts/route.test.ts(4,20): error TS2307: Cannot find module '@/lib/stripe' or its corresponding type declarations.
+app/api/cron/stripe-payouts/route.test.ts(59,55): error TS2345: Argument of type '(fn: string) => Promise<{ data: { id: string; balance: number; }; error: null; } | { data: boolean; error: null; } | { data: null; error: null; }>' is not assignable to parameter of type '(fn: string, args?: any, options?: { head?: boolean | undefined; get?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined) => PostgrestFilterBuilder<any, any, any, any, string, null, "RPC">'.
+  Type 'Promise<{ data: { id: string; balance: number; }; error: null; } | { data: boolean; error: null; } | { data: null; error: null; }>' is missing the following properties from type 'PostgrestFilterBuilder<any, any, any, any, string, null, "RPC">': eq, neq, gt, gte, and 55 more.
+app/api/cron/stripe-payouts/route.test.ts(72,33): error TS2503: Cannot find namespace 'vi'.
+app/api/cron/stripe-payouts/route.test.ts(80,53): error TS2503: Cannot find namespace 'vi'.
+app/api/cron/stripe-payouts/route.test.ts(83,42): error TS7006: Parameter 'arg' implicitly has an 'any' type.
+app/api/cron/stripe-payouts/route.test.ts(84,36): error TS7006: Parameter 'arg' implicitly has an 'any' type.
+app/api/cron/stripe-payouts/route.test.ts(85,36): error TS7006: Parameter 'arg' implicitly has an 'any' type.
+app/api/cron/stripe-payouts/route.test.ts(97,44): error TS2503: Cannot find namespace 'vi'.
+app/api/cron/stripe-payouts/route.test.ts(98,41): error TS7006: Parameter 'call' implicitly has an 'any' type.
+app/api/cron/stripe-payouts/route.test.ts(122,55): error TS2345: Argument of type '(fn: string) => Promise<{ data: { id: string; balance: number; }; error: null; } | { data: null; error: null; }>' is not assignable to parameter of type '(fn: string, args?: any, options?: { head?: boolean | undefined; get?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined) => PostgrestFilterBuilder<any, any, any, any, string, null, "RPC">'.
+  Type 'Promise<{ data: { id: string; balance: number; }; error: null; } | { data: null; error: null; }>' is missing the following properties from type 'PostgrestFilterBuilder<any, any, any, any, string, null, "RPC">': eq, neq, gt, gte, and 55 more.
+app/api/customer/discount-codes/route.ts(28,86): error TS2304: Cannot find name 'user'.
+app/api/customer/support-stats/route.ts(49,85): error TS2304: Cannot find name 'user'.
+app/api/goals/route.ts(29,59): error TS2304: Cannot find name 'user'.
+app/api/goals/route.ts(84,60): error TS2304: Cannot find name 'user'.
+app/api/leaderboard/route.ts(158,66): error TS18004: No value exists in scope for the shorthand property 'type'. Either declare one or provide an initializer.
+app/api/leaderboard/route.ts(158,72): error TS18004: No value exists in scope for the shorthand property 'period'. Either declare one or provide an initializer.
+app/api/merchants/[id]/message-community/route.ts(81,88): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/merchants/[id]/message-community/route.ts(81,100): error TS18004: No value exists in scope for the shorthand property 'communityId'. Either declare one or provide an initializer.
+app/api/merchants/[id]/products/[productId]/route.ts(27,44): error TS2304: Cannot find name 'supabase'.
+app/api/merchants/[id]/products/[productId]/route.ts(56,44): error TS2304: Cannot find name 'supabase'.
+app/api/merchants/[id]/products/route.ts(40,78): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/merchants/[id]/route.ts(26,69): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/merchants/[id]/route.ts(62,71): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/merchants/onboard/route.ts(77,49): error TS2345: Argument of type 'PostgrestError | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+app/api/merchants/onboard/route.ts(77,61): error TS18004: No value exists in scope for the shorthand property 'merchantName'. Either declare one or provide an initializer.
+app/api/merchants/onboard/route.ts(107,45): error TS2345: Argument of type 'PostgrestError | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+app/api/merchants/onboard/route.ts(107,62): error TS18004: No value exists in scope for the shorthand property 'merchantName'. Either declare one or provide an initializer.
+app/api/merchants/onboard/route.ts(176,73): error TS18004: No value exists in scope for the shorthand property 'merchantName'. Either declare one or provide an initializer.
+app/api/merchants/verify/route.ts(76,60): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/merchants/verify/route.ts(76,72): error TS18004: No value exists in scope for the shorthand property 'userId'. Either declare one or provide an initializer.
+app/api/merchants/verify/route.ts(99,72): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/merchants/verify/route.ts(99,84): error TS18004: No value exists in scope for the shorthand property 'userId'. Either declare one or provide an initializer.
+app/api/messages/[conversationId]/route.ts(71,80): error TS18004: No value exists in scope for the shorthand property 'conversationId'. Either declare one or provide an initializer.
+app/api/messages/[conversationId]/route.ts(71,96): error TS18004: No value exists in scope for the shorthand property 'userId'. Either declare one or provide an initializer.
+app/api/messages/[conversationId]/send/route.ts(70,86): error TS18004: No value exists in scope for the shorthand property 'conversationId'. Either declare one or provide an initializer.
+app/api/messages/[conversationId]/send/route.ts(70,102): error TS18004: No value exists in scope for the shorthand property 'userId'. Either declare one or provide an initializer.
+app/api/messages/conversations/route.ts(98,77): error TS18004: No value exists in scope for the shorthand property 'userId'. Either declare one or provide an initializer.
+app/api/notifications/route.ts(34,67): error TS2304: Cannot find name 'user'.
+app/api/notifications/route.ts(66,69): error TS2304: Cannot find name 'user'.
+app/api/products/check-moq/route.ts(27,74): error TS18004: No value exists in scope for the shorthand property 'productId'. Either declare one or provide an initializer.
+app/api/products/check-moq/route.ts(27,85): error TS18004: No value exists in scope for the shorthand property 'postalCode'. Either declare one or provide an initializer.
+app/api/products/check-similar/route.ts(48,84): error TS18004: No value exists in scope for the shorthand property 'ean'. Either declare one or provide an initializer.
+app/api/products/check-similar/route.ts(48,89): error TS18004: No value exists in scope for the shorthand property 'brand'. Either declare one or provide an initializer.
+app/api/products/create/route.ts(129,44): error TS2345: Argument of type 'PostgrestError | null' is not assignable to parameter of type 'Error'.
+  Type 'null' is not assignable to type 'Error'.
+app/api/products/create/route.ts(129,60): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/products/create/route.ts(169,71): error TS18004: No value exists in scope for the shorthand property 'merchantId'. Either declare one or provide an initializer.
+app/api/products/validate-ean/route.ts(38,76): error TS18004: No value exists in scope for the shorthand property 'ean'. Either declare one or provide an initializer.
+app/api/search/advanced/route.ts(44,70): error TS18004: No value exists in scope for the shorthand property 'query'. Either declare one or provide an initializer.
+app/api/search/advanced/route.ts(44,77): error TS18004: No value exists in scope for the shorthand property 'type'. Either declare one or provide an initializer.
+app/api/search/route.ts(124,61): error TS18004: No value exists in scope for the shorthand property 'query'. Either declare one or provide an initializer.
+app/api/search/route.ts(124,68): error TS18004: No value exists in scope for the shorthand property 'type'. Either declare one or provide an initializer.
+app/api/sellers/avatar/route.ts(55,77): error TS2304: Cannot find name 'user'.
+app/api/sellers/loot-boxes/route.ts(36,81): error TS2304: Cannot find name 'user'.
+app/api/sellers/quests/route.ts(58,77): error TS2304: Cannot find name 'user'.
+app/api/sellers/register/route.ts(88,79): error TS2304: Cannot find name 'data'.
+app/api/sellers/xp/route.ts(57,73): error TS2304: Cannot find name 'user'.
+app/api/shipping/preferences/route.ts(33,74): error TS2304: Cannot find name 'user'.
+app/api/shipping/preferences/route.ts(83,75): error TS2304: Cannot find name 'user'.
+app/api/shipping/preferences/route.ts(121,75): error TS2304: Cannot find name 'user'.
+app/api/stripe/connect/analytics/route.ts(59,78): error TS2304: Cannot find name 'user'.
+app/api/stripe/connect/create-account/route.ts(43,43): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(params?: AccountCreateParams | undefined, options?: RequestOptions | undefined): Promise<Response<Account>>', gave the following error.
+    Type 'number' is not assignable to type 'WeeklyAnchor | undefined'.
+  Overload 2 of 2, '(options?: RequestOptions | undefined): Promise<Response<Account>>', gave the following error.
+    Object literal may only specify known properties, and 'type' does not exist in type 'RequestOptions'.
+app/api/stripe/connect/create-account/route.ts(110,84): error TS2304: Cannot find name 'user'.
+app/api/stripe/connect/onboarding-link/route.ts(53,85): error TS2304: Cannot find name 'user'.
+app/api/stripe/connect/request-payout/route.ts(130,58): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'Error'.
+app/api/stripe/connect/request-payout/route.ts(130,66): error TS2304: Cannot find name 'user'.
+app/api/stripe/connect/status/route.ts(95,15): error TS2304: Cannot find name 'user'.
+app/api/stripe/connect/webhook/route.ts(80,25): error TS18048: 'event' is possibly 'undefined'.
+app/api/stripe/connect/webhook/route.ts(150,40): error TS2339: Property 'transfer_id' does not exist on type 'Payout'.
+app/api/stripe/connect/webhook/route.ts(156,28): error TS2339: Property 'transfer_id' does not exist on type 'Payout'.
+app/api/treasury/release/route.ts(37,80): error TS2304: Cannot find name 'user'.
+app/api/user/product-preferences/route.ts(37,87): error TS2304: Cannot find name 'authUser'.
+app/api/user/product-preferences/route.ts(85,88): error TS2304: Cannot find name 'authUser'.
+app/api/user/product-preferences/route.ts(115,90): error TS2304: Cannot find name 'authUser'.
+app/api/user/profile/route.ts(23,75): error TS2304: Cannot find name 'authUser'.
+app/api/user/profile/route.ts(63,77): error TS2304: Cannot find name 'authUser'.
+app/api/warehouses/[id]/inventory/route.ts(82,90): error TS2339: Property 'last_restocked_at' does not exist on type '{ quantity: any; reserved_quantity: any; available_quantity: any; }'.
+app/api/warehouses/[id]/orders/route.ts(57,77): error TS18004: No value exists in scope for the shorthand property 'warehouseId'. Either declare one or provide an initializer.
+app/api/warehouses/[id]/route.ts(30,70): error TS18004: No value exists in scope for the shorthand property 'warehouseId'. Either declare one or provide an initializer.
+app/api/warehouses/[id]/route.ts(66,72): error TS18004: No value exists in scope for the shorthand property 'warehouseId'. Either declare one or provide an initializer.
+app/api/warehouses/[id]/stats/route.ts(24,7): error TS2304: Cannot find name 'supabase'.
+app/api/warehouses/[id]/stats/route.ts(30,7): error TS2304: Cannot find name 'supabase'.
+app/api/warehouses/[id]/stats/route.ts(36,7): error TS2304: Cannot find name 'supabase'.
+app/api/warehouses/[id]/stats/route.ts(42,7): error TS2304: Cannot find name 'supabase'.
+app/api/warehouses/find/route.ts(58,70): error TS18004: No value exists in scope for the shorthand property 'postalCode'. Either declare one or provide an initializer.
+app/api/warehouses/find/route.ts(58,82): error TS18004: No value exists in scope for the shorthand property 'country'. Either declare one or provide an initializer.
+app/api/webhooks/warehouse/route.ts(94,66): error TS18004: No value exists in scope for the shorthand property 'eventType'. Either declare one or provide an initializer.
+app/api/webhooks/warehouse/route.ts(120,64): error TS18004: No value exists in scope for the shorthand property 'partnerId'. Either declare one or provide an initializer.
+app/api/webhooks/warehouse/route.ts(120,75): error TS18004: No value exists in scope for the shorthand property 'eventType'. Either declare one or provide an initializer.
+app/campaigns/[campaignId]/page.tsx(107,32): error TS2339: Property 'moq_current' does not exist on type 'Campaign'.
+app/campaigns/[campaignId]/page.tsx(150,27): error TS2339: Property 'moq_current' does not exist on type 'Campaign'.
+app/components/ToastNotifications.tsx(5,50): error TS2305: Module '"@/app/components/BrandIcons"' has no exported member 'CloseIcon'.
+app/messages/page.tsx(108,26): error TS2304: Cannot find name 'formatTime'.
+lib/profile-helpers.ts(43,12): error TS2352: Conversion of type 'GenericStringError' to type 'Profile' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ error: true; } & String' is missing the following properties from type 'Profile': id, role, is_active, is_verified, email
+lib/stripeSettlement.ts(5,3): error TS2322: Type '"2023-10-16"' is not assignable to type '"2024-04-10"'.
+tests/e2e/auth.spec.ts(1,30): error TS2307: Cannot find module '@playwright/test' or its corresponding type declarations.
+tests/e2e/auth.spec.ts(7,28): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(11,46): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(17,57): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(35,54): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(52,55): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(69,57): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(86,53): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(92,43): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(98,54): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(104,53): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(112,48): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(118,50): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(124,51): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(130,47): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(138,47): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(144,53): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(150,55): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(156,39): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(164,35): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(170,40): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(176,43): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(182,43): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(188,43): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(196,42): error TS7031: Binding element 'request' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(203,44): error TS7031: Binding element 'request' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(210,45): error TS7031: Binding element 'request' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(217,45): error TS7031: Binding element 'request' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(226,52): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(233,62): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(240,62): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(249,72): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(255,74): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(261,71): error TS7031: Binding element 'page' implicitly has an 'any' type.
+tests/e2e/auth.spec.ts(267,75): error TS7031: Binding element 'page' implicitly has an 'any' type.

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const sortDir = searchParams.get('sortDir') || 'desc';
     const offset = (page - 1) * pageSize;
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('merchants')
       .select(`
         id,
@@ -55,12 +55,12 @@ export async function GET(req: NextRequest) {
 
     // Get product counts and order counts separately
     const merchantIds = (merchants || []).map((m: any) => m.id);
-    const { data: productCounts } = await supabase
+    const { data: productCounts } = await supabaseAdmin
       .from('products')
       .select('merchant_id, id')
       .in('merchant_id', merchantIds);
     
-    const { data: orderCounts } = await supabase
+    const { data: orderCounts } = await supabaseAdmin
       .from('orders')
       .select('merchant_id, id, total_amount')
       .in('merchant_id', merchantIds);

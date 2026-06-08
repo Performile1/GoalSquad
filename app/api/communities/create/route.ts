@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (orgError || !organization) {
-      logger.dbError('INSERT', 'organizations', orgError, { name: validatedData.name });
+      logger.dbError('INSERT', 'organizations', orgError ?? new Error('Unknown org error'), { name: data.name });
       return NextResponse.json({ error: 'Kunde inte skapa organisation' }, { status: 500 });
     }
 
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (communityError || !community) {
-      logger.dbError('INSERT', 'communities', communityError, { name: validatedData.name });
+      logger.dbError('INSERT', 'communities', communityError ?? new Error('Unknown community error'), { name: data.name });
       // Rollback organization
       await supabaseAdmin.from('organizations').delete().eq('id', organization.id);
       return NextResponse.json({ error: 'Kunde inte skapa förening/klass' }, { status: 500 });
@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    logger.apiError('POST', '/api/communities/create', error as Error, { name: validatedData.name });
+    logger.apiError('POST', '/api/communities/create', error as Error, { name: (error as any).name || 'unknown' });
     return NextResponse.json({ error: 'Internt serverfel' }, { status: 500 });
   }
 }

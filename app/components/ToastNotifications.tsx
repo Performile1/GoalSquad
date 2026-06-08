@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckIcon, XPIcon, BoxIcon, TrophyIcon, CloseIcon } from '@/app/components/BrandIcons';
+import { CheckIcon, XPIcon, BoxIcon, TrophyIcon } from '@/app/components/BrandIcons';
 
 export interface Toast {
   id: string;

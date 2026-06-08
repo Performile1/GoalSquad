@@ -10,8 +10,14 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
+  let name = '';
+  let ean: string | null = null;
+  let brand: string | null = null;
   try {
-    const { name, ean, brand } = await req.json();
+    const body = await req.json();
+    name = body.name;
+    ean = body.ean;
+    brand = body.brand;
 
     if (!name && !ean) {
       return NextResponse.json(

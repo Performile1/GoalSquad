@@ -40,7 +40,7 @@ export async function getProfile(userId: string, fields = 'role, is_active'): Pr
       return null;
     }
 
-    return profile as Profile;
+    return profile as unknown as Profile;
   } catch (error) {
     console.error(`Unexpected error fetching profile for user ${userId}:`, error);
     return null;

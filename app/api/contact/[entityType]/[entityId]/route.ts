@@ -13,8 +13,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { entityType: string; entityId: string } }
 ) {
+  let entityType = params.entityType;
+  let entityId = params.entityId;
   try {
-    const { entityType, entityId } = params;
 
     // Validate entity type
     const validTypes = ['merchant', 'community', 'seller', 'user'];
@@ -56,8 +57,9 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { entityType: string; entityId: string } }
 ) {
+  let entityType = params.entityType;
+  let entityId = params.entityId;
   try {
-    const { entityType, entityId } = params;
     const body = await req.json();
 
     // Validate entity type

@@ -24,7 +24,7 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { data: product, error } = await supabase
+    const { data: product, error } = await supabaseAdmin
       .from('products')
       .select('*')
       .eq('id', params.productId)
@@ -53,7 +53,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { data: product, error } = await supabase
+    const { data: product, error } = await supabaseAdmin
       .from('products')
       .update({ ...body, updated_at: new Date().toISOString() })
       .eq('id', params.productId)
