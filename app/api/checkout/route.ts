@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     // If warehouse_id is provided, check if it's a warehouse partner (community)
     if (warehouseId) {
       const { data: warehouse } = await supabaseAdmin
-        .from('warehouses')
+        .from('warehouse_partners')
         .select('id, community_id')
         .eq('id', warehouseId)
         .single();

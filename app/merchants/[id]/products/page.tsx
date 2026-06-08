@@ -83,13 +83,22 @@ export default function MerchantProducts() {
               <p className="text-gray-600">Hantera företagets produkter</p>
             </div>
           </div>
-          <Link
-            href={`/merchants/${merchantId}/products/new`}
-            className="px-6 py-3 rounded-xl font-semibold text-white transition-colors"
-            style={{ backgroundColor: '#003B3D' }}
-          >
-            + Ny produkt
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/merchants/${merchantId}/products/import`}
+              className="px-6 py-3 rounded-xl font-semibold transition-colors border-2"
+              style={{ borderColor: '#003B3D', color: '#003B3D' }}
+            >
+              Importera CSV
+            </Link>
+            <Link
+              href={`/merchants/${merchantId}/products/new`}
+              className="px-6 py-3 rounded-xl font-semibold text-white transition-colors"
+              style={{ backgroundColor: '#003B3D' }}
+            >
+              + Ny produkt
+            </Link>
+          </div>
         </motion.div>
 
         {/* Stats summary */}

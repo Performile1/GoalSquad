@@ -22,6 +22,32 @@ export async function getAuthUser(req: NextRequest) {
   return user;
 }
 
+/**
+ * Canonical role lookup. `profiles.role` is the single source of truth.
+ * Use this instead of reading `user_metadata.role` / `detailed_role`,
+ * which is a legacy parallel system that does not stay in sync.
+ */
+export async function getUserRole(userId: string): Promise<string | null> {
+  const { data, error } = await supabaseAdmin
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+  if (error || !data) return null;
+  return data.role;
+}
+
+/** Returns true if the user's `profiles.role` is one of the allowed roles. */
+export async function userHasRole(
+  userId: string,
+  allowed: AppRole | AppRole[]
+): Promise<boolean> {
+  const role = await getUserRole(userId);
+  if (!role) return false;
+  const list = Array.isArray(allowed) ? allowed : [allowed];
+  return list.includes(role as AppRole);
+}
+
 /** Application roles stored in `profiles.role`. */
 export type AppRole =
   | 'gs_admin'

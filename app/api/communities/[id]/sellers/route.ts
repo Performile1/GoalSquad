@@ -16,18 +16,18 @@ export async function GET(
     const { id } = params;
 
     const { data: sellers, error } = await supabaseAdmin
-      .from('sellers')
+      .from('seller_profiles')
       .select(`
         id,
         user_id,
-        full_name,
         shop_url,
         total_sales,
         total_orders,
         xp_total,
         current_level,
         is_active,
-        created_at
+        created_at,
+        profiles!inner(full_name)
       `)
       .eq('community_id', id)
       .order('total_sales', { ascending: false });
@@ -37,7 +37,7 @@ export async function GET(
     const formattedSellers = (sellers || []).map((s: any) => ({
       id: s.id,
       userId: s.user_id,
-      fullName: s.full_name,
+      fullName: s.profiles?.full_name || null,
       shopUrl: s.shop_url,
       totalSales: s.total_sales || 0,
       totalOrders: s.total_orders || 0,

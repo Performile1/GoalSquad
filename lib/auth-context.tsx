@@ -132,37 +132,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      // Fetch profile using API endpoint with service role to bypass RLS
-      const profileResponse = await fetch(`/api/auth/get-profile?userId=${userId}`);
-      const data = await profileResponse.json();
+      // Single unified call replaces the old two-step waterfall
+      const res = await fetch('/api/auth/me', { cache: 'no-store' });
+      const data = await res.json();
 
-      if (!profileResponse.ok) {
+      if (!res.ok) {
         throw new Error(data.error || 'Failed to fetch profile');
       }
 
-      // Check entity tables to determine correct role using API endpoint with service role
-      // This bypasses RLS for these internal role determination queries
-      const entityResponse = await fetch(`/api/auth/check-entity-role?userId=${userId}`);
-      const entityData = await entityResponse.json();
-
-      // Determine correct role based on entity associations
-      let correctRole = data.role;
-      if (entityData.warehouse) {
-        correctRole = 'warehouse';
-      } else if (entityData.merchant) {
-        correctRole = 'merchant';
-      } else if (entityData.seller) {
-        correctRole = 'seller';
-      } else if (entityData.community) {
-        correctRole = 'community';
-      } else if (data.role === 'gs_admin' || data.role === 'admin') {
-        correctRole = 'gs_admin';
-      }
-
-      // Update profile with correct role if different
       setProfile({
-        ...data,
-        role: correctRole,
+        ...data.profile,
       });
     } catch (error) {
       console.error('Error fetching profile:', error);

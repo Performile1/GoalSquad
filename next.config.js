@@ -1,12 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Inherited legacy type-debt: ~192 pre-existing TS errors live in older
-  // routes we have not touched. Our new feature files are type-clean. Unblock
-  // production builds while the legacy debt is paid down incrementally.
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

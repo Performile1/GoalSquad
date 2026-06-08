@@ -14,7 +14,7 @@ export async function POST(
     const { id } = params;
 
     const { error } = await supabaseAdmin
-      .from('sellers')
+      .from('seller_profiles')
       .update({ is_active: false })
       .eq('id', id);
 

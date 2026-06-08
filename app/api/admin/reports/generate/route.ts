@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { userHasRole } from '@/lib/api-auth';
 
 export async function POST(request: Request) {
   const loggerContext = { route: '/api/admin/reports/generate', method: 'POST' };
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
     const supabase = createRouteHandlerClient({ cookies });
     const { data: { session } } = await supabase.auth.getSession();
 
-    if (!session || !['admin', 'warehouse_staff'].includes(session.user.user_metadata?.role)) {
+    if (!session || !(await userHasRole(session.user.id, ['gs_admin', 'warehouse']))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

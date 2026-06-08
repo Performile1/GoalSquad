@@ -20,11 +20,10 @@ export async function GET(req: NextRequest) {
     const offset = (page - 1) * pageSize;
 
     let query = supabaseAdmin
-      .from('sellers')
+      .from('seller_profiles')
       .select(`
         id,
         user_id,
-        full_name,
         shop_url,
         total_sales,
         total_orders,
@@ -33,11 +32,13 @@ export async function GET(req: NextRequest) {
         is_active,
         community_id,
         communities!inner(name),
+        profiles!inner(full_name),
         created_at
       `, { count: 'exact' });
 
     if (search) {
-      query = query.or(`full_name.ilike.%${search}%,shop_url.ilike.%${search}%`);
+      // full_name lives on profiles; search shop_url on the base table.
+      query = query.ilike('shop_url', `%${search}%`);
     }
 
     if (status === 'active') {
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
     const formattedSellers = (sellers || []).map((s: any) => ({
       id: s.id,
       user_id: s.user_id,
-      full_name: s.full_name,
+      full_name: s.profiles?.full_name || null,
       shop_url: s.shop_url,
       total_sales: s.total_sales || 0,
       total_orders: s.total_orders || 0,

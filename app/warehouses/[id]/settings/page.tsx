@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertIcon } from '@/app/components/BrandIcons';
 
-const SECTIONS = ['Lagerinfo', 'Kontakt & Adress', 'Postnummer & Territorium', 'API & Integrationer'];
+const SECTIONS = ['Lagerinfo', 'Kontakt & Adress', 'Postnummer & Territorium', 'Skrivare & Terminal', 'API & Integrationer'];
 
 export default function WarehouseSettingsPage() {
   const { id } = useParams();
@@ -34,6 +34,11 @@ export default function WarehouseSettingsPage() {
     price_per_inbound: 0,
     price_per_pallet: 0,
     price_per_split: 0,
+    label_format: 'zpl',
+    printer_ip: '',
+    auto_print_labels: false,
+    terminal_pin_required: true,
+    scan_confirmation: true,
   });
 
   useEffect(() => {
@@ -61,8 +66,9 @@ export default function WarehouseSettingsPage() {
   }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    const target = e.target as HTMLInputElement;
+    const { name, value, type } = target;
+    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? target.checked : value }));
   };
 
   const handleSave = async () => {
@@ -80,6 +86,9 @@ export default function WarehouseSettingsPage() {
         price_per_inbound: Number(form.price_per_inbound),
         price_per_pallet: Number(form.price_per_pallet),
         price_per_split: Number(form.price_per_split),
+        auto_print_labels: Boolean(form.auto_print_labels),
+        terminal_pin_required: Boolean(form.terminal_pin_required),
+        scan_confirmation: Boolean(form.scan_confirmation),
       };
       const res = await fetch(`/api/warehouses/${id}`, {
         method: 'PUT',
@@ -237,6 +246,46 @@ export default function WarehouseSettingsPage() {
           )}
 
           {activeSection === 3 && (
+            <>
+              <h2 className="text-xl font-bold text-gray-900">Skrivare & Terminal</h2>
+              <p className="text-sm text-gray-500">Konfigurera etikettskrivare och plockdatorer för detta lager.</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Etikettformat</label>
+                  <select name="label_format" value={form.label_format} onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none">
+                    <option value="zpl">ZPL (Zebra)</option>
+                    <option value="pdf">PDF (A6)</option>
+                    <option value="epl">EPL</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Skrivarens IP-adress</label>
+                  <input name="printer_ip" value={form.printer_ip || ''} onChange={handleChange} placeholder="192.168.1.50"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
+                </div>
+              </div>
+              <div className="space-y-3 pt-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" name="auto_print_labels" checked={!!form.auto_print_labels} onChange={handleChange}
+                    className="w-5 h-5 accent-primary-900 rounded" />
+                  <span className="text-sm text-gray-700">Skriv ut fraktetiketter automatiskt vid plock</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" name="terminal_pin_required" checked={!!form.terminal_pin_required} onChange={handleChange}
+                    className="w-5 h-5 accent-primary-900 rounded" />
+                  <span className="text-sm text-gray-700">Kräv PIN-kod på plockdatorer</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" name="scan_confirmation" checked={!!form.scan_confirmation} onChange={handleChange}
+                    className="w-5 h-5 accent-primary-900 rounded" />
+                  <span className="text-sm text-gray-700">Kräv streckkodsskanning för att bekräfta plock</span>
+                </label>
+              </div>
+            </>
+          )}
+
+          {activeSection === 4 && (
             <>
               <h2 className="text-xl font-bold text-gray-900">API & Integrationer</h2>
               <div className="grid gap-4">

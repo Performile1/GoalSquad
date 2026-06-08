@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { userHasRole } from '@/lib/api-auth';
 
 export async function GET(request: Request, { params }: { params: { orderId: string } }) {
   const orderId = params.orderId;
@@ -26,7 +27,7 @@ export async function GET(request: Request, { params }: { params: { orderId: str
     }
 
     // Endast orderägaren eller lager/admin får spåra
-    if (order.user_id !== session.user.id && !['admin', 'warehouse_staff', 'warehouse_admin', 'lagerpersonal'].includes(session.user.user_metadata?.role || session.user.user_metadata?.detailed_role || '')) {
+    if (order.user_id !== session.user.id && !(await userHasRole(session.user.id, ['warehouse', 'gs_admin']))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

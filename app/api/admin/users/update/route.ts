@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { userHasRole } from '@/lib/api-auth';
 
 export async function POST(request: Request) {
   const loggerContext = { route: '/api/admin/users/update', method: 'POST' };
@@ -16,15 +17,13 @@ export async function POST(request: Request) {
     }
 
     // 2. Strikt rollkontroll - Endast existerande admins får ändra roller
-    const callerRole = session.user.user_metadata?.role;
-    const callerDetailedRole = session.user.user_metadata?.detailed_role;
-    if (!['admin', 'platform_admin'].includes(callerRole || callerDetailedRole || '')) {
+    if (!(await userHasRole(session.user.id, 'gs_admin'))) {
       console.log(JSON.stringify({ level: 'warn', message: 'Unauthorized RBAC modification attempt', actor: session.user.id, ...loggerContext }));
       return NextResponse.json({ error: 'Forbidden. Admin privileges required.' }, { status: 403 });
     }
 
     const { targetUserId, newRole } = await request.json();
-    const validRoles = ['admin', 'merchant', 'warehouse_staff', 'user'];
+    const validRoles = ['gs_admin', 'merchant', 'seller', 'community', 'warehouse', 'user'];
 
     if (!targetUserId || !validRoles.includes(newRole)) {
       return NextResponse.json({ error: 'Invalid payload parameters' }, { status: 400 });
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
     }
 
     // Evita att en admin råkar nedgradera sig själv om det är sista admin
-    if (targetUserId === session.user.id && newRole !== 'admin') {
+    if (targetUserId === session.user.id && newRole !== 'gs_admin') {
       return NextResponse.json({ error: 'You cannot demote your own admin account.' }, { status: 400 });
     }
 

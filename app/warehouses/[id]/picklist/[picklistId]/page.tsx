@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 interface PickItem {
   sku: string;
@@ -24,15 +25,57 @@ export default function WarehousePickingTerminal() {
   const [isFinalizing, setIsFinalizing] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      setItems([
-        { sku: 'KAFFE-BRYGG-01', name: 'Arvid Nordquist Gran Dia (6-pack)', location: 'A-04-B', full_boxes: 12, loose_units: 3, total_qty: 75 },
-        { sku: 'KAKOR-CHOKLAD-02', name: 'Mormors Chokladflarn (Tolvpack)', location: 'B-12-A', full_boxes: 8, loose_units: 0, total_qty: 96 },
-        { sku: 'GODIS-SUR-03', name: 'Sura Nappar Bulkbox', location: 'C-01-C', full_boxes: 5, loose_units: 11, total_qty: 41 },
-      ]);
-      setLoading(false);
-    }, 800);
-  }, [picklistId]);
+    async function load() {
+      try {
+        // 1. Fetch picking tasks for this warehouse + campaign (picklistId)
+        const res = await fetch(`/api/warehouses/${warehouseId}/picking-tasks?status=pending`);
+        const json = await res.json();
+        const tasks = (json.tasks ?? []).filter((t: any) => t.campaign_id === picklistId);
+
+        const skus = tasks.map((t: any) => t.sku);
+        if (skus.length === 0) {
+          setItems([]);
+          setLoading(false);
+          return;
+        }
+
+        // 2. Enrich with product names
+        const { data: products } = await supabase
+          .from('products')
+          .select('sku, name')
+          .in('sku', skus);
+
+        // 3. Enrich with inventory locations
+        const { data: inventory } = await supabase
+          .from('warehouse_inventory')
+          .select('sku, location_code')
+          .in('sku', skus)
+          .eq('warehouse_id', warehouseId);
+
+        const productMap = new Map((products ?? []).map((p: any) => [p.sku, p.name]));
+        const locMap = new Map((inventory ?? []).map((i: any) => [i.sku, i.location_code]));
+
+        const mapped: PickItem[] = tasks.map((t: any) => {
+          const qty = t.quantity_to_pick ?? 0;
+          return {
+            sku: t.sku,
+            name: productMap.get(t.sku) || t.sku,
+            location: locMap.get(t.sku) || 'A-01',
+            full_boxes: Math.floor(qty / 12),
+            loose_units: qty % 12,
+            total_qty: qty,
+          };
+        });
+
+        setItems(mapped);
+      } catch (e) {
+        console.error('Failed to load picking data:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [picklistId, warehouseId]);
 
   const toggleItemConfirm = async (sku: string, qty: number) => {
     if (confirmedItems.includes(sku)) {

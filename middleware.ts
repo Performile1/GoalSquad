@@ -42,12 +42,50 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith('/messages') ||
     pathname.startsWith('/account')
 
-  // Redirect to login if no session and trying to access protected routes
+  // Redirect to login if no session and trying to access protected routes.
+  // The login page (`/auth/login`) reads the `redirect` query param.
   if (!session && isProtected) {
     const url = req.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('redirectTo', pathname)
+    url.pathname = '/auth/login'
+    url.search = ''
+    url.searchParams.set('redirect', pathname)
     return NextResponse.redirect(url)
+  }
+
+  // Role-based protection for sensitive areas. `profiles.role` is the
+  // single source of truth. A user may read their own profile under RLS.
+  if (session) {
+    const needsRoleCheck =
+      pathname.startsWith('/admin') || pathname.startsWith('/warehouses')
+
+    if (needsRoleCheck) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+
+      const role = profile?.role
+      const isAdmin = role === 'gs_admin'
+
+      if (pathname.startsWith('/admin') && !isAdmin) {
+        const url = req.nextUrl.clone()
+        url.pathname = '/dashboard'
+        url.search = ''
+        return NextResponse.redirect(url)
+      }
+
+      if (
+        pathname.startsWith('/warehouses') &&
+        role !== 'warehouse' &&
+        !isAdmin
+      ) {
+        const url = req.nextUrl.clone()
+        url.pathname = '/dashboard'
+        url.search = ''
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   return res

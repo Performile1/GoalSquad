@@ -194,11 +194,25 @@ export default function MerchantDashboard() {
               Produkter
             </button>
             <button
+              onClick={() => router.push(`/merchants/${merchantId}/products/import`)}
+              className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
+            >
+              <BoxIcon size={20} />
+              Importera CSV
+            </button>
+            <button
               onClick={() => router.push(`/merchants/${merchantId}/orders`)}
               className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
             >
               <DashboardIcon size={20} />
               Ordrar
+            </button>
+            <button
+              onClick={() => router.push(`/merchants/me/returns`)}
+              className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
+            >
+              <BoxIcon size={20} />
+              Returer
             </button>
             <button
               onClick={() => router.push(`/merchants/${merchantId}/settings`)}

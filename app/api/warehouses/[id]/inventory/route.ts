@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { userHasRole } from '@/lib/api-auth';
 
 // GET: Hämta allt lager för ett specifikt warehouse
 export async function GET(request: Request, { params }: { params: { id: string } }) {
@@ -51,9 +52,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const { productId, stockDelta } = body;
 
     // Säkra att endast admin eller lagerpersonal får ändra lagersaldon
-    const userRole = session?.user?.user_metadata?.role;
-    const userDetailedRole = session?.user?.user_metadata?.detailed_role;
-    if (!session || !['admin', 'warehouse_staff', 'warehouse_admin', 'lagerpersonal', 'lager'].includes(userRole || userDetailedRole || '')) {
+    if (!session || !(await userHasRole(session.user.id, ['warehouse', 'gs_admin']))) {
       console.log(JSON.stringify({ level: 'warn', message: 'Forbidden write attempt', user: session?.user?.id, ...loggerContext }));
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

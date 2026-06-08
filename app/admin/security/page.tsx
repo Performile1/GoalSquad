@@ -143,9 +143,11 @@ export default function AdminSecurityDashboard() {
                       <td className="py-4 px-4 font-mono text-xs text-slate-400">{user.id}</td>
                       <td className="py-4 px-4">
                         <span className={`inline-flex px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wide ${
-                          user.role === 'admin' ? 'bg-purple-50 text-purple-700 border border-purple-200' :
+                          user.role === 'gs_admin' ? 'bg-purple-50 text-purple-700 border border-purple-200' :
                           user.role === 'merchant' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
-                          user.role === 'warehouse_staff' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                          user.role === 'warehouse' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                          user.role === 'seller' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                          user.role === 'community' ? 'bg-teal-50 text-teal-700 border border-teal-200' :
                           'bg-slate-100 text-slate-600'
                         }`}>
                           {user.role}
@@ -159,9 +161,11 @@ export default function AdminSecurityDashboard() {
                           className="px-2 py-1 text-xs bg-slate-50 border border-slate-200 rounded outline-none focus:bg-white focus:ring-1 focus:ring-blue-500"
                         >
                           <option value="user">User (Standard)</option>
-                          <option value="warehouse_staff">Warehouse Staff</option>
+                          <option value="seller">Säljare</option>
                           <option value="merchant">Merchant</option>
-                          <option value="admin">Global Admin</option>
+                          <option value="warehouse">Lagerpartner</option>
+                          <option value="community">Förening</option>
+                          <option value="gs_admin">Global Admin</option>
                         </select>
                       </td>
                     </tr>

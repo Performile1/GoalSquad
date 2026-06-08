@@ -10,7 +10,19 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
+
+  // `profiles.role` is the single source of truth. Consumers (and logged-out
+  // visitors) see the consumer CTAs; staff roles get a panel link instead.
+  const role = profile?.role ?? 'user';
+  const isConsumer = !user || role === 'user';
+  const panelLabel =
+    role === 'merchant' ? 'Merchant-panel' :
+    role === 'seller' ? 'Säljarpanel' :
+    role === 'warehouse' ? 'Lagerpanel' :
+    role === 'community' ? 'Föreningspanel' :
+    role === 'gs_admin' ? 'Adminpanel' :
+    'Min sida';
 
   const navLinks = [
     { href: '/products', label: 'Shop', icon: <ShopIcon size={16} />, hasDropdown: true },
@@ -112,17 +124,19 @@ export default function Navbar() {
               </svg>
             </Link>
 
-            {/* Join CTA — btn-primary */}
-            <Link href="/join" className="btn-primary text-sm px-4 py-2">
-              Registrera dig →
-            </Link>
+            {/* Join CTA — only for consumers / logged-out visitors */}
+            {isConsumer && (
+              <Link href="/join" className="btn-primary text-sm px-4 py-2">
+                Registrera dig →
+              </Link>
+            )}
 
             {/* Auth */}
             {user ? (
               <div className="flex items-center gap-1.5">
                 <Link href="/dashboard"
                   className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-700 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)]">
-                  Min sida
+                  {panelLabel}
                 </Link>
                 <button onClick={() => signOut()}
                   className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-500 hover:text-gray-700 hover:bg-gray-100">
@@ -189,14 +203,16 @@ export default function Navbar() {
                 </svg>
                 Varukorg
               </Link>
-              <Link href="/merchants/onboard" onClick={() => setMobileOpen(false)} className="btn-primary w-full text-center block py-3">
-                Bli Merchant →
-              </Link>
+              {isConsumer && (
+                <Link href="/merchants/onboard" onClick={() => setMobileOpen(false)} className="btn-primary w-full text-center block py-3">
+                  Bli Merchant →
+                </Link>
+              )}
               {user ? (
                 <>
                   <Link href="/dashboard" onClick={() => setMobileOpen(false)}
                     className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
-                    Min sida
+                    {panelLabel}
                   </Link>
                   <button onClick={() => { signOut(); setMobileOpen(false); }}
                     className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 transition-colors">

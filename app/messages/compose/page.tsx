@@ -48,13 +48,12 @@ export default function ComposeMessagePage() {
       } else if (formData.targetType === 'user' && formData.targetId) {
         recipients = [formData.targetId];
       } else if (formData.targetType === 'class' && formData.targetId) {
-        // Send to all users in a specific class
+        // Send to all sellers in a specific class (canonical class_id FK)
         const { data: classMembers } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('role', 'seller')
-          .contains('metadata', { class_id: formData.targetId });
-        recipients = classMembers?.map(u => u.id) || [];
+          .from('seller_profiles')
+          .select('user_id')
+          .eq('class_id', formData.targetId);
+        recipients = classMembers?.map(u => u.user_id).filter(Boolean) || [];
       } else if (formData.targetType === 'club' && formData.targetId) {
         // Send to all members of a specific club/community
         const { data: clubMembers } = await supabase

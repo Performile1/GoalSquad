@@ -167,25 +167,46 @@ export default function WarehouseDashboard() {
           <h3 className="text-xl font-bold text-gray-900 mb-4">Snabbåtgärder</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <button
-              onClick={() => router.push(`/warehouses/${warehouseId}/shipments`)}
+              onClick={() => router.push(`/warehouses/${warehouseId}/picklist`)}
               className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
             >
-              <TruckIcon size={20} />
-              Sändningar
+              <BoxIcon size={20} />
+              Plockordrar
             </button>
             <button
-              onClick={() => router.push(`/warehouses/${warehouseId}/consolidations`)}
+              onClick={() => router.push(`/warehouses/${warehouseId}/orders`)}
               className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
             >
               <DashboardIcon size={20} />
-              Konsolideringar
+              Ordrar
             </button>
             <button
               onClick={() => router.push(`/warehouses/${warehouseId}/splits`)}
               className="bg-primary-900 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
             >
+              <TruckIcon size={20} />
+              Splitordrar
+            </button>
+            <button
+              onClick={() => router.push(`/warehouses/returns`)}
+              className="bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-2"
+            >
               <BoxIcon size={20} />
-              Splitningar
+              Returer
+            </button>
+            <button
+              onClick={() => router.push(`/warehouses/${warehouseId}/staff`)}
+              className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
+              <DashboardIcon size={20} />
+              Personal
+            </button>
+            <button
+              onClick={() => router.push(`/warehouses/${warehouseId}/management`)}
+              className="border-2 border-gray-300 text-gray-700 py-4 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            >
+              <DashboardIcon size={20} />
+              Hantering
             </button>
             <button
               onClick={() => router.push(`/warehouses/${warehouseId}/settings`)}
