@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
+import { validateParams, idParamSchema } from '@/lib/validation';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -10,7 +11,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const merchantId = params.id;
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const merchantId = paramCheck.data.id;
 
     // Verify user is the merchant
     const { data: merchant, error: merchantError } = await supabaseAdmin
@@ -34,7 +37,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ products });
   } catch (error) {
-    logger.apiError('GET', '/api/merchants/[id]/products', error as Error, { merchantId: params.id });
+    logger.apiError('GET', '/api/merchants/[id]/products', error as Error, { merchantId });
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }

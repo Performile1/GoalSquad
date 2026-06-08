@@ -2,8 +2,19 @@ import { requireAdmin } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { validateQuery } from '@/lib/validation';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
+
+const querySchema = z.object({
+  page: z.string().regex(/^\d+$/).transform(Number).default('1'),
+  pageSize: z.string().regex(/^\d+$/).transform(Number).default('20'),
+  search: z.string().optional(),
+  status: z.string().optional(),
+  sortField: z.string().default('created_at'),
+  sortDir: z.enum(['asc', 'desc']).default('desc'),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,15 +22,12 @@ export async function GET(req: NextRequest) {
     if ('error' in auth) return auth.error;
 
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const pageSize = parseInt(searchParams.get('pageSize') || '20');
-    const search = searchParams.get('search') || '';
-    const status = searchParams.get('status') || '';
-    const sortField = searchParams.get('sortField') || 'created_at';
-    const sortDir = searchParams.get('sortDir') || 'desc';
+    const qCheck = validateQuery(searchParams, querySchema);
+    if ('error' in qCheck) return qCheck.error;
+    const { page, pageSize, search, status, sortField, sortDir } = qCheck.data;
     const offset = (page - 1) * pageSize;
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('orders')
       .select(`
         id,

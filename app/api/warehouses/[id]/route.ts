@@ -2,16 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
+import { validateParams, idParamSchema } from '@/lib/validation';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const warehouseId = paramCheck.data.id;
+
     const { data: warehouse, error } = await supabaseAdmin
       .from('warehouse_partners')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', warehouseId)
       .single();
 
     if (error || !warehouse) return NextResponse.json({ error: 'Warehouse not found' }, { status: 404 });
@@ -22,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ warehouse });
   } catch (error) {
-    logger.apiError('GET', '/api/warehouses/[id]', error as Error, { warehouseId: params.id });
+    logger.apiError('GET', '/api/warehouses/[id]', error as Error, { warehouseId });
     return NextResponse.json({ error: 'Failed to fetch warehouse' }, { status: 500 });
   }
 }
@@ -32,10 +37,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const authUser = await getAuthUser(req);
     if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const warehouseId = paramCheck.data.id;
+
     const { data: warehouse } = await supabaseAdmin
       .from('warehouse_partners')
       .select('user_id')
-      .eq('id', params.id)
+      .eq('id', warehouseId)
       .single();
 
     if (!warehouse || warehouse.user_id !== authUser.id) {
@@ -46,7 +55,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const { data: updated, error } = await supabaseAdmin
       .from('warehouse_partners')
       .update({ ...body, updated_at: new Date().toISOString() })
-      .eq('id', params.id)
+      .eq('id', warehouseId)
       .select()
       .single();
 
@@ -54,7 +63,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ warehouse: updated });
   } catch (error) {
-    logger.apiError('PATCH', '/api/warehouses/[id]', error as Error, { warehouseId: params.id });
+    logger.apiError('PATCH', '/api/warehouses/[id]', error as Error, { warehouseId });
     return NextResponse.json({ error: 'Failed to update warehouse' }, { status: 500 });
   }
 }
