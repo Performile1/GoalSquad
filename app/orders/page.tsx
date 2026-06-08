@@ -40,7 +40,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/auth/login');
+      router.push('/login');
       return;
     }
     if (user) fetchOrders();

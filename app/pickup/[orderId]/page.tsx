@@ -9,7 +9,7 @@ interface OrderDetails {
   id: string;
   orderNumber: string;
   status: string;
-  total: number;
+  total_amount: number;
   currency: string;
   sellerName: string;
   items: { name: string; quantity: number }[];
@@ -91,7 +91,7 @@ export default function PickupPage() {
               <div className="text-right">
                 <p className="text-sm text-gray-500">Summa</p>
                 <p className="text-lg font-bold text-primary-900">
-                  {order.total.toLocaleString()} {order.currency}
+                  {order.total_amount?.toLocaleString()} {order.currency}
                 </p>
               </div>
             </div>

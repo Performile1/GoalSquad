@@ -27,14 +27,43 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  const { pathname } = req.nextUrl
+
+  // Define protected route prefixes
+  const isProtected =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/merchant') ||
+    pathname.startsWith('/sellers') ||
+    pathname.startsWith('/warehouses') ||
+    pathname.startsWith('/orders') ||
+    pathname.startsWith('/cart') ||
+    pathname.startsWith('/checkout') ||
+    pathname.startsWith('/messages') ||
+    pathname.startsWith('/account')
+
   // Redirect to login if no session and trying to access protected routes
-  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/auth/login', req.url))
+  if (!session && isProtected) {
+    const url = req.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(url)
   }
 
   return res
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*', '/merchant/:path*', '/sellers/:path*', '/warehouses/:path*'],
+  matcher: [
+    '/dashboard/:path*',
+    '/admin/:path*',
+    '/merchant/:path*',
+    '/sellers/:path*',
+    '/warehouses/:path*',
+    '/orders/:path*',
+    '/cart/:path*',
+    '/checkout/:path*',
+    '/messages/:path*',
+    '/account/:path*',
+  ],
 }

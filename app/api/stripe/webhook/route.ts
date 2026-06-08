@@ -139,7 +139,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 async function creditSellerForCompletedOrder(orderId: string) {
   const { data: order } = await supabaseAdmin
     .from('orders')
-    .select('id, seller_id, total_amount, total, shipping_country')
+    .select('id, seller_id, total_amount, shipping_country')
     .eq('id', orderId)
     .single();
 
@@ -169,7 +169,7 @@ async function creditSellerForCompletedOrder(orderId: string) {
     return;
   }
 
-  const amount = Number(order.total_amount ?? order.total ?? 0);
+  const amount = Number(order.total_amount ?? 0);
 
   // Bump sales stats (leaderboard sorts on total_sales).
   await supabaseAdmin

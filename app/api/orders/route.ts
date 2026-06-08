@@ -27,7 +27,6 @@ export async function GET(req: NextRequest) {
         order_number,
         status,
         total_amount,
-        total,
         currency,
         created_at,
         shipping_address,
@@ -55,7 +54,7 @@ export async function GET(req: NextRequest) {
 
     const mapped = (orders ?? []).map((o: any) => ({
       ...o,
-      total_amount: parseFloat(o.total_amount ?? o.total ?? '0'),
+      total_amount: parseFloat(o.total_amount ?? '0'),
       items_count: o.order_items?.length ?? 0,
     }));
 

@@ -43,8 +43,10 @@ const checkoutSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let userId: string | null = null;
   try {
     const user = await getAuthUser(req);
+    userId = user?.id ?? null;
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -187,7 +189,6 @@ export async function POST(req: NextRequest) {
         customer_id: user.id,
         status: 'pending',
         total_amount: orderTotal,
-        total: orderTotal,
         currency: 'SEK',
         shipping_address: shippingAddress,
         warehouse_id: warehouseId ?? null,
@@ -242,7 +243,7 @@ export async function POST(req: NextRequest) {
       orderId: order.id,
     });
   } catch (error) {
-    logger.apiError('POST', '/api/checkout', error as Error, { userId: user?.id });
+    logger.apiError('POST', '/api/checkout', error as Error, { userId: userId ?? 'unknown' });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -10,9 +10,6 @@ import {
   MoneyIcon, TrophyIcon, XPIcon, OrdersIcon, UserIcon, LeaderboardIcon, CartIcon
 } from '@/app/components/BrandIcons';
 import { apiFetch } from '@/lib/api-client';
-import { supabaseAdmin } from '@/lib/supabase';
-
-export const dynamic = 'force-dynamic';
 
 export default function SellerDashboardPage() {
   const router = useRouter();
@@ -57,49 +54,16 @@ export default function SellerDashboardPage() {
     if (!user) return;
     setStatsLoading(true);
     try {
-      // Get seller profile id from user_id
-      const { data: profile } = await supabaseAdmin
-        .from('seller_profiles')
-        .select('id, community_id')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!profile) {
+      const res = await apiFetch('/api/sellers/dashboard/stats');
+      if (!res.ok) {
         setStatsLoading(false);
         return;
       }
-
-      const sellerProfileId = profile.id;
-
-      // Stats
-      const statsRes = await apiFetch(`/api/sellers/${sellerProfileId}/stats`);
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData);
-      }
-
-      // XP
-      const xpRes = await apiFetch(`/api/sellers/xp`);
-      if (xpRes.ok) {
-        const xpJson = await xpRes.json();
-        setXpData(xpJson);
-      }
-
-      // Orders
-      const ordersRes = await apiFetch(`/api/sellers/${sellerProfileId}/orders?limit=5`);
-      if (ordersRes.ok) {
-        const ordersJson = await ordersRes.json();
-        setOrders(ordersJson.orders || []);
-      }
-
-      // Campaigns
-      if (profile.community_id) {
-        const campRes = await apiFetch(`/api/communities/${profile.community_id}/campaigns`);
-        if (campRes.ok) {
-          const campJson = await campRes.json();
-          setCampaigns(campJson.campaigns || []);
-        }
-      }
+      const data = await res.json();
+      setStats(data.profile ?? null);
+      setXpData(data.xp ?? null);
+      setOrders(data.recentOrders || []);
+      setCampaigns(data.activeCampaigns || []);
     } catch (e) {
       console.error('Failed to fetch seller stats:', e);
     } finally {
@@ -333,7 +297,7 @@ export default function SellerDashboardPage() {
                     }`}>
                       {order.status}
                     </span>
-                    <span className="font-bold text-gray-900">{order.total?.toLocaleString()} kr</span>
+                    <span className="font-bold text-gray-900">{order.total_amount?.toLocaleString()} kr</span>
                   </div>
                 </div>
               ))}
