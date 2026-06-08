@@ -6,25 +6,39 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Return approved community products as campaign products
-    // (No direct campaign_products table exists; this is a shim)
-    const { data: products, error } = await supabaseAdmin
-      .from('community_products')
-      .select('id, title, description, price, image_urls, stock, seller_name, status')
-      .eq('status', 'approved')
-      .limit(20);
+    const campaignId = params.id;
+
+    const { data: rows, error } = await supabaseAdmin
+      .from('campaign_products')
+      .select(`
+        id,
+        campaign_price,
+        moq_per_seller,
+        sort_order,
+        products:product_id (id, title, description, price, image_urls),
+        community_products:community_product_id (id, price, stock, seller_name, image_urls)
+      `)
+      .eq('campaign_id', campaignId)
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(50);
 
     if (error) throw error;
 
-    const formatted = (products || []).map((p: any) => ({
-      id: p.id,
-      title: p.title,
-      description: p.description,
-      price: p.price,
-      imageUrl: p.image_urls?.[0],
-      stock: p.stock,
-      sellerName: p.seller_name,
-    }));
+    const formatted = (rows || []).map((row: any) => {
+      const product = row.products;
+      const cp = row.community_products;
+      return {
+        id: product?.id ?? cp?.id,
+        title: product?.title ?? cp?.title,
+        description: product?.description,
+        price: row.campaign_price ?? cp?.price ?? product?.price,
+        imageUrl: cp?.image_urls?.[0] ?? product?.image_urls?.[0],
+        stock: cp?.stock ?? null,
+        sellerName: cp?.seller_name ?? null,
+        moqPerSeller: row.moq_per_seller,
+      };
+    });
 
     return NextResponse.json({ products: formatted });
   } catch (error) {
