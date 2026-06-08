@@ -10,13 +10,16 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { GamificationEngine } from '@/lib/gamification-engine';
 import { Treasury } from '@/lib/treasury';
 import { logger } from '@/lib/logger';
+import { validateParams, idParamSchema } from '@/lib/validation';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const sellerId = params.id;
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const sellerId = paramCheck.data.id;
 
     // Get seller profile
     const { data: profile, error: profileError } = await supabaseAdmin

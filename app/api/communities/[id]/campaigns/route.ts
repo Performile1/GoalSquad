@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
 import { logger } from '@/lib/logger';
+import { validateParams, idParamSchema } from '@/lib/validation';
 
 const campaignSchema = z.object({
   name: z.string().min(2).max(255),
@@ -25,7 +26,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const communityId = params.id;
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const communityId = paramCheck.data.id;
 
     const { data: campaigns, error } = await supabaseAdmin
       .from('campaigns')
@@ -56,7 +59,9 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const communityId = params.id;
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const communityId = paramCheck.data.id;
     const body = await req.json();
     const validatedData = campaignSchema.parse(body);
 

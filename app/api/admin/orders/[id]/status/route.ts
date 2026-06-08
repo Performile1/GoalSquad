@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api-auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { validateParams, idParamSchema, validateBody } from '@/lib/validation';
+import { z } from 'zod';
+
+const statusSchema = z.object({
+  status: z.enum(['pending','paid','processing','ready_for_pickup','shipped','completed','cancelled','refunded']),
+});
 
 export const dynamic = 'force-dynamic';
 
@@ -10,17 +16,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const auth = await requireAdmin();
     if ('error' in auth) return auth.error;
 
-    const body = await req.json();
-    const { status } = body;
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const { id } = paramCheck.data;
 
-    if (!status) {
-      return NextResponse.json({ error: 'Status required' }, { status: 400 });
-    }
+    const bodyCheck = await validateBody(req, statusSchema);
+    if ('error' in bodyCheck) return bodyCheck.error;
+    const { status } = bodyCheck.data;
 
     const { error } = await supabaseAdmin
       .from('orders')
       .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) throw error;
 

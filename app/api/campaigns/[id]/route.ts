@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { validateParams, idParamSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const paramCheck = validateParams(params, idParamSchema);
+    if ('error' in paramCheck) return paramCheck.error;
+    const { id } = paramCheck.data;
+
     const { data: campaign, error } = await supabaseAdmin
       .from('campaigns')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error || !campaign) {
