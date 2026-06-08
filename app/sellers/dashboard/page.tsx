@@ -314,7 +314,7 @@ export default function SellerDashboardPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {campaigns.filter((c: any) => c.status === 'active').slice(0, 4).map((campaign: any) => (
-                <Link key={campaign.id} href={`/campaign/${campaign.id}`} className="block border-2 border-gray-100 rounded-xl p-4 hover:border-primary-300 transition">
+                <Link key={campaign.id} href={`/campaigns/${campaign.id}`} className="block border-2 border-gray-100 rounded-xl p-4 hover:border-primary-300 transition">
                   <h3 className="font-bold text-gray-900">{campaign.title}</h3>
                   <p className="text-sm text-gray-500 mb-2">{campaign.description?.slice(0, 60)}...</p>
                   {campaign.moq_target && (
