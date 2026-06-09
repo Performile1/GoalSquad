@@ -10,7 +10,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, entities, signOut } = useAuth();
 
   // `profiles.role` is the single source of truth. Consumers (and logged-out
   // visitors) see the consumer CTAs; staff roles get a panel link instead.
@@ -134,6 +134,18 @@ export default function Navbar() {
             {/* Auth */}
             {user ? (
               <div className="flex items-center gap-1.5">
+                {role === 'merchant' && entities?.merchant && (
+                  <Link href={`/merchants/${entities.merchant}/products`}
+                    className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-700 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)]">
+                    Produkter
+                  </Link>
+                )}
+                {role === 'seller' && entities?.seller && (
+                  <Link href={`/sellers/${entities.seller}/products`}
+                    className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-700 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)]">
+                    Produkter
+                  </Link>
+                )}
                 <Link href="/dashboard"
                   className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all text-gray-700 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)]">
                   {panelLabel}
@@ -210,6 +222,18 @@ export default function Navbar() {
               )}
               {user ? (
                 <>
+                  {role === 'merchant' && entities?.merchant && (
+                    <Link href={`/merchants/${entities.merchant}/products`} onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)] transition-colors">
+                      Produkter
+                    </Link>
+                  )}
+                  {role === 'seller' && entities?.seller && (
+                    <Link href={`/sellers/${entities.seller}/products`} onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)] transition-colors">
+                      Produkter
+                    </Link>
+                  )}
                   <Link href="/dashboard" onClick={() => setMobileOpen(false)}
                     className="block px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
                     {panelLabel}

@@ -16,9 +16,17 @@ interface Profile {
   metadata?: Record<string, any>;
 }
 
+interface Entities {
+  merchant: string | null;
+  seller: string | null;
+  warehouse: string | null;
+  community: string | null;
+}
+
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
+  entities: Entities | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<any>;
@@ -36,6 +44,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [entities, setEntities] = useState<Entities | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -143,6 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile({
         ...data.profile,
       });
+      setEntities(data.entities || null);
     } catch (error) {
       console.error('Error fetching profile:', error);
       // Set minimal profile on error
@@ -155,6 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         is_active: true,
         is_verified: false,
       });
+      setEntities(null);
     } finally {
       setLoading(false);
     }
@@ -224,6 +235,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     profile,
+    entities,
     session,
     loading,
     signIn,
