@@ -16,11 +16,11 @@
 -- ============================================================
 INSERT INTO public.product_categories (id, name, slug, description, icon, color, sort_order, is_active)
 VALUES
-  ('c1111111-1111-1111-1111-111111111111'::UUID, 'Sportkläder',       'sportklader',       'Träningskläder för alla sporter',        '👕', '#003B3D', 1, true),
-  ('c1111111-1111-1111-1111-111111111112'::UUID, 'Fotboll',           'fotboll',           'Fotbollar och fotbollsutrustning',         '⚽', '#003B3D', 2, true),
-  ('c1111111-1111-1111-1111-111111111113'::UUID, 'Utrustning',        'utrustning',        'Sportutrustning och tillbehör',            '🎒', '#003B3D', 3, true),
-  ('c1111111-1111-1111-1111-111111111114'::UUID, 'Tillbehör',         'tillbehor',         'Sporttillbehör och småprylar',             '🧤', '#003B3D', 4, true),
-  ('c1111111-1111-1111-1111-111111111115'::UUID, 'Mat & Dryck',       'mat-dryck',         'Energi och dryck för träning',             '🥤', '#003B3D', 5, true)
+  ('00000000-0000-0000-0000-000000000101'::UUID, 'Sportkläder',       'sportklader',       'Träningskläder för alla sporter',        '👕', '#003B3D', 1, true),
+  ('00000000-0000-0000-0000-000000000102'::UUID, 'Fotboll',           'fotboll',           'Fotbollar och fotbollsutrustning',         '⚽', '#003B3D', 2, true),
+  ('00000000-0000-0000-0000-000000000103'::UUID, 'Utrustning',        'utrustning',        'Sportutrustning och tillbehör',            '🎒', '#003B3D', 3, true),
+  ('00000000-0000-0000-0000-000000000104'::UUID, 'Tillbehör',         'tillbehor',         'Sporttillbehör och småprylar',             '🧤', '#003B3D', 4, true),
+  ('00000000-0000-0000-0000-000000000105'::UUID, 'Mat & Dryck',       'mat-dryck',         'Energi och dryck för träning',             '🥤', '#003B3D', 5, true)
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   slug = EXCLUDED.slug,
@@ -91,8 +91,8 @@ END $$;
 
 INSERT INTO public.merchants (id, name, business_name, email, phone, verification_status, created_at, updated_at)
 VALUES
-  ('m1111111-1111-1111-1111-111111111111'::UUID, 'GoalSquad Sports AB', 'GoalSquad Sports AB', 'info@goalsquad.shop', '+46701111111', 'verified', NOW(), NOW()),
-  ('m1111111-1111-1111-1111-111111111112'::UUID, 'Nordic Gear Oy',      'Nordic Gear Oy',      'info@nordicgear.fi', '+46702222222', 'verified', NOW(), NOW())
+  ('00000000-0000-0000-0000-000000000001'::UUID, 'GoalSquad Sports AB', 'GoalSquad Sports AB', 'info@goalsquad.shop', '+46701111111', 'verified', NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000002'::UUID, 'Nordic Gear Oy',      'Nordic Gear Oy',      'info@nordicgear.fi', '+46702222222', 'verified', NOW(), NOW())
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   verification_status = EXCLUDED.verification_status;
@@ -111,14 +111,14 @@ INSERT INTO public.products (
 )
 VALUES
   (
-    'p1111111-1111-1111-1111-111111111111'::UUID,
-    'm1111111-1111-1111-1111-111111111111'::UUID,
+    '00000000-0000-0000-0000-000000000011'::UUID,
+    '00000000-0000-0000-0000-000000000001'::UUID,
     'GS-JACKA-001',
     'GoalSquad Träningsjacka',
     'GoalSquad Träningsjacka',
     'Vind- och vattenavvisande jacka perfekt för träning i alla väder.',
     699.00, 450.00, 699.00, 'SEK',
-    'c1111111-1111-1111-1111-111111111111'::UUID, 200, 'active',
+    '00000000-0000-0000-0000-000000000101'::UUID, 200, 'active',
     'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80',
     ARRAY['jacka','träning','sportkläder','vindtät'],
     '7312345678901', 'GoalSquad',
@@ -126,14 +126,14 @@ VALUES
     NOW(), NOW()
   ),
   (
-    'p1111111-1111-1111-1111-111111111112'::UUID,
-    'm1111111-1111-1111-1111-111111111111'::UUID,
+    '00000000-0000-0000-0000-000000000012'::UUID,
+    '00000000-0000-0000-0000-000000000001'::UUID,
     'GS-BOLL-001',
     'GoalSquad Fotboll',
     'GoalSquad Fotboll',
     'FIFA-godkänd fotboll i premiumkvalitet för alla underlag.',
     299.00, 180.00, 299.00, 'SEK',
-    'c1111111-1111-1111-1111-111111111112'::UUID, 150, 'active',
+    '00000000-0000-0000-0000-000000000102'::UUID, 150, 'active',
     'https://images.unsplash.com/photo-1486286701208-11713a29d79c?w=600&q=80',
     ARRAY['fotboll','matchboll','fifa'],
     '7312345678902', 'GoalSquad',
@@ -141,14 +141,14 @@ VALUES
     NOW(), NOW()
   ),
   (
-    'p1111111-1111-1111-1111-111111111113'::UUID,
-    'm1111111-1111-1111-1111-111111111111'::UUID,
+    '00000000-0000-0000-0000-000000000013'::UUID,
+    '00000000-0000-0000-0000-000000000001'::UUID,
     'GS-BYXA-001',
     'GoalSquad Träningsbyxor',
     'GoalSquad Träningsbyxor',
     'Löparbyxor med reflexdetaljer för säker träning i mörkret.',
     449.00, 280.00, 449.00, 'SEK',
-    'c1111111-1111-1111-1111-111111111111'::UUID, 180, 'active',
+    '00000000-0000-0000-0000-000000000101'::UUID, 180, 'active',
     'https://images.unsplash.com/photo-1518600506278-4e8ef466b810?w=600&q=80',
     ARRAY['byxor','löpning','reflex','sportkläder'],
     '7312345678903', 'GoalSquad',
@@ -156,14 +156,14 @@ VALUES
     NOW(), NOW()
   ),
   (
-    'p1111111-1111-1111-1111-111111111114'::UUID,
-    'm1111111-1111-1111-1111-111111111112'::UUID,
+    '00000000-0000-0000-0000-000000000014'::UUID,
+    '00000000-0000-0000-0000-000000000002'::UUID,
     'NG-HAND-001',
     'Nordic Vinterhandske',
     'Nordic Vinterhandske',
     'Värmeisolerade handskar för vinterträning i kalla temperaturer.',
     199.00, 120.00, 199.00, 'SEK',
-    'c1111111-1111-1111-1111-111111111114'::UUID, 300, 'active',
+    '00000000-0000-0000-0000-000000000104'::UUID, 300, 'active',
     'https://images.unsplash.com/photo-1583416750470-965b6387ece4?w=600&q=80',
     ARRAY['handskar','vinter','isolering','tillbehör'],
     '7312345678904', 'Nordic Gear',
@@ -171,14 +171,14 @@ VALUES
     NOW(), NOW()
   ),
   (
-    'p1111111-1111-1111-1111-111111111115'::UUID,
-    'm1111111-1111-1111-1111-111111111112'::UUID,
+    '00000000-0000-0000-0000-000000000015'::UUID,
+    '00000000-0000-0000-0000-000000000002'::UUID,
     'NG-PANN-001',
     'Nordic Pannband',
     'Nordic Pannband',
     'Svettavvisande pannband i merinoull för intensiv träning.',
     149.00, 80.00, 149.00, 'SEK',
-    'c1111111-1111-1111-1111-111111111114'::UUID, 250, 'active',
+    '00000000-0000-0000-0000-000000000104'::UUID, 250, 'active',
     'https://images.unsplash.com/photo-1576872381149-7847515ce5d8?w=600&q=80',
     ARRAY['pannband','merino','ull','tillbehör'],
     '7312345678905', 'Nordic Gear',
@@ -186,14 +186,14 @@ VALUES
     NOW(), NOW()
   ),
   (
-    'p1111111-1111-1111-1111-111111111116'::UUID,
-    'm1111111-1111-1111-1111-111111111112'::UUID,
+    '00000000-0000-0000-0000-000000000016'::UUID,
+    '00000000-0000-0000-0000-000000000002'::UUID,
     'NG-FLAS-001',
     'Nordic Vattenflaska',
     'Nordic Vattenflaska',
     'BPA-fri flaska med dubbelväggsisolering för kalla drycker.',
     99.00, 55.00, 99.00, 'SEK',
-    'c1111111-1111-1111-1111-111111111113'::UUID, 400, 'active',
+    '00000000-0000-0000-0000-000000000103'::UUID, 400, 'active',
     'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80',
     ARRAY['flaska','vatten','isolering','träning'],
     '7312345678906', 'Nordic Gear',
@@ -224,7 +224,7 @@ INSERT INTO public.community_products (
 )
 VALUES
   (
-    'cp111111-1111-1111-1111-111111111111'::UUID,
+    '00000000-0000-0000-0000-000000000021'::UUID,
     'Handgjord Supporter-scarf',
     'Virad scarf i klubbens färger, perfekt för kalla matcher.',
     179.00, 'handmade',
@@ -234,7 +234,7 @@ VALUES
     'approved', NOW(), NOW(), NOW()
   ),
   (
-    'cp111111-1111-1111-1111-111111111112'::UUID,
+    '00000000-0000-0000-0000-000000000022'::UUID,
     'Egen Designad T-shirt',
     'Unik t-shirt med eget tryck, stödjer föreningen vid köp.',
     249.00, 'jersey',
@@ -252,10 +252,23 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = NOW();
 
 -- ============================================================
--- 6. VERIFY
+-- 6. FIX ADMIN ROLE
+-- ============================================================
+-- Ensure admin@goalsquad.se has gs_admin role (not consumer)
+UPDATE public.profiles
+SET role = 'gs_admin',
+    is_active = true,
+    is_verified = true,
+    updated_at = NOW()
+WHERE email = 'admin@goalsquad.se';
+
+-- ============================================================
+-- 7. VERIFY
 -- ============================================================
 SELECT 'Products seeded:' as status, COUNT(*) as count FROM public.products WHERE status = 'active'
 UNION ALL
 SELECT 'Community products seeded:', COUNT(*) FROM public.community_products WHERE status = 'approved'
 UNION ALL
-SELECT 'Categories seeded:', COUNT(*) FROM public.product_categories WHERE is_active = true;
+SELECT 'Categories seeded:', COUNT(*) FROM public.product_categories WHERE is_active = true
+UNION ALL
+SELECT 'Admin fixed:', COUNT(*) FROM public.profiles WHERE email = 'admin@goalsquad.se' AND role = 'gs_admin';
