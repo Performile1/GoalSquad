@@ -29,11 +29,17 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl
 
+  // Public merchant pages: /merchants (list) and /merchants/[id] (profile)
+  const isPublicMerchant =
+    pathname === '/merchants' ||
+    /^\/merchants\/[a-f0-9-]{36}$/i.test(pathname);
+
   // Define protected route prefixes
   const isProtected =
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/merchants/me') ||
+    (pathname.startsWith('/merchants') && !isPublicMerchant) ||
     pathname.startsWith('/sellers') ||
     pathname.startsWith('/warehouses') ||
     pathname.startsWith('/orders') ||
@@ -95,7 +101,7 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/admin/:path*',
-    '/merchants/me/:path*',
+    '/merchants/:path*',
     '/sellers/:path*',
     '/warehouses/:path*',
     '/orders/:path*',

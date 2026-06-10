@@ -21,13 +21,13 @@ export async function GET(req: NextRequest) {
         .from('product_categories')
         .select('*')
         .eq('is_active', true)
-        .order('display_order');
+        .order('sort_order');
 
       const formattedCategories = (categories || []).map((cat: any) => ({
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
-        iconEmoji: cat.icon_emoji || '',
+        iconEmoji: cat.icon || '',
         parentId: cat.parent_id,
         productCount: 0, // Would need separate query
       }));
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
-      iconEmoji: cat.icon_emoji || '',
+      iconEmoji: cat.icon || '',
       parentId: cat.parent_id,
       productCount: parseInt(cat.product_count || 0),
     }));

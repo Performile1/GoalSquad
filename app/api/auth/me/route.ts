@@ -47,12 +47,19 @@ export async function GET(request: NextRequest) {
     ]);
 
     // 4. Build role from entity data (mirrors auth-context.tsx logic server-side)
+    // gs_admin must have highest priority — an admin may also have merchant/seller profiles
     let role = profile.role as string;
-    if (warehouse.data?.id) role = 'warehouse';
-    else if (merchant.data?.id) role = 'merchant';
-    else if (seller.data?.id) role = 'seller';
-    else if (community.data?.id) role = 'community';
-    else if (profile.role === 'gs_admin' || profile.role === 'admin') role = 'gs_admin';
+    if (profile.role === 'gs_admin' || profile.role === 'admin') {
+      role = 'gs_admin';
+    } else if (warehouse.data?.id) {
+      role = 'warehouse';
+    } else if (merchant.data?.id) {
+      role = 'merchant';
+    } else if (seller.data?.id) {
+      role = 'seller';
+    } else if (community.data?.id) {
+      role = 'community';
+    }
 
     return NextResponse.json({
       user: {
