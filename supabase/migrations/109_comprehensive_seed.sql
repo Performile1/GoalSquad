@@ -128,6 +128,12 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'communities' AND column_name = 'slug') THEN
     ALTER TABLE public.communities ADD COLUMN slug VARCHAR(255);
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'communities' AND column_name = 'logo_url') THEN
+    ALTER TABLE public.communities ADD COLUMN logo_url TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'communities' AND column_name = 'banner_url') THEN
+    ALTER TABLE public.communities ADD COLUMN banner_url TEXT;
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'communities' AND column_name = 'sport_type') THEN
     ALTER TABLE public.communities ADD COLUMN sport_type VARCHAR(100);
   END IF;
