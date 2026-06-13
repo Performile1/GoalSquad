@@ -9,39 +9,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
-    // Use database function for category tree
-    const { data, error } = await supabaseAdmin.rpc('get_category_tree');
+    const { data: categories, error } = await supabaseAdmin
+      .from('product_categories')
+      .select('id, name, slug, icon, parent_id, sort_order, is_active')
+      .eq('is_active', true)
+      .order('sort_order');
 
     if (error) {
-      logger.apiError('GET', '/api/products/categories', error, { usingFunction: true });
-      // Fallback to basic query
-      const { data: categories } = await supabaseAdmin
-        .from('product_categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order');
-
-      const formattedCategories = (categories || []).map((cat: any) => ({
-        id: cat.id,
-        name: cat.name,
-        slug: cat.slug,
-        iconEmoji: cat.icon || '',
-        parentId: cat.parent_id,
-        productCount: 0, // Would need separate query
-      }));
-
-      return NextResponse.json({ categories: formattedCategories });
+      logger.apiError('GET', '/api/products/categories', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch categories' },
+        { status: 500 }
+      );
     }
 
-    const formattedCategories = (data || []).map((cat: any) => ({
+    const formattedCategories = (categories || []).map((cat: any) => ({
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
       iconEmoji: cat.icon || '',
       parentId: cat.parent_id,
-      productCount: parseInt(cat.product_count || 0),
+      productCount: 0,
     }));
 
     return NextResponse.json({ categories: formattedCategories });

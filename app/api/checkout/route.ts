@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
+
+export const dynamic = 'force-dynamic';
 import { logger } from '@/lib/logger';
 import { z } from 'zod';
 

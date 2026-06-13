@@ -270,12 +270,12 @@ INSERT INTO public.products (
   created_at, updated_at
 )
 VALUES
-  ('00000000-0000-0000-0000-000000000701'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-JACKA-001', 'GoalSquad Träningsjacka', 'GoalSquad Träningsjacka', 'Vind- och vattenavvisande jacka perfekt för träning i alla väder.', 699.00, 450.00, 699.00, 'SEK', '00000000-0000-0000-0000-000000000101'::UUID, 200, 'active', 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80', ARRAY['jacka','träning','sportkläder','vindtät'], '7312345678901', 'GoalSquad', 420, 350, 280, 80, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000702'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BOLL-001', 'GoalSquad Fotboll', 'GoalSquad Fotboll', 'FIFA-godkänd fotboll i premiumkvalitet.', 299.00, 180.00, 299.00, 'SEK', '00000000-0000-0000-0000-000000000102'::UUID, 150, 'active', 'https://images.unsplash.com/photo-1486286701208-11713a29d79c?w=600&q=80', ARRAY['fotboll','matchboll','fifa'], '7312345678902', 'GoalSquad', 450, 220, 220, 220, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000703'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BYXA-001', 'GoalSquad Träningsbyxor', 'GoalSquad Träningsbyxor', 'Löparbyxor med reflexdetaljer för säker träning i mörkret.', 449.00, 280.00, 449.00, 'SEK', '00000000-0000-0000-0000-000000000101'::UUID, 180, 'active', 'https://images.unsplash.com/photo-1518600506278-4e8ef466b810?w=600&q=80', ARRAY['byxor','löpning','reflex','sportkläder'], '7312345678903', 'GoalSquad', 320, 300, 250, 50, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000704'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-HAND-001', 'Nordic Vinterhandske', 'Nordic Vinterhandske', 'Värmeisolerade handskar för vinterträning.', 199.00, 120.00, 199.00, 'SEK', '00000000-0000-0000-0000-000000000104'::UUID, 300, 'active', 'https://images.unsplash.com/photo-1583416750470-965b6387ece4?w=600&q=80', ARRAY['handskar','vinter','isolering','tillbehör'], '7312345678904', 'Nordic Gear', 180, 250, 150, 40, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000705'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-PANN-001', 'Nordic Pannband', 'Nordic Pannband', 'Svettavvisande pannband i merinoull.', 149.00, 80.00, 149.00, 'SEK', '00000000-0000-0000-0000-000000000104'::UUID, 250, 'active', 'https://images.unsplash.com/photo-1576872381149-7847515ce5d8?w=600&q=80', ARRAY['pannband','merino','ull','tillbehör'], '7312345678905', 'Nordic Gear', 45, 200, 80, 20, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000706'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-FLAS-001', 'Nordic Vattenflaska', 'Nordic Vattenflaska', 'BPA-fri flaska med dubbelväggsisolering.', 99.00, 55.00, 99.00, 'SEK', '00000000-0000-0000-0000-000000000103'::UUID, 400, 'active', 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80', ARRAY['flaska','vatten','isolering','träning'], '7312345678906', 'Nordic Gear', 300, 250, 80, 80, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000011'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-JACKA-001', 'GoalSquad Träningsjacka', 'GoalSquad Träningsjacka', 'Vind- och vattenavvisande jacka perfekt för träning i alla väder.', 699.00, 450.00, 699.00, 'SEK', '00000000-0000-0000-0000-000000000101'::UUID, 200, 'active', 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80', ARRAY['jacka','träning','sportkläder','vindtät'], '7312345678901', 'GoalSquad', 420, 350, 280, 80, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000012'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BOLL-001', 'GoalSquad Fotboll', 'GoalSquad Fotboll', 'FIFA-godkänd fotboll i premiumkvalitet.', 299.00, 180.00, 299.00, 'SEK', '00000000-0000-0000-0000-000000000102'::UUID, 150, 'active', 'https://images.unsplash.com/photo-1486286701208-11713a29d79c?w=600&q=80', ARRAY['fotboll','matchboll','fifa'], '7312345678902', 'GoalSquad', 450, 220, 220, 220, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000013'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BYXA-001', 'GoalSquad Träningsbyxor', 'GoalSquad Träningsbyxor', 'Löparbyxor med reflexdetaljer för säker träning i mörkret.', 449.00, 280.00, 449.00, 'SEK', '00000000-0000-0000-0000-000000000101'::UUID, 180, 'active', 'https://images.unsplash.com/photo-1518600506278-4e8ef466b810?w=600&q=80', ARRAY['byxor','löpning','reflex','sportkläder'], '7312345678903', 'GoalSquad', 320, 300, 250, 50, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000014'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-HAND-001', 'Nordic Vinterhandske', 'Nordic Vinterhandske', 'Värmeisolerade handskar för vinterträning.', 199.00, 120.00, 199.00, 'SEK', '00000000-0000-0000-0000-000000000104'::UUID, 300, 'active', 'https://images.unsplash.com/photo-1583416750470-965b6387ece4?w=600&q=80', ARRAY['handskar','vinter','isolering','tillbehör'], '7312345678904', 'Nordic Gear', 180, 250, 150, 40, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000015'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-PANN-001', 'Nordic Pannband', 'Nordic Pannband', 'Svettavvisande pannband i merinoull.', 149.00, 80.00, 149.00, 'SEK', '00000000-0000-0000-0000-000000000104'::UUID, 250, 'active', 'https://images.unsplash.com/photo-1576872381149-7847515ce5d8?w=600&q=80', ARRAY['pannband','merino','ull','tillbehör'], '7312345678905', 'Nordic Gear', 45, 200, 80, 20, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000016'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-FLAS-001', 'Nordic Vattenflaska', 'Nordic Vattenflaska', 'BPA-fri flaska med dubbelväggsisolering.', 99.00, 55.00, 99.00, 'SEK', '00000000-0000-0000-0000-000000000103'::UUID, 400, 'active', 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80', ARRAY['flaska','vatten','isolering','träning'], '7312345678906', 'Nordic Gear', 300, 250, 80, 80, NOW(), NOW()),
   ('00000000-0000-0000-0000-000000000707'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-SKOR-001', 'GoalSquad Löparskor', 'GoalSquad Löparskor', 'Lätta löparskor med dämpning för alla underlag.', 899.00, 550.00, 899.00, 'SEK', '00000000-0000-0000-0000-000000000101'::UUID, 120, 'active', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80', ARRAY['skor','löpning','dämpning','sportkläder'], '7312345678907', 'GoalSquad', 280, 310, 120, 110, NOW(), NOW()),
   ('00000000-0000-0000-0000-000000000708'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-TRÖJA-001', 'GoalSquad Matchtröja', 'GoalSquad Matchtröja', 'Andningsbar matchtröja med fukttransport.', 349.00, 220.00, 349.00, 'SEK', '00000000-0000-0000-0000-000000000101'::UUID, 95, 'active', 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&q=80', ARRAY['tröja','match','fotboll','andningsbar'], '7312345678908', 'GoalSquad', 180, 280, 200, 20, NOW(), NOW()),
   ('00000000-0000-0000-0000-000000000709'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-RYGG-001', 'Nordic Träningsryggsäck', 'Nordic Träningsryggsäck', 'Vattentät ryggsäck med skofack och datorfack.', 549.00, 320.00, 549.00, 'SEK', '00000000-0000-0000-0000-000000000103'::UUID, 80, 'active', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80', ARRAY['ryggsäck','väska','vattentät','träning'], '7312345678909', 'Nordic Gear', 650, 450, 300, 220, NOW(), NOW()),
@@ -300,8 +300,8 @@ INSERT INTO public.community_products (
   id, title, description, price, category, seller_type, seller_name, community_name, location, stock, shipping_info, contact_email, image_urls, status, approved_at, created_at, updated_at
 )
 VALUES
-  ('00000000-0000-0000-0000-000000000801'::UUID, 'IFK Göteborg Matchkläder', 'Officiella supporterkläder med klubbemblem.', 499.00, 'Sportkläder', 'community', 'IFK Göteborg Supporters', 'IFK Göteborg', 'Göteborg', 50, 'Fri frakt vid beställning över 500 kr.', 'shop@ifkgoteborg.sup', ARRAY['https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&q=80'], 'active', NOW(), NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000802'::UUID, 'Malmö FF Träningspaket', 'Komplett träningspaket med klubbens färger.', 799.00, 'Utrustning', 'community', 'Malmö FF Support', 'Malmö FF', 'Malmö', 30, 'Hämtas på stadion eller skickas.', 'shop@malmo.ff', ARRAY['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80'], 'active', NOW(), NOW(), NOW())
+  ('00000000-0000-0000-0000-000000000801'::UUID, 'IFK Göteborg Matchkläder', 'Officiella supporterkläder med klubbemblem.', 499.00, 'Sportkläder', 'community', 'IFK Göteborg Supporters', 'IFK Göteborg', 'Göteborg', 50, 'Fri frakt vid beställning över 500 kr.', 'shop@ifkgoteborg.sup', ARRAY['https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600&q=80'], 'approved', NOW(), NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000802'::UUID, 'Malmö FF Träningspaket', 'Komplett träningspaket med klubbens färger.', 799.00, 'Utrustning', 'community', 'Malmö FF Support', 'Malmö FF', 'Malmö', 30, 'Hämtas på stadion eller skickas.', 'shop@malmo.ff', ARRAY['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80'], 'approved', NOW(), NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
@@ -318,10 +318,10 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================
 INSERT INTO public.campaign_products (id, campaign_id, product_id, campaign_price, moq_per_seller, is_active, sort_order, created_at, updated_at)
 VALUES
-  ('00000000-0000-0000-0000-000000000a01'::UUID, '00000000-0000-0000-0000-000000000901'::UUID, '00000000-0000-0000-0000-000000000701'::UUID, 599.00, 5, true, 1, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000a02'::UUID, '00000000-0000-0000-0000-000000000901'::UUID, '00000000-0000-0000-0000-000000000702'::UUID, 249.00, 10, true, 2, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000a03'::UUID, '00000000-0000-0000-0000-000000000901'::UUID, '00000000-0000-0000-0000-000000000703'::UUID, 349.00, 5, true, 3, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000a04'::UUID, '00000000-0000-0000-0000-000000000902'::UUID, '00000000-0000-0000-0000-000000000706'::UUID, 79.00, 15, true, 1, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000a01'::UUID, '00000000-0000-0000-0000-000000000901'::UUID, '00000000-0000-0000-0000-000000000011'::UUID, 599.00, 5, true, 1, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000a02'::UUID, '00000000-0000-0000-0000-000000000901'::UUID, '00000000-0000-0000-0000-000000000012'::UUID, 249.00, 10, true, 2, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000a03'::UUID, '00000000-0000-0000-0000-000000000901'::UUID, '00000000-0000-0000-0000-000000000013'::UUID, 349.00, 5, true, 3, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000a04'::UUID, '00000000-0000-0000-0000-000000000902'::UUID, '00000000-0000-0000-0000-000000000016'::UUID, 79.00, 15, true, 1, NOW(), NOW()),
   ('00000000-0000-0000-0000-000000000a05'::UUID, '00000000-0000-0000-0000-000000000902'::UUID, '00000000-0000-0000-0000-000000000707'::UUID, 749.00, 3, true, 2, NOW(), NOW()),
   ('00000000-0000-0000-0000-000000000a06'::UUID, '00000000-0000-0000-0000-000000000902'::UUID, '00000000-0000-0000-0000-000000000710'::UUID, 99.00, 20, true, 3, NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
@@ -353,34 +353,120 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================
 -- 15. ORDERS
 -- ============================================================
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'order_number') THEN
+    ALTER TABLE public.orders ADD COLUMN order_number VARCHAR(50) UNIQUE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'customer_id') THEN
+    ALTER TABLE public.orders ADD COLUMN customer_id UUID REFERENCES auth.users(id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'customer_email') THEN
+    ALTER TABLE public.orders ADD COLUMN customer_email VARCHAR(255);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_name') THEN
+    ALTER TABLE public.orders ADD COLUMN shipping_name VARCHAR(255);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_address_line1') THEN
+    ALTER TABLE public.orders ADD COLUMN shipping_address_line1 VARCHAR(255);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_city') THEN
+    ALTER TABLE public.orders ADD COLUMN shipping_city VARCHAR(100);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_postal_code') THEN
+    ALTER TABLE public.orders ADD COLUMN shipping_postal_code VARCHAR(20);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_country') THEN
+    ALTER TABLE public.orders ADD COLUMN shipping_country VARCHAR(2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'subtotal') THEN
+    ALTER TABLE public.orders ADD COLUMN subtotal DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'shipping_total') THEN
+    ALTER TABLE public.orders ADD COLUMN shipping_total DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'tax_total') THEN
+    ALTER TABLE public.orders ADD COLUMN tax_total DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'total') THEN
+    ALTER TABLE public.orders ADD COLUMN total DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'total_amount') THEN
+    ALTER TABLE public.orders ADD COLUMN total_amount DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'currency') THEN
+    ALTER TABLE public.orders ADD COLUMN currency VARCHAR(3) DEFAULT 'SEK';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'payment_status') THEN
+    ALTER TABLE public.orders ADD COLUMN payment_status VARCHAR(50) DEFAULT 'pending';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'status') THEN
+    ALTER TABLE public.orders ADD COLUMN status VARCHAR(50) DEFAULT 'pending';
+  END IF;
+END $$;
+
 INSERT INTO public.orders (
   id, order_number, customer_id, customer_email,
   shipping_name, shipping_address_line1, shipping_city, shipping_postal_code, shipping_country,
-  subtotal, shipping_total, tax_total, total, currency,
+  subtotal, shipping_total, tax_total, total, total_amount, currency,
   payment_status, status, created_at, updated_at
 )
 VALUES
-  ('00000000-0000-0000-0000-000000000d01'::UUID, 'GS-2025-0001', 'cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 'consumer1@test.goalsquad.shop', 'Test Kund', 'Storgatan 1', 'Stockholm', '11122', 'SE', 898.00, 49.00, 224.50, 1171.50, 'SEK', 'paid', 'delivered', NOW() - INTERVAL '10 days', NOW()),
-  ('00000000-0000-0000-0000-000000000d02'::UUID, 'GS-2025-0002', 'dddddddd-dddd-dddd-dddd-dddddddddddd'::UUID, 'consumer2@test.goalsquad.shop', 'Maria Berg', 'Lilla Vägen 5', 'Malmö', '21133', 'SE', 548.00, 49.00, 137.00, 734.00, 'SEK', 'paid', 'shipped', NOW() - INTERVAL '5 days', NOW()),
-  ('00000000-0000-0000-0000-000000000d03'::UUID, 'GS-2025-0003', 'cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 'consumer1@test.goalsquad.shop', 'Test Kund', 'Storgatan 1', 'Stockholm', '11122', 'SE', 299.00, 29.00, 74.75, 402.75, 'SEK', 'paid', 'processing', NOW() - INTERVAL '2 days', NOW()),
-  ('00000000-0000-0000-0000-000000000d04'::UUID, 'GS-2025-0004', 'dddddddd-dddd-dddd-dddd-dddddddddddd'::UUID, 'consumer2@test.goalsquad.shop', 'Maria Berg', 'Lilla Vägen 5', 'Malmö', '21133', 'SE', 1048.00, 0.00, 262.00, 1310.00, 'SEK', 'paid', 'pending', NOW(), NOW())
+  ('00000000-0000-0000-0000-000000000d01'::UUID, 'GS-2025-0001', 'cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 'consumer1@test.goalsquad.shop', 'Test Kund', 'Storgatan 1', 'Stockholm', '11122', 'SE', 898.00, 49.00, 224.50, 1171.50, 1171.50, 'SEK', 'paid', 'delivered', NOW() - INTERVAL '10 days', NOW()),
+  ('00000000-0000-0000-0000-000000000d02'::UUID, 'GS-2025-0002', 'dddddddd-dddd-dddd-dddd-dddddddddddd'::UUID, 'consumer2@test.goalsquad.shop', 'Maria Berg', 'Lilla Vägen 5', 'Malmö', '21133', 'SE', 548.00, 49.00, 137.00, 734.00, 734.00, 'SEK', 'paid', 'shipped', NOW() - INTERVAL '5 days', NOW()),
+  ('00000000-0000-0000-0000-000000000d03'::UUID, 'GS-2025-0003', 'cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 'consumer1@test.goalsquad.shop', 'Test Kund', 'Storgatan 1', 'Stockholm', '11122', 'SE', 299.00, 29.00, 74.75, 402.75, 402.75, 'SEK', 'paid', 'processing', NOW() - INTERVAL '2 days', NOW()),
+  ('00000000-0000-0000-0000-000000000d04'::UUID, 'GS-2025-0004', 'dddddddd-dddd-dddd-dddd-dddddddddddd'::UUID, 'consumer2@test.goalsquad.shop', 'Maria Berg', 'Lilla Vägen 5', 'Malmö', '21133', 'SE', 1048.00, 0.00, 262.00, 1310.00, 1310.00, 'SEK', 'paid', 'pending', NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
 -- 16. ORDER ITEMS
 -- ============================================================
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'merchant_id') THEN
+    ALTER TABLE public.order_items ADD COLUMN merchant_id UUID REFERENCES public.merchants(id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'sku') THEN
+    ALTER TABLE public.order_items ADD COLUMN sku VARCHAR(100);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'name') THEN
+    ALTER TABLE public.order_items ADD COLUMN name VARCHAR(500);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'quantity') THEN
+    ALTER TABLE public.order_items ADD COLUMN quantity INTEGER;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'unit_price') THEN
+    ALTER TABLE public.order_items ADD COLUMN unit_price DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'merchant_base_price') THEN
+    ALTER TABLE public.order_items ADD COLUMN merchant_base_price DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'subtotal') THEN
+    ALTER TABLE public.order_items ADD COLUMN subtotal DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'total_price') THEN
+    ALTER TABLE public.order_items ADD COLUMN total_price DECIMAL(10, 2);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'created_at') THEN
+    ALTER TABLE public.order_items ADD COLUMN created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'order_items' AND column_name = 'updated_at') THEN
+    ALTER TABLE public.order_items ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+  END IF;
+END $$;
+
 INSERT INTO public.order_items (
-  id, order_id, product_id, merchant_id, sku, name, quantity, unit_price, merchant_base_price, subtotal, created_at, updated_at
+  id, order_id, product_id, merchant_id, sku, name, quantity, unit_price, merchant_base_price, subtotal, total_price, created_at, updated_at
 )
 VALUES
-  ('00000000-0000-0000-0000-000000000e01'::UUID, '00000000-0000-0000-0000-000000000d01'::UUID, '00000000-0000-0000-0000-000000000701'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-JACKA-001', 'GoalSquad Träningsjacka', 1, 699.00, 450.00, 699.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e02'::UUID, '00000000-0000-0000-0000-000000000d01'::UUID, '00000000-0000-0000-0000-000000000702'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BOLL-001', 'GoalSquad Fotboll', 1, 199.00, 180.00, 199.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e03'::UUID, '00000000-0000-0000-0000-000000000d02'::UUID, '00000000-0000-0000-0000-000000000704'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-HAND-001', 'Nordic Vinterhandske', 2, 199.00, 120.00, 398.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e04'::UUID, '00000000-0000-0000-0000-000000000d02'::UUID, '00000000-0000-0000-0000-000000000705'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-PANN-001', 'Nordic Pannband', 1, 149.00, 80.00, 149.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e05'::UUID, '00000000-0000-0000-0000-000000000d03'::UUID, '00000000-0000-0000-0000-000000000702'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BOLL-001', 'GoalSquad Fotboll', 1, 299.00, 180.00, 299.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e06'::UUID, '00000000-0000-0000-0000-000000000d04'::UUID, '00000000-0000-0000-0000-000000000707'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-SKOR-001', 'GoalSquad Löparskor', 1, 899.00, 550.00, 899.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e07'::UUID, '00000000-0000-0000-0000-000000000d04'::UUID, '00000000-0000-0000-0000-000000000709'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-RYGG-001', 'Nordic Träningsryggsäck', 1, 549.00, 320.00, 549.00, NOW(), NOW()),
-  ('00000000-0000-0000-0000-000000000e08'::UUID, '00000000-0000-0000-0000-000000000d04'::UUID, '00000000-0000-0000-0000-000000000706'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-FLAS-001', 'Nordic Vattenflaska', 2, 99.00, 55.00, 198.00, NOW(), NOW())
+  ('00000000-0000-0000-0000-000000000e01'::UUID, '00000000-0000-0000-0000-000000000d01'::UUID, '00000000-0000-0000-0000-000000000011'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-JACKA-001', 'GoalSquad Träningsjacka', 1, 699.00, 450.00, 699.00, 699.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e02'::UUID, '00000000-0000-0000-0000-000000000d01'::UUID, '00000000-0000-0000-0000-000000000012'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BOLL-001', 'GoalSquad Fotboll', 1, 199.00, 180.00, 199.00, 199.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e03'::UUID, '00000000-0000-0000-0000-000000000d02'::UUID, '00000000-0000-0000-0000-000000000014'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-HAND-001', 'Nordic Vinterhandske', 2, 199.00, 120.00, 398.00, 398.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e04'::UUID, '00000000-0000-0000-0000-000000000d02'::UUID, '00000000-0000-0000-0000-000000000015'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-PANN-001', 'Nordic Pannband', 1, 149.00, 80.00, 149.00, 149.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e05'::UUID, '00000000-0000-0000-0000-000000000d03'::UUID, '00000000-0000-0000-0000-000000000012'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-BOLL-001', 'GoalSquad Fotboll', 1, 299.00, 180.00, 299.00, 299.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e06'::UUID, '00000000-0000-0000-0000-000000000d04'::UUID, '00000000-0000-0000-0000-000000000707'::UUID, '00000000-0000-0000-0000-000000000001'::UUID, 'GS-SKOR-001', 'GoalSquad Löparskor', 1, 899.00, 550.00, 899.00, 899.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e07'::UUID, '00000000-0000-0000-0000-000000000d04'::UUID, '00000000-0000-0000-0000-000000000709'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-RYGG-001', 'Nordic Träningsryggsäck', 1, 549.00, 320.00, 549.00, 549.00, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000e08'::UUID, '00000000-0000-0000-0000-000000000d04'::UUID, '00000000-0000-0000-0000-000000000016'::UUID, '00000000-0000-0000-0000-000000000002'::UUID, 'NG-FLAS-001', 'Nordic Vattenflaska', 2, 99.00, 55.00, 198.00, 198.00, NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================

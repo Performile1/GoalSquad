@@ -7,12 +7,24 @@ export default function PwaInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
       return;
+    }
+
+    // Check if dismissed recently
+    try {
+      const dismissed = localStorage.getItem('pwa-prompt-dismissed');
+      if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) {
+        setIsDismissed(true);
+        return;
+      }
+    } catch {
+      // localStorage not available
     }
 
     const handleBeforeInstall = (e: Event) => {
@@ -43,16 +55,15 @@ export default function PwaInstallPrompt() {
   const handleDismiss = () => {
     setShowPrompt(false);
     // Don't show again for 7 days
-    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+    try {
+      localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+    } catch {
+      // localStorage not available
+    }
+    setIsDismissed(true);
   };
 
-  if (isInstalled) return null;
-
-  // Check if dismissed recently
-  const dismissed = localStorage.getItem('pwa-prompt-dismissed');
-  if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) {
-    return null;
-  }
+  if (isInstalled || isDismissed) return null;
 
   return (
     <AnimatePresence>

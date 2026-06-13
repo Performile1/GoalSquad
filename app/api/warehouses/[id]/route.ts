@@ -4,6 +4,8 @@ import { getAuthUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 import { validateParams, idParamSchema } from '@/lib/validation';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   let warehouseId = params.id;
   try {

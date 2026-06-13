@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 // GET: Hämta användarens önskelista
 export async function GET() {
   const loggerContext = { route: '/api/wishlist', method: 'GET' };

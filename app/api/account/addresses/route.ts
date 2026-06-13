@@ -3,6 +3,8 @@ import { createServerClient } from '@supabase/ssr';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 // GET: Hämta användarens adresser
 export async function GET() {
   try {
