@@ -84,18 +84,28 @@ END $$;
 
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Public read active" ON organizations;
-DROP POLICY IF EXISTS "Service role full access" ON organizations;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'organizations' AND policyname = 'public_read_active'
+  ) THEN
+    CREATE POLICY "public_read_active"
+      ON organizations FOR SELECT
+      USING (status = 'active');
+  END IF;
 
-CREATE POLICY "Public read active"
-  ON organizations FOR SELECT
-  USING (status = 'active');
-
-CREATE POLICY "Service role full access"
-  ON organizations FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'organizations' AND policyname = 'service_role_full_access'
+  ) THEN
+    CREATE POLICY "service_role_full_access"
+      ON organizations FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- ============================================
 -- 3. PROFILES
@@ -283,6 +293,38 @@ CREATE INDEX IF NOT EXISTS idx_community_members_role ON community_members(commu
 
 ALTER TABLE community_members ENABLE ROW LEVEL SECURITY;
 
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_members' AND policyname = 'community_members_select_own'
+  ) THEN
+    CREATE POLICY "community_members_select_own"
+      ON community_members FOR SELECT
+      USING (user_id = auth.uid());
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_members' AND policyname = 'community_members_insert_own'
+  ) THEN
+    CREATE POLICY "community_members_insert_own"
+      ON community_members FOR INSERT
+      WITH CHECK (user_id = auth.uid());
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_members' AND policyname = 'community_members_service_role_all'
+  ) THEN
+    CREATE POLICY "community_members_service_role_all"
+      ON community_members FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
+
 -- ============================================
 -- 6. MERCHANTS
 -- ============================================
@@ -380,6 +422,39 @@ CREATE INDEX IF NOT EXISTS idx_merchants_org ON merchants(organization_id);
 
 ALTER TABLE merchants ENABLE ROW LEVEL SECURITY;
 
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchants' AND policyname = 'merchants_select_own_or_active'
+  ) THEN
+    CREATE POLICY "merchants_select_own_or_active"
+      ON merchants FOR SELECT
+      USING (is_active = true OR user_id = auth.uid());
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchants' AND policyname = 'merchants_update_own'
+  ) THEN
+    CREATE POLICY "merchants_update_own"
+      ON merchants FOR UPDATE
+      USING (user_id = auth.uid())
+      WITH CHECK (user_id = auth.uid());
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchants' AND policyname = 'merchants_service_role_all'
+  ) THEN
+    CREATE POLICY "merchants_service_role_all"
+      ON merchants FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
+
 -- ============================================
 -- 7. PRODUCTS
 -- ============================================
@@ -424,6 +499,47 @@ BEGIN
 END $$;
 
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'products' AND policyname = 'products_select_active'
+  ) THEN
+    CREATE POLICY "products_select_active"
+      ON products FOR SELECT
+      USING (status = 'active');
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'products' AND policyname = 'products_manage_own'
+  ) THEN
+    CREATE POLICY "products_manage_own"
+      ON products FOR ALL
+      USING (
+        merchant_id IN (
+          SELECT id FROM merchants WHERE user_id = auth.uid()
+        )
+      )
+      WITH CHECK (
+        merchant_id IN (
+          SELECT id FROM merchants WHERE user_id = auth.uid()
+        )
+      );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'products' AND policyname = 'products_service_role_all'
+  ) THEN
+    CREATE POLICY "products_service_role_all"
+      ON products FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- ============================================
 -- 8. COMMUNITY PRODUCTS
@@ -541,25 +657,50 @@ END $$;
 
 ALTER TABLE community_products ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Public read approved" ON community_products;
-DROP POLICY IF EXISTS "Authenticated users can create" ON community_products;
-DROP POLICY IF EXISTS "Sellers update own" ON community_products;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_products' AND policyname = 'public_read_approved'
+  ) THEN
+    CREATE POLICY "public_read_approved"
+      ON community_products FOR SELECT
+      USING (status = 'approved');
+  END IF;
 
-CREATE POLICY "Public read approved"
-  ON community_products FOR SELECT
-  USING (status = 'approved');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_products' AND policyname = 'authenticated_create_own'
+  ) THEN
+    CREATE POLICY "authenticated_create_own"
+      ON community_products FOR INSERT
+      TO authenticated
+      WITH CHECK (auth.uid() IS NOT NULL);
+  END IF;
 
-CREATE POLICY "Authenticated users can create"
-  ON community_products FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_products' AND policyname = 'sellers_update_own'
+  ) THEN
+    CREATE POLICY "sellers_update_own"
+      ON community_products FOR UPDATE
+      TO authenticated
+      USING (contact_email = (
+        SELECT email FROM auth.users WHERE id = auth.uid()
+      ));
+  END IF;
 
-CREATE POLICY "Sellers update own"
-  ON community_products FOR UPDATE
-  TO authenticated
-  USING (contact_email = (
-    SELECT email FROM auth.users WHERE id = auth.uid()
-  ));
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_products' AND policyname = 'community_products_service_role_all'
+  ) THEN
+    CREATE POLICY "community_products_service_role_all"
+      ON community_products FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- ============================================
 -- 9. BLOG POSTS
@@ -593,55 +734,39 @@ CREATE INDEX IF NOT EXISTS idx_blog_posts_created_at ON blog_posts(created_at DE
 
 ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Anyone can view published posts" ON blog_posts;
-DROP POLICY IF EXISTS "Admins can view all posts" ON blog_posts;
-DROP POLICY IF EXISTS "Admins can insert posts" ON blog_posts;
-DROP POLICY IF EXISTS "Admins can update posts" ON blog_posts;
-DROP POLICY IF EXISTS "Admins can delete posts" ON blog_posts;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'blog_posts' AND policyname = 'anyone_view_published_posts'
+  ) THEN
+    CREATE POLICY "anyone_view_published_posts"
+      ON blog_posts FOR SELECT
+      USING (published = true);
+  END IF;
 
-CREATE POLICY "Anyone can view published posts"
-  ON blog_posts FOR SELECT
-  USING (published = true);
-
-CREATE POLICY "Admins can view all posts"
-  ON blog_posts FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'admin'
-    )
-  );
-
-CREATE POLICY "Admins can insert posts"
-  ON blog_posts FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'admin'
-    )
-  );
-
-CREATE POLICY "Admins can update posts"
-  ON blog_posts FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'admin'
-    )
-  );
-
-CREATE POLICY "Admins can delete posts"
-  ON blog_posts FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles
-      WHERE profiles.id = auth.uid()
-      AND profiles.role = 'admin'
-    )
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'blog_posts' AND policyname = 'admins_manage_posts'
+  ) THEN
+    CREATE POLICY "admins_manage_posts"
+      ON blog_posts FOR ALL
+      USING (
+        EXISTS (
+          SELECT 1 FROM profiles
+          WHERE profiles.id = auth.uid()
+          AND profiles.role = 'admin'
+        )
+      )
+      WITH CHECK (
+        EXISTS (
+          SELECT 1 FROM profiles
+          WHERE profiles.id = auth.uid()
+          AND profiles.role = 'admin'
+        )
+      );
+  END IF;
+END $$;
 
 -- ============================================
 -- 10. TRIGGER FOR UPDATED_AT

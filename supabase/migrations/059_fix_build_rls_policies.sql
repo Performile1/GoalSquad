@@ -1,40 +1,67 @@
 -- Fix RLS policies for build-time data fetching
--- These policies allow public reads for build-time static page generation
+-- Public builds must not rely on blanket anon reads against sensitive base tables.
+-- Prefer service-role API routes or dedicated safe public views for any truly public data.
 
--- Enable RLS on tables that might be accessed during build
 ALTER TABLE ad_placements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE communities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE merchants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warehouse_inventory ENABLE ROW LEVEL SECURITY;
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 
--- Add policies for public reads (for build-time static generation)
-DROP POLICY IF EXISTS "Public read for build" ON ad_placements;
-CREATE POLICY "Public read for build" ON ad_placements
-  FOR SELECT
-  TO anon, authenticated
-  USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_placements' AND policyname = 'ad_placements_service_role_all'
+  ) THEN
+    CREATE POLICY "ad_placements_service_role_all"
+      ON ad_placements FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Public read for build" ON communities;
-CREATE POLICY "Public read for build" ON communities
-  FOR SELECT
-  TO anon, authenticated
-  USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'communities' AND policyname = 'communities_service_role_all'
+  ) THEN
+    CREATE POLICY "communities_service_role_all"
+      ON communities FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Public read for build" ON merchants;
-CREATE POLICY "Public read for build" ON merchants
-  FOR SELECT
-  TO anon, authenticated
-  USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchants' AND policyname = 'merchants_service_role_all'
+  ) THEN
+    CREATE POLICY "merchants_service_role_all"
+      ON merchants FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Public read for build" ON warehouse_inventory;
-CREATE POLICY "Public read for build" ON warehouse_inventory
-  FOR SELECT
-  TO anon, authenticated
-  USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'warehouse_inventory' AND policyname = 'warehouse_inventory_service_role_all'
+  ) THEN
+    CREATE POLICY "warehouse_inventory_service_role_all"
+      ON warehouse_inventory FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Public read for build" ON products;
-CREATE POLICY "Public read for build" ON products
-  FOR SELECT
-  TO anon, authenticated
-  USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'products' AND policyname = 'products_service_role_all'
+  ) THEN
+    CREATE POLICY "products_service_role_all"
+      ON products FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;

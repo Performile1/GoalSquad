@@ -94,35 +94,51 @@ ALTER TABLE merchant_integration_configs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warehouse_zones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE warehouse_picking_tasks ENABLE ROW LEVEL SECURITY;
 
--- Merchant owners can read their own certifications.
-DROP POLICY IF EXISTS "merchant owns certifications" ON merchant_certifications;
-CREATE POLICY "merchant owns certifications" ON merchant_certifications
-    FOR SELECT TO authenticated
-    USING (
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchant_certifications' AND policyname = 'merchant_owns_certifications'
+  ) THEN
+    CREATE POLICY "merchant_owns_certifications" ON public.merchant_certifications
+      FOR SELECT TO authenticated
+      USING (
         EXISTS (
-            SELECT 1 FROM merchants m
-            WHERE m.id = merchant_certifications.merchant_id
-              AND m.user_id = auth.uid()
+          SELECT 1 FROM public.merchants m
+          WHERE m.id = public.merchant_certifications.merchant_id
+            AND m.user_id = auth.uid()
         )
-    );
+      );
+  END IF;
 
--- Merchant owners can read their own integration config.
-DROP POLICY IF EXISTS "merchant owns integration config" ON merchant_integration_configs;
-CREATE POLICY "merchant owns integration config" ON merchant_integration_configs
-    FOR SELECT TO authenticated
-    USING (
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchant_integration_configs' AND policyname = 'merchant_owns_integration_config'
+  ) THEN
+    CREATE POLICY "merchant_owns_integration_config" ON public.merchant_integration_configs
+      FOR SELECT TO authenticated
+      USING (
         EXISTS (
-            SELECT 1 FROM merchants m
-            WHERE m.id = merchant_integration_configs.merchant_id
-              AND m.user_id = auth.uid()
+          SELECT 1 FROM public.merchants m
+          WHERE m.id = public.merchant_integration_configs.merchant_id
+            AND m.user_id = auth.uid()
         )
-    );
+      );
+  END IF;
 
--- Authenticated users can read warehouse zones and picking tasks.
-DROP POLICY IF EXISTS "authenticated read zones" ON warehouse_zones;
-CREATE POLICY "authenticated read zones" ON warehouse_zones
-    FOR SELECT TO authenticated USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'warehouse_zones' AND policyname = 'authenticated_read_warehouse_zones'
+  ) THEN
+    CREATE POLICY "authenticated_read_warehouse_zones" ON public.warehouse_zones
+      FOR SELECT TO authenticated USING (true);
+  END IF;
 
-DROP POLICY IF EXISTS "authenticated read picking tasks" ON warehouse_picking_tasks;
-CREATE POLICY "authenticated read picking tasks" ON warehouse_picking_tasks
-    FOR SELECT TO authenticated USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'warehouse_picking_tasks' AND policyname = 'authenticated_read_picking_tasks'
+  ) THEN
+    CREATE POLICY "authenticated_read_picking_tasks" ON public.warehouse_picking_tasks
+      FOR SELECT TO authenticated USING (true);
+  END IF;
+END $$;

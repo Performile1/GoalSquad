@@ -46,30 +46,49 @@ CREATE TRIGGER address_book_updated_at_trigger
 -- RLS
 ALTER TABLE public.address_book ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users can view their own addresses" ON public.address_book;
-CREATE POLICY "Users can view their own addresses" ON public.address_book
-    FOR SELECT
-    TO authenticated
-    USING (user_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'address_book' AND policyname = 'Users can view their own addresses'
+  ) THEN
+    CREATE POLICY "Users can view their own addresses" ON public.address_book
+      FOR SELECT
+      TO authenticated
+      USING (user_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can insert their own addresses" ON public.address_book;
-CREATE POLICY "Users can insert their own addresses" ON public.address_book
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (user_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'address_book' AND policyname = 'Users can insert their own addresses'
+  ) THEN
+    CREATE POLICY "Users can insert their own addresses" ON public.address_book
+      FOR INSERT
+      TO authenticated
+      WITH CHECK (user_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can update their own addresses" ON public.address_book;
-CREATE POLICY "Users can update their own addresses" ON public.address_book
-    FOR UPDATE
-    TO authenticated
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'address_book' AND policyname = 'Users can update their own addresses'
+  ) THEN
+    CREATE POLICY "Users can update their own addresses" ON public.address_book
+      FOR UPDATE
+      TO authenticated
+      USING (user_id = auth.uid())
+      WITH CHECK (user_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can delete their own addresses" ON public.address_book;
-CREATE POLICY "Users can delete their own addresses" ON public.address_book
-    FOR DELETE
-    TO authenticated
-    USING (user_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'address_book' AND policyname = 'Users can delete their own addresses'
+  ) THEN
+    CREATE POLICY "Users can delete their own addresses" ON public.address_book
+      FOR DELETE
+      TO authenticated
+      USING (user_id = auth.uid());
+  END IF;
+END $$;
 
 -- ---------------------------------------------------------------------
 -- 2. PRODUCT REVIEWS TABLE
@@ -104,17 +123,35 @@ CREATE TRIGGER product_reviews_updated_at_trigger
 -- RLS
 ALTER TABLE public.product_reviews ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Anyone can view reviews" ON public.product_reviews;
-CREATE POLICY "Anyone can view reviews" ON public.product_reviews
-    FOR SELECT
-    TO authenticated, anon
-    USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_reviews' AND policyname = 'authenticated_view_reviews'
+  ) THEN
+    CREATE POLICY "authenticated_view_reviews"
+      ON public.product_reviews FOR SELECT TO authenticated USING (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Users can insert their own reviews" ON public.product_reviews;
-CREATE POLICY "Users can insert their own reviews" ON public.product_reviews
-    FOR INSERT
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_reviews' AND policyname = 'users_insert_own_reviews'
+  ) THEN
+    CREATE POLICY "users_insert_own_reviews" ON public.product_reviews
+      FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+  END IF;
+END $$;
+
+CREATE POLICY "users_update_own_reviews" ON public.product_reviews
+    FOR UPDATE
     TO authenticated
+    USING (user_id = auth.uid())
     WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "users_delete_own_reviews" ON public.product_reviews
+    FOR DELETE
+    TO authenticated
+    USING (user_id = auth.uid());
 
 DROP POLICY IF EXISTS "Users can update their own reviews" ON public.product_reviews;
 CREATE POLICY "Users can update their own reviews" ON public.product_reviews
@@ -305,30 +342,40 @@ CREATE INDEX IF NOT EXISTS idx_api_keys_key_hash ON public.api_keys(key_hash);
 -- RLS
 ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Users can view their own API keys" ON public.api_keys;
-CREATE POLICY "Users can view their own API keys" ON public.api_keys
-    FOR SELECT
-    TO authenticated
-    USING (user_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'api_keys' AND policyname = 'users_view_own_api_keys'
+  ) THEN
+    CREATE POLICY "users_view_own_api_keys" ON public.api_keys
+      FOR SELECT TO authenticated USING (user_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can insert their own API keys" ON public.api_keys;
-CREATE POLICY "Users can insert their own API keys" ON public.api_keys
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (user_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'api_keys' AND policyname = 'users_insert_own_api_keys'
+  ) THEN
+    CREATE POLICY "users_insert_own_api_keys" ON public.api_keys
+      FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can update their own API keys" ON public.api_keys;
-CREATE POLICY "Users can update their own API keys" ON public.api_keys
-    FOR UPDATE
-    TO authenticated
-    USING (user_id = auth.uid())
-    WITH CHECK (user_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'api_keys' AND policyname = 'users_update_own_api_keys'
+  ) THEN
+    CREATE POLICY "users_update_own_api_keys" ON public.api_keys
+      FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can delete their own API keys" ON public.api_keys;
-CREATE POLICY "Users can delete their own API keys" ON public.api_keys
-    FOR DELETE
-    TO authenticated
-    USING (user_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'api_keys' AND policyname = 'users_delete_own_api_keys'
+  ) THEN
+    CREATE POLICY "users_delete_own_api_keys" ON public.api_keys
+      FOR DELETE TO authenticated USING (user_id = auth.uid());
+  END IF;
+END $$;
 
 COMMIT;
 

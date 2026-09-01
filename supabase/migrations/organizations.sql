@@ -29,21 +29,34 @@ CREATE INDEX IF NOT EXISTS idx_organizations_status    ON organizations(status);
 -- RLS
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 
--- Drop existing policies before recreating (idempotent)
-DROP POLICY IF EXISTS "Public read active" ON organizations;
-DROP POLICY IF EXISTS "Service role full access" ON organizations;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'organizations'
+      AND policyname = 'public_read_active'
+  ) THEN
+    CREATE POLICY "public_read_active"
+      ON organizations FOR SELECT
+      USING (status = 'active');
+  END IF;
 
--- Anyone can view active organizations
-CREATE POLICY "Public read active"
-  ON organizations FOR SELECT
-  USING (status = 'active');
-
--- Service role (admin) has full access
-CREATE POLICY "Service role full access"
-  ON organizations FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'organizations'
+      AND policyname = 'service_role_full_access'
+  ) THEN
+    CREATE POLICY "service_role_full_access"
+      ON organizations FOR ALL
+      TO service_role
+      USING (true)
+      WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()

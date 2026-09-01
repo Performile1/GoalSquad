@@ -41,6 +41,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const getSupabaseUrl = () =>
+  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
+
+const getSupabaseAnonKey = () =>
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+
+const hasSupabaseConfig = () =>
+  Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
+  Boolean(process.env.SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -111,6 +121,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, lastActivity, sessionTimeout]);
 
   useEffect(() => {
+    if (!hasSupabaseConfig()) {
+      setLoading(false);
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setEntities(null);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -120,6 +139,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setLoading(false);
       }
+    }).catch(() => {
+      setSession(null);
+      setUser(null);
+      setLoading(false);
     });
 
     // Listen for auth changes

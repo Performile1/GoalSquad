@@ -13,13 +13,15 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
-// Maps form values → valid DB community_type CHECK values
-const TYPE_MAP: Record<string, string> = {
-  sports_team: 'forening',
-  school_class: 'klass',
-  youth_club:   'forening',
-  scout_troop:  'forening',
-  other:        'association',
+// Community types are inconsistent across older/newer migrations. We try a
+// few valid values in order so the API works against both legacy and newer DB
+// schemas instead of 500ing on a CHECK constraint mismatch.
+const TYPE_CANDIDATES: Record<string, string[]> = {
+  sports_team: ['forening', 'club', 'association'],
+  school_class: ['klass', 'class', 'school'],
+  youth_club: ['forening', 'club', 'association'],
+  scout_troop: ['forening', 'club', 'association'],
+  other: ['association', 'organization', 'club'],
 };
 
 const communitySchema = z.object({
@@ -94,23 +96,44 @@ export async function POST(req: NextRequest) {
       applied_at:    new Date().toISOString(),
     };
 
-    // Insert community — only columns that exist in the DB schema
-    const { data: community, error: communityError } = await supabaseAdmin
-      .from('communities')
-      .insert({
-        name:            data.name,
-        slug,
-        description:     data.description ?? null,
-        community_type:  TYPE_MAP[data.communityType] ?? 'association',
-        organization_id: organization.id,
-        status:          'active',
-        metadata,
-      })
-      .select()
-      .single();
+    // Insert community — older and newer migrations disagree on the allowed
+    // community_type values, so try common valid candidates instead of failing
+    // immediately with a 500 on a single mismatched CHECK constraint.
+    let community: any = null;
+    let communityError: any = null;
 
-    if (communityError || !community) {
-      logger.dbError('INSERT', 'communities', communityError ?? new Error('Unknown community error'), { name: data.name });
+    for (const candidateType of TYPE_CANDIDATES[data.communityType] ?? ['association']) {
+      const result = await supabaseAdmin
+        .from('communities')
+        .insert({
+          name:            data.name,
+          slug,
+          description:     data.description ?? null,
+          community_type:  candidateType,
+          organization_id: organization.id,
+          status:          'active',
+          metadata,
+        })
+        .select()
+        .single();
+
+      if (!result.error) {
+        community = result.data;
+        communityError = null;
+        break;
+      }
+
+      communityError = result.error;
+      const errorText = `${result.error?.message ?? ''} ${result.error?.details ?? ''}`.toLowerCase();
+      const isCheckConstraintIssue = result.error?.code === '23514' || errorText.includes('community_type');
+
+      if (!isCheckConstraintIssue) {
+        break;
+      }
+    }
+
+    if (!community) {
+      logger.dbError('INSERT', 'communities', communityError ?? new Error('Unknown community error'), { name: data.name, communityType: data.communityType });
       // Rollback organization
       await supabaseAdmin.from('organizations').delete().eq('id', organization.id);
       return NextResponse.json({ error: 'Kunde inte skapa förening/klass' }, { status: 500 });

@@ -29,24 +29,34 @@ CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON public.notifications(
 
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Service role full access on notifications" ON public.notifications;
-CREATE POLICY "Service role full access on notifications"
-  ON public.notifications FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'notifications' AND policyname = 'service_role_full_access_on_notifications'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_notifications"
+      ON public.notifications FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Users can view own notifications" ON public.notifications;
-CREATE POLICY "Users can view own notifications"
-  ON public.notifications FOR SELECT
-  TO authenticated
-  USING (recipient_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'notifications' AND policyname = 'users_view_own_notifications'
+  ) THEN
+    CREATE POLICY "users_view_own_notifications"
+      ON public.notifications FOR SELECT TO authenticated USING (recipient_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can update own notifications" ON public.notifications;
-CREATE POLICY "Users can update own notifications"
-  ON public.notifications FOR UPDATE
-  TO authenticated
-  USING (recipient_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'notifications' AND policyname = 'users_update_own_notifications'
+  ) THEN
+    CREATE POLICY "users_update_own_notifications"
+      ON public.notifications FOR UPDATE TO authenticated
+      USING (recipient_id = auth.uid())
+      WITH CHECK (recipient_id = auth.uid());
+  END IF;
+END $$;
 
 -- ============================================
 -- SALES ANALYTICS
@@ -78,18 +88,24 @@ CREATE INDEX IF NOT EXISTS idx_entity_sales_quantity ON public.entity_sales_anal
 
 ALTER TABLE public.entity_sales_analytics ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Service role full access on entity_sales_analytics" ON public.entity_sales_analytics;
-CREATE POLICY "Service role full access on entity_sales_analytics"
-  ON public.entity_sales_analytics FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_sales_analytics' AND policyname = 'service_role_full_access_on_entity_sales_analytics'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_entity_sales_analytics"
+      ON public.entity_sales_analytics FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Entities can view own sales analytics" ON public.entity_sales_analytics;
-CREATE POLICY "Entities can view own sales analytics"
-  ON public.entity_sales_analytics FOR SELECT
-  TO authenticated
-  USING (entity_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_sales_analytics' AND policyname = 'entities_view_own_sales_analytics'
+  ) THEN
+    CREATE POLICY "entities_view_own_sales_analytics"
+      ON public.entity_sales_analytics FOR SELECT TO authenticated USING (entity_id = auth.uid());
+  END IF;
+END $$;
 
 -- ============================================
 -- GOALS / TARGETS
@@ -123,30 +139,42 @@ CREATE INDEX IF NOT EXISTS idx_entity_goals_period ON public.entity_goals(start_
 
 ALTER TABLE public.entity_goals ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Service role full access on entity_goals" ON public.entity_goals;
-CREATE POLICY "Service role full access on entity_goals"
-  ON public.entity_goals FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'service_role_full_access_on_entity_goals'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_entity_goals"
+      ON public.entity_goals FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Entities can view own goals" ON public.entity_goals;
-CREATE POLICY "Entities can view own goals"
-  ON public.entity_goals FOR SELECT
-  TO authenticated
-  USING (entity_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'entities_view_own_goals'
+  ) THEN
+    CREATE POLICY "entities_view_own_goals"
+      ON public.entity_goals FOR SELECT TO authenticated USING (entity_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Entities can create own goals" ON public.entity_goals;
-CREATE POLICY "Entities can create own goals"
-  ON public.entity_goals FOR INSERT
-  TO authenticated
-  WITH CHECK (entity_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'entities_create_own_goals'
+  ) THEN
+    CREATE POLICY "entities_create_own_goals"
+      ON public.entity_goals FOR INSERT TO authenticated WITH CHECK (entity_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Entities can update own goals" ON public.entity_goals;
-CREATE POLICY "Entities can update own goals"
-  ON public.entity_goals FOR UPDATE
-  TO authenticated
-  USING (entity_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'entities_update_own_goals'
+  ) THEN
+    CREATE POLICY "entities_update_own_goals"
+      ON public.entity_goals FOR UPDATE TO authenticated
+      USING (entity_id = auth.uid())
+      WITH CHECK (entity_id = auth.uid());
+  END IF;
+END $$;
 
 -- ============================================
 -- INTER-CLUB MESSAGING
@@ -178,30 +206,43 @@ CREATE INDEX IF NOT EXISTS idx_coordination_location ON public.coordination_mess
 
 ALTER TABLE public.coordination_messages ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Service role full access on coordination_messages" ON public.coordination_messages;
-CREATE POLICY "Service role full access on coordination_messages"
-  ON public.coordination_messages FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'coordination_messages' AND policyname = 'service_role_full_access_on_coordination_messages'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_coordination_messages"
+      ON public.coordination_messages FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "Users can view own coordination messages" ON public.coordination_messages;
-CREATE POLICY "Users can view own coordination messages"
-  ON public.coordination_messages FOR SELECT
-  TO authenticated
-  USING (sender_id = auth.uid() OR recipient_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'coordination_messages' AND policyname = 'users_view_own_coordination_messages'
+  ) THEN
+    CREATE POLICY "users_view_own_coordination_messages"
+      ON public.coordination_messages FOR SELECT TO authenticated
+      USING (sender_id = auth.uid() OR recipient_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can create coordination messages" ON public.coordination_messages;
-CREATE POLICY "Users can create coordination messages"
-  ON public.coordination_messages FOR INSERT
-  TO authenticated
-  WITH CHECK (sender_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'coordination_messages' AND policyname = 'users_create_coordination_messages'
+  ) THEN
+    CREATE POLICY "users_create_coordination_messages"
+      ON public.coordination_messages FOR INSERT TO authenticated WITH CHECK (sender_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "Users can update own coordination messages" ON public.coordination_messages;
-CREATE POLICY "Users can update own coordination messages"
-  ON public.coordination_messages FOR UPDATE
-  TO authenticated
-  USING (sender_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'coordination_messages' AND policyname = 'users_update_own_coordination_messages'
+  ) THEN
+    CREATE POLICY "users_update_own_coordination_messages"
+      ON public.coordination_messages FOR UPDATE TO authenticated
+      USING (sender_id = auth.uid())
+      WITH CHECK (sender_id = auth.uid());
+  END IF;
+END $$;
 
 -- ============================================
 -- COMPANY SHIPPING PREFERENCES

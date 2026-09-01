@@ -63,13 +63,24 @@ CREATE INDEX IF NOT EXISTS idx_treasury_holds_status ON public.treasury_holds(st
 CREATE INDEX IF NOT EXISTS idx_treasury_holds_until ON public.treasury_holds(hold_until) WHERE status = 'held';
 
 ALTER TABLE public.treasury_holds ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "treasury_holds_service_role" ON public.treasury_holds;
-CREATE POLICY "treasury_holds_service_role"
-  ON public.treasury_holds FOR ALL TO service_role USING (true) WITH CHECK (true);
-DROP POLICY IF EXISTS "treasury_holds_own_read" ON public.treasury_holds;
-CREATE POLICY "treasury_holds_own_read"
-  ON public.treasury_holds FOR SELECT TO authenticated
-  USING (holder_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'treasury_holds' AND policyname = 'treasury_holds_service_role'
+  ) THEN
+    CREATE POLICY "treasury_holds_service_role"
+      ON public.treasury_holds FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'treasury_holds' AND policyname = 'treasury_holds_own_read'
+  ) THEN
+    CREATE POLICY "treasury_holds_own_read"
+      ON public.treasury_holds FOR SELECT TO authenticated USING (holder_id = auth.uid());
+  END IF;
+END $$;
 
 DROP TRIGGER IF EXISTS update_treasury_holds_updated_at ON public.treasury_holds;
 CREATE TRIGGER update_treasury_holds_updated_at
@@ -113,17 +124,29 @@ CREATE INDEX IF NOT EXISTS idx_ledger_entries_wallet ON public.ledger_entries(wa
 CREATE INDEX IF NOT EXISTS idx_ledger_entries_created ON public.ledger_entries(created_at DESC);
 
 ALTER TABLE public.ledger_entries ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "ledger_entries_service_role" ON public.ledger_entries;
-CREATE POLICY "ledger_entries_service_role"
-  ON public.ledger_entries FOR ALL TO service_role USING (true) WITH CHECK (true);
-DROP POLICY IF EXISTS "ledger_entries_own_read" ON public.ledger_entries;
-CREATE POLICY "ledger_entries_own_read"
-  ON public.ledger_entries FOR SELECT TO authenticated
-  USING (
-    wallet_id IN (
-      SELECT id FROM public.wallets WHERE user_id = auth.uid()
-    )
-  );
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ledger_entries' AND policyname = 'ledger_entries_service_role'
+  ) THEN
+    CREATE POLICY "ledger_entries_service_role"
+      ON public.ledger_entries FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ledger_entries' AND policyname = 'ledger_entries_own_read'
+  ) THEN
+    CREATE POLICY "ledger_entries_own_read"
+      ON public.ledger_entries FOR SELECT TO authenticated
+      USING (
+        wallet_id IN (
+          SELECT id FROM public.wallets WHERE user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
 -- ============================================================
 -- 3. SPLIT CONFIGURATIONS
@@ -156,12 +179,24 @@ VALUES ('Standard GoalSquad Split', true, 12.00, 60.00, 20.00, 8.00)
 ON CONFLICT DO NOTHING;
 
 ALTER TABLE public.split_configurations ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "split_config_service_role" ON public.split_configurations;
-CREATE POLICY "split_config_service_role"
-  ON public.split_configurations FOR ALL TO service_role USING (true) WITH CHECK (true);
-DROP POLICY IF EXISTS "split_config_read" ON public.split_configurations;
-CREATE POLICY "split_config_read"
-  ON public.split_configurations FOR SELECT TO authenticated USING (active = true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'split_configurations' AND policyname = 'split_config_service_role'
+  ) THEN
+    CREATE POLICY "split_config_service_role"
+      ON public.split_configurations FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'split_configurations' AND policyname = 'split_config_read'
+  ) THEN
+    CREATE POLICY "split_config_read"
+      ON public.split_configurations FOR SELECT TO authenticated USING (active = true);
+  END IF;
+END $$;
 
 -- ============================================================
 -- 4. ACHIEVEMENTS (katalog — refereras i sellers/[id]/stats)
@@ -184,12 +219,24 @@ CREATE INDEX IF NOT EXISTS idx_achievements_category ON public.achievements(cate
 CREATE INDEX IF NOT EXISTS idx_achievements_active ON public.achievements(is_active) WHERE is_active = true;
 
 ALTER TABLE public.achievements ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "achievements_public_read" ON public.achievements;
-CREATE POLICY "achievements_public_read"
-  ON public.achievements FOR SELECT USING (is_active = true);
-DROP POLICY IF EXISTS "achievements_service_role" ON public.achievements;
-CREATE POLICY "achievements_service_role"
-  ON public.achievements FOR ALL TO service_role USING (true) WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'achievements' AND policyname = 'achievements_public_read'
+  ) THEN
+    CREATE POLICY "achievements_public_read"
+      ON public.achievements FOR SELECT USING (is_active = true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'achievements' AND policyname = 'achievements_service_role'
+  ) THEN
+    CREATE POLICY "achievements_service_role"
+      ON public.achievements FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;
 
 -- Add FK from user_achievements to achievements (if table + column don't exist)
 DO $$

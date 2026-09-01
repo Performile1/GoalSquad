@@ -150,85 +150,95 @@ ALTER TABLE public.ads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ad_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ad_payments ENABLE ROW LEVEL SECURITY;
 
--- Ad placements - service role full access
-DROP POLICY IF EXISTS "Service role full access on ad_placements" ON public.ad_placements;
-CREATE POLICY "Service role full access on ad_placements"
-  ON public.ad_placements FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_placements' AND policyname = 'service_role_full_access_on_ad_placements'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_ad_placements"
+      ON public.ad_placements FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
--- Ad placements - authenticated can view active
-DROP POLICY IF EXISTS "Authenticated can view active ad_placements" ON public.ad_placements;
-CREATE POLICY "Authenticated can view active ad_placements"
-  ON public.ad_placements FOR SELECT
-  TO authenticated
-  USING (is_active = true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_placements' AND policyname = 'authenticated_view_active_ad_placements'
+  ) THEN
+    CREATE POLICY "authenticated_view_active_ad_placements"
+      ON public.ad_placements FOR SELECT TO authenticated USING (is_active = true);
+  END IF;
 
--- Ads - service role full access
-DROP POLICY IF EXISTS "Service role full access on ads" ON public.ads;
-CREATE POLICY "Service role full access on ads"
-  ON public.ads FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ads' AND policyname = 'service_role_full_access_on_ads'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_ads"
+      ON public.ads FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
--- Ads - advertisers can view their own ads
-DROP POLICY IF EXISTS "Advertisers can view own ads" ON public.ads;
-CREATE POLICY "Advertisers can view own ads"
-  ON public.ads FOR SELECT
-  TO authenticated
-  USING (advertiser_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ads' AND policyname = 'advertisers_view_own_ads'
+  ) THEN
+    CREATE POLICY "advertisers_view_own_ads"
+      ON public.ads FOR SELECT TO authenticated USING (advertiser_id = auth.uid());
+  END IF;
 
--- Ads - advertisers can create ads
-DROP POLICY IF EXISTS "Advertisers can create ads" ON public.ads;
-CREATE POLICY "Advertisers can create ads"
-  ON public.ads FOR INSERT
-  TO authenticated
-  WITH CHECK (advertiser_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ads' AND policyname = 'advertisers_create_ads'
+  ) THEN
+    CREATE POLICY "advertisers_create_ads"
+      ON public.ads FOR INSERT TO authenticated WITH CHECK (advertiser_id = auth.uid());
+  END IF;
 
--- Ads - authenticated can view approved/active ads
-DROP POLICY IF EXISTS "Authenticated can view approved ads" ON public.ads;
-CREATE POLICY "Authenticated can view approved ads"
-  ON public.ads FOR SELECT
-  TO authenticated
-  USING (status IN ('approved', 'active'));
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ads' AND policyname = 'authenticated_view_approved_ads'
+  ) THEN
+    CREATE POLICY "authenticated_view_approved_ads"
+      ON public.ads FOR SELECT TO authenticated USING (status IN ('approved', 'active'));
+  END IF;
 
--- Ad stats - service role full access
-DROP POLICY IF EXISTS "Service role full access on ad_stats" ON public.ad_stats;
-CREATE POLICY "Service role full access on ad_stats"
-  ON public.ad_stats FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_stats' AND policyname = 'service_role_full_access_on_ad_stats'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_ad_stats"
+      ON public.ad_stats FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
--- Ad stats - advertisers can view their ad stats
-DROP POLICY IF EXISTS "Advertisers can view own ad_stats" ON public.ad_stats;
-CREATE POLICY "Advertisers can view own ad_stats"
-  ON public.ad_stats FOR SELECT
-  TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.ads 
-      WHERE ads.id = ad_stats.ad_id 
-      AND ads.advertiser_id = auth.uid()
-    )
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_stats' AND policyname = 'advertisers_view_own_ad_stats'
+  ) THEN
+    CREATE POLICY "advertisers_view_own_ad_stats"
+      ON public.ad_stats FOR SELECT TO authenticated
+      USING (
+        EXISTS (
+          SELECT 1 FROM public.ads
+          WHERE ads.id = ad_stats.ad_id
+            AND ads.advertiser_id = auth.uid()
+        )
+      );
+  END IF;
 
--- Ad payments - service role full access
-DROP POLICY IF EXISTS "Service role full access on ad_payments" ON public.ad_payments;
-CREATE POLICY "Service role full access on ad_payments"
-  ON public.ad_payments FOR ALL
-  TO service_role
-  USING (true)
-  WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_payments' AND policyname = 'service_role_full_access_on_ad_payments'
+  ) THEN
+    CREATE POLICY "service_role_full_access_on_ad_payments"
+      ON public.ad_payments FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
--- Ad payments - payers can view their own payments
-DROP POLICY IF EXISTS "Payers can view own ad_payments" ON public.ad_payments;
-CREATE POLICY "Payers can view own ad_payments"
-  ON public.ad_payments FOR SELECT
-  TO authenticated
-  USING (payer_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'ad_payments' AND policyname = 'payers_view_own_ad_payments'
+  ) THEN
+    CREATE POLICY "payers_view_own_ad_payments"
+      ON public.ad_payments FOR SELECT TO authenticated USING (payer_id = auth.uid());
+  END IF;
+END $$;
 
 -- ============================================
 -- TRIGGERS

@@ -3,7 +3,13 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 const getUrl = () =>
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
   process.env.SUPABASE_URL ||
-  '';
+  'https://placeholder.supabase.co';
+
+const getAnonKey = () =>
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+
+const getServiceRoleKey = () =>
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key';
 
 // Client-side Supabase client (lazy — skapas vid första anrop)
 let _supabase: SupabaseClient | null = null;
@@ -12,7 +18,7 @@ export const supabase = new Proxy({} as SupabaseClient, {
     if (!_supabase) {
       _supabase = createClient(
         getUrl(),
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        getAnonKey()
       );
     }
     return (_supabase as any)[prop];
@@ -26,7 +32,7 @@ export const supabaseAdmin = new Proxy({} as SupabaseClient, {
     if (!_supabaseAdmin) {
       _supabaseAdmin = createClient(
         getUrl(),
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
+        getServiceRoleKey()
       );
     }
     return (_supabaseAdmin as any)[prop];

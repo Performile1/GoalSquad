@@ -88,3 +88,44 @@ export function validateQuery<T extends ZodSchema>(
 
 /** Convenience: single UUID param schema for dynamic routes. */
 export const idParamSchema = z.object({ id: uuidSchema });
+
+const sanitizeText = (value: string) => value.replace(/\s+/g, ' ').trim();
+
+const booleanStringSchema = z.union([
+  z.boolean(),
+  z.literal('true').transform(() => true),
+  z.literal('false').transform(() => false),
+]);
+
+export const addressSchema = z.object({
+  label: z.string().transform(sanitizeText).pipe(
+    z.string().min(1).max(60).regex(/^[\p{L}\p{N}\s'.#&/\-]+$/u, 'Invalid label')
+  ),
+  full_name: z.string().transform(sanitizeText).pipe(
+    z.string().min(1).max(120).regex(/^[\p{L}\p{N}\s.'’\-]+$/u, 'Invalid full name')
+  ),
+  address_line1: z.string().transform(sanitizeText).pipe(
+    z.string().min(1).max(160).regex(/^[\p{L}\p{N}\s.,#/-]+$/u, 'Invalid address line 1')
+  ),
+  address_line2: z.string().optional().nullable().transform((value) => value ? sanitizeText(value) : null).pipe(
+    z.string().max(160).regex(/^[\p{L}\p{N}\s.,#/-]*$/u, 'Invalid address line 2').nullable().optional()
+  ),
+  city: z.string().transform(sanitizeText).pipe(
+    z.string().min(1).max(80).regex(/^[\p{L}\p{N}\s.'’\-]+$/u, 'Invalid city')
+  ),
+  postal_code: z.string().transform(sanitizeText).pipe(
+    z.string().min(2).max(16).regex(/^[A-Za-z0-9\s-]{2,16}$/, 'Invalid postal code')
+  ),
+  country: z.string().transform((value) => value.trim().toUpperCase()).pipe(
+    z.string().min(2).max(2).regex(/^[A-Z]{2}$/, 'Invalid country code')
+  ),
+  phone: z.string().transform(sanitizeText).pipe(
+    z.string().min(6).max(20).regex(/^\+?[0-9\s()-]{6,20}$/, 'Invalid phone number')
+  ),
+  is_default: booleanStringSchema.default(false),
+});
+
+export const addressUpdateSchema = addressSchema.partial().refine(
+  (value) => Object.keys(value).length > 0,
+  { message: 'At least one field must be provided' }
+);

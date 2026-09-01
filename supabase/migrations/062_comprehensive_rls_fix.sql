@@ -1,48 +1,58 @@
 -- Comprehensive RLS policy fix for all entity tables
 -- This ensures authenticated users can read their own records
 
--- Drop all existing policies on entity tables to avoid conflicts
-DROP POLICY IF EXISTS "profiles_select_own" ON profiles;
-DROP POLICY IF EXISTS "merchants_select_own" ON merchants;
-DROP POLICY IF EXISTS "communities_select_own" ON communities;
-DROP POLICY IF EXISTS "seller_profiles_select_own" ON seller_profiles;
-DROP POLICY IF EXISTS "warehouse_partners_select_own" ON warehouse_partners;
-DROP POLICY IF EXISTS "profiles_select" ON profiles;
-DROP POLICY IF EXISTS "merchants_select" ON merchants;
-DROP POLICY IF EXISTS "communities_select" ON communities;
-DROP POLICY IF EXISTS "seller_profiles_select" ON seller_profiles;
-DROP POLICY IF EXISTS "warehouse_partners_select" ON warehouse_partners;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'profiles_select_own'
+  ) THEN
+    CREATE POLICY "profiles_select_own" ON public.profiles
+      FOR SELECT TO authenticated USING (auth.uid() = id);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'merchants' AND policyname = 'merchants_select_own'
+  ) THEN
+    CREATE POLICY "merchants_select_own" ON public.merchants
+      FOR SELECT TO authenticated USING (auth.uid() = user_id);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'communities' AND policyname = 'communities_select_own'
+  ) THEN
+    CREATE POLICY "communities_select_own" ON public.communities
+      FOR SELECT TO authenticated USING (auth.uid() = owner_id);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seller_profiles' AND policyname = 'seller_profiles_select_own'
+  ) THEN
+    CREATE POLICY "seller_profiles_select_own" ON public.seller_profiles
+      FOR SELECT TO authenticated USING (auth.uid() = user_id);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'warehouse_partners' AND policyname = 'warehouse_partners_select_own'
+  ) THEN
+    CREATE POLICY "warehouse_partners_select_own" ON public.warehouse_partners
+      FOR SELECT TO authenticated USING (auth.uid() = user_id);
+  END IF;
+END $$;
 
 -- Ensure RLS is enabled
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE merchants ENABLE ROW LEVEL SECURITY;
-ALTER TABLE communities ENABLE ROW LEVEL SECURITY;
-ALTER TABLE seller_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE warehouse_partners ENABLE ROW LEVEL SECURITY;
-
--- Create policies allowing authenticated users to read their own records
-CREATE POLICY "profiles_select_own" ON profiles
-  FOR SELECT
-  USING (auth.uid() = id);
-
-CREATE POLICY "merchants_select_own" ON merchants
-  FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "communities_select_own" ON communities
-  FOR SELECT
-  USING (auth.uid() = owner_id);
-
-CREATE POLICY "seller_profiles_select_own" ON seller_profiles
-  FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "warehouse_partners_select_own" ON warehouse_partners
-  FOR SELECT
-  USING (auth.uid() = user_id);
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.merchants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.communities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.seller_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.warehouse_partners ENABLE ROW LEVEL SECURITY;
 
 -- Verify policies are active
-SELECT 
+SELECT
   schemaname,
   tablename,
   policyname,

@@ -1,94 +1,89 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
+import { addressSchema, validateBody } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
-// GET: Hämta användarens adresser
+const readSessionUserId = async () => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return null;
+  }
+
+  return user.id;
+};
+
 export async function GET() {
   try {
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
-    const { data: { session } } = await supabase.auth.getSession();
+    const userId = await readSessionUserId();
 
-    if (!session) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data, error } = await supabase
-      .from('profiles')
-      .select('address_line1, address_line2, city, postal_code, country, phone')
-      .eq('id', session.user.id)
-      .single();
+      .from('address_book')
+      .select('*')
+      .eq('user_id', userId)
+      .order('is_default', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
 
-    // För enkelhetens skull returnerar vi profilsadress som en enda adress
-    // I en fullständig implementation skulle vi ha en separat address_book tabell
-    const addresses = data ? [{
-      id: session.user.id,
-      user_id: session.user.id,
-      label: 'Standard',
-      full_name: session.user.user_metadata?.full_name || '',
-      address_line1: data.address_line1 || '',
-      address_line2: data.address_line2 || '',
-      city: data.city || '',
-      postal_code: data.postal_code || '',
-      country: data.country || 'SE',
-      phone: data.phone || '',
-      is_default: true,
-      created_at: new Date().toISOString()
-    }] : [];
-
-    return NextResponse.json({ success: true, addresses });
-  } catch (error: any) {
-    console.error('Error fetching addresses:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ success: true, addresses: data ?? [] });
+  } catch {
+    return NextResponse.json({ error: 'Unable to load addresses' }, { status: 500 });
   }
 }
 
-// POST: Skapa ny adress
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
+    const userId = await readSessionUserId();
 
-    if (!session) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const parsed = await validateBody(request, addressSchema);
+    if ('error' in parsed) {
+      return parsed.error;
+    }
 
-    // Uppdatera profilsadress
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        address_line1: body.address_line1,
-        address_line2: body.address_line2,
-        city: body.city,
-        postal_code: body.postal_code,
-        country: body.country,
-        phone: body.phone,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', session.user.id);
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
+
+    const payload = {
+      user_id: userId,
+      label: parsed.data.label,
+      full_name: parsed.data.full_name,
+      address_line1: parsed.data.address_line1,
+      address_line2: parsed.data.address_line2 ?? null,
+      city: parsed.data.city,
+      postal_code: parsed.data.postal_code,
+      country: parsed.data.country,
+      phone: parsed.data.phone,
+      is_default: parsed.data.is_default,
+    };
+
+    if (payload.is_default) {
+      await supabase
+        .from('address_book')
+        .update({ is_default: false })
+        .eq('user_id', userId);
+    }
+
+    const { error } = await supabase.from('address_book').insert(payload);
 
     if (error) throw error;
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error('Error creating address:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Unable to create address' }, { status: 500 });
   }
 }

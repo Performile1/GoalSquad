@@ -161,103 +161,129 @@ ALTER TABLE public.seller_leaderboard_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.seller_badges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.financial_settlements ENABLE ROW LEVEL SECURITY;
 
--- Policy för customer_payment_methods
-DROP POLICY IF EXISTS "Users can view their payment methods" ON public.customer_payment_methods;
-CREATE POLICY "Users can view their payment methods" ON public.customer_payment_methods
-    FOR SELECT TO authenticated
-    USING (auth.uid() = user_id);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'customer_payment_methods' AND policyname = 'users_view_own_payment_methods'
+  ) THEN
+    CREATE POLICY "users_view_own_payment_methods" ON public.customer_payment_methods FOR SELECT TO authenticated USING (auth.uid() = user_id);
+  END IF;
 
-DROP POLICY IF EXISTS "Users can insert their payment methods" ON public.customer_payment_methods;
-CREATE POLICY "Users can insert their payment methods" ON public.customer_payment_methods
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'customer_payment_methods' AND policyname = 'users_insert_own_payment_methods'
+  ) THEN
+    CREATE POLICY "users_insert_own_payment_methods" ON public.customer_payment_methods FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+  END IF;
 
-DROP POLICY IF EXISTS "Users can update their payment methods" ON public.customer_payment_methods;
-CREATE POLICY "Users can update their payment methods" ON public.customer_payment_methods
-    FOR UPDATE TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'customer_payment_methods' AND policyname = 'users_update_own_payment_methods'
+  ) THEN
+    CREATE POLICY "users_update_own_payment_methods" ON public.customer_payment_methods FOR UPDATE TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  END IF;
 
-DROP POLICY IF EXISTS "Users can delete their payment methods" ON public.customer_payment_methods;
-CREATE POLICY "Users can delete their payment methods" ON public.customer_payment_methods
-    FOR DELETE TO authenticated
-    USING (auth.uid() = user_id);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'customer_payment_methods' AND policyname = 'users_delete_own_payment_methods'
+  ) THEN
+    CREATE POLICY "users_delete_own_payment_methods" ON public.customer_payment_methods FOR DELETE TO authenticated USING (auth.uid() = user_id);
+  END IF;
 
--- Policy för system_worker_logs (endast admin)
-DROP POLICY IF EXISTS "Admins can view worker logs" ON public.system_worker_logs;
-CREATE POLICY "Admins can view worker logs" ON public.system_worker_logs
-    FOR SELECT TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'system_worker_logs' AND policyname = 'admins_view_worker_logs'
+  ) THEN
+    CREATE POLICY "admins_view_worker_logs" ON public.system_worker_logs FOR SELECT TO authenticated USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
--- Policy för supporter_orders
-DROP POLICY IF EXISTS "Users can view their orders" ON public.supporter_orders;
-CREATE POLICY "Users can view their orders" ON public.supporter_orders
-    FOR SELECT TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'supporter_orders' AND policyname = 'users_view_own_supporter_orders'
+  ) THEN
+    CREATE POLICY "users_view_own_supporter_orders" ON public.supporter_orders FOR SELECT TO authenticated USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "System can insert orders" ON public.supporter_orders;
-CREATE POLICY "System can insert orders" ON public.supporter_orders
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'supporter_orders' AND policyname = 'system_insert_supporter_orders'
+  ) THEN
+    CREATE POLICY "system_insert_supporter_orders" ON public.supporter_orders FOR INSERT TO authenticated WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
--- Policy för campaign_notifications
-DROP POLICY IF EXISTS "Admins can view notifications" ON public.campaign_notifications;
-CREATE POLICY "Admins can view notifications" ON public.campaign_notifications
-    FOR SELECT TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_notifications' AND policyname = 'admins_view_campaign_notifications'
+  ) THEN
+    CREATE POLICY "admins_view_campaign_notifications" ON public.campaign_notifications FOR SELECT TO authenticated USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "System can insert notifications" ON public.campaign_notifications;
-CREATE POLICY "System can insert notifications" ON public.campaign_notifications
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_notifications' AND policyname = 'system_insert_campaign_notifications'
+  ) THEN
+    CREATE POLICY "system_insert_campaign_notifications" ON public.campaign_notifications FOR INSERT TO authenticated WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
--- Policy för hub_payouts_receipts
-DROP POLICY IF EXISTS "Admins can view receipts" ON public.hub_payouts_receipts;
-CREATE POLICY "Admins can view receipts" ON public.hub_payouts_receipts
-    FOR SELECT TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'hub_payouts_receipts' AND policyname = 'admins_view_hub_payouts_receipts'
+  ) THEN
+    CREATE POLICY "admins_view_hub_payouts_receipts" ON public.hub_payouts_receipts FOR SELECT TO authenticated USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "System can insert receipts" ON public.hub_payouts_receipts;
-CREATE POLICY "System can insert receipts" ON public.hub_payouts_receipts
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'hub_payouts_receipts' AND policyname = 'system_insert_hub_payouts_receipts'
+  ) THEN
+    CREATE POLICY "system_insert_hub_payouts_receipts" ON public.hub_payouts_receipts FOR INSERT TO authenticated WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
--- Policy för seller_leaderboard_stats (public läsning för leaderboard)
-DROP POLICY IF EXISTS "Public can view leaderboard stats" ON public.seller_leaderboard_stats;
-CREATE POLICY "Public can view leaderboard stats" ON public.seller_leaderboard_stats
-    FOR SELECT TO authenticated
-    USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seller_leaderboard_stats' AND policyname = 'authenticated_view_seller_leaderboard_stats'
+  ) THEN
+    CREATE POLICY "authenticated_view_seller_leaderboard_stats" ON public.seller_leaderboard_stats
+      FOR SELECT TO authenticated USING (true);
+  END IF;
 
-DROP POLICY IF EXISTS "System can update leaderboard stats" ON public.seller_leaderboard_stats;
-CREATE POLICY "System can update leaderboard stats" ON public.seller_leaderboard_stats
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seller_leaderboard_stats' AND policyname = 'admins_update_seller_leaderboard_stats'
+  ) THEN
+    CREATE POLICY "admins_update_seller_leaderboard_stats" ON public.seller_leaderboard_stats FOR UPDATE TO authenticated USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin') WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "System can update leaderboard stats" ON public.seller_leaderboard_stats;
-CREATE POLICY "System can update leaderboard stats" ON public.seller_leaderboard_stats
-    FOR UPDATE TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seller_badges' AND policyname = 'authenticated_view_seller_badges'
+  ) THEN
+    CREATE POLICY "authenticated_view_seller_badges" ON public.seller_badges
+      FOR SELECT TO authenticated USING (true);
+  END IF;
 
--- Policy för seller_badges
-DROP POLICY IF EXISTS "Public can view badges" ON public.seller_badges;
-CREATE POLICY "Public can view badges" ON public.seller_badges
-    FOR SELECT TO authenticated
-    USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seller_badges' AND policyname = 'admins_insert_seller_badges'
+  ) THEN
+    CREATE POLICY "admins_insert_seller_badges" ON public.seller_badges FOR INSERT TO authenticated WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "System can insert badges" ON public.seller_badges;
-CREATE POLICY "System can insert badges" ON public.seller_badges
-    FOR INSERT TO authenticated
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'financial_settlements' AND policyname = 'admins_view_financial_settlements'
+  ) THEN
+    CREATE POLICY "admins_view_financial_settlements" ON public.financial_settlements FOR SELECT TO authenticated USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
--- Policy för financial_settlements
-DROP POLICY IF EXISTS "Admins can view settlements" ON public.financial_settlements;
-CREATE POLICY "Admins can view settlements" ON public.financial_settlements
-    FOR SELECT TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
-
-DROP POLICY IF EXISTS "Admins can insert settlements" ON public.financial_settlements;
-CREATE POLICY "Admins can insert settlements" ON public.financial_settlements
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'financial_settlements' AND policyname = 'admins_insert_financial_settlements'
+  ) THEN
+    CREATE POLICY "admins_insert_financial_settlements" ON public.financial_settlements FOR INSERT TO authenticated WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
+END $$;
     FOR INSERT TO authenticated
     WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
 

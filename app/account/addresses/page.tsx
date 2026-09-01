@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface Address {
   id: string;
@@ -17,22 +18,25 @@ interface Address {
   created_at: string;
 }
 
+const initialFormState = {
+  label: '',
+  full_name: '',
+  address_line1: '',
+  address_line2: '',
+  city: '',
+  postal_code: '',
+  country: 'SE',
+  phone: '',
+  is_default: false,
+};
+
 export default function AddressBookPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  const [formData, setFormData] = useState({
-    label: '',
-    full_name: '',
-    address_line1: '',
-    address_line2: '',
-    city: '',
-    postal_code: '',
-    country: 'SE',
-    phone: '',
-    is_default: false
-  });
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState(initialFormState);
 
   useEffect(() => {
     fetchAddresses();
@@ -40,54 +44,46 @@ export default function AddressBookPage() {
 
   const fetchAddresses = async () => {
     try {
+      setError(null);
+      setLoading(true);
       const response = await fetch('/api/account/addresses');
       const data = await response.json();
-      
+
       if (!response.ok) throw new Error(data.error || 'Kunde inte hämta adresser');
       setAddresses(data.addresses || []);
-    } catch (err: any) {
-      console.error(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kunde inte hämta adresser');
     } finally {
       setLoading(false);
     }
   };
 
+  const resetForm = () => {
+    setFormData(initialFormState);
+    setEditingAddress(null);
+    setShowForm(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const url = editingAddress 
-        ? `/api/account/addresses/${editingAddress.id}`
-        : '/api/account/addresses';
-      
+      const url = editingAddress ? `/api/account/addresses/${editingAddress.id}` : '/api/account/addresses';
       const method = editingAddress ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Kunde inte spara adress');
-      
-      setShowForm(false);
-      setEditingAddress(null);
-      setFormData({
-        label: '',
-        full_name: '',
-        address_line1: '',
-        address_line2: '',
-        city: '',
-        postal_code: '',
-        country: 'SE',
-        phone: '',
-        is_default: false
-      });
-      
+
+      resetForm();
       await fetchAddresses();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kunde inte spara adress');
     }
   };
 
@@ -102,24 +98,24 @@ export default function AddressBookPage() {
       postal_code: address.postal_code,
       country: address.country,
       phone: address.phone,
-      is_default: address.is_default
+      is_default: address.is_default,
     });
     setShowForm(true);
   };
 
   const handleDelete = async (addressId: string) => {
-    if (!confirm('Är du säker på att du vill ta bort denna adress?')) return;
-    
+    const confirmed = window.confirm('Är du säker på att du vill ta bort denna adress?');
+    if (!confirmed) return;
+
     try {
       const response = await fetch(`/api/account/addresses/${addressId}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) throw new Error('Kunde inte ta bort adress');
-      
       await fetchAddresses();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kunde inte ta bort adress');
     }
   };
 
@@ -128,120 +124,132 @@ export default function AddressBookPage() {
       const response = await fetch(`/api/account/addresses/${addressId}/set-default`, {
         method: 'POST',
       });
-      
+
       if (!response.ok) throw new Error('Kunde inte sätta som standard');
-      
       await fetchAddresses();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kunde inte sätta som standard');
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 rounded-full border-4 border-blue-600 border-t-transparent animate-spin mx-auto mb-4" />
-          <p className="text-slate-600 font-semibold">Laddar adresser...</p>
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground font-semibold">Laddar adresser...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        
-        {/* Header */}
-        <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex items-center justify-between">
+        <div className="bg-card border border-border rounded-lg p-6 shadow-sm flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Adressbok</h1>
-            <p className="text-sm text-slate-500 mt-1">Hantera dina leveransadresser</p>
+            <h1 className="text-2xl font-bold text-foreground">Adressbok</h1>
+            <p className="text-sm text-muted-foreground mt-1">Hantera dina leveransadresser</p>
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition"
+            className={cn(
+              'px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-lg transition',
+              'hover:bg-primary/90'
+            )}
           >
             + Lägg till adress
           </button>
         </div>
 
-        {/* Address Form */}
+        {error && (
+          <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
         {showForm && (
-          <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">
+          <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
+            <h2 className="text-lg font-bold text-foreground mb-4">
               {editingAddress ? 'Redigera adress' : 'Ny adress'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Etikett</label>
+                  <label htmlFor="address-label" className="block text-sm font-semibold text-foreground mb-2">Etikett</label>
                   <input
+                    id="address-label"
                     type="text"
                     value={formData.label}
                     onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                     placeholder="T.ex. Hem, Kontor"
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Fullständigt namn</label>
+                  <label htmlFor="address-full-name" className="block text-sm font-semibold text-foreground mb-2">Fullständigt namn</label>
                   <input
+                    id="address-full-name"
                     type="text"
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                     required
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Adressrad 1</label>
+                <label htmlFor="address-line-1" className="block text-sm font-semibold text-foreground mb-2">Adressrad 1</label>
                 <input
+                  id="address-line-1"
                   type="text"
                   value={formData.address_line1}
                   onChange={(e) => setFormData({ ...formData, address_line1: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Adressrad 2 (valfritt)</label>
+                <label htmlFor="address-line-2" className="block text-sm font-semibold text-foreground mb-2">Adressrad 2 (valfritt)</label>
                 <input
+                  id="address-line-2"
                   type="text"
                   value={formData.address_line2}
                   onChange={(e) => setFormData({ ...formData, address_line2: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Postnummer</label>
+                  <label htmlFor="address-postal-code" className="block text-sm font-semibold text-foreground mb-2">Postnummer</label>
                   <input
+                    id="address-postal-code"
                     type="text"
                     value={formData.postal_code}
                     onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Ort</label>
+                  <label htmlFor="address-city" className="block text-sm font-semibold text-foreground mb-2">Ort</label>
                   <input
+                    id="address-city"
                     type="text"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Land</label>
+                  <label htmlFor="address-country" className="block text-sm font-semibold text-foreground mb-2">Land</label>
                   <select
+                    id="address-country"
                     value={formData.country}
                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                   >
                     <option value="SE">Sverige</option>
                     <option value="NO">Norge</option>
@@ -251,12 +259,13 @@ export default function AddressBookPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Telefon</label>
+                <label htmlFor="address-phone" className="block text-sm font-semibold text-foreground mb-2">Telefon</label>
                 <input
+                  id="address-phone"
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-input bg-background rounded-lg outline-none focus:ring-2 focus:ring-ring"
                   required
                 />
               </div>
@@ -266,24 +275,21 @@ export default function AddressBookPage() {
                   id="is_default"
                   checked={formData.is_default}
                   onChange={(e) => setFormData({ ...formData, is_default: e.target.checked })}
-                  className="w-5 h-5 text-blue-600 rounded"
+                  className="w-5 h-5 text-primary rounded"
                 />
-                <label htmlFor="is_default" className="text-sm text-slate-700">Sätt som standardadress</label>
+                <label htmlFor="is_default" className="text-sm text-foreground">Sätt som standardadress</label>
               </div>
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditingAddress(null);
-                  }}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition"
+                  onClick={resetForm}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-muted-foreground bg-muted hover:bg-muted/80 rounded-lg transition"
                 >
                   Avbryt
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition"
+                  className="flex-1 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-lg transition"
                 >
                   Spara
                 </button>
@@ -292,57 +298,57 @@ export default function AddressBookPage() {
           </div>
         )}
 
-        {/* Address List */}
         <div className="space-y-4">
           {addresses.length === 0 ? (
-            <div className="bg-white border border-slate-200 rounded-lg p-12 text-center text-slate-500">
+            <div className="bg-card border border-border rounded-lg p-12 text-center text-muted-foreground">
               Inga adresser sparade
             </div>
           ) : (
             addresses.map((address) => (
               <div
                 key={address.id}
-                className={`bg-white border rounded-lg p-6 shadow-sm ${
-                  address.is_default ? 'border-blue-500 bg-blue-50' : 'border-slate-200'
-                }`}
+                className={cn(
+                  'bg-card border rounded-lg p-6 shadow-sm',
+                  address.is_default ? 'border-primary bg-primary/5' : 'border-border'
+                )}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-slate-900">{address.label}</span>
+                      <span className="font-semibold text-foreground">{address.label}</span>
                       {address.is_default && (
-                        <span className="px-2 py-1 text-xs font-semibold bg-blue-600 text-white rounded">Standard</span>
+                        <span className="px-2 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded">Standard</span>
                       )}
                     </div>
-                    <p className="text-slate-700">{address.full_name}</p>
-                    <p className="text-slate-600 text-sm">
+                    <p className="text-foreground">{address.full_name}</p>
+                    <p className="text-muted-foreground text-sm">
                       {address.address_line1}
                       {address.address_line2 && <>, {address.address_line2}</>}
                     </p>
-                    <p className="text-slate-600 text-sm">
+                    <p className="text-muted-foreground text-sm">
                       {address.postal_code} {address.city}
                     </p>
-                    <p className="text-slate-600 text-sm">{address.country}</p>
-                    <p className="text-slate-600 text-sm">{address.phone}</p>
+                    <p className="text-muted-foreground text-sm">{address.country}</p>
+                    <p className="text-muted-foreground text-sm">{address.phone}</p>
                   </div>
                   <div className="flex flex-col gap-2">
                     {!address.is_default && (
                       <button
                         onClick={() => handleSetDefault(address.id)}
-                        className="px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition"
+                        className="px-3 py-1 text-xs font-medium text-primary hover:text-primary/80 transition"
                       >
                         Sätt som standard
                       </button>
                     )}
                     <button
                       onClick={() => handleEdit(address)}
-                      className="px-3 py-1 text-xs font-medium text-slate-600 hover:text-slate-700 transition"
+                      className="px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition"
                     >
                       Redigera
                     </button>
                     <button
                       onClick={() => handleDelete(address.id)}
-                      className="px-3 py-1 text-xs font-medium text-red-600 hover:text-red-700 transition"
+                      className="px-3 py-1 text-xs font-medium text-destructive hover:text-destructive/80 transition"
                     >
                       Ta bort
                     </button>
@@ -352,7 +358,6 @@ export default function AddressBookPage() {
             ))
           )}
         </div>
-
       </div>
     </div>
   );

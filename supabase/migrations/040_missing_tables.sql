@@ -145,12 +145,24 @@ CREATE INDEX IF NOT EXISTS idx_leaderboards_entity      ON public.leaderboards(e
 CREATE INDEX IF NOT EXISTS idx_leaderboards_rank        ON public.leaderboards(rank);
 
 ALTER TABLE public.leaderboards ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "leaderboards_service_role" ON public.leaderboards;
-DROP POLICY IF EXISTS "leaderboards_public_read"  ON public.leaderboards;
-CREATE POLICY "leaderboards_service_role"
-  ON public.leaderboards FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "leaderboards_public_read"
-  ON public.leaderboards FOR SELECT TO authenticated, anon USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'leaderboards' AND policyname = 'leaderboards_service_role'
+  ) THEN
+    CREATE POLICY "leaderboards_service_role"
+      ON public.leaderboards FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'leaderboards' AND policyname = 'leaderboards_authenticated_read'
+  ) THEN
+    CREATE POLICY "leaderboards_authenticated_read"
+      ON public.leaderboards FOR SELECT TO authenticated USING (true);
+  END IF;
+END $$;
 
 -- ============================================================
 -- 6. USER ACHIEVEMENTS (migration 034 kördes ej fullt)
@@ -172,12 +184,24 @@ CREATE INDEX IF NOT EXISTS idx_user_achievements_user        ON public.user_achi
 CREATE INDEX IF NOT EXISTS idx_user_achievements_achievement ON public.user_achievements(achievement_id);
 
 ALTER TABLE public.user_achievements ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "user_achievements_service_role" ON public.user_achievements;
-DROP POLICY IF EXISTS "user_achievements_own_read"     ON public.user_achievements;
-CREATE POLICY "user_achievements_service_role"
-  ON public.user_achievements FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "user_achievements_own_read"
-  ON public.user_achievements FOR SELECT TO authenticated USING (user_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'user_achievements' AND policyname = 'user_achievements_service_role'
+  ) THEN
+    CREATE POLICY "user_achievements_service_role"
+      ON public.user_achievements FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'user_achievements' AND policyname = 'user_achievements_own_read'
+  ) THEN
+    CREATE POLICY "user_achievements_own_read"
+      ON public.user_achievements FOR SELECT TO authenticated USING (user_id = auth.uid());
+  END IF;
+END $$;
 
 -- ============================================================
 -- 7. CAMPAIGNS (migration 032 kördes ej)
@@ -220,26 +244,52 @@ CREATE INDEX IF NOT EXISTS idx_campaigns_type       ON public.campaigns(campaign
 CREATE INDEX IF NOT EXISTS idx_campaigns_published  ON public.campaigns(published_at) WHERE status = 'published';
 
 ALTER TABLE public.campaigns ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "campaigns_select_published" ON public.campaigns;
-DROP POLICY IF EXISTS "campaigns_select_all"       ON public.campaigns;
-DROP POLICY IF EXISTS "campaigns_insert_admin"     ON public.campaigns;
-DROP POLICY IF EXISTS "campaigns_update_admin"     ON public.campaigns;
-DROP POLICY IF EXISTS "campaigns_delete_admin"     ON public.campaigns;
-DROP POLICY IF EXISTS "campaigns_service_role"     ON public.campaigns;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaigns' AND policyname = 'campaigns_service_role'
+  ) THEN
+    CREATE POLICY "campaigns_service_role"
+      ON public.campaigns FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-CREATE POLICY "campaigns_service_role"
-  ON public.campaigns FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "campaigns_select_published"
-  ON public.campaigns FOR SELECT TO authenticated, anon USING (status = 'published');
-CREATE POLICY "campaigns_insert_admin"
-  ON public.campaigns FOR INSERT TO authenticated
-  WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
-CREATE POLICY "campaigns_update_admin"
-  ON public.campaigns FOR UPDATE TO authenticated
-  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
-CREATE POLICY "campaigns_delete_admin"
-  ON public.campaigns FOR DELETE TO authenticated
-  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaigns' AND policyname = 'campaigns_select_published'
+  ) THEN
+    CREATE POLICY "campaigns_select_published"
+      ON public.campaigns FOR SELECT TO authenticated USING (status = 'published');
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaigns' AND policyname = 'campaigns_insert_admin'
+  ) THEN
+    CREATE POLICY "campaigns_insert_admin"
+      ON public.campaigns FOR INSERT TO authenticated
+      WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaigns' AND policyname = 'campaigns_update_admin'
+  ) THEN
+    CREATE POLICY "campaigns_update_admin"
+      ON public.campaigns FOR UPDATE TO authenticated
+      USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'))
+      WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaigns' AND policyname = 'campaigns_delete_admin'
+  ) THEN
+    CREATE POLICY "campaigns_delete_admin"
+      ON public.campaigns FOR DELETE TO authenticated
+      USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+  END IF;
+END $$;
 
 DROP TRIGGER IF EXISTS update_campaigns_updated_at ON public.campaigns;
 CREATE TRIGGER update_campaigns_updated_at
@@ -272,16 +322,26 @@ CREATE TABLE IF NOT EXISTS public.seo_settings (
 );
 
 ALTER TABLE public.seo_settings ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "seo_settings_service_role"  ON public.seo_settings;
-DROP POLICY IF EXISTS "seo_settings_select_admin"  ON public.seo_settings;
-DROP POLICY IF EXISTS "seo_settings_update_admin"  ON public.seo_settings;
-DROP POLICY IF EXISTS "seo_settings_insert_admin"  ON public.seo_settings;
-CREATE POLICY "seo_settings_service_role"
-  ON public.seo_settings FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "seo_settings_admin"
-  ON public.seo_settings FOR ALL TO authenticated
-  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'))
-  WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seo_settings' AND policyname = 'seo_settings_service_role'
+  ) THEN
+    CREATE POLICY "seo_settings_service_role"
+      ON public.seo_settings FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'seo_settings' AND policyname = 'seo_settings_admin'
+  ) THEN
+    CREATE POLICY "seo_settings_admin"
+      ON public.seo_settings FOR ALL TO authenticated
+      USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'))
+      WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+  END IF;
+END $$;
 
 INSERT INTO public.seo_settings (site_title, site_description, site_keywords)
 VALUES (
@@ -333,12 +393,24 @@ CREATE INDEX IF NOT EXISTS idx_campaign_form_submissions_form     ON public.camp
 CREATE INDEX IF NOT EXISTS idx_campaign_form_submissions_campaign ON public.campaign_form_submissions(campaign_id);
 
 ALTER TABLE public.campaign_form_submissions ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "campaign_form_submissions_service_role" ON public.campaign_form_submissions;
-DROP POLICY IF EXISTS "campaign_form_submissions_insert_anon"  ON public.campaign_form_submissions;
-CREATE POLICY "campaign_form_submissions_service_role"
-  ON public.campaign_form_submissions FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "campaign_form_submissions_insert_anon"
-  ON public.campaign_form_submissions FOR INSERT TO anon, authenticated WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_form_submissions' AND policyname = 'campaign_form_submissions_service_role'
+  ) THEN
+    CREATE POLICY "campaign_form_submissions_service_role"
+      ON public.campaign_form_submissions FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_form_submissions' AND policyname = 'campaign_form_submissions_insert_anon'
+  ) THEN
+    CREATE POLICY "campaign_form_submissions_insert_anon"
+      ON public.campaign_form_submissions FOR INSERT TO anon, authenticated WITH CHECK (true);
+  END IF;
+END $$;
 
 -- ============================================================
 -- 10. PICK SESSIONS + ITEMS + PRODUCT BARCODES (migration 037 kördes ej)
@@ -389,19 +461,52 @@ ALTER TABLE public.pick_sessions       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pick_session_items  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.product_barcodes    ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "pick_sessions_service_role"       ON public.pick_sessions;
-DROP POLICY IF EXISTS "pick_sessions_authenticated"      ON public.pick_sessions;
-DROP POLICY IF EXISTS "pick_session_items_service_role"  ON public.pick_session_items;
-DROP POLICY IF EXISTS "pick_session_items_authenticated" ON public.pick_session_items;
-DROP POLICY IF EXISTS "product_barcodes_read"            ON public.product_barcodes;
-DROP POLICY IF EXISTS "product_barcodes_write"           ON public.product_barcodes;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_sessions' AND policyname = 'pick_sessions_service_role'
+  ) THEN
+    CREATE POLICY "pick_sessions_service_role" ON public.pick_sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-CREATE POLICY "pick_sessions_service_role"       ON public.pick_sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "pick_sessions_authenticated"      ON public.pick_sessions FOR ALL TO authenticated USING (picker_id = auth.uid()) WITH CHECK (true);
-CREATE POLICY "pick_session_items_service_role"  ON public.pick_session_items FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "pick_session_items_authenticated" ON public.pick_session_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "product_barcodes_read"            ON public.product_barcodes FOR SELECT TO authenticated, anon USING (true);
-CREATE POLICY "product_barcodes_write"           ON public.product_barcodes FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_sessions' AND policyname = 'pick_sessions_authenticated'
+  ) THEN
+    CREATE POLICY "pick_sessions_authenticated"
+      ON public.pick_sessions FOR ALL TO authenticated USING (picker_id = auth.uid()) WITH CHECK (picker_id = auth.uid());
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_session_items' AND policyname = 'pick_session_items_service_role'
+  ) THEN
+    CREATE POLICY "pick_session_items_service_role" ON public.pick_session_items FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_session_items' AND policyname = 'pick_session_items_authenticated'
+  ) THEN
+    CREATE POLICY "pick_session_items_authenticated"
+      ON public.pick_session_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_barcodes' AND policyname = 'product_barcodes_read'
+  ) THEN
+    CREATE POLICY "product_barcodes_read" ON public.product_barcodes FOR SELECT TO authenticated USING (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_barcodes' AND policyname = 'product_barcodes_write'
+  ) THEN
+    CREATE POLICY "product_barcodes_write" ON public.product_barcodes FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;
 
 -- ============================================================
 -- 11. FIX PROFILES — guardian_id (guardians API kräver det)
@@ -422,18 +527,26 @@ END $$;
 -- ============================================================
 -- 12. FIX BLOG POSTS RLS — 'admin' → 'gs_admin'
 -- ============================================================
-DROP POLICY IF EXISTS "Admins can view all posts"   ON public.blog_posts;
-DROP POLICY IF EXISTS "Admins can insert posts"     ON public.blog_posts;
-DROP POLICY IF EXISTS "Admins can update posts"     ON public.blog_posts;
-DROP POLICY IF EXISTS "Admins can delete posts"     ON public.blog_posts;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'blog_posts' AND policyname = 'blog_posts_admin_all'
+  ) THEN
+    CREATE POLICY "blog_posts_admin_all"
+      ON public.blog_posts FOR ALL TO authenticated
+      USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'))
+      WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
+  END IF;
 
-DROP POLICY IF EXISTS "blog_posts_admin_all" ON public.blog_posts;
-CREATE POLICY "blog_posts_admin_all"
-  ON public.blog_posts FOR ALL TO authenticated
-  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'))
-  WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'gs_admin'));
-
-DROP POLICY IF EXISTS "blog_posts_service_role" ON public.blog_posts;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'blog_posts' AND policyname = 'blog_posts_service_role'
+  ) THEN
+    CREATE POLICY "blog_posts_service_role"
+      ON public.blog_posts FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;
 CREATE POLICY "blog_posts_service_role"
   ON public.blog_posts FOR ALL TO service_role USING (true) WITH CHECK (true);
 

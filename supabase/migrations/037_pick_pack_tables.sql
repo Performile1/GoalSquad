@@ -86,19 +86,51 @@ ALTER TABLE public.pick_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pick_session_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.product_barcodes ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "pick_sessions_service_role" ON public.pick_sessions;
-DROP POLICY IF EXISTS "pick_sessions_authenticated" ON public.pick_sessions;
-CREATE POLICY "pick_sessions_service_role" ON public.pick_sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "pick_sessions_authenticated" ON public.pick_sessions FOR ALL TO authenticated USING (picker_id = auth.uid() OR true) WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_sessions' AND policyname = 'pick_sessions_service_role'
+  ) THEN
+    CREATE POLICY "pick_sessions_service_role" ON public.pick_sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS "pick_session_items_service_role" ON public.pick_session_items;
-DROP POLICY IF EXISTS "pick_session_items_authenticated" ON public.pick_session_items;
-CREATE POLICY "pick_session_items_service_role" ON public.pick_session_items FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "pick_session_items_authenticated" ON public.pick_session_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_sessions' AND policyname = 'pick_sessions_authenticated'
+  ) THEN
+    CREATE POLICY "pick_sessions_authenticated"
+      ON public.pick_sessions FOR ALL TO authenticated USING (picker_id = auth.uid()) WITH CHECK (picker_id = auth.uid());
+  END IF;
 
-DROP POLICY IF EXISTS "product_barcodes_read" ON public.product_barcodes;
-DROP POLICY IF EXISTS "product_barcodes_write" ON public.product_barcodes;
-CREATE POLICY "product_barcodes_read" ON public.product_barcodes FOR SELECT TO authenticated, anon USING (true);
-CREATE POLICY "product_barcodes_write" ON public.product_barcodes FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_session_items' AND policyname = 'pick_session_items_service_role'
+  ) THEN
+    CREATE POLICY "pick_session_items_service_role" ON public.pick_session_items FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pick_session_items' AND policyname = 'pick_session_items_authenticated'
+  ) THEN
+    CREATE POLICY "pick_session_items_authenticated"
+      ON public.pick_session_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_barcodes' AND policyname = 'product_barcodes_read'
+  ) THEN
+    CREATE POLICY "product_barcodes_read" ON public.product_barcodes FOR SELECT TO authenticated USING (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_barcodes' AND policyname = 'product_barcodes_write'
+  ) THEN
+    CREATE POLICY "product_barcodes_write" ON public.product_barcodes FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;
 
 DO $$ BEGIN RAISE NOTICE 'Migration 037: Pick & Pack tables created'; END $$;

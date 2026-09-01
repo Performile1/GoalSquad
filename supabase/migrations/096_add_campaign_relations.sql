@@ -32,12 +32,24 @@ CREATE INDEX IF NOT EXISTS idx_campaign_products_campaign ON public.campaign_pro
 CREATE INDEX IF NOT EXISTS idx_campaign_products_product ON public.campaign_products(product_id);
 
 ALTER TABLE public.campaign_products ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "campaign_products_public_read" ON public.campaign_products;
-CREATE POLICY "campaign_products_public_read"
-  ON public.campaign_products FOR SELECT USING (is_active = true);
-DROP POLICY IF EXISTS "campaign_products_service_role" ON public.campaign_products;
-CREATE POLICY "campaign_products_service_role"
-  ON public.campaign_products FOR ALL TO service_role USING (true) WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_products' AND policyname = 'campaign_products_public_read'
+  ) THEN
+    CREATE POLICY "campaign_products_public_read"
+      ON public.campaign_products FOR SELECT USING (is_active = true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_products' AND policyname = 'campaign_products_service_role'
+  ) THEN
+    CREATE POLICY "campaign_products_service_role"
+      ON public.campaign_products FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;
 
 DROP TRIGGER IF EXISTS update_campaign_products_updated_at ON public.campaign_products;
 CREATE TRIGGER update_campaign_products_updated_at
@@ -67,16 +79,33 @@ CREATE INDEX IF NOT EXISTS idx_campaign_sellers_seller ON public.campaign_seller
 CREATE INDEX IF NOT EXISTS idx_campaign_sellers_status ON public.campaign_sellers(status);
 
 ALTER TABLE public.campaign_sellers ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "campaign_sellers_own_read" ON public.campaign_sellers;
-CREATE POLICY "campaign_sellers_own_read"
-  ON public.campaign_sellers FOR SELECT TO authenticated
-  USING (seller_id IN (SELECT id FROM public.seller_profiles WHERE user_id = auth.uid()));
-DROP POLICY IF EXISTS "campaign_sellers_public_read" ON public.campaign_sellers;
-CREATE POLICY "campaign_sellers_public_read"
-  ON public.campaign_sellers FOR SELECT USING (status = 'active');
-DROP POLICY IF EXISTS "campaign_sellers_service_role" ON public.campaign_sellers;
-CREATE POLICY "campaign_sellers_service_role"
-  ON public.campaign_sellers FOR ALL TO service_role USING (true) WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_sellers' AND policyname = 'campaign_sellers_own_read'
+  ) THEN
+    CREATE POLICY "campaign_sellers_own_read"
+      ON public.campaign_sellers FOR SELECT TO authenticated
+      USING (seller_id IN (SELECT id FROM public.seller_profiles WHERE user_id = auth.uid()));
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_sellers' AND policyname = 'campaign_sellers_public_read'
+  ) THEN
+    CREATE POLICY "campaign_sellers_public_read"
+      ON public.campaign_sellers FOR SELECT USING (status = 'active');
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'campaign_sellers' AND policyname = 'campaign_sellers_service_role'
+  ) THEN
+    CREATE POLICY "campaign_sellers_service_role"
+      ON public.campaign_sellers FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;
 
 DROP TRIGGER IF EXISTS update_campaign_sellers_updated_at ON public.campaign_sellers;
 CREATE TRIGGER update_campaign_sellers_updated_at

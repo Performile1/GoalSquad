@@ -19,24 +19,36 @@ CREATE TABLE IF NOT EXISTS public.platform_settings (
 -- RLS
 ALTER TABLE public.platform_settings ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Admins can view platform settings" ON public.platform_settings;
-CREATE POLICY "Admins can view platform settings" ON public.platform_settings
-    FOR SELECT
-    TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'platform_settings' AND policyname = 'admins_view_platform_settings'
+  ) THEN
+    CREATE POLICY "admins_view_platform_settings" ON public.platform_settings
+      FOR SELECT TO authenticated
+      USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "Admins can update platform settings" ON public.platform_settings;
-CREATE POLICY "Admins can update platform settings" ON public.platform_settings
-    FOR UPDATE
-    TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'platform_settings' AND policyname = 'admins_update_platform_settings'
+  ) THEN
+    CREATE POLICY "admins_update_platform_settings" ON public.platform_settings
+      FOR UPDATE TO authenticated
+      USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
+      WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "Admins can insert platform settings" ON public.platform_settings;
-CREATE POLICY "Admins can insert platform settings" ON public.platform_settings
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'platform_settings' AND policyname = 'admins_insert_platform_settings'
+  ) THEN
+    CREATE POLICY "admins_insert_platform_settings" ON public.platform_settings
+      FOR INSERT TO authenticated
+      WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
+END $$;
 
 -- ---------------------------------------------------------------------
 -- 2. Granulära rättigheter
@@ -66,33 +78,44 @@ CREATE INDEX IF NOT EXISTS idx_profile_permissions_permission ON public.profile_
 ALTER TABLE public.permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profile_permissions ENABLE ROW LEVEL SECURITY;
 
--- Permissions table - alla autentiserade kan läsa
-DROP POLICY IF EXISTS "Authenticated can view permissions" ON public.permissions;
-CREATE POLICY "Authenticated can view permissions" ON public.permissions
-    FOR SELECT
-    TO authenticated
-    USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'permissions' AND policyname = 'authenticated_view_permissions'
+  ) THEN
+    CREATE POLICY "authenticated_view_permissions" ON public.permissions
+      FOR SELECT TO authenticated
+      USING (true);
+  END IF;
 
--- Profile permissions - admins kan läsa alla, användare kan läsa sina egna
-DROP POLICY IF EXISTS "Admins can view all profile permissions" ON public.profile_permissions;
-CREATE POLICY "Admins can view all profile permissions" ON public.profile_permissions
-    FOR SELECT
-    TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'profile_permissions' AND policyname = 'admins_view_all_profile_permissions'
+  ) THEN
+    CREATE POLICY "admins_view_all_profile_permissions" ON public.profile_permissions
+      FOR SELECT TO authenticated
+      USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
 
-DROP POLICY IF EXISTS "Users can view their own permissions" ON public.profile_permissions;
-CREATE POLICY "Users can view their own permissions" ON public.profile_permissions
-    FOR SELECT
-    TO authenticated
-    USING (profile_id = auth.uid());
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'profile_permissions' AND policyname = 'users_view_own_permissions'
+  ) THEN
+    CREATE POLICY "users_view_own_permissions" ON public.profile_permissions
+      FOR SELECT TO authenticated USING (profile_id = auth.uid());
+  END IF;
 
--- Endast admins kan modifiera permissions
-DROP POLICY IF EXISTS "Admins can manage profile permissions" ON public.profile_permissions;
-CREATE POLICY "Admins can manage profile permissions" ON public.profile_permissions
-    FOR ALL
-    TO authenticated
-    USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
-    WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'profile_permissions' AND policyname = 'admins_manage_profile_permissions'
+  ) THEN
+    CREATE POLICY "admins_manage_profile_permissions" ON public.profile_permissions
+      FOR ALL TO authenticated
+      USING (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin')
+      WITH CHECK (auth.jwt() -> 'user_metadata' ->> 'role' = 'admin');
+  END IF;
+END $$;
 
 -- ---------------------------------------------------------------------
 -- 4. Populera standardrättigheter

@@ -14,24 +14,56 @@
  */
 
 -- ============================================
--- DROP EXISTING POLICIES (för att börja om)
+-- SAFE POLICY MANAGEMENT
+-- ============================================
+-- Avoid destructive DROP POLICY resets in production. Re-runnable scripts should
+-- only create missing policies and leave the existing authorization model in place.
 -- ============================================
 
-DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON profiles;
-DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
-DROP POLICY IF EXISTS "Merchants are viewable by everyone" ON merchants;
-DROP POLICY IF EXISTS "Merchants can update own data" ON merchants;
-DROP POLICY IF EXISTS "Active products are viewable by everyone" ON products;
-DROP POLICY IF EXISTS "Merchants can manage own products" ON products;
-DROP POLICY IF EXISTS "Communities are viewable by everyone" ON communities;
-DROP POLICY IF EXISTS "Community admins can update" ON communities;
-DROP POLICY IF EXISTS "Users can view own orders" ON orders;
-DROP POLICY IF EXISTS "Users can create orders" ON orders;
-DROP POLICY IF EXISTS "Users can view own order items" ON order_items;
-DROP POLICY IF EXISTS "Warehouses are viewable by everyone" ON consolidation_warehouses;
-DROP POLICY IF EXISTS "Warehouse inventory is viewable by everyone" ON warehouse_inventory;
-DROP POLICY IF EXISTS "Users can view own conversations" ON conversations;
-DROP POLICY IF EXISTS "Users can view messages in own conversations" ON messages;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'profiles_select_all'
+    ) THEN
+        CREATE POLICY "profiles_select_all" ON profiles FOR SELECT USING (true);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'profiles_insert_own'
+    ) THEN
+        CREATE POLICY "profiles_insert_own" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE schemaname = 'public' AND tablename = 'profiles' AND policyname = 'profiles_update_own'
+    ) THEN
+        CREATE POLICY "profiles_update_own" ON profiles FOR UPDATE USING (auth.uid() = id);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE schemaname = 'public' AND tablename = 'merchants' AND policyname = 'merchants_select_active'
+    ) THEN
+        CREATE POLICY "merchants_select_active" ON merchants FOR SELECT USING (is_active = true);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE schemaname = 'public' AND tablename = 'products' AND policyname = 'products_select_active'
+    ) THEN
+        CREATE POLICY "products_select_active" ON products FOR SELECT USING (is_active = true AND is_available = true);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE schemaname = 'public' AND tablename = 'communities' AND policyname = 'communities_select_active'
+    ) THEN
+        CREATE POLICY "communities_select_active" ON communities FOR SELECT USING (is_active = true);
+    END IF;
+END $$;
 
 -- ============================================
 -- PROFILES

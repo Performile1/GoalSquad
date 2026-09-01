@@ -310,26 +310,61 @@ ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.anti_cheat_flags ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.community_campaigns ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS signatures_service ON public.signatures;
-CREATE POLICY signatures_service ON public.signatures FOR ALL TO service_role USING (true) WITH CHECK (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'signatures' AND policyname = 'signatures_service'
+  ) THEN
+    CREATE POLICY signatures_service ON public.signatures FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS contact_info_service ON public.contact_information;
-CREATE POLICY contact_info_service ON public.contact_information FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'contact_information' AND policyname = 'contact_info_service'
+  ) THEN
+    CREATE POLICY contact_info_service ON public.contact_information FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS order_agg_service ON public.order_aggregations;
-CREATE POLICY order_agg_service ON public.order_aggregations FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'order_aggregations' AND policyname = 'order_agg_service'
+  ) THEN
+    CREATE POLICY order_agg_service ON public.order_aggregations FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS pending_moq_service ON public.pending_moq_orders;
-CREATE POLICY pending_moq_service ON public.pending_moq_orders FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'pending_moq_orders' AND policyname = 'pending_moq_service'
+  ) THEN
+    CREATE POLICY pending_moq_service ON public.pending_moq_orders FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS conv_part_service ON public.conversation_participants;
-CREATE POLICY conv_part_service ON public.conversation_participants FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'conversation_participants' AND policyname = 'conv_part_service'
+  ) THEN
+    CREATE POLICY conv_part_service ON public.conversation_participants FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS messages_service ON public.messages;
-CREATE POLICY messages_service ON public.messages FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'messages' AND policyname = 'messages_service'
+  ) THEN
+    CREATE POLICY messages_service ON public.messages FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS anti_cheat_service ON public.anti_cheat_flags;
-CREATE POLICY anti_cheat_service ON public.anti_cheat_flags FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'anti_cheat_flags' AND policyname = 'anti_cheat_service'
+  ) THEN
+    CREATE POLICY anti_cheat_service ON public.anti_cheat_flags FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
 
-DROP POLICY IF EXISTS community_campaigns_service ON public.community_campaigns;
-CREATE POLICY community_campaigns_service ON public.community_campaigns FOR ALL TO service_role USING (true) WITH CHECK (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'community_campaigns' AND policyname = 'community_campaigns_service'
+  ) THEN
+    CREATE POLICY community_campaigns_service ON public.community_campaigns FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+END $$;

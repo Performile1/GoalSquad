@@ -370,12 +370,24 @@ CREATE TABLE IF NOT EXISTS public.product_flow_summary (
 );
 
 ALTER TABLE public.product_flow_summary ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "product_flow_summary_service_role" ON public.product_flow_summary;
-DROP POLICY IF EXISTS "product_flow_summary_authenticated_read" ON public.product_flow_summary;
-CREATE POLICY "product_flow_summary_service_role" ON public.product_flow_summary
-  FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "product_flow_summary_authenticated_read" ON public.product_flow_summary
-  FOR SELECT TO authenticated USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_flow_summary' AND policyname = 'product_flow_summary_service_role'
+  ) THEN
+    CREATE POLICY "product_flow_summary_service_role"
+      ON public.product_flow_summary FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'product_flow_summary' AND policyname = 'product_flow_summary_authenticated_read'
+  ) THEN
+    CREATE POLICY "product_flow_summary_authenticated_read"
+      ON public.product_flow_summary FOR SELECT TO authenticated USING (true);
+  END IF;
+END $$;
 
 -- 8.6 entity_goals (used by entity_goals route)
 CREATE TABLE IF NOT EXISTS public.entity_goals (
@@ -400,17 +412,34 @@ CREATE INDEX IF NOT EXISTS idx_entity_goals_entity ON public.entity_goals(entity
 CREATE INDEX IF NOT EXISTS idx_entity_goals_status ON public.entity_goals(status);
 
 ALTER TABLE public.entity_goals ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "entity_goals_service_role" ON public.entity_goals;
-DROP POLICY IF EXISTS "entity_goals_authenticated_read" ON public.entity_goals;
-DROP POLICY IF EXISTS "entity_goals_own_manage" ON public.entity_goals;
-CREATE POLICY "entity_goals_service_role" ON public.entity_goals
-  FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "entity_goals_authenticated_read" ON public.entity_goals
-  FOR SELECT TO authenticated USING (true);
-CREATE POLICY "entity_goals_own_manage" ON public.entity_goals
-  FOR ALL TO authenticated
-  USING (entity_id = auth.uid())
-  WITH CHECK (entity_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'entity_goals_service_role'
+  ) THEN
+    CREATE POLICY "entity_goals_service_role"
+      ON public.entity_goals FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'entity_goals_authenticated_read'
+  ) THEN
+    CREATE POLICY "entity_goals_authenticated_read"
+      ON public.entity_goals FOR SELECT TO authenticated USING (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'entity_goals' AND policyname = 'entity_goals_own_manage'
+  ) THEN
+    CREATE POLICY "entity_goals_own_manage"
+      ON public.entity_goals FOR ALL TO authenticated
+      USING (entity_id = auth.uid())
+      WITH CHECK (entity_id = auth.uid());
+  END IF;
+END $$;
 
 -- 8.7 wallets
 CREATE TABLE IF NOT EXISTS public.wallets (
@@ -425,12 +454,24 @@ CREATE TABLE IF NOT EXISTS public.wallets (
 );
 
 ALTER TABLE public.wallets ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "wallets_service_role" ON public.wallets;
-DROP POLICY IF EXISTS "wallets_own_read" ON public.wallets;
-CREATE POLICY "wallets_service_role" ON public.wallets
-  FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "wallets_own_read" ON public.wallets
-  FOR SELECT TO authenticated USING (user_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'wallets' AND policyname = 'wallets_service_role'
+  ) THEN
+    CREATE POLICY "wallets_service_role"
+      ON public.wallets FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'wallets' AND policyname = 'wallets_own_read'
+  ) THEN
+    CREATE POLICY "wallets_own_read"
+      ON public.wallets FOR SELECT TO authenticated USING (user_id = auth.uid());
+  END IF;
+END $$;
 
 -- 8.8 leaderboards
 CREATE TABLE IF NOT EXISTS public.leaderboards (
@@ -451,12 +492,24 @@ CREATE INDEX IF NOT EXISTS idx_leaderboards_type_period ON public.leaderboards(l
 CREATE INDEX IF NOT EXISTS idx_leaderboards_rank ON public.leaderboards(rank);
 
 ALTER TABLE public.leaderboards ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "leaderboards_service_role" ON public.leaderboards;
-DROP POLICY IF EXISTS "leaderboards_public_read" ON public.leaderboards;
-CREATE POLICY "leaderboards_service_role" ON public.leaderboards
-  FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "leaderboards_public_read" ON public.leaderboards
-  FOR SELECT TO authenticated USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'leaderboards' AND policyname = 'leaderboards_service_role'
+  ) THEN
+    CREATE POLICY "leaderboards_service_role"
+      ON public.leaderboards FOR ALL TO service_role USING (true) WITH CHECK (true);
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'leaderboards' AND policyname = 'leaderboards_authenticated_read'
+  ) THEN
+    CREATE POLICY "leaderboards_authenticated_read"
+      ON public.leaderboards FOR SELECT TO authenticated USING (true);
+  END IF;
+END $$;
 
 -- 8.9 user_achievements
 CREATE TABLE IF NOT EXISTS public.user_achievements (

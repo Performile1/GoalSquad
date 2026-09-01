@@ -27,6 +27,10 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  if (request.method !== 'GET' || (url.protocol !== 'http:' && url.protocol !== 'https:')) {
+    return;
+  }
+
   // API calls: network-first, cache fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
