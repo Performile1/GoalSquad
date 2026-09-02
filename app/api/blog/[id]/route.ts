@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
@@ -23,6 +24,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
+
     const body = await req.json();
     const { title, content, excerpt, image_url, published } = body;
 
@@ -53,6 +57,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
+
     const { error } = await supabaseAdmin
       .from('blog_posts')
       .delete()

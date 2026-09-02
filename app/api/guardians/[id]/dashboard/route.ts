@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { Treasury } from '@/lib/treasury';
+import { requireUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
 export async function GET(
@@ -13,7 +14,14 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const auth = await requireUser(req);
+    if ('error' in auth) return auth.error;
+
     const guardianId = params.id;
+
+    if (guardianId !== auth.user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     // Get guardian profile
     const { data: guardian, error: guardianError } = await supabaseAdmin

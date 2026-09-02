@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireUser } from '@/lib/api-auth';
 import { AuditSignature } from '@/lib/audit-signature';
 import { logger } from '@/lib/logger';
 import { z } from 'zod';
@@ -28,9 +29,6 @@ const onboardingSchema = z.object({
   orgNumber: z.string().optional(),
   vatNumber: z.string().optional(),
   
-  // User context
-  userId: z.string().uuid(),
-  
   // Verification
   verificationMethod: z.enum(['otp_sms', 'otp_email']),
   
@@ -41,6 +39,9 @@ const onboardingSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireUser(req);
+    if ('error' in auth) return auth.error;
+
     const body = await req.json();
     const validatedData = onboardingSchema.parse(body);
 
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
       .from('merchants')
       .insert({
         organization_id: organization.id,
-        user_id: validatedData.userId,
+        user_id: auth.user.id,
         merchant_name: validatedData.merchantName,
         slug: validatedData.slug,
         description: validatedData.description,
@@ -133,7 +134,7 @@ export async function POST(req: NextRequest) {
       entityType: 'merchant',
       entityId: merchant.id,
       action: 'onboarding',
-      userId: validatedData.userId,
+      userId: auth.user.id,
       email: validatedData.email,
       phone: validatedData.phone,
       verificationMethod: validatedData.verificationMethod,

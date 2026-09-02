@@ -45,18 +45,36 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { seller: sellerData, profile: profileData } = await req.json();
+    const { seller: sellerData = {}, profile: profileData = {} } = await req.json();
+    const allowedSellerFields = ['shop_url', 'shop_bio', 'shop_video_url', 'avatar_data', 'metadata'];
+    const allowedProfileFields = [
+      'full_name', 'phone', 'avatar_url', 'date_of_birth',
+      'address_line1', 'address_line2', 'city', 'postal_code',
+      'country', 'personal_id_number', 'language', 'currency',
+      'timezone', 'email_notifications', 'sms_notifications',
+      'push_notifications',
+    ];
+    const safeSellerData = Object.fromEntries(
+      allowedSellerFields
+        .filter((field) => field in sellerData)
+        .map((field) => [field, sellerData[field]])
+    );
+    const safeProfileData = Object.fromEntries(
+      allowedProfileFields
+        .filter((field) => field in profileData)
+        .map((field) => [field, profileData[field]])
+    );
 
     const [sellerUpdate, profileUpdate] = await Promise.all([
       supabaseAdmin
         .from('seller_profiles')
-        .update({ ...sellerData, updated_at: new Date().toISOString() })
+        .update({ ...safeSellerData, updated_at: new Date().toISOString() })
         .eq('id', params.id)
         .select()
         .single(),
       supabaseAdmin
         .from('profiles')
-        .update({ ...profileData, updated_at: new Date().toISOString() })
+        .update({ ...safeProfileData, updated_at: new Date().toISOString() })
         .eq('id', authUser.id)
         .select()
         .single(),

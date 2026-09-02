@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
 export async function PUT(
@@ -12,6 +13,9 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
+
     const campaignId = params.id;
     const { status } = await req.json();
 

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
@@ -50,6 +51,9 @@ const productSchema = z.object({
 export async function POST(req: NextRequest) {
   let merchantId = '';
   try {
+    const auth = await requireUser(req);
+    if ('error' in auth) return auth.error;
+
     const body = await req.json();
     const validatedData = productSchema.parse(body);
     merchantId = validatedData.merchantId;
@@ -57,7 +61,7 @@ export async function POST(req: NextRequest) {
     // Verify merchant exists and is verified
     const { data: merchant, error: merchantError } = await supabaseAdmin
       .from('merchants')
-      .select('id, verification_status')
+      .select('id, user_id, verification_status')
       .eq('id', validatedData.merchantId)
       .single();
 
@@ -66,6 +70,10 @@ export async function POST(req: NextRequest) {
         { error: 'Merchant not found' },
         { status: 404 }
       );
+    }
+
+    if (merchant.user_id !== auth.user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     if (merchant.verification_status !== 'verified') {

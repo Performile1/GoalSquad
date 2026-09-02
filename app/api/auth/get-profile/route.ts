@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // 4. Fetch the profile (service role; access already authorized above).
     const { data, error } = await supabaseAdmin
       .from('profiles')
-      .select('*')
+      .select('id, email, full_name, avatar_url, role, is_active, is_verified, created_at, updated_at')
       .eq('id', userId)
       .single();
 

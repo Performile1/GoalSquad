@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getUserRole } from '@/lib/api-auth';
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const orderId = params.id;
@@ -27,7 +28,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     // Kolla rättigheter (ägare eller admin)
-    if (order.user_id !== session.user.id && session.user.user_metadata?.role !== 'admin') {
+    const userRole = await getUserRole(session.user.id);
+    if (order.user_id !== session.user.id && !['admin', 'gs_admin'].includes(userRole || '')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

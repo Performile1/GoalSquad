@@ -49,9 +49,21 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const body = await req.json();
+    const allowedFields = [
+      'merchant_name', 'description', 'logo_url', 'banner_url',
+      'email', 'phone', 'address_line1', 'address_line2',
+      'city', 'postal_code', 'country', 'website_url',
+      'company_description', 'settings', 'metadata',
+    ];
+    const updateData = Object.fromEntries(
+      allowedFields
+        .filter((field) => field in body)
+        .map((field) => [field, body[field]])
+    );
+
     const { data: updated, error } = await supabaseAdmin
       .from('merchants')
-      .update({ ...body, updated_at: new Date().toISOString() })
+      .update({ ...updateData, updated_at: new Date().toISOString() })
       .eq('id', merchantId)
       .select()
       .single();
