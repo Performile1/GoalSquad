@@ -31,7 +31,15 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (profileErr || !profile) {
+    if (profileErr && profileErr.code !== 'PGRST116') {
+      logger.dbError('SELECT', 'profiles', profileErr, { userId: user.id });
+      return NextResponse.json(
+        { error: 'Profile lookup failed' },
+        { status: 500 }
+      );
+    }
+
+    if (!profile) {
       return NextResponse.json(
         { error: 'Profile not found' },
         { status: 404 }

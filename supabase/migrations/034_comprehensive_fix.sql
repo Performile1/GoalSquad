@@ -222,13 +222,13 @@ BEGIN
       FOR SELECT TO authenticated
       USING (
         EXISTS (SELECT 1 FROM public.ads WHERE ads.id = ad_payment_transactions.ad_id AND ads.advertiser_id = auth.uid())
-        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'gs_admin'))
       );
     CREATE POLICY "ad_payment_transactions_insert_own" ON public.ad_payment_transactions
       FOR INSERT TO authenticated
       WITH CHECK (
         EXISTS (SELECT 1 FROM public.ads WHERE ads.id = ad_payment_transactions.ad_id AND ads.advertiser_id = auth.uid())
-        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'gs_admin'))
       );
     CREATE POLICY "ad_payment_transactions_service_role" ON public.ad_payment_transactions
       FOR ALL TO service_role USING (true) WITH CHECK (true);
@@ -250,11 +250,11 @@ BEGIN
       FOR UPDATE TO authenticated
       USING (
         advertiser_id = auth.uid()
-        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'gs_admin'))
       )
       WITH CHECK (
         advertiser_id = auth.uid()
-        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+        OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'gs_admin'))
       );
   ELSE
     RAISE NOTICE 'ads table not found - skipping Section 7';
@@ -632,7 +632,10 @@ CREATE TABLE IF NOT EXISTS public.coordination_messages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS community_id UUID REFERENCES public.communities(id) ON DELETE CASCADE;
+ALTER TABLE public.coordination_messages
+  ADD COLUMN IF NOT EXISTS community_id UUID REFERENCES public.communities(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS sender_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS recipient_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL;
 ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS content TEXT;
 ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false;
 ALTER TABLE public.coordination_messages ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
@@ -660,6 +663,10 @@ CREATE TABLE IF NOT EXISTS public.merchant_community_messages (
   metadata JSONB DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+ALTER TABLE public.merchant_community_messages
+  ADD COLUMN IF NOT EXISTS sender_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS recipient_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL;
 
 CREATE INDEX IF NOT EXISTS idx_merchant_community_messages_merchant ON public.merchant_community_messages(merchant_id);
 CREATE INDEX IF NOT EXISTS idx_merchant_community_messages_community ON public.merchant_community_messages(community_id);
@@ -697,7 +704,7 @@ CREATE POLICY "broadcast_messages_service_role" ON public.broadcast_messages
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "broadcast_messages_admin_read" ON public.broadcast_messages
   FOR SELECT TO authenticated
-  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'gs_admin')));
 
 -- 8.16 broadcast_recipients
 CREATE TABLE IF NOT EXISTS public.broadcast_recipients (
@@ -709,6 +716,9 @@ CREATE TABLE IF NOT EXISTS public.broadcast_recipients (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(broadcast_id, recipient_id)
 );
+
+ALTER TABLE public.broadcast_recipients
+  ADD COLUMN IF NOT EXISTS recipient_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE;
 
 CREATE INDEX IF NOT EXISTS idx_broadcast_recipients_recipient ON public.broadcast_recipients(recipient_id);
 
@@ -735,6 +745,9 @@ CREATE TABLE IF NOT EXISTS public.customer_support_stats (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+ALTER TABLE public.customer_support_stats
+  ADD COLUMN IF NOT EXISTS agent_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL;
+
 ALTER TABLE public.customer_support_stats ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "customer_support_stats_service_role" ON public.customer_support_stats;
 DROP POLICY IF EXISTS "customer_support_stats_admin_read" ON public.customer_support_stats;
@@ -744,7 +757,7 @@ CREATE POLICY "customer_support_stats_admin_read" ON public.customer_support_sta
   FOR SELECT TO authenticated
   USING (
     agent_id = auth.uid()
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'gs_admin'))
   );
 
 -- ============================================================
@@ -813,21 +826,30 @@ CREATE POLICY "merchant_shipping_preferences_own" ON public.merchant_shipping_pr
 -- SECTION 12: FIX NOTIFICATIONS TABLE
 -- ============================================================
 
+-- Migration 027 may already have created this table with the legacy
+-- `type` and `recipient_type` columns. Do not redefine that table with
+-- CREATE TABLE IF NOT EXISTS; add only the columns missing from either shape.
 CREATE TABLE IF NOT EXISTS public.notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   recipient_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  sender_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-  notification_type VARCHAR(100) NOT NULL,
+  type VARCHAR(100),
+  recipient_type VARCHAR(50),
   title VARCHAR(255),
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT false,
   read_at TIMESTAMP WITH TIME ZONE,
-  entity_type VARCHAR(50),
-  entity_id UUID,
-  action_url TEXT,
-  metadata JSONB DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+ALTER TABLE public.notifications
+  ADD COLUMN IF NOT EXISTS sender_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS recipient_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS agent_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS notification_type VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS entity_type VARCHAR(50),
+  ADD COLUMN IF NOT EXISTS entity_id UUID,
+  ADD COLUMN IF NOT EXISTS action_url TEXT,
+  ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
 
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON public.notifications(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_unread ON public.notifications(recipient_id, is_read) WHERE is_read = false;
