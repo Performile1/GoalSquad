@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { User, Session } from '@supabase/supabase-js';
+import { apiFetch } from '@/lib/api-client';
 
 interface Profile {
   id: string;
@@ -165,7 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchProfile = async (userId: string) => {
     try {
       // Single unified call replaces the old two-step waterfall
-      const res = await fetch('/api/auth/me', { cache: 'no-store' });
+      const res = await apiFetch('/api/auth/me', { cache: 'no-store' });
       const data = await res.json();
 
       if (!res.ok) {

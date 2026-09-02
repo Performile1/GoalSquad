@@ -148,8 +148,23 @@ export async function requireAdmin() {
  *   if ('error' in auth) return auth.error;
  *   const { user, supabase } = auth;
  */
-export async function requireUser() {
+export async function requireUser(req?: NextRequest) {
   const cookieStore = cookies();
+  const authHeader = req?.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !user) {
+      return {
+        error: NextResponse.json(
+          { error: 'Unauthorized: Missing or invalid session' },
+          { status: 401 }
+        ),
+      };
+    }
+    return { user, supabase: createClient(cookieStore) };
+  }
+
   const supabase = createClient(cookieStore);
 
   const { data: { user }, error } = await supabase.auth.getUser();

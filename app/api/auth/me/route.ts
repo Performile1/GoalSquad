@@ -20,7 +20,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     // 1. Validate session
-    const auth = await requireUser();
+    const auth = await requireUser(request);
     if ('error' in auth) return auth.error;
     const { user } = auth;
 
