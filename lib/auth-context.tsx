@@ -169,26 +169,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await apiFetch('/api/auth/me', { cache: 'no-store' });
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to fetch profile');
+      if (res.ok) {
+        setProfile({
+          ...data.profile,
+        });
+        setEntities(data.entities || null);
+        return;
       }
 
-      setProfile({
-        ...data.profile,
-      });
-      setEntities(data.entities || null);
+      // Keep role resolution working if the server route is unavailable while
+      // the browser session can still read the user's own profile under RLS.
+      const { data: directProfile, error: directProfileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (directProfileError || !directProfile) {
+        throw new Error(data.error || directProfileError?.message || 'Failed to fetch profile');
+      }
+
+      setProfile(directProfile);
+      setEntities(null);
     } catch (error) {
       console.error('Error fetching profile:', error);
-      // Set minimal profile on error
-      setProfile({
-        id: userId,
-        email: user?.email || '',
-        full_name: null,
-        avatar_url: null,
-        role: 'user',
-        is_active: true,
-        is_verified: false,
-      });
+      setProfile(null);
       setEntities(null);
     } finally {
       setLoading(false);
