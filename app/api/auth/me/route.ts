@@ -83,6 +83,7 @@ export async function GET(request: NextRequest) {
         seller: seller.data?.id || null,
         warehouse: warehouse.data?.id || null,
         community: community.data?.id || null,
+        guardian: profile.role === 'guardian' ? user.id : null,
       },
     });
   } catch (error) {

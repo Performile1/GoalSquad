@@ -22,6 +22,7 @@ interface Entities {
   seller: string | null;
   warehouse: string | null;
   community: string | null;
+  guardian: string | null;
 }
 
 interface AuthContextType {
@@ -46,7 +47,9 @@ const getSupabaseUrl = () =>
   process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
 
 const getSupabaseAnonKey = () =>
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  'placeholder-anon-key';
 
 const hasSupabaseConfig = () =>
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||

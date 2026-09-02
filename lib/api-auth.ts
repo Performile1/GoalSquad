@@ -55,6 +55,7 @@ export type AppRole =
   | 'seller'
   | 'community'
   | 'warehouse'
+  | 'guardian'
   | 'user';
 
 export interface AuthProfile {

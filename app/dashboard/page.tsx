@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { apiFetch } from '@/lib/api-client';
 import {
   ShopIcon, OrdersIcon, CommunityIcon, MessageIcon, LeaderboardIcon,
   MerchantIcon, UserIcon, VerifiedIcon,
@@ -16,6 +17,7 @@ const ROLE_LABELS: Record<string, string> = {
   seller: 'Säljare',
   warehouse: 'Lagertjänst',
   community: 'Förening',
+  guardian: 'Vårdnadshavare',
   gs_admin: 'Administratör',
 };
 
@@ -28,7 +30,8 @@ export default function DashboardPage() {
     seller: { id: string } | null;
     warehouse: { id: string } | null;
     community: { id: string } | null;
-  }>({ merchant: null, seller: null, warehouse: null, community: null });
+    guardian: { id: string } | null;
+  }>({ merchant: null, seller: null, warehouse: null, community: null, guardian: null });
 
   useEffect(() => {
     const checkRoles = async () => {
@@ -44,8 +47,13 @@ export default function DashboardPage() {
           return;
         }
 
+        if (profile.role === 'guardian') {
+          router.replace(`/guardians/${user.id}/dashboard`);
+          return;
+        }
+
         // Check for multiple roles using API endpoint with service role
-        const entityResponse = await fetch(`/api/auth/check-entity-role?userId=${user.id}`);
+        const entityResponse = await apiFetch(`/api/auth/check-entity-role?userId=${user.id}`);
         const entityData = await entityResponse.json();
 
         // Store roles in state for role switcher
@@ -54,6 +62,7 @@ export default function DashboardPage() {
           seller: entityData.seller ? { id: entityData.seller } : null,
           warehouse: entityData.warehouse ? { id: entityData.warehouse } : null,
           community: entityData.community ? { id: entityData.community } : null,
+          guardian: entityData.guardian ? { id: entityData.guardian } : null,
         });
 
         // Priority order: warehouse > merchant > seller > community > consumer

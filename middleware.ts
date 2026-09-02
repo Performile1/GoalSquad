@@ -42,6 +42,7 @@ export async function middleware(req: NextRequest) {
     (pathname.startsWith('/merchants') && !isPublicMerchant) ||
     pathname.startsWith('/sellers') ||
     pathname.startsWith('/warehouses') ||
+    pathname.startsWith('/guardians') ||
     pathname.startsWith('/orders') ||
     pathname.startsWith('/cart') ||
     pathname.startsWith('/checkout') ||
@@ -52,7 +53,7 @@ export async function middleware(req: NextRequest) {
   // The login page (`/auth/login`) reads the `redirect` query param.
   if (!session && isProtected) {
     const url = req.nextUrl.clone()
-    url.pathname = '/auth/login'
+    url.pathname = '/login'
     url.search = ''
     url.searchParams.set('redirect', pathname)
     return NextResponse.redirect(url)
@@ -104,6 +105,7 @@ export const config = {
     '/merchants/:path*',
     '/sellers/:path*',
     '/warehouses/:path*',
+    '/guardians/:path*',
     '/orders/:path*',
     '/cart/:path*',
     '/checkout/:path*',
