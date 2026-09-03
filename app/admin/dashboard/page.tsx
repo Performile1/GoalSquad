@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch } from '@/lib/api-client';
-import { DashboardIcon, UserIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, XPIcon, LevelIcon, BadgeIcon, TrophyIcon, MessageIcon } from '@/app/components/BrandIcons';
+import { DashboardIcon, UserIcon, UsersIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, OrdersIcon, MerchantIcon, BuildingIcon, MessageIcon, TrophyIcon } from '@/app/components/BrandIcons';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface AdminStats {
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
     { name: 'Lager', value: 45 },
   ];
 
-  const COLORS = ['#1e3a5f', '#2d5a87', '#4a7ba7', '#6b9dc7', '#8bbce8'];
+  const COLORS = ['#003B3D', '#B68B2C', '#4A7BA7', '#67A890', '#D97745'];
 
   useEffect(() => {
     if (!loading) {
@@ -240,216 +240,81 @@ export default function AdminDashboard() {
     }
   };
 
+  const metricCards = [
+    { key: 'sales' as const, label: 'Försäljning', value: `${(stats?.totalSales || 0).toLocaleString('sv-SE')} kr`, icon: MoneyIcon, tone: 'bg-[#FFF8DF] text-[#8A6818]' },
+    { key: 'users' as const, label: 'Användare', value: (stats?.activeUsers || 0).toLocaleString('sv-SE'), icon: UsersIcon, tone: 'bg-[#E8F4F1] text-[#006568]' },
+    { key: 'warehouses' as const, label: 'Lagerpartners', value: (stats?.totalWarehouses || 0).toLocaleString('sv-SE'), icon: TruckIcon, tone: 'bg-[#EEF1FA] text-[#3B4E8A]' },
+    { key: 'orders' as const, label: 'Ordrar', value: (stats?.totalOrders || 0).toLocaleString('sv-SE'), icon: OrdersIcon, tone: 'bg-[#FFF0E9] text-[#A64C25]' },
+    { key: 'returns' as const, label: 'Returer', value: '0', icon: AlertIcon, tone: 'bg-[#F3EDF7] text-[#74448A]' },
+  ];
+
+  const quickLinks = [
+    { href: '/admin/users', icon: UsersIcon, title: 'Användare', value: stats?.activeUsers || 0 },
+    { href: '/admin/sellers', icon: UserIcon, title: 'Säljare', value: stats?.totalSellers || 0 },
+    { href: '/admin/merchants', icon: MerchantIcon, title: 'Företag', value: stats?.totalCompanies || 0 },
+    { href: '/admin/communities', icon: CommunityIcon, title: 'Föreningar & klubbar', value: stats?.totalCommunities || 0 },
+    { href: '/admin/warehouses', icon: BuildingIcon, title: 'Lagerpartners', value: stats?.totalWarehouses || 0 },
+    { href: '/admin/orders', icon: OrdersIcon, title: 'Ordrar', value: stats?.totalOrders || 0 },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Main Content Area */}
-      <div className="flex-1 p-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Översikt över hela plattformen</p>
-        </motion.div>
-
-        {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Försäljning', value: `${(stats?.totalSales || 0).toLocaleString()} kr`, icon: MoneyIcon, change: '+12%' },
-            { label: 'Användare', value: stats?.activeUsers || 0, icon: UserIcon, change: '+8%' },
-            { label: 'Lagerpartner', value: stats?.totalWarehouses || 0, icon: TruckIcon, change: '+5%' },
-            { label: 'Ordrar', value: stats?.totalOrders || 0, icon: DashboardIcon, change: '+15%' },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-700">{stat.label}</h3>
-                <stat.icon size={24} className="icon-brand" />
-              </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-              <div className="text-sm text-green-600 font-semibold">{stat.change}</div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border-2 border-gray-200">
-          <div className="flex flex-wrap gap-4 items-center">
-            <div>
-              <label className="text-sm font-semibold text-gray-700 mb-2 block">Metric</label>
-              <select
-                value={selectedMetric}
-                onChange={(e) => setSelectedMetric(e.target.value as any)}
-                className="px-4 py-2 border-2 border-gray-200 rounded-xl"
-              >
-                <option value="sales">Försäljning</option>
-                <option value="users">Användare</option>
-                <option value="warehouses">Lagerpartners</option>
-                <option value="orders">Ordrar</option>
-                <option value="returns">Returer</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-gray-700 mb-2 block">Tidsperiod</label>
-              <select
-                value={timeFilter}
-                onChange={(e) => setTimeFilter(e.target.value as any)}
-                className="px-4 py-2 border-2 border-gray-200 rounded-xl"
-              >
-                <option value="7d">Senaste 7 dagar</option>
-                <option value="30d">Senaste 30 dagar</option>
-                <option value="90d">Senaste 90 dagar</option>
-                <option value="1y">Senaste året</option>
-              </select>
-            </div>
+    <div className="min-h-screen bg-[#F4F6F5]">
+      <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+        <motion.header initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#B68B2C]"><DashboardIcon size={16} /> Plattformöversikt</div>
+            <h1 className="text-3xl font-black tracking-tight text-[#1A1A1A] sm:text-4xl">Admin dashboard</h1>
+            <p className="mt-1 text-sm text-slate-500">En samlad vy över GoalSquads försäljning, användare och drift.</p>
           </div>
-        </div>
+          <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-right shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Senast uppdaterad</p>
+            <p className="mt-1 text-sm font-bold text-[#003B3D]">{new Date().toLocaleDateString('sv-SE')}</p>
+          </div>
+        </motion.header>
 
-        {/* Main Chart */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border-2 border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{getChartTitle()}</h2>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={getChartData()}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="value" stroke="#1e3a5f" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <section className="mb-7 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5" aria-label="Nyckeltal">
+          {metricCards.map((stat, index) => (
+            <motion.button key={stat.label} type="button" onClick={() => setSelectedMetric(stat.key)} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className={`rounded-xl border bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${selectedMetric === stat.key ? 'border-[#003B3D] ring-2 ring-[#003B3D]/10' : 'border-slate-200'}`}>
+              <div className="flex items-start justify-between gap-3"><span className={`rounded-lg p-2.5 ${stat.tone}`}><stat.icon size={22} /></span><span className="text-xs font-bold text-emerald-600">+12%</span></div>
+              <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-400">{stat.label}</p>
+              <p className="mt-1 text-2xl font-black tracking-tight text-[#1A1A1A]">{stat.value}</p>
+            </motion.button>
+          ))}
+        </section>
 
-        {/* Secondary Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Entitetsfördelning</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={entityDistribution}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {entityDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
+        <section className="mb-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+              <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B68B2C]">Utveckling</p><h2 className="mt-1 text-xl font-black text-[#1A1A1A]">{getChartTitle()}</h2></div>
+              <div className="flex flex-wrap gap-2">
+                <select aria-label="Välj metric" value={selectedMetric} onChange={(e) => setSelectedMetric(e.target.value as typeof selectedMetric)} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 outline-none focus:border-[#003B3D]">
+                  <option value="sales">Försäljning</option><option value="users">Användare</option><option value="warehouses">Lagerpartners</option><option value="orders">Ordrar</option><option value="returns">Returer</option>
+                </select>
+                <select aria-label="Välj tidsperiod" value={timeFilter} onChange={(e) => setTimeFilter(e.target.value as typeof timeFilter)} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 outline-none focus:border-[#003B3D]">
+                  <option value="7d">Senaste 7 dagar</option><option value="30d">Senaste 30 dagar</option><option value="90d">Senaste 90 dagar</option><option value="1y">Senaste året</option>
+                </select>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={340}>
+              <LineChart data={getChartData()} margin={{ top: 8, right: 12, left: -18, bottom: 4 }}>
+                <CartesianGrid stroke="#E8ECEB" vertical={false} /><XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} /><YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} /><Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #DCE5E2', boxShadow: '0 8px 24px rgba(0,59,61,.12)' }} /><Line type="monotone" dataKey="value" stroke="#003B3D" strokeWidth={3} dot={{ r: 3, fill: '#FFD700', stroke: '#003B3D', strokeWidth: 2 }} activeDot={{ r: 6, fill: '#FFD700', stroke: '#003B3D', strokeWidth: 2 }} />
+              </LineChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Lagerpartners Status</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={warehouseData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#1e3a5f" />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="rounded-xl border border-slate-200 bg-[#003B3D] p-5 text-white shadow-sm sm:p-6">
+            <div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#FFD700]">Snabbstatistik</p><h2 className="mt-1 text-xl font-black">Plattformen</h2></div><TrophyIcon size={34} className="text-[#FFD700]" /></div>
+            <div className="space-y-4">{quickLinks.slice(0, 4).map((item) => <Link key={item.href} href={item.href} className="flex items-center justify-between border-b border-white/10 pb-3 transition hover:text-[#FFD700]"><span className="flex items-center gap-3 text-sm font-semibold"><item.icon size={20} className="text-[#FFD700]" />{item.title}</span><span className="text-lg font-black">{item.value}</span></Link>)}</div>
+            <Link href="/admin/analytics" className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FFD700]">Öppna full analys <span aria-hidden="true">→</span></Link>
           </div>
-        </div>
+        </section>
 
-        {/* Recent Activity */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 border-2 border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Senaste aktivitet</h2>
-          <div className="space-y-4">
-            {activities.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                Ingen nyligen aktivitet
-              </div>
-            ) : (
-              activities.slice(0, 5).map((activity, index) => {
-                const ActivityIcon = getActivityIcon(activity.type);
-                return (
-                  <motion.div
-                    key={activity.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl bg-white"
-                  >
-                    <div className="bg-primary-50 rounded-lg p-3">
-                      <ActivityIcon size={24} className="icon-brand" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{activity.entity}</p>
-                      <p className="text-sm text-gray-600">{activity.description}</p>
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      {new Date(activity.timestamp).toLocaleString('sv-SE')}
-                    </span>
-                  </motion.div>
-                );
-              })
-            )}
-          </div>
-        </div>
-      </div>
+        <section className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B68B2C]">Fördelning</p><h2 className="mt-1 text-lg font-black text-[#1A1A1A]">Entitetsfördelning</h2></div><CommunityIcon size={28} className="icon-brand" /></div><ResponsiveContainer width="100%" height={250}><PieChart><Pie data={entityDistribution} cx="50%" cy="50%" innerRadius={52} outerRadius={88} paddingAngle={3} dataKey="value">{entityDistribution.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}</Pie><Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #DCE5E2' }} /><Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} /></PieChart></ResponsiveContainer></div>
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"><div className="mb-3 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B68B2C]">Kapacitet</p><h2 className="mt-1 text-lg font-black text-[#1A1A1A]">Lagerpartners status</h2></div><TruckIcon size={28} className="icon-brand" /></div><ResponsiveContainer width="100%" height={250}><BarChart data={warehouseData} margin={{ left: -20, right: 8 }}><CartesianGrid stroke="#E8ECEB" vertical={false} /><XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 11 }} /><YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} /><Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #DCE5E2' }} /><Bar dataKey="value" radius={[5, 5, 0, 0]} fill="#003B3D" /></BarChart></ResponsiveContainer></div>
+        </section>
 
-      {/* Right Sidebar Menu */}
-      <div className="w-80 bg-white border-l-2 border-gray-200 p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Navigering</h2>
-        <div className="space-y-2">
-          {[
-            { href: '/admin/users', icon: UserIcon, title: 'Användare' },
-            { href: '/admin/sellers', icon: UserIcon, title: 'Säljare' },
-            { href: '/admin/merchants', icon: ShoppingBagIcon, title: 'Företag' },
-            { href: '/admin/communities', icon: CommunityIcon, title: 'Föreningar & Klubbar' },
-            { href: '/admin/warehouses', icon: TruckIcon, title: 'Lagerpartners' },
-            { href: '/admin/orders', icon: DashboardIcon, title: 'Ordrar' },
-            { href: '/admin/returns', icon: AlertIcon, title: 'Returer' },
-            { href: '/messages', icon: MessageIcon, title: 'Community Meddelanden' },
-            { href: '/admin/blog', icon: DashboardIcon, title: 'Blogg' },
-          ].map((item) => (
-            <Link key={item.href} href={item.href} className="block">
-              <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
-                <item.icon size={20} className="icon-brand" />
-                <span className="font-semibold text-gray-700">{item.title}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Quick Stats */}
-        <div className="mt-8 pt-8 border-t-2 border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Snabbstatistik</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Föreningar</span>
-              <span className="font-semibold text-gray-900">{stats?.totalCommunities || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Säljare</span>
-              <span className="font-semibold text-gray-900">{stats?.totalSellers || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Företag</span>
-              <span className="font-semibold text-gray-900">{stats?.totalCompanies || 0}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Väntande rapporter</span>
-              <span className="font-semibold text-red-600">{stats?.pendingReports || 0}</span>
-            </div>
-          </div>
-        </div>
+        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"><div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B68B2C]">Liveflöde</p><h2 className="mt-1 text-lg font-black text-[#1A1A1A]">Senaste aktivitet</h2></div><Link href="/admin/users" className="text-xs font-bold text-[#003B3D] hover:text-[#B68B2C]">Visa alla</Link></div><div className="divide-y divide-slate-100">{activities.length === 0 ? <div className="py-8 text-center text-sm text-slate-500">Ingen nyligen aktivitet</div> : activities.slice(0, 5).map((activity, index) => { const ActivityIcon = getActivityIcon(activity.type); return <motion.div key={activity.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.05 }} className="flex items-center gap-3 py-3"><div className="rounded-lg bg-[#E8F4F1] p-2.5 text-[#003B3D]"><ActivityIcon size={20} /></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-slate-800">{activity.entity}</p><p className="truncate text-xs text-slate-500">{activity.description}</p></div><time className="hidden text-xs font-medium text-slate-400 sm:block">{new Date(activity.timestamp).toLocaleString('sv-SE')}</time></motion.div>; })}</div></section>
       </div>
     </div>
   );
