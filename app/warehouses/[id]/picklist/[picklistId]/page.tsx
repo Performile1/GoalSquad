@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { apiFetch } from '@/lib/api-client';
 
 interface PickItem {
   sku: string;
@@ -28,7 +29,7 @@ export default function WarehousePickingTerminal() {
     async function load() {
       try {
         // 1. Fetch picking tasks for this warehouse + campaign (picklistId)
-        const res = await fetch(`/api/warehouses/${warehouseId}/picking-tasks?status=pending`);
+        const res = await apiFetch(`/api/warehouses/${warehouseId}/picking-tasks?status=pending`);
         const json = await res.json();
         const tasks = (json.tasks ?? []).filter((t: any) => t.campaign_id === picklistId);
 

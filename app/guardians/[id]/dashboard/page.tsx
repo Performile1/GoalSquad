@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import { UserIcon, SettingsIcon, MoneyIcon, DashboardIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface GuardianData {
   fullName: string;
@@ -48,7 +49,7 @@ export default function GuardianDashboard() {
 
   const fetchGuardianData = async () => {
     try {
-      const response = await fetch(`/api/guardians/${guardianId}/dashboard`);
+      const response = await apiFetch(`/api/guardians/${guardianId}/dashboard`);
       const result = await response.json();
       setData(result);
     } catch (error) {

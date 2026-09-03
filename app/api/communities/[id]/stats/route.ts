@@ -7,13 +7,35 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { Treasury } from '@/lib/treasury';
 import { logger } from '@/lib/logger';
+import { getAuthUser, getUserRole } from '@/lib/api-auth';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const authUser = await getAuthUser(req);
+    if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const communityId = params.id;
+
+    const requesterRole = await getUserRole(authUser.id);
+    const { data: membership } = await supabaseAdmin
+      .from('community_members')
+      .select('id')
+      .eq('community_id', communityId)
+      .eq('user_id', authUser.id)
+      .maybeSingle();
+    const { data: ownedCommunity } = await supabaseAdmin
+      .from('communities')
+      .select('id')
+      .eq('id', communityId)
+      .eq('owner_id', authUser.id)
+      .maybeSingle();
+
+    if (!membership && !ownedCommunity && !['admin', 'gs_admin'].includes(requesterRole || '')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     // Get community
     const { data: community, error: communityError } = await supabaseAdmin

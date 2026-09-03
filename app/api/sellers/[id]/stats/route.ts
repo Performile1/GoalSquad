@@ -11,15 +11,24 @@ import { GamificationEngine } from '@/lib/gamification-engine';
 import { Treasury } from '@/lib/treasury';
 import { logger } from '@/lib/logger';
 import { validateParams, idParamSchema } from '@/lib/validation';
+import { getAuthUser, getUserRole } from '@/lib/api-auth';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const authUser = await getAuthUser(req);
+    if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const paramCheck = validateParams(params, idParamSchema);
     if ('error' in paramCheck) return paramCheck.error;
     const sellerId = paramCheck.data.id;
+
+    const requesterRole = await getUserRole(authUser.id);
+    if (sellerId !== authUser.id && !['admin', 'gs_admin'].includes(requesterRole || '')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     // Get seller profile
     const { data: profile, error: profileError } = await supabaseAdmin

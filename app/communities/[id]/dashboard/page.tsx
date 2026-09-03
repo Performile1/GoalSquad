@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { MessageIcon, UserIcon, OrdersIcon, AlertIcon, CommunityIcon, MoneyIcon, TargetIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface CommunityStats {
   name: string;
@@ -52,7 +53,7 @@ export default function CommunityDashboard() {
 
   const fetchCommunityStats = async () => {
     try {
-      const response = await fetch(`/api/communities/${communityId}/stats`);
+      const response = await apiFetch(`/api/communities/${communityId}/stats`);
       const data = await response.json();
       setStats(data);
     } catch (error) {

@@ -892,6 +892,14 @@ DROP POLICY IF EXISTS "Service role full access on communities" ON public.commun
 CREATE POLICY "Service role full access on communities"
   ON public.communities FOR ALL TO service_role USING (true) WITH CHECK (true);
 
+-- Supabase projects can have default table grants revoked. Policies alone do
+-- not grant SQL privileges, so restore the grants required by the API clients.
+GRANT USAGE ON SCHEMA public TO authenticated, service_role;
+GRANT ALL ON TABLE public.profiles, public.notifications, public.products,
+  public.product_categories, public.community_products TO service_role;
+GRANT SELECT ON TABLE public.profiles, public.notifications, public.products,
+  public.product_categories, public.community_products TO authenticated;
+
 DO $$
 BEGIN
   RAISE NOTICE 'Migration 034: Comprehensive fix completed successfully';

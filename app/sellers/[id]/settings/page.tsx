@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 const SECTIONS = ['Profil & Shop', 'Adress', 'Bank & Utbetalning'];
 
@@ -38,7 +39,7 @@ export default function SellerSettingsPage() {
   useEffect(() => {
     const fetchSeller = async () => {
       try {
-        const res = await fetch(`/api/sellers/${id}/profile`);
+        const res = await apiFetch(`/api/sellers/${id}/profile`);
         const data = await res.json();
         if (data.seller) setForm(prev => ({ ...prev, ...data.seller }));
         if (data.profile) setProfileForm(prev => ({ ...prev, ...data.profile }));
@@ -64,7 +65,7 @@ export default function SellerSettingsPage() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`/api/sellers/${id}/profile`, {
+      const res = await apiFetch(`/api/sellers/${id}/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ seller: form, profile: profileForm }),

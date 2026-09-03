@@ -94,7 +94,7 @@ export default function WarehouseManagement() {
   const handleStockAdjust = async (productId: string, delta: number) => {
     try {
       setUpdatingId(productId);
-      const response = await fetch(`/api/warehouses/${warehouseId}/inventory`, {
+      const response = await apiFetch(`/api/warehouses/${warehouseId}/inventory`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId, stockDelta: delta }),

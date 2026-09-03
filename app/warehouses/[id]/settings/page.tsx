@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 const SECTIONS = ['Lagerinfo', 'Kontakt & Adress', 'Postnummer & Territorium', 'Skrivare & Terminal', 'API & Integrationer'];
 
@@ -44,7 +45,7 @@ export default function WarehouseSettingsPage() {
   useEffect(() => {
     const fetchWarehouse = async () => {
       try {
-        const res = await fetch(`/api/warehouses/${id}`);
+        const res = await apiFetch(`/api/warehouses/${id}`);
         const data = await res.json();
         if (data.warehouse) {
           const w = data.warehouse;
@@ -90,7 +91,7 @@ export default function WarehouseSettingsPage() {
         terminal_pin_required: Boolean(form.terminal_pin_required),
         scan_confirmation: Boolean(form.scan_confirmation),
       };
-      const res = await fetch(`/api/warehouses/${id}`, {
+      const res = await apiFetch(`/api/warehouses/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

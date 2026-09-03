@@ -119,6 +119,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { error: profileRoleError } = await supabaseAdmin
+      .from('profiles')
+      .update({ role: 'merchant', updated_at: new Date().toISOString() })
+      .eq('id', auth.user.id);
+
+    if (profileRoleError) {
+      logger.dbError('UPDATE', 'profiles', profileRoleError, { userId: auth.user.id });
+      await supabaseAdmin.from('merchants').delete().eq('id', merchant.id);
+      await supabaseAdmin.from('organizations').delete().eq('id', organization.id);
+      return NextResponse.json({ error: 'Failed to update account role' }, { status: 500 });
+    }
+
     // Create merchant wallet
     await supabaseAdmin
       .from('wallets')

@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DashboardIcon, ShoppingBagIcon, MoneyIcon, UserIcon, MessageIcon, CheckIcon, AlertIcon, SettingsIcon, BoxIcon, LogisticsIcon, TruckIcon, BarcodeIcon } from '@/app/components/BrandIcons';
 import MerchantShippingPreferences from '@/app/components/MerchantShippingPreferences';
+import { apiFetch } from '@/lib/api-client';
 
 interface MerchantStats {
   id: string;
@@ -33,7 +34,7 @@ export default function MerchantDashboard() {
 
   const fetchMerchantStats = async () => {
     try {
-      const response = await fetch(`/api/merchants/${merchantId}/stats`);
+      const response = await apiFetch(`/api/merchants/${merchantId}/stats`);
       const data = await response.json();
       setStats(data);
     } catch (error) {
