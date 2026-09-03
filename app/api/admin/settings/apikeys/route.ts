@@ -1,19 +1,14 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { randomBytes, createHash } from 'crypto';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function POST(request: Request) {
   const loggerContext = { route: '/api/admin/settings/apikeys', method: 'POST' };
 
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session || session.user.user_metadata?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const { name } = await request.json();
     if (!name) return NextResponse.json({ error: 'Missing name parameter' }, { status: 400 });
@@ -32,7 +27,7 @@ export async function POST(request: Request) {
         key_prefix: prefix,
         hashed_key: hashedKey,
         masked_key: maskedKey,
-        created_by: session.user.id
+        created_by: auth.user.id
       })
       .select()
       .single();
@@ -40,7 +35,7 @@ export async function POST(request: Request) {
     if (dbError) throw dbError;
 
     await supabaseAdmin.from('audit_logs').insert({
-      actor_id: session.user.id,
+      actor_id: auth.user.id,
       action: 'API_KEY_GENERATE',
       entity_type: 'api_keys',
       entity_id: apiKeyRecord.id,
@@ -63,12 +58,8 @@ export async function GET() {
   const loggerContext = { route: '/api/admin/settings/apikeys', method: 'GET' };
 
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session || session.user.user_metadata?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const { data: apiKeys, error } = await supabaseAdmin
       .from('api_keys')

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { requireAdmin } from '@/lib/api-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,19 +11,8 @@ export async function GET() {
   const loggerContext = { route: '/api/admin/settings', method: 'GET' };
 
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Kontrollera admin behörighet
-    const userRole = session.user.user_metadata?.role;
-    const userDetailedRole = session.user.user_metadata?.detailed_role;
-    if (!['admin', 'platform_admin'].includes(userRole || userDetailedRole || '')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const { data, error } = await supabaseAdmin
       .from('platform_settings')
@@ -43,19 +33,8 @@ export async function POST(request: Request) {
   const loggerContext = { route: '/api/admin/settings', method: 'POST' };
 
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Kontrollera admin behörighet
-    const userRole = session.user.user_metadata?.role;
-    const userDetailedRole = session.user.user_metadata?.detailed_role;
-    if (!['admin', 'platform_admin'].includes(userRole || userDetailedRole || '')) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const settings = await request.json();
 
@@ -76,7 +55,7 @@ export async function POST(request: Request) {
 
     // Skriv till audit log
     await supabaseAdmin.from('audit_logs').insert({
-      actor_id: session.user.id,
+      actor_id: auth.user.id,
       action: 'PLATFORM_SETTINGS_UPDATE',
       entity_type: 'platform_settings',
       entity_id: updatedSettings.id,
