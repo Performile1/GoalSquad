@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { apiFetch } from '@/lib/api-client';
-import { DashboardIcon, UserIcon, UsersIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, OrdersIcon, MerchantIcon, BuildingIcon, MessageIcon, TrophyIcon } from '@/app/components/BrandIcons';
+import { DashboardIcon, UserIcon, UsersIcon, ShoppingBagIcon, MoneyIcon, TruckIcon, CommunityIcon, AlertIcon, OrdersIcon, MessageIcon } from '@/app/components/BrandIcons';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface AdminStats {
@@ -248,15 +248,6 @@ export default function AdminDashboard() {
     { key: 'returns' as const, label: 'Returer', value: '0', icon: AlertIcon, tone: 'bg-[#F3EDF7] text-[#74448A]' },
   ];
 
-  const quickLinks = [
-    { href: '/admin/users', icon: UsersIcon, title: 'Användare', value: stats?.activeUsers || 0 },
-    { href: '/admin/sellers', icon: UserIcon, title: 'Säljare', value: stats?.totalSellers || 0 },
-    { href: '/admin/merchants', icon: MerchantIcon, title: 'Företag', value: stats?.totalCompanies || 0 },
-    { href: '/admin/communities', icon: CommunityIcon, title: 'Föreningar & klubbar', value: stats?.totalCommunities || 0 },
-    { href: '/admin/warehouses', icon: BuildingIcon, title: 'Lagerpartners', value: stats?.totalWarehouses || 0 },
-    { href: '/admin/orders', icon: OrdersIcon, title: 'Ordrar', value: stats?.totalOrders || 0 },
-  ];
-
   return (
     <div className="min-h-screen bg-[#F4F6F5]">
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
@@ -282,7 +273,7 @@ export default function AdminDashboard() {
           ))}
         </section>
 
-        <section className="mb-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="mb-6">
           <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
               <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B68B2C]">Utveckling</p><h2 className="mt-1 text-xl font-black text-[#1A1A1A]">{getChartTitle()}</h2></div>
@@ -300,12 +291,6 @@ export default function AdminDashboard() {
                 <CartesianGrid stroke="#E8ECEB" vertical={false} /><XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} /><YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} /><Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #DCE5E2', boxShadow: '0 8px 24px rgba(0,59,61,.12)' }} /><Line type="monotone" dataKey="value" stroke="#003B3D" strokeWidth={3} dot={{ r: 3, fill: '#FFD700', stroke: '#003B3D', strokeWidth: 2 }} activeDot={{ r: 6, fill: '#FFD700', stroke: '#003B3D', strokeWidth: 2 }} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-[#003B3D] p-5 text-white shadow-sm sm:p-6">
-            <div className="mb-5 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#FFD700]">Snabbstatistik</p><h2 className="mt-1 text-xl font-black">Plattformen</h2></div><TrophyIcon size={34} className="text-[#FFD700]" /></div>
-            <div className="space-y-4">{quickLinks.slice(0, 4).map((item) => <Link key={item.href} href={item.href} className="flex items-center justify-between border-b border-white/10 pb-3 transition hover:text-[#FFD700]"><span className="flex items-center gap-3 text-sm font-semibold"><item.icon size={20} className="text-[#FFD700]" />{item.title}</span><span className="text-lg font-black">{item.value}</span></Link>)}</div>
-            <Link href="/admin/analytics" className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FFD700]">Öppna full analys <span aria-hidden="true">→</span></Link>
           </div>
         </section>
 
