@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { apiFetch } from '@/lib/api-client';
 import { SupportIcon, BadgeIcon, ImpactIcon, TrophyIcon, CheerIcon } from '@/app/components/BrandIcons';
 
 interface CustomerGamification {
@@ -34,7 +35,7 @@ export default function CustomerGamificationPage() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch('/api/customer/support-stats');
+      const res = await apiFetch('/api/customer/support-stats');
       if (res.ok) {
         const data = await res.json();
         setGamification(data);

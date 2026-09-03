@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
 const P = '#003B3D';  // Dark petroleum — dark context
 const GOLD = '#FFD700';
@@ -54,6 +55,10 @@ function SwishIcon() {
 }
 
 export default function Footer() {
+  const { user, loading } = useAuth();
+
+  if (loading || user) return null;
+
   const paymentProviders = [
     { label: 'STRIPE' },
     { label: 'KLARNA' },

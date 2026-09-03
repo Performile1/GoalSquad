@@ -21,7 +21,17 @@ export async function GET(request: NextRequest) {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      throw error;
+      logger.apiError('GET', '/api/customer/support-stats', error, { userId: user.id });
+      return NextResponse.json({
+        total_spent: 0,
+        total_orders: 0,
+        supported_sellers: {},
+        supported_communities: {},
+        xp_given_to_sellers: 0,
+        collector_badges: [],
+        cheer_count: 0,
+        referral_count: 0,
+      });
     }
 
     if (!stats) {
