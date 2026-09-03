@@ -40,7 +40,13 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match(request))
+        .catch(async () => {
+          const cached = await caches.match(request);
+          return cached || new Response(JSON.stringify({ error: 'Offline' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        })
     );
     return;
   }
@@ -55,7 +61,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(STATIC_CACHE).then((cache) => cache.put(request, clone));
         }
         return res;
-      });
+      }).catch(() => new Response('Offline', { status: 503, statusText: 'Offline' }));
     })
   );
 });

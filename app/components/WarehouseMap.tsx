@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface Warehouse {
@@ -16,6 +16,17 @@ interface Warehouse {
   isActive: boolean;
   pendingOrders?: number;
   capacity?: number;
+  utilization?: number;
+  errorRate?: number;
+}
+
+interface DemandArea {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  order_count: number;
+  radius_km: number;
 }
 
 interface WarehouseMapProps {
@@ -30,8 +41,10 @@ export default function WarehouseMap({
   showCoverage = true 
 }: WarehouseMapProps) {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+  const [demandAreas, setDemandAreas] = useState<DemandArea[]>([]);
   const [loading, setLoading] = useState(true);
   const [hoveredWarehouse, setHoveredWarehouse] = useState<string | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchWarehouses();
@@ -42,6 +55,7 @@ export default function WarehouseMap({
       const response = await fetch('/api/warehouses');
       const data = await response.json();
       setWarehouses(data.warehouses || []);
+      setDemandAreas(data.demandAreas || []);
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
     } finally {
@@ -49,20 +63,45 @@ export default function WarehouseMap({
     }
   };
 
-  // Sweden bounds for map
-  const swedenBounds = {
-    minLat: 55.0,
-    maxLat: 69.0,
-    minLng: 10.0,
-    maxLng: 24.0,
-  };
+  useEffect(() => {
+    if (loading || !mapRef.current || !process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) return;
 
-  // Convert lat/lng to SVG coordinates
-  const latLngToXY = (lat: number, lng: number) => {
-    const x = ((lng - swedenBounds.minLng) / (swedenBounds.maxLng - swedenBounds.minLng)) * 800;
-    const y = ((swedenBounds.maxLat - lat) / (swedenBounds.maxLat - swedenBounds.minLat)) * 1000;
-    return { x, y };
-  };
+    const renderMap = () => {
+      const googleMaps = (window as any).google?.maps;
+      if (!googleMaps || !mapRef.current) return;
+      const map = new googleMaps.Map(mapRef.current, {
+        center: { lat: 62.2, lng: 15.2 }, zoom: 5, streetViewControl: false,
+        mapTypeControl: false, fullscreenControl: false,
+        styles: [{ elementType: 'geometry', stylers: [{ color: '#eef2f1' }] }, { elementType: 'labels.text.fill', stylers: [{ color: '#526260' }] }, { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#c9dedb' }] }],
+      });
+      const bounds = new googleMaps.LatLngBounds();
+      demandAreas.forEach((area) => {
+        if (!area.latitude || !area.longitude) return;
+        const position = { lat: area.latitude, lng: area.longitude };
+        bounds.extend(position);
+        new googleMaps.Circle({ map, center: position, radius: Number(area.radius_km || 10) * 1000, fillColor: '#C2410C', fillOpacity: 0.14, strokeColor: '#C2410C', strokeOpacity: 0.45, strokeWeight: 1 });
+      });
+      warehouses.forEach((warehouse) => {
+        if (!warehouse.latitude || !warehouse.longitude) return;
+        const position = { lat: warehouse.latitude, lng: warehouse.longitude };
+        bounds.extend(position);
+        const isFull = Number(warehouse.utilization || 0) >= 90;
+        const hasErrors = Number(warehouse.errorRate || 0) >= 5;
+        const color = hasErrors ? '#C2410C' : isFull ? '#B68B2C' : warehouse.isActive ? '#003B3D' : '#94A3B8';
+        const marker = new googleMaps.Marker({ map, position, title: warehouse.name, icon: { path: googleMaps.SymbolPath.CIRCLE, scale: 9, fillColor: color, fillOpacity: 1, strokeColor: '#ffffff', strokeWeight: 2 } });
+        marker.addListener('click', () => onWarehouseSelect?.(warehouse.id));
+      });
+      if (warehouses.length > 1) map.fitBounds(bounds, 48);
+    };
+
+    if ((window as any).google?.maps) { renderMap(); return; }
+    const existingScript = document.querySelector('script[data-google-maps]');
+    if (existingScript) { existingScript.addEventListener('load', renderMap); return () => existingScript.removeEventListener('load', renderMap); }
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+    script.async = true; script.defer = true; script.dataset.googleMaps = 'true'; script.addEventListener('load', renderMap); document.head.appendChild(script);
+    return () => script.removeEventListener('load', renderMap);
+  }, [loading, warehouses, demandAreas, onWarehouseSelect]);
 
   if (loading) {
     return (
@@ -77,11 +116,11 @@ export default function WarehouseMap({
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">
           Konsolideringslager i Sverige
         </h2>
-        <div className="flex gap-2 text-sm">
+          <div className="flex flex-wrap gap-3 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-primary-900 rounded-full"></div>
             <span>Aktivt</span>
@@ -90,94 +129,17 @@ export default function WarehouseMap({
             <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
             <span>Inaktivt</span>
           </div>
+          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#B68B2C]"></div><span>Fullbelagt</span></div>
+          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#C2410C]"></div><span>Många fel</span></div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map */}
         <div className="lg:col-span-2">
-          <div className="relative bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl overflow-hidden border-2 border-gray-200">
-            <svg viewBox="0 0 800 1000" className="w-full h-[600px]">
-              {/* Sweden outline (simplified) */}
-              <path
-                d="M 400 50 L 450 100 L 480 200 L 500 350 L 490 500 L 470 650 L 450 750 L 420 850 L 400 950 L 380 850 L 350 750 L 330 650 L 310 500 L 320 350 L 340 200 L 370 100 Z"
-                fill="#e6f0f0"
-                stroke="#003B3D"
-                strokeWidth="2"
-              />
-
-              {/* Coverage circles */}
-              {showCoverage && warehouses.map((warehouse) => {
-                const { x, y } = latLngToXY(warehouse.latitude, warehouse.longitude);
-                const radius = (warehouse.coverageRadiusKm / 100) * 150; // Scale for visualization
-                
-                return (
-                  <circle
-                    key={`coverage-${warehouse.id}`}
-                    cx={x}
-                    cy={y}
-                    r={radius}
-                    fill={warehouse.id === selectedWarehouse ? 'rgba(59, 130, 246, 0.2)' : 'rgba(156, 163, 175, 0.1)'}
-                    stroke={warehouse.id === selectedWarehouse ? '#3b82f6' : '#9ca3af'}
-                    strokeWidth="1"
-                    strokeDasharray="5,5"
-                  />
-                );
-              })}
-
-              {/* Warehouse markers */}
-              {warehouses.map((warehouse, index) => {
-                const { x, y } = latLngToXY(warehouse.latitude, warehouse.longitude);
-                const isSelected = warehouse.id === selectedWarehouse;
-                const isHovered = warehouse.id === hoveredWarehouse;
-                
-                return (
-                  <g
-                    key={warehouse.id}
-                    onMouseEnter={() => setHoveredWarehouse(warehouse.id)}
-                    onMouseLeave={() => setHoveredWarehouse(null)}
-                    onClick={() => onWarehouseSelect?.(warehouse.id)}
-                    className="cursor-pointer"
-                  >
-                    {/* Marker */}
-                    <motion.circle
-                      cx={x}
-                      cy={y}
-                      r={isSelected || isHovered ? 12 : 8}
-                      fill={warehouse.isActive ? '#3b82f6' : '#9ca3af'}
-                      stroke="white"
-                      strokeWidth="2"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                    />
-                    
-                    {/* Label */}
-                    {(isSelected || isHovered) && (
-                      <text
-                        x={x}
-                        y={y - 20}
-                        textAnchor="middle"
-                        className="text-xs font-bold fill-gray-900"
-                      >
-                        {warehouse.city}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
-            </svg>
-
-            {/* Legend */}
-            <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 text-xs">
-              <div className="font-bold mb-2">Täckningsområden</div>
-              {warehouses.map((w) => (
-                <div key={w.id} className="flex items-center gap-2 mb-1">
-                  <div className={`w-2 h-2 rounded-full ${w.isActive ? 'bg-primary-900' : 'bg-gray-300'}`}></div>
-                  <span>{w.city}: {w.postalCodeRanges.join(', ')}</span>
-                </div>
-              ))}
-            </div>
+          <div className="relative overflow-hidden rounded-xl border-2 border-slate-200 bg-slate-100">
+            {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? <div ref={mapRef} className="h-[600px] w-full" /> : <div className="flex h-[600px] items-center justify-center p-8 text-center text-sm text-slate-600">Google Maps kräver `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` i Vercel. Partnerlistan nedan är tillgänglig utan kartnyckel.</div>}
+            <div className="absolute bottom-4 left-4 rounded-lg bg-white/95 p-3 text-xs shadow-lg"><div className="mb-2 font-bold">Partnerstatus</div><div className="space-y-1"><div><span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#003B3D]" />Normal kapacitet</div><div><span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#B68B2C]" />Fullbelagt</div><div><span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#C2410C]" />Många fel</div><div><span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#C2410C]/40" />Hög order-efterfrågan</div></div></div>
           </div>
         </div>
 
