@@ -34,10 +34,9 @@ export async function GET(req: NextRequest) {
         order_number,
         total_amount,
         status,
-        customer_name,
+        shipping_name,
         customer_email,
-        seller_id,
-        sellers!left(full_name),
+        customer_id,
         community_id,
         communities!left(name),
         merchant_id,
@@ -47,7 +46,7 @@ export async function GET(req: NextRequest) {
       `, { count: 'exact' });
 
     if (search) {
-      query = query.or(`order_number.ilike.%${search}%,customer_name.ilike.%${search}%,customer_email.ilike.%${search}%`);
+      query = query.or(`order_number.ilike.%${search}%,shipping_name.ilike.%${search}%,customer_email.ilike.%${search}%`);
     }
 
     if (status) {
@@ -65,10 +64,10 @@ export async function GET(req: NextRequest) {
       order_number: o.order_number,
       total_amount: o.total_amount || 0,
       status: o.status,
-      customer_name: o.customer_name,
+      customer_name: o.shipping_name,
       customer_email: o.customer_email,
-      seller_id: o.seller_id,
-      seller_name: o.sellers?.full_name || null,
+      seller_id: o.customer_id,
+      seller_name: null,
       community_id: o.community_id,
       community_name: o.communities?.name || null,
       merchant_id: o.merchant_id,

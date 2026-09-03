@@ -1,10 +1,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js';
 import { User, Session } from '@supabase/supabase-js';
 import { apiFetch } from '@/lib/api-client';
+import { supabase } from '@/lib/supabase';
 
 interface Profile {
   id: string;
@@ -68,11 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const [showWarning, setShowWarning] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
 
   // Load user's timeout preference from profile metadata
   useEffect(() => {
@@ -296,11 +290,6 @@ export function useCommunityMember(communityId: string) {
   const { user } = useAuth();
   const [member, setMember] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
   useEffect(() => {
     if (!user || !communityId) {
       setLoading(false);
@@ -350,11 +339,6 @@ export function useUserCommunities() {
   const { user } = useAuth();
   const [communities, setCommunities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
   useEffect(() => {
     if (!user) {
       setLoading(false);

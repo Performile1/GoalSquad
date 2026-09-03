@@ -900,6 +900,12 @@ GRANT ALL ON TABLE public.profiles, public.notifications, public.products,
 GRANT SELECT ON TABLE public.profiles, public.notifications, public.products,
   public.product_categories, public.community_products TO authenticated;
 
+-- Admin/API reads also aggregate orders and their related entities.
+GRANT ALL ON TABLE public.orders, public.order_items, public.communities,
+  public.merchants, public.seller_profiles, public.warehouse_partners TO service_role;
+GRANT SELECT ON TABLE public.orders, public.order_items, public.communities,
+  public.merchants, public.seller_profiles, public.warehouse_partners TO authenticated;
+
 DO $$
 BEGIN
   RAISE NOTICE 'Migration 034: Comprehensive fix completed successfully';

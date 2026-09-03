@@ -1,7 +1,7 @@
 // GoalSquad Service Worker for PWA Offline Support
 
-const CACHE_NAME = 'goalsquad-v2';
-const STATIC_CACHE = 'goalsquad-static-v2';
+const CACHE_NAME = 'goalsquad-v3';
+const STATIC_CACHE = 'goalsquad-static-v3';
 const urlsToCache = [
   '/',
   '/marketplace',
