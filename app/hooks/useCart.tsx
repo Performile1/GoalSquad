@@ -27,6 +27,7 @@ function readCart(): CartItem[] {
 
 function writeCart(items: CartItem[]) {
   localStorage.setItem(CART_KEY, JSON.stringify(items));
+  window.dispatchEvent(new CustomEvent('goalsquad-cart-updated', { detail: items }));
 }
 
 export function useCart() {
@@ -36,6 +37,24 @@ export function useCart() {
   useEffect(() => {
     setItems(readCart());
     setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    const syncCart = (event: Event) => {
+      const nextItems = event instanceof StorageEvent
+        ? readCart()
+        : ((event as CustomEvent<CartItem[]>).detail || readCart());
+      setItems((currentItems) =>
+        JSON.stringify(currentItems) === JSON.stringify(nextItems) ? currentItems : nextItems
+      );
+    };
+
+    window.addEventListener('storage', syncCart);
+    window.addEventListener('goalsquad-cart-updated', syncCart);
+    return () => {
+      window.removeEventListener('storage', syncCart);
+      window.removeEventListener('goalsquad-cart-updated', syncCart);
+    };
   }, []);
 
   useEffect(() => {

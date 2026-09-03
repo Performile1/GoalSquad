@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useCart } from '@/app/hooks/useCart';
 import { ShopIcon, CommunityIcon, LeaderboardIcon, SearchIcon, ChevronDownIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
 
 export default function Navbar() {
@@ -11,6 +12,7 @@ export default function Navbar() {
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { user, profile, entities, signOut } = useAuth();
+  const { count: cartCount } = useCart();
 
   // `profiles.role` is the single source of truth. Consumers (and logged-out
   // visitors) see the consumer CTAs; staff roles get a panel link instead.
@@ -118,11 +120,12 @@ export default function Navbar() {
           {/* Right side */}
           <div className="hidden md:flex items-center gap-2.5">
             {/* Cart */}
-            <Link href="/cart" title="Varukorg"
-              className="p-2 rounded-lg text-gray-500 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.07)] transition-all">
+            <Link href="/cart" title={`Varukorg${cartCount ? `, ${cartCount} artiklar` : ''}`}
+              className="relative p-2 rounded-lg text-gray-500 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.07)] transition-all">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
+              {cartCount > 0 && <span className="absolute -right-1 -top-1 flex min-w-[1.25rem] h-5 items-center justify-center rounded-full bg-[#FFD700] px-1 text-[11px] font-black leading-none text-[#1A1A1A] ring-2 ring-[#F8F9FA]">{cartCount}</span>}
             </Link>
 
             {/* Join CTA — only for consumers / logged-out visitors */}
@@ -210,11 +213,14 @@ export default function Navbar() {
             ))}
             <div className="pt-3 border-t border-[#EAECEE] space-y-2">
               <Link href="/cart" onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.06)] transition-all">
+                className="flex items-center justify-between gap-2 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:text-[#003B3D] hover:bg-[rgba(0,59,61,0.07)] transition-all">
+                <span className="flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 Varukorg
+                </span>
+                {cartCount > 0 && <span className="flex min-w-[1.25rem] h-5 items-center justify-center rounded-full bg-[#FFD700] px-1 text-[11px] font-black leading-none text-[#1A1A1A]">{cartCount}</span>}
               </Link>
               {isConsumer && (
                 <Link href="/merchants/onboard" onClick={() => setMobileOpen(false)} className="btn-primary w-full text-center block py-3">
