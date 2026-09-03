@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api-client';
 
 interface PlatformSettings {
   id: string;
@@ -13,6 +14,12 @@ interface PlatformSettings {
   registration_enabled: boolean;
   metadata: any;
 }
+
+const DEFAULT_SETTINGS: PlatformSettings = {
+  id: 'global', platform_fee_percentage: 0, min_order_value: 0, max_order_value: 0,
+  currency: 'SEK', default_language: 'sv', maintenance_mode: false, registration_enabled: true,
+  metadata: { seller_margin_percentage: 10, warehouse_handling_fee: 0, warehouse_payout_days: 7, stripe_mode: 'live', stripe_payment_enabled: true, gamification_enabled: true, xp_per_order: 100, leaderboard_enabled: true },
+};
 
 interface ApiKey {
   id: string;
@@ -40,11 +47,12 @@ export default function AdminSettingsPage() {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('/api/admin/settings/global');
+      const response = await apiFetch('/api/admin/settings/global');
       const data = await response.json();
       
       if (!response.ok) throw new Error(data.error || 'Kunde inte hämta inställningar');
-      setSettings(data.settings);
+      const raw = data.settings || {};
+      setSettings({ ...DEFAULT_SETTINGS, ...raw, metadata: { ...DEFAULT_SETTINGS.metadata, ...(raw.metadata || {}) } });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message });
     } finally {
@@ -54,7 +62,7 @@ export default function AdminSettingsPage() {
 
   const fetchApiKeys = async () => {
     try {
-      const response = await fetch('/api/admin/settings/apikeys');
+      const response = await apiFetch('/api/admin/settings/apikeys');
       const data = await response.json();
       if (data.success) {
         setApiKeys(data.keys || []);
@@ -69,7 +77,7 @@ export default function AdminSettingsPage() {
     
     setSaving(true);
     try {
-      const response = await fetch('/api/admin/settings/global', {
+      const response = await apiFetch('/api/admin/settings/global', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ settings }),
@@ -92,7 +100,7 @@ export default function AdminSettingsPage() {
     if (!newKeyName) return;
 
     try {
-      const res = await fetch('/api/admin/settings/apikeys', {
+      const res = await apiFetch('/api/admin/settings/apikeys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newKeyName })
@@ -225,6 +233,50 @@ export default function AdminSettingsPage() {
                     <option value="USD">USD - US Dollar</option>
                   </select>
                 </div>
+              </div>
+            </div>
+
+            {/* Payouts & warehouse payments */}
+            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-slate-900 mb-1">Utbetalningar och lager</h2>
+              <p className="text-sm text-slate-500 mb-4">Styr marginaler och när ersättning betalas ut till säljare och lagerpartners.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Säljarmarginal (%)</label>
+                  <input type="number" step="0.1" min="0" max="100" value={settings.metadata.seller_margin_percentage} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, seller_margin_percentage: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Lagerhantering (SEK)</label>
+                  <input type="number" step="0.01" min="0" value={settings.metadata.warehouse_handling_fee} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, warehouse_handling_fee: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Utbetalning efter (dagar)</label>
+                  <input type="number" min="0" value={settings.metadata.warehouse_payout_days} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, warehouse_payout_days: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Payments */}
+            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-slate-900 mb-1">Betalningsinställningar</h2>
+              <p className="text-sm text-slate-500 mb-4">Stripe används för betalningar och utbetalningar. Hemliga nycklar hanteras i miljövariabler.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Stripe-läge</label>
+                  <select value={settings.metadata.stripe_mode} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, stripe_mode: e.target.value } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]"><option value="test">Test</option><option value="live">Live</option></select>
+                </div>
+                <label className="flex items-center justify-between rounded-lg bg-slate-50 p-4 text-sm font-semibold text-slate-700">Stripe-betalningar aktiverade<input type="checkbox" checked={settings.metadata.stripe_payment_enabled} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, stripe_payment_enabled: e.target.checked } })} className="h-4 w-4 accent-[#003B3D]" /></label>
+              </div>
+            </div>
+
+            {/* Gamification */}
+            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-slate-900 mb-1">Gamification</h2>
+              <p className="text-sm text-slate-500 mb-4">Bestäm om XP och topplistor ska vara aktiva på plattformen.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div><label className="block text-sm font-semibold text-slate-700 mb-2">XP per order</label><input type="number" min="0" value={settings.metadata.xp_per_order} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, xp_per_order: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" /></div>
+                <label className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 text-sm font-semibold text-slate-700"><input type="checkbox" checked={settings.metadata.gamification_enabled} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, gamification_enabled: e.target.checked } })} className="h-4 w-4 accent-[#003B3D]" />Gamification aktiv</label>
+                <label className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 text-sm font-semibold text-slate-700"><input type="checkbox" checked={settings.metadata.leaderboard_enabled} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, leaderboard_enabled: e.target.checked } })} className="h-4 w-4 accent-[#003B3D]" />Topplistor aktiv</label>
               </div>
             </div>
 

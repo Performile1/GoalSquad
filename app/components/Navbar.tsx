@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ShopIcon, CommunityIcon, LeaderboardIcon, SearchIcon, ChevronDownIcon } from '@/app/components/BrandIcons';
+import { ShopIcon, CommunityIcon, LeaderboardIcon, SearchIcon, ChevronDownIcon, ShoppingBagIcon } from '@/app/components/BrandIcons';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,6 +26,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/products', label: 'Shop', icon: <ShopIcon size={16} />, hasDropdown: true },
+    { href: '/marketplace', label: 'Marketplace', icon: <ShoppingBagIcon size={16} /> },
     { href: '/communities', label: 'Communities', icon: <CommunityIcon size={16} /> },
     { href: '/leaderboard', label: 'Leaderboard', icon: <LeaderboardIcon size={16} /> },
     { href: '/search', label: 'Sök', icon: <SearchIcon size={16} /> },
