@@ -15,7 +15,10 @@ WITH expected_tables(name) AS (
     ('orders', 'stripe_payment_intent_id'), ('orders', 'payment_status'),
     ('profiles', 'role'), ('notifications', 'recipient_id'),
     ('warehouse_partners', 'user_id'), ('warehouse_staff', 'warehouse_id'),
-    ('products', 'certifications'), ('products', 'images')
+    ('products', 'certifications'), ('products', 'images'),
+    ('order_items', 'origin_warehouse_partner_id'),
+    ('order_items', 'destination_warehouse_id'),
+    ('order_items', 'fulfillment_route_status')
 )
 SELECT 'table' AS object_type, e.name AS object_name,
        CASE WHEN t.table_name IS NULL THEN 'MISSING' ELSE 'OK' END AS status,

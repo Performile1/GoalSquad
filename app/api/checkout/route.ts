@@ -83,6 +83,37 @@ export async function POST(req: NextRequest) {
 
     const productMap = new Map(products.map((p) => [p.id, p]));
 
+    // Resolve routing server-side. Client-supplied warehouse ids are only a
+    // preference; the product assignment and destination postal code win.
+    let destinationWarehouseId: string | null = null;
+    if (warehouseId) {
+      const { data: selectedDestination } = await supabaseAdmin
+        .from('consolidation_warehouses')
+        .select('id')
+        .eq('id', warehouseId)
+        .maybeSingle();
+      destinationWarehouseId = selectedDestination?.id || null;
+    }
+    if (!destinationWarehouseId) {
+      const { data: nearestWarehouse } = await supabaseAdmin.rpc('find_nearest_warehouse', {
+        p_postal_code: shippingAddress.postalCode,
+        p_country: shippingAddress.country,
+      });
+      destinationWarehouseId = nearestWarehouse || null;
+    }
+
+    const routeByProduct = new Map<string, { originWarehouseId: string | null; destinationWarehouseId: string | null }>();
+    await Promise.all(items.map(async (item) => {
+      const { data: originWarehouse } = await supabaseAdmin.rpc('get_product_warehouse_for_postal_code', {
+        p_product_id: item.productId,
+        p_postal_code: shippingAddress.postalCode,
+      });
+      routeByProduct.set(item.productId, {
+        originWarehouseId: originWarehouse || null,
+        destinationWarehouseId,
+      });
+    }));
+
     // --- Fetch community products if any ---
     let communityProductMap = new Map();
     if (communityProductIds.length > 0) {
@@ -184,13 +215,14 @@ export async function POST(req: NextRequest) {
         productId: item.productId,
         quantity: item.quantity,
         merchantId: productMap.get(item.productId)?.merchant_id,
-        warehouseId,
+        warehouseId: routeByProduct.get(item.productId)?.originWarehouseId || warehouseId,
       })),
       orderTotal,
       deliveryMethod as DeliveryMethod,
       warehouseId,
     );
     const grandTotal = orderTotal + shippingQuote.totalCost;
+    const primaryOriginWarehouseId = routeByProduct.get(items[0].productId)?.originWarehouseId || null;
     if (shippingQuote.totalCost > 0) {
       stripeLineItems.push({
         price_data: {
@@ -215,7 +247,7 @@ export async function POST(req: NextRequest) {
         total_amount: grandTotal,
         currency: 'SEK',
         shipping_address: shippingAddress,
-        warehouse_id: warehouseId ?? null,
+        warehouse_id: primaryOriginWarehouseId,
         community_id: orderCommunityId,
         seller_id: sellerId ?? orderSellerId,
         metadata: { shipping_quote: shippingQuote, subtotal: orderTotal },
@@ -229,9 +261,12 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Insert order items ---
-    const itemsWithOrderId = orderItems.map((item) => ({
+    const itemsWithOrderId = orderItems.map((item, index) => ({
       ...item,
       order_id: order.id,
+      origin_warehouse_partner_id: routeByProduct.get(items[index].productId)?.originWarehouseId || null,
+      destination_warehouse_id: routeByProduct.get(items[index].productId)?.destinationWarehouseId || null,
+      fulfillment_route_status: 'planned',
     }));
 
     await supabaseAdmin.from('order_items').insert(itemsWithOrderId);
