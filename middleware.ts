@@ -24,8 +24,9 @@ export async function middleware(req: NextRequest) {
   )
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
+  const session = user ? { user } : null
 
   const { pathname } = req.nextUrl
 
@@ -66,11 +67,15 @@ export async function middleware(req: NextRequest) {
       pathname.startsWith('/admin') || pathname.startsWith('/warehouses')
 
     if (needsRoleCheck) {
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
-        .eq('id', session.user.id)
+        .eq('id', user!.id)
         .single()
+
+      // Do not redirect on a transient profile/database failure. The page/API
+      // can show the actual error; redirecting here creates an admin loop.
+      if (profileError) return res
 
       const role = profile?.role
       const isAdmin = role === 'gs_admin'

@@ -120,8 +120,12 @@ export default function AdminDashboard() {
         router.push('/auth/login');
         return;
       }
-      // Allow access for gs_admin role or admin@goalsquad.se email
-      if (!profile || (profile.role !== 'gs_admin' && user.email !== 'admin@goalsquad.se')) {
+      // Middleware already gates this route. Wait for the profile to resolve
+      // instead of redirecting during a transient /api/auth/me failure.
+      if (!profile) {
+        return;
+      }
+      if (profile.role !== 'gs_admin') {
         router.push('/dashboard');
         return;
       }
