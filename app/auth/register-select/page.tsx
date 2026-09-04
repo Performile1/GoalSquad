@@ -44,7 +44,7 @@ const USER_TYPES = [
     title: 'Lagerpartner',
     description: 'Hantera lager och logistik för GoalSquad',
     icon: TruckIcon,
-    href: '/warehouses/join',
+    href: '/warehouses/onboard',
     badge: 'För logistik',
   },
   {

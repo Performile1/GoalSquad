@@ -1,3 +1,4 @@
+import { createBrowserClient } from '@supabase/ssr';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const getUrl = () =>
@@ -20,7 +21,7 @@ let _supabase: SupabaseClient | null = null;
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
     if (!_supabase) {
-      _supabase = createClient(
+      _supabase = createBrowserClient(
         getUrl(),
         getAnonKey()
       );

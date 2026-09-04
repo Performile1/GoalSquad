@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { MessageIcon } from '@/app/components/BrandIcons';
 
 interface Message {
@@ -14,6 +15,7 @@ const QUICK_REPLIES = [
   'Hur registrerar jag en förening?',
   'Hur fungerar utbetalningar?',
   'Kan mitt företag bli leverantör?',
+  'Kan mitt företag bli lagerpartner?',
   'Hur lång är leveranstiden?',
 ];
 
@@ -24,6 +26,8 @@ const BOT_ANSWERS: Record<string, string> = {
     'Intäkter från försäljning betalas ut månadsvis till föreningens bankkonto. Du ser varje försäljning i realtid i din dashboard.',
   'Kan mitt företag bli leverantör?':
     'Absolut! Gå till /merchants/onboard för att registrera ditt företag. Vi granskar ansökan och återkommer inom 2 arbetsdagar.',
+  'Kan mitt företag bli lagerpartner?':
+    'Absolut! Gå till /warehouses/onboard för att ansöka som lagerpartner. Vi granskar ansökan och återkommer inom 2 arbetsdagar.',
   'Hur lång är leveranstiden?':
     'Leveranstiden är normalt 2–5 arbetsdagar beroende på leverantör och region. Kunden får en spårningslänk via e-post.',
 };
@@ -34,6 +38,8 @@ function getBotResponse(text: string): string {
     return 'För att registrera en förening, gå till /join/community. Det är gratis och tar bara några minuter!';
   if (lower.includes('betalning') || lower.includes('utbetalning') || lower.includes('pengar'))
     return 'Utbetalningar sker månadsvis till ert bankkonto. Ni ser alla transaktioner i realtid i er dashboard.';
+  if (lower.includes('lagerpartner') || lower.includes('warehouse') || lower.includes('lagring'))
+    return 'Företag kan bli lagerpartner på /warehouses/onboard. Ansök så återkommer vi efter granskning.';
   if (lower.includes('företag') || lower.includes('leverantör') || lower.includes('merchant'))
     return 'Företag kan registrera sig som leverantör på /merchants/onboard. Vi hanterar logistik och betalning åt er.';
   if (lower.includes('leverans') || lower.includes('frakt') || lower.includes('leveranstid'))
@@ -41,6 +47,30 @@ function getBotResponse(text: string): string {
   if (lower.includes('hej') || lower.includes('hallå') || lower.includes('hi'))
     return 'Hej! Hur kan jag hjälpa dig idag? Fråga gärna om föreningar, leverantörer eller hur plattformen fungerar.';
   return 'Tack för din fråga! För mer detaljerad hjälp, kontakta oss på support@goalsquad.se eller besök vår kontaktsida.';
+}
+
+function renderMessage(text: string) {
+  const parts = text.split(/(\/[a-z0-9_-]+(?:\/[a-z0-9_-]+)*)/gi);
+
+  return parts.map((part, index) => {
+    if (!part.startsWith('/')) return <span key={index}>{part}</span>;
+
+    const label = part === '/merchants/onboard'
+      ? 'Bli merchant'
+      : part === '/warehouses/onboard'
+        ? 'Bli lagerpartner'
+        : part;
+
+    return (
+      <Link
+        key={index}
+        href={part}
+        className="font-semibold text-primary-700 underline underline-offset-2 hover:text-primary-900"
+      >
+        {label}
+      </Link>
+    );
+  });
 }
 
 export default function ChatWidget() {
@@ -113,7 +143,7 @@ export default function ChatWidget() {
                         : 'bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-sm'
                     }`}
                   >
-                    {msg.text}
+                    {renderMessage(msg.text)}
                   </div>
                 </div>
               ))}
