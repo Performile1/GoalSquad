@@ -57,7 +57,7 @@ export default function WarehousePickingTerminal() {
         const locMap = new Map((inventory ?? []).map((i: any) => [i.sku, i.location_code]));
 
         const mapped: PickItem[] = tasks.map((t: any) => {
-          const qty = t.quantity_to_pick ?? 0;
+          const qty = Math.max(0, (t.quantity_to_pick ?? 0) - (t.quantity_picked ?? 0));
           return {
             sku: t.sku,
             name: productMap.get(t.sku) || t.sku,

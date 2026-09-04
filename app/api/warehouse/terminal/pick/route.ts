@@ -12,11 +12,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Saknar parametrar' }, { status: 400 });
     }
 
-    const { data: shipment } = await supabaseAdmin
+    const { data: shipmentById } = await supabaseAdmin
       .from('bulk_shipments')
-      .select('warehouse_id')
+      .select('id, warehouse_id, campaign_id')
       .eq('id', bulkShipmentId)
       .maybeSingle();
+    const { data: shipmentByCampaign } = shipmentById
+      ? { data: null }
+      : await supabaseAdmin.from('bulk_shipments').select('id, warehouse_id, campaign_id').eq('campaign_id', bulkShipmentId).maybeSingle();
+    const shipment = shipmentById || shipmentByCampaign;
     const role = await getUserRole(authUser.id);
     const { data: warehouse } = shipment?.warehouse_id
       ? await supabaseAdmin.from('warehouse_partners').select('user_id').eq('id', shipment.warehouse_id).maybeSingle()
@@ -33,7 +37,7 @@ export async function POST(request: Request) {
           status: 'picking',
           metadata: { picker_id: authUser.id, started_picking_at: new Date().toISOString() }
         })
-        .eq('id', bulkShipmentId)
+        .eq('id', shipment?.id || bulkShipmentId)
         .eq('status', 'pending');
 
       if (error) throw error;
@@ -45,6 +49,21 @@ export async function POST(request: Request) {
       if (!sku || quantityPicked === undefined) {
         return NextResponse.json({ success: false, error: 'Saknar SKU eller antal' }, { status: 400 });
       }
+
+      const { data: task } = await supabaseAdmin
+        .from('warehouse_picking_tasks')
+        .select('id, quantity_to_pick, quantity_picked, status')
+        .eq('warehouse_id', shipment?.warehouse_id)
+        .eq('campaign_id', shipment?.campaign_id || bulkShipmentId)
+        .eq('sku', sku)
+        .maybeSingle();
+      if (!task) return NextResponse.json({ success: false, error: 'Picking task not found' }, { status: 404 });
+      const nextQuantity = Math.min(task.quantity_to_pick, Number(task.quantity_picked || 0) + Number(quantityPicked));
+      const { error: taskError } = await supabaseAdmin
+        .from('warehouse_picking_tasks')
+        .update({ quantity_picked: nextQuantity, status: nextQuantity >= task.quantity_to_pick ? 'picked' : 'picking', updated_at: new Date().toISOString() })
+        .eq('id', task.id);
+      if (taskError) throw taskError;
 
       await supabaseAdmin.from('audit_logs').insert({
         actor_id: authUser.id,
@@ -62,20 +81,20 @@ export async function POST(request: Request) {
       const { error: shipmentError } = await supabaseAdmin
         .from('bulk_shipments')
         .update({ status: 'picked', updated_at: new Date().toISOString() })
-        .eq('id', bulkShipmentId);
+        .eq('id', shipment?.id || bulkShipmentId);
 
       if (shipmentError) throw shipmentError;
 
-      const { data: shipment } = await supabaseAdmin
+      const { data: persistedShipment } = await supabaseAdmin
         .from('bulk_shipments')
         .select('campaign_id')
-        .eq('id', bulkShipmentId)
+        .eq('id', shipment?.id || bulkShipmentId)
         .single();
 
-      if (shipment) {
+      if (persistedShipment) {
         await supabaseAdmin.from('warehouse_cross_dock_queue').insert({
-          bulk_shipment_id: bulkShipmentId,
-          campaign_id: shipment.campaign_id,
+          bulk_shipment_id: shipment?.id || bulkShipmentId,
+          campaign_id: persistedShipment.campaign_id,
           status: 'pending'
         });
       }

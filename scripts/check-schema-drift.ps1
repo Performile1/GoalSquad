@@ -19,6 +19,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$migrationFiles = Get-ChildItem -File (Join-Path $RepoRoot 'supabase/migrations') -Filter '*.sql'
+$migrationNumbers = $migrationFiles | ForEach-Object {
+  if ($_.BaseName -match '^(\d+)_') { [int]$Matches[1] }
+}
+$duplicateNumbers = $migrationNumbers | Group-Object | Where-Object Count -gt 1
+if ($duplicateNumbers) {
+  Write-Host "`nDUPLICATE MIGRATION NUMBERS DETECTED:" -ForegroundColor Red
+  $duplicateNumbers | ForEach-Object { Write-Host "  - $($_.Name): $($_.Count) files" -ForegroundColor Red }
+  exit 1
+}
+
 # Views and intentionally-external relations that have no CREATE TABLE.
 $Allowlist = @(
   'public',                  # schema-qualified false positive
