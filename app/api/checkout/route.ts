@@ -15,6 +15,7 @@ import { getAuthUser } from '@/lib/api-auth';
 export const dynamic = 'force-dynamic';
 import { logger } from '@/lib/logger';
 import { z } from 'zod';
+import { calculateShippingQuote, type DeliveryMethod } from '@/lib/shipping-calculator';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-04-10' as any,
@@ -42,6 +43,7 @@ const checkoutSchema = z.object({
   // The seller_profile.id (UUID) that should be credited for this order.
   sellerId: z.string().uuid('Invalid seller ID format').optional().nullable(),
   campaignId: z.string().uuid('Invalid campaign ID format').optional().nullable(),
+  deliveryMethod: z.enum(['home', 'club_distribution', 'single_distributor']).default('home'),
 });
 
 export async function POST(req: NextRequest) {
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    const { items, shippingAddress, warehouseId, sellerId, campaignId } = validatedData.data;
+    const { items, shippingAddress, warehouseId, sellerId, campaignId, deliveryMethod } = validatedData.data;
 
     // --- Fetch products ---
     const productIds = items.map((i) => i.productId).filter(Boolean);
@@ -177,6 +179,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No valid items' }, { status: 400 });
     }
 
+    const shippingQuote = await calculateShippingQuote(
+      items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        merchantId: productMap.get(item.productId)?.merchant_id,
+        warehouseId,
+      })),
+      orderTotal,
+      deliveryMethod as DeliveryMethod,
+      warehouseId,
+    );
+    const grandTotal = orderTotal + shippingQuote.totalCost;
+    if (shippingQuote.totalCost > 0) {
+      stripeLineItems.push({
+        price_data: {
+          currency: 'SEK',
+          product_data: { name: shippingQuote.freeShipping ? 'Frakt' : 'Frakt och hantering' },
+          unit_amount: Math.round(shippingQuote.totalCost * 100),
+        },
+        quantity: 1,
+      });
+    }
+
     // --- Create order in DB ---
     const orderNumber = `GS-${Date.now().toString(36).toUpperCase()}`;
 
@@ -187,13 +212,13 @@ export async function POST(req: NextRequest) {
         customer_id: user?.id ?? null,
         customer_email: shippingAddress.email,
         status: 'pending',
-        total_amount: orderTotal,
+        total_amount: grandTotal,
         currency: 'SEK',
         shipping_address: shippingAddress,
         warehouse_id: warehouseId ?? null,
         community_id: orderCommunityId,
         seller_id: sellerId ?? orderSellerId,
-        metadata: {},
+        metadata: { shipping_quote: shippingQuote, subtotal: orderTotal },
       })
       .select()
       .single();

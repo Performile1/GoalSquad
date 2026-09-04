@@ -18,7 +18,7 @@ interface PlatformSettings {
 const DEFAULT_SETTINGS: PlatformSettings = {
   id: 'global', platform_fee_percentage: 0, min_order_value: 0, max_order_value: 0,
   currency: 'SEK', default_language: 'sv', maintenance_mode: false, registration_enabled: true,
-  metadata: { seller_margin_percentage: 10, warehouse_handling_fee: 0, warehouse_payout_days: 7, default_shipping_fee: 0, free_shipping_threshold: 0, stripe_mode: 'live', stripe_payment_enabled: true, gamification_enabled: true, xp_per_order: 100, leaderboard_enabled: true },
+  metadata: { seller_margin_percentage: 10, warehouse_handling_fee: 0, warehouse_payout_days: 7, default_shipping_fee: 49, free_shipping_threshold: 1000, free_shipping_delivery_methods: [], free_shipping_single_warehouse: false, free_shipping_waive_handling: false, stripe_mode: 'live', stripe_payment_enabled: true, gamification_enabled: true, xp_per_order: 100, leaderboard_enabled: true },
 };
 
 interface ApiKey {
@@ -261,6 +261,14 @@ export default function AdminSettingsPage() {
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Fri frakt över (SEK)</label>
                   <input type="number" step="0.01" min="0" value={settings.metadata.free_shipping_threshold} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, free_shipping_threshold: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
                 </div>
+                <div className="md:col-span-3">
+                  <p className="mb-2 text-sm font-semibold text-slate-700">Gratis frakt för leveranssätt</p>
+                  <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+                    {([['home', 'Hemleverans'], ['club_distribution', 'Klubbutdelning'], ['single_distributor', 'En distributör']] as const).map(([value, label]) => <label key={value} className="flex items-center gap-2"><input type="checkbox" checked={(settings.metadata.free_shipping_delivery_methods || []).includes(value)} onChange={(e) => { const methods = settings.metadata.free_shipping_delivery_methods || []; setSettings({ ...settings, metadata: { ...settings.metadata, free_shipping_delivery_methods: e.target.checked ? [...methods, value] : methods.filter((method: string) => method !== value) } }); }} className="h-4 w-4 accent-[#003B3D]" />{label}</label>)}
+                  </div>
+                </div>
+                <label className="md:col-span-3 flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox" checked={settings.metadata.free_shipping_single_warehouse} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, free_shipping_single_warehouse: e.target.checked } })} className="h-4 w-4 accent-[#003B3D]" />Gratis frakt när ordern skickas från ett lager</label>
+                <label className="md:col-span-3 flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox" checked={settings.metadata.free_shipping_waive_handling} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, free_shipping_waive_handling: e.target.checked } })} className="h-4 w-4 accent-[#003B3D]" />Ta även bort hanteringskostnad vid fri frakt</label>
               </div>
             </div>
 

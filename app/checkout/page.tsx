@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const [warehouse, setWarehouse] = useState<any>(null);
   const [loadingWarehouse, setLoadingWarehouse] = useState(false);
   const [warehouseError, setWarehouseError] = useState('');
+  const [deliveryMethod, setDeliveryMethod] = useState<'home' | 'club_distribution' | 'single_distributor'>('home');
   const [paymentError, setPaymentError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [createAccount, setCreateAccount] = useState(false);
@@ -42,6 +43,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
           shippingAddress: { name, email, phone, address, city, postalCode, country: 'SE' },
+          deliveryMethod,
           warehouseId: warehouse?.id || null,
           sellerId: items[0]?.sellerId || null,
           campaignId: items[0]?.campaignId || null,
@@ -120,6 +122,12 @@ export default function CheckoutPage() {
           <div className="bg-white rounded-2xl shadow-sm p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Leveransuppgifter</h2>
             <div className="space-y-5">
+              <div>
+                <p className="mb-2 text-sm font-semibold text-gray-700">Hur ska ordern levereras?</p>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  {[['home', 'Hemleverans'], ['club_distribution', 'Klubbutdelning'], ['single_distributor', 'En distributör']].map(([value, label]) => <label key={value} className={`cursor-pointer rounded-lg border-2 p-3 text-sm font-semibold ${deliveryMethod === value ? 'border-primary-600 bg-primary-50 text-primary-900' : 'border-gray-200 text-gray-600'}`}><input type="radio" name="deliveryMethod" value={value} checked={deliveryMethod === value} onChange={() => setDeliveryMethod(value as typeof deliveryMethod)} className="mr-2 accent-primary-900" />{label}</label>)}
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Förnamn & Efternamn</label>
