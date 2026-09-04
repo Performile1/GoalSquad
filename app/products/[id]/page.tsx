@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import CertificationBadges, { CertificationList } from '@/app/components/CertificationBadges';
 import AllergenCards from '@/app/components/AllergenCards';
 import { ShoppingBagIcon, BoxIcon, AlertIcon, CartIcon, CheckIcon } from '@/app/components/BrandIcons';
+import { useCart } from '@/app/hooks/useCart';
 
 interface Product {
   id: string;
@@ -19,13 +20,20 @@ interface Product {
   requiresFrozen: boolean;
   isFragile: boolean;
   shippingNotes?: string;
-  // ... other fields
+  sellerId: string;
+  merchantName: string;
+  stock: number;
+  attributes: Record<string, any>;
+  reviews: { items: { id: string; rating: number; title?: string; comment?: string; verified_purchase: boolean; created_at: string }[]; average: number; count: number };
 }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+  const { addItem } = useCart();
 
   useEffect(() => {
     fetchProduct();
@@ -35,12 +43,35 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     try {
       const response = await fetch(`/api/products/${params.id}`);
       const data = await response.json();
-      setProduct(data.product);
+      setProduct({
+        ...data.product,
+        images: data.product.images || [],
+        certifications: data.product.certifications || [],
+        allergens: data.product.allergens || [],
+        shippingRestrictions: data.product.shippingRestrictions || [],
+        attributes: data.product.attributes || {},
+        reviews: data.product.reviews || { items: [], average: 0, count: 0 },
+      });
     } catch (error) {
       console.error('Failed to fetch product:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddToCart = () => {
+    if (!product || product.stock < 1) return;
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.images[0],
+      sellerId: product.sellerId,
+      sellerName: product.merchantName,
+      quantity,
+    });
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 2500);
   };
 
   if (loading) {
@@ -147,8 +178,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </p>
 
               {/* Add to Cart */}
-              <button className="w-full bg-gradient-to-r from-primary-900 to-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-700 transition shadow-lg">
-                Lägg i varukorg
+              <div className="flex items-center gap-3 mb-4">
+                <label htmlFor="product-quantity" className="font-semibold text-gray-700">Antal</label>
+                <input id="product-quantity" type="number" min="1" max={product.stock} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(product.stock, Number(event.target.value) || 1)))} className="w-20 rounded-lg border-2 border-gray-200 px-3 py-2 text-center focus:border-primary-600 focus:outline-none" />
+                <span className="text-sm text-gray-500">{product.stock} i lager</span>
+              </div>
+              <button onClick={handleAddToCart} disabled={product.stock === 0} className="w-full bg-gradient-to-r from-primary-900 to-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:from-primary-800 hover:to-primary-700 transition shadow-lg disabled:cursor-not-allowed disabled:opacity-50">
+                {added ? 'Tillagd i varukorgen' : product.stock === 0 ? 'Slut i lager' : 'Lägg i varukorg'}
               </button>
             </div>
 
@@ -262,6 +298,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <CertificationList certifications={product.certifications} />
               </div>
             )}
+
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Produktinformation</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                {Object.entries(product.attributes).filter(([key]) => !['certifications', 'images'].includes(key)).slice(0, 10).map(([key, value]) => (
+                  <div key={key} className="flex justify-between gap-4 border-b border-gray-100 pb-2"><span className="text-gray-500 capitalize">{key.replaceAll('_', ' ')}</span><span className="font-semibold text-gray-800 text-right">{Array.isArray(value) ? value.join(', ') : String(value)}</span></div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-bold text-gray-900">Reviews</h3><span className="text-sm font-bold text-primary-900">{product.reviews.average ? `${product.reviews.average}/5` : 'Inga betyg'} {product.reviews.count ? `(${product.reviews.count})` : ''}</span></div>
+              {product.reviews.items.length ? <div className="space-y-4">{product.reviews.items.slice(0, 5).map((review) => <div key={review.id} className="border-t border-gray-100 pt-4"><div className="flex justify-between gap-3"><span className="text-amber-500">{'★'.repeat(review.rating)}<span className="text-gray-200">{'★'.repeat(5 - review.rating)}</span></span>{review.verified_purchase && <span className="text-xs font-semibold text-emerald-600">Verifierat köp</span>}</div>{review.title && <p className="mt-1 font-bold text-gray-900">{review.title}</p>}{review.comment && <p className="mt-1 text-sm leading-relaxed text-gray-600">{review.comment}</p>}</div>)}</div> : <p className="text-sm text-gray-500">Bli först med att recensera produkten.</p>}
+            </div>
           </div>
         </div>
       </div>

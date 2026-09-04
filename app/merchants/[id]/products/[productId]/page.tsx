@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ShopIcon, TrophyIcon, ShoppingCartIcon, MerchantIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
 interface Product {
   id: string;
@@ -36,6 +37,8 @@ export default function MerchantProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
 
   useEffect(() => {
     fetchProduct();
@@ -56,6 +59,27 @@ export default function MerchantProductPage() {
   const handleAddToCart = () => {
     // Add to cart logic
     console.log('Adding to cart:', productId, quantity);
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadMessage('');
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const response = await apiFetch(`/api/merchants/${merchantId}/products/${productId}/images`, { method: 'POST', body });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Uppladdningen misslyckades');
+      setProduct((current) => current ? { ...current, image_url: current.image_url || data.imageUrl } : current);
+      setUploadMessage('Bilden är uppladdad.');
+    } catch (error) {
+      setUploadMessage(error instanceof Error ? error.message : 'Uppladdningen misslyckades');
+    } finally {
+      setUploading(false);
+      event.target.value = '';
+    }
   };
 
   if (loading) {
@@ -126,6 +150,11 @@ export default function MerchantProductPage() {
                 <p className="text-sm text-gray-600 italic">{product.image_seo_tags.caption}</p>
               </div>
             )}
+            <label className="mt-4 block cursor-pointer rounded-xl border-2 border-dashed border-primary-200 bg-primary-50 p-4 text-center text-sm font-semibold text-primary-900 hover:border-primary-600">
+              {uploading ? 'Laddar upp...' : 'Ladda upp ny produktbild'}
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={uploading} className="sr-only" />
+            </label>
+            {uploadMessage && <p className="mt-2 text-sm text-gray-600">{uploadMessage}</p>}
           </motion.div>
 
           {/* Product Details */}
