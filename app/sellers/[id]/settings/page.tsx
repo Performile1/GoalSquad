@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { AlertIcon } from '@/app/components/BrandIcons';
 import { apiFetch } from '@/lib/api-client';
 
-const SECTIONS = ['Profil & Shop', 'Adress', 'Bank & Utbetalning'];
+const SECTIONS = ['Profil & Shop', 'Adress', 'Bank & Utbetalning', 'Leverans'];
 
 export default function SellerSettingsPage() {
   const { id } = useParams();
@@ -28,6 +28,7 @@ export default function SellerSettingsPage() {
     bank_clearing: '',
     bank_account: '',
     bank_account_verified: false,
+    metadata: { shipping_preference: 'warehouse', delivery_note: '', payout_schedule: 'monthly' },
   });
 
   const [profileForm, setProfileForm] = useState({
@@ -205,6 +206,18 @@ export default function SellerSettingsPage() {
                     {form.bank_account_verified ? 'Utbetalningar är aktiverade' : 'GoalSquad verifierar ditt bankkonto innan utbetalning'}
                   </p>
                 </div>
+              </div>
+            </>
+          )}
+
+          {activeSection === 3 && (
+            <>
+              <h2 className="text-xl font-bold text-gray-900">Leverans</h2>
+              <p className="text-sm text-gray-500">Välj hur beställningar från din shop ska lämnas vidare till kunden.</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="text-sm font-semibold text-gray-600">Leveranssätt<select value={form.metadata.shipping_preference} onChange={(e) => setForm({ ...form, metadata: { ...form.metadata, shipping_preference: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="warehouse">Via GoalSquad lager</option><option value="pickup">Upphämtning</option><option value="seller">Jag lämnar över</option></select></label>
+                <label className="text-sm font-semibold text-gray-600">Utbetalningsintervall<select value={form.metadata.payout_schedule} onChange={(e) => setForm({ ...form, metadata: { ...form.metadata, payout_schedule: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="monthly">Månadsvis</option><option value="weekly">Veckovis</option></select></label>
+                <label className="md:col-span-2 text-sm font-semibold text-gray-600">Leveransinformation<textarea value={form.metadata.delivery_note} onChange={(e) => setForm({ ...form, metadata: { ...form.metadata, delivery_note: e.target.value } })} rows={3} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
               </div>
             </>
           )}

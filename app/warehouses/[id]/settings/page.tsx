@@ -40,6 +40,7 @@ export default function WarehouseSettingsPage() {
     auto_print_labels: false,
     terminal_pin_required: true,
     scan_confirmation: true,
+    settings: { carrier: 'DHL', outbound_shipping_fee: 0, return_shipping_fee: 0, full_capacity_threshold: 90, error_rate_threshold: 5 },
   });
 
   useEffect(() => {
@@ -90,6 +91,7 @@ export default function WarehouseSettingsPage() {
         auto_print_labels: Boolean(form.auto_print_labels),
         terminal_pin_required: Boolean(form.terminal_pin_required),
         scan_confirmation: Boolean(form.scan_confirmation),
+        settings: form.settings,
       };
       const res = await apiFetch(`/api/warehouses/${id}`, {
         method: 'PUT',
@@ -183,6 +185,13 @@ export default function WarehouseSettingsPage() {
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-600 focus:outline-none" />
                   </div>
                 ))}
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 pt-2">Fraktinställningar</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="text-sm font-semibold text-gray-600">Primär transportör<select value={form.settings.carrier} onChange={(e) => setForm({ ...form, settings: { ...form.settings, carrier: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option>DHL</option><option>PostNord</option><option>Bring</option><option>Budbee</option><option>Annat</option></select></label>
+                <label className="text-sm font-semibold text-gray-600">Utgående fraktkostnad (kr)<input type="number" min="0" step="0.01" value={form.settings.outbound_shipping_fee} onChange={(e) => setForm({ ...form, settings: { ...form.settings, outbound_shipping_fee: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
+                <label className="text-sm font-semibold text-gray-600">Returfraktkostnad (kr)<input type="number" min="0" step="0.01" value={form.settings.return_shipping_fee} onChange={(e) => setForm({ ...form, settings: { ...form.settings, return_shipping_fee: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
+                <label className="text-sm font-semibold text-gray-600">Fullbelagt vid (%)<input type="number" min="1" max="100" value={form.settings.full_capacity_threshold} onChange={(e) => setForm({ ...form, settings: { ...form.settings, full_capacity_threshold: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
               </div>
             </>
           )}

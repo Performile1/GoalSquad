@@ -187,6 +187,8 @@ export default function MerchantOnboarding() {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}

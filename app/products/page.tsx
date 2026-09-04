@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ShopIcon, OrdersIcon, SearchIcon, DashboardIcon, TrophyIcon } from '@/app/components/BrandIcons';
+import { ShopIcon, OrdersIcon, SearchIcon, DashboardIcon, TrophyIcon, ShoppingBagIcon, JerseyIcon, ElectronicsIcon, HomeIcon, ToysIcon, EquipmentIcon, FoodIcon } from '@/app/components/BrandIcons';
 
 interface Category {
   id: string;
@@ -25,6 +25,18 @@ interface Product {
   tags: string[];
   source?: 'merchant' | 'community';
 }
+
+const categoryIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  sport: TrophyIcon,
+  sportklader: JerseyIcon,
+  klader: JerseyIcon,
+  elektronik: ElectronicsIcon,
+  'hem-hushall': HomeIcon,
+  leksaker: ToysIcon,
+  utrustning: EquipmentIcon,
+  tillbehor: ShoppingBagIcon,
+  'mat-dryck': FoodIcon,
+};
 
 export default function ProductsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -150,7 +162,7 @@ export default function ProductsPage() {
                         : 'hover:bg-primary-50 text-gray-700'
                     }`}
                   >
-                    <SearchIcon size={16} className="mr-2" />
+                    <ShoppingBagIcon size={18} className="mr-2 inline-block align-middle text-primary-900" />
                     Alla kategorier
                     <span className="float-right text-sm">
                       ({products.length})
@@ -166,7 +178,7 @@ export default function ProductsPage() {
                           : 'hover:bg-primary-50 text-gray-700'
                       }`}
                     >
-                      <span className="mr-2">{category.iconEmoji}</span>
+                      {(() => { const CategoryIcon = categoryIcons[category.slug] || ShoppingBagIcon; return <CategoryIcon size={18} className="mr-2 inline-block align-middle text-primary-900" />; })()}
                       {category.name}
                       <span className="float-right text-sm">
                         ({category.productCount})

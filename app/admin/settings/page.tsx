@@ -18,7 +18,7 @@ interface PlatformSettings {
 const DEFAULT_SETTINGS: PlatformSettings = {
   id: 'global', platform_fee_percentage: 0, min_order_value: 0, max_order_value: 0,
   currency: 'SEK', default_language: 'sv', maintenance_mode: false, registration_enabled: true,
-  metadata: { seller_margin_percentage: 10, warehouse_handling_fee: 0, warehouse_payout_days: 7, stripe_mode: 'live', stripe_payment_enabled: true, gamification_enabled: true, xp_per_order: 100, leaderboard_enabled: true },
+  metadata: { seller_margin_percentage: 10, warehouse_handling_fee: 0, warehouse_payout_days: 7, default_shipping_fee: 0, free_shipping_threshold: 0, stripe_mode: 'live', stripe_payment_enabled: true, gamification_enabled: true, xp_per_order: 100, leaderboard_enabled: true },
 };
 
 interface ApiKey {
@@ -252,6 +252,14 @@ export default function AdminSettingsPage() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Utbetalning efter (dagar)</label>
                   <input type="number" min="0" value={settings.metadata.warehouse_payout_days} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, warehouse_payout_days: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Standardfrakt (SEK)</label>
+                  <input type="number" step="0.01" min="0" value={settings.metadata.default_shipping_fee} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, default_shipping_fee: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Fri frakt över (SEK)</label>
+                  <input type="number" step="0.01" min="0" value={settings.metadata.free_shipping_threshold} onChange={(e) => setSettings({ ...settings, metadata: { ...settings.metadata, free_shipping_threshold: Number(e.target.value) } })} className="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#003B3D]" />
                 </div>
               </div>
             </div>

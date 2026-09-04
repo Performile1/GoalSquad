@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { MerchantIcon, AlertIcon } from '@/app/components/BrandIcons';
+import { apiFetch } from '@/lib/api-client';
 
-const SECTIONS = ['Företagsinfo', 'Kontakt & Adress', 'Ekonomi & Bank', 'Verifiering'];
+const SECTIONS = ['Företagsinfo', 'Kontakt & Adress', 'Ekonomi & Bank', 'Frakt & Returer', 'Verifiering'];
 
 export default function MerchantSettingsPage() {
   const { id } = useParams();
@@ -41,12 +42,13 @@ export default function MerchantSettingsPage() {
     iban: '',
     bic: '',
     verification_status: '',
+    settings: { shipping_method: 'warehouse', shipping_fee: 0, free_shipping_threshold: 0, return_shipping_paid_by: 'customer', delivery_countries: 'SE' },
   });
 
   useEffect(() => {
     const fetchMerchant = async () => {
       try {
-        const res = await fetch(`/api/merchants/${id}`);
+        const res = await apiFetch(`/api/merchants/${id}`);
         const data = await res.json();
         if (data.merchant) {
           setForm(prev => ({ ...prev, ...data.merchant }));
@@ -69,7 +71,7 @@ export default function MerchantSettingsPage() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`/api/merchants/${id}`, {
+      const res = await apiFetch(`/api/merchants/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -268,8 +270,22 @@ export default function MerchantSettingsPage() {
             </>
           )}
 
-          {/* 3: Verifiering */}
+          {/* 3: Frakt & Returer */}
           {activeSection === 3 && (
+            <>
+              <h2 className="text-xl font-bold text-gray-900">Frakt & Returer</h2>
+              <p className="text-sm text-gray-500">Bestäm hur dina produkter levereras. Carrier-hemligheter hanteras av GoalSquad.</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="text-sm font-semibold text-gray-600">Fraktmodell<select value={form.settings.shipping_method} onChange={(e) => setForm({ ...form, settings: { ...form.settings, shipping_method: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="warehouse">GoalSquad lager</option><option value="merchant">Merchant skickar</option><option value="pickup">Upphämtning</option></select></label>
+                <label className="text-sm font-semibold text-gray-600">Fraktkostnad (kr)<input type="number" min="0" step="0.01" value={form.settings.shipping_fee} onChange={(e) => setForm({ ...form, settings: { ...form.settings, shipping_fee: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
+                <label className="text-sm font-semibold text-gray-600">Fri frakt över (kr)<input type="number" min="0" step="0.01" value={form.settings.free_shipping_threshold} onChange={(e) => setForm({ ...form, settings: { ...form.settings, free_shipping_threshold: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
+                <label className="text-sm font-semibold text-gray-600">Returfrakt betalas av<select value={form.settings.return_shipping_paid_by} onChange={(e) => setForm({ ...form, settings: { ...form.settings, return_shipping_paid_by: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="customer">Kund</option><option value="merchant">Merchant</option><option value="goalsquad">GoalSquad</option></select></label>
+              </div>
+            </>
+          )}
+
+          {/* 4: Verifiering */}
+          {activeSection === 4 && (
             <>
               <h2 className="text-xl font-bold text-gray-900">Verifieringsstatus</h2>
               <div className="space-y-4">
@@ -292,7 +308,7 @@ export default function MerchantSettingsPage() {
           )}
         </motion.div>
 
-        {activeSection !== 3 && (
+        {activeSection !== 4 && (
           <div className="mt-6 flex justify-end">
             <button
               onClick={handleSave}

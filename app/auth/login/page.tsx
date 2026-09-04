@@ -111,6 +111,8 @@ export default function LoginPage() {
             </label>
             <input
               type="email"
+              name="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="din@email.com"
@@ -125,6 +127,8 @@ export default function LoginPage() {
             </label>
             <input
               type="password"
+              name="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -137,6 +141,8 @@ export default function LoginPage() {
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
+                name="remember"
+                autoComplete="off"
                 className="w-4 h-4 accent-primary-900 rounded"
               />
               <span className="text-sm text-gray-600">Kom ihåg mig</span>

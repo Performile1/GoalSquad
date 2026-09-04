@@ -339,6 +339,8 @@ export default function WarehouseOnboardPage() {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   value={form.contactEmail}
                   onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-600 focus:outline-none"

@@ -210,6 +210,8 @@ function SellerJoinContent() {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">E-postadress *</label>
                   <input
                     type="email"
+                    name="email"
+                    autoComplete="email"
                     required
                     value={form.email}
                     onChange={(e) => set('email', e.target.value)}
@@ -221,6 +223,8 @@ function SellerJoinContent() {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Lösenord *</label>
                   <input
                     type="password"
+                    name="password"
+                    autoComplete="new-password"
                     required
                     minLength={8}
                     value={form.password}

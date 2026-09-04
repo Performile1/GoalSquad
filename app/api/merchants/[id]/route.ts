@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const { data: merchant, error } = await supabaseAdmin
       .from('merchants')
-      .select('id, name, business_name, company_slug, company_description, logo_url, website_url, verification_status, created_at')
+      .select('id, name, merchant_name, business_name, company_slug, company_description, logo_url, website_url, verification_status, settings, created_at')
       .eq('id', merchantId)
       .single();
 

@@ -31,6 +31,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Let document navigations reach the app directly. An offline fallback
+  // should never turn a normal login/page load into a synthetic 503 response.
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    return;
+  }
+
   // API calls: network-first, cache fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(

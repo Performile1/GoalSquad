@@ -116,6 +116,8 @@ export default function AdminCreateUser() {
                 </div>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -135,6 +137,8 @@ export default function AdminCreateUser() {
                 </div>
                 <input
                   type="password"
+                  name="password"
+                  autoComplete="new-password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required

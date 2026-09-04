@@ -146,6 +146,8 @@ function RegisterForm() {
             </label>
             <input
               type="text"
+              name="name"
+              autoComplete="name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Anna Andersson"
@@ -160,6 +162,8 @@ function RegisterForm() {
             </label>
             <input
               type="email"
+              name="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="din@email.com"
@@ -174,6 +178,8 @@ function RegisterForm() {
             </label>
             <input
               type="password"
+              name="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Minst 8 tecken"
@@ -188,6 +194,8 @@ function RegisterForm() {
             </label>
             <input
               type="password"
+              name="confirmPassword"
+              autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Skriv lösenordet igen"
@@ -200,6 +208,8 @@ function RegisterForm() {
             <label className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
+                name="acceptTerms"
+                autoComplete="off"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
                 className="w-5 h-5 accent-primary-900 rounded mt-1"

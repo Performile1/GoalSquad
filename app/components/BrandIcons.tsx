@@ -357,6 +357,36 @@ export function ShoppingBagIcon({ size = 48, className = '' }: IconProps) {
   );
 }
 
+export function ElectronicsIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect x="7" y="7" width="34" height="25" rx="3" fill={A} stroke={P} strokeWidth="2.5" />
+      <path d="M17 40h14M24 32v8" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M18 19h12M21 24h6" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+    </svg>
+  );
+}
+
+export function HomeIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M6 23L24 8l18 15v17H6V23z" fill={A} stroke={P} strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M19 40V27h10v13" stroke={P} strokeWidth="2.5" />
+      <path d="M12 23h24" stroke="white" strokeWidth="2" opacity="0.7" />
+    </svg>
+  );
+}
+
+export function ToysIcon({ size = 48, className = '' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="24" cy="25" r="13" fill={A} stroke={P} strokeWidth="2.5" />
+      <circle cx="19" cy="23" r="2" fill={P} /><circle cx="29" cy="23" r="2" fill={P} />
+      <path d="M18 30c3 3 9 3 12 0M24 12V7M15 14l-3-4M33 14l3-4" stroke={P} strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function LeafIcon({ size = 48, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
