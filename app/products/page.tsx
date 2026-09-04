@@ -126,16 +126,16 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-10 xl:gap-12">
           {/* Sidebar - Filters */}
           <div className="lg:w-80 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-4">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <div className="bg-white rounded-2xl shadow-lg p-7 sticky top-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">
                 Filtrera
               </h2>
 
               {/* Search */}
-              <div className="mb-6">
+              <div className="mb-8">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Sök produkter
                 </label>
@@ -149,11 +149,11 @@ export default function ProductsPage() {
               </div>
 
               {/* Categories */}
-              <div className="mb-6">
+              <div className="mb-8">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   Kategorier
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <button
                     onClick={() => setSelectedCategory(null)}
                     className={`w-full text-left px-4 py-3 rounded-lg transition ${
@@ -189,7 +189,7 @@ export default function ProductsPage() {
               </div>
 
               {/* Price Range */}
-              <div className="mb-6">
+              <div className="mb-8">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   Prisintervall
                 </label>
@@ -235,7 +235,7 @@ export default function ProductsPage() {
           {/* Products Grid */}
           <div className="flex-1">
             {/* Results Header */}
-            <div className="mb-6 flex justify-between items-center">
+            <div className="mb-7 flex justify-between items-center px-1">
               <h2 className="text-2xl font-bold text-gray-900">
                 {filteredProducts.length} produkter
               </h2>
@@ -265,7 +265,7 @@ export default function ProductsPage() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 xl:gap-8">
                 {filteredProducts.map((product, index) => (
                   <ProductCard key={product.id} product={product} index={index} />
                 ))}
@@ -284,7 +284,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition overflow-hidden group cursor-pointer"
+      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition overflow-hidden group cursor-pointer flex flex-col h-full"
     >
       {/* Image */}
       <div className="h-56 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -302,7 +302,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-1">
         {/* Category Badge */}
         <div className="mb-3 flex flex-wrap gap-2">
           <span className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold">
@@ -319,18 +319,18 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1">
           {product.name}
         </h3>
-        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+        <p className="text-sm text-gray-600 mb-5 line-clamp-2 min-h-[2.5rem]">
           {product.description}
         </p>
 
         {/* Merchant / Seller */}
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-gray-500 mb-5 min-h-[1rem]">
           {product.source === 'community' ? 'Säljs av' : 'Från'} {product.merchantName}
         </p>
 
         {/* Tags */}
         {product.tags && product.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-5 min-h-[1.5rem]">
             {product.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
@@ -343,7 +343,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         )}
 
         {/* Price & Stock */}
-        <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+        <div className="mt-auto flex justify-between items-center pt-5 border-t border-gray-100">
           <div className="text-3xl font-bold text-primary-900">
             {product.price.toLocaleString()} kr
           </div>
@@ -360,7 +360,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         </div>
 
         {/* CTA */}
-        <button className="w-full mt-4 bg-primary-900 text-white py-3 rounded-xl font-semibold hover:bg-primary-600 transition">
+        <button className="w-full mt-5 bg-primary-900 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-600 transition">
           Köp nu →
         </button>
       </div>
