@@ -45,8 +45,6 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith('/warehouses') ||
     pathname.startsWith('/guardians') ||
     pathname.startsWith('/orders') ||
-    pathname.startsWith('/cart') ||
-    pathname.startsWith('/checkout') ||
     pathname.startsWith('/messages') ||
     pathname.startsWith('/account')
 

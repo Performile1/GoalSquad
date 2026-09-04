@@ -49,10 +49,6 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
     userId = user?.id ?? null;
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await req.json();
     
     // Validate request body with Zod
@@ -188,7 +184,8 @@ export async function POST(req: NextRequest) {
       .from('orders')
       .insert({
         order_number: orderNumber,
-        customer_id: user.id,
+        customer_id: user?.id ?? null,
+        customer_email: shippingAddress.email,
         status: 'pending',
         total_amount: orderTotal,
         currency: 'SEK',
@@ -225,7 +222,7 @@ export async function POST(req: NextRequest) {
       metadata: {
         order_id: order.id,
         order_number: orderNumber,
-        user_id: user.id,
+        user_id: user?.id ?? '',
         seller_id: sellerId ?? '',
         campaign_id: campaignId ?? '',
       },
