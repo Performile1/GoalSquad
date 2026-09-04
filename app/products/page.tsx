@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ShopIcon, OrdersIcon, SearchIcon, DashboardIcon, TrophyIcon, ShoppingBagIcon, JerseyIcon, ElectronicsIcon, HomeIcon, ToysIcon, EquipmentIcon, FoodIcon } from '@/app/components/BrandIcons';
+import { useCart } from '@/app/hooks/useCart';
 
 interface Category {
   id: string;
@@ -23,6 +24,7 @@ interface Product {
   categoryName: string;
   stock: number;
   tags: string[];
+  sellerId: string;
   source?: 'merchant' | 'community';
 }
 
@@ -279,6 +281,20 @@ export default function ProductsPage() {
 }
 
 function ProductCard({ product, index }: { product: Product; index: number }) {
+  const { addItem } = useCart();
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const addToCart = () => {
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: imageFailed ? undefined : product.imageUrl,
+      sellerId: product.sellerId,
+      sellerName: product.merchantName,
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -288,10 +304,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
     >
       {/* Image */}
       <div className="h-56 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-        {product.imageUrl ? (
+        {product.imageUrl && !imageFailed ? (
           <img
             src={product.imageUrl}
             alt={product.name}
+            onError={() => setImageFailed(true)}
             className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
           />
         ) : (
@@ -360,8 +377,8 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         </div>
 
         {/* CTA */}
-        <button className="w-full mt-5 bg-primary-900 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-600 transition">
-          Köp nu →
+        <button onClick={addToCart} disabled={product.stock <= 0} className="w-full mt-5 bg-primary-900 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-600 transition disabled:cursor-not-allowed disabled:opacity-50">
+          {product.stock > 0 ? 'Lägg i varukorg →' : 'Slut i lager'}
         </button>
       </div>
     </motion.div>
