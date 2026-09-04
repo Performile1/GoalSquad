@@ -110,8 +110,6 @@ export const config = {
     '/warehouses/:path*',
     '/guardians/:path*',
     '/orders/:path*',
-    '/cart/:path*',
-    '/checkout/:path*',
     '/messages/:path*',
     '/account/:path*',
   ],
