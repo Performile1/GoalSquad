@@ -3,12 +3,21 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { getUserRole } from '@/lib/api-auth';
+import { rateLimit } from '@/lib/rate-limit';
+import Stripe from 'stripe';
+
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-04-10' as any })
+  : null;
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const orderId = params.id;
   const loggerContext = { route: `/api/orders/${orderId}/cancel`, method: 'POST' };
 
   try {
+    const limit = rateLimit(request, 'order-cancel', 10);
+    if (!limit.allowed) return NextResponse.json({ error: 'Too many cancellation attempts' }, { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } });
+
     const supabase = createRouteHandlerClient({ cookies });
     const { data: { session } } = await supabase.auth.getSession();
 
@@ -19,7 +28,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     // 1. Hämta orderns nuvarande status
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .select('id, user_id, status, shipment_status')
+      .select('id, user_id, status, shipment_status, stripe_payment_intent_id, payment_status, total_amount')
       .eq('id', orderId)
       .single();
 
@@ -40,10 +49,18 @@ export async function POST(request: Request, { params }: { params: { id: string 
       }, { status: 400 });
     }
 
+    if (order.stripe_payment_intent_id && order.payment_status === 'paid') {
+      if (!stripe) return NextResponse.json({ error: 'Payment provider is not configured' }, { status: 503 });
+      await stripe.refunds.create(
+        { payment_intent: order.stripe_payment_intent_id },
+        { idempotencyKey: `order-cancel-refund-${orderId}` }
+      );
+    }
+
     // 3. Uppdatera orderstatus till 'cancelled'
     const { data: updatedOrder, error: updateError } = await supabaseAdmin
       .from('orders')
-      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .update({ status: 'cancelled', payment_status: order.stripe_payment_intent_id ? 'refunded' : order.payment_status, updated_at: new Date().toISOString() })
       .eq('id', orderId)
       .select()
       .single();
@@ -61,8 +78,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
         after: { status: 'cancelled' }
       }
     });
-
-    // TODO: Här integreras Stripe Refund-anrop i framtiden baserat på order.stripe_payment_intent_id
 
     console.log(JSON.stringify({ level: 'info', message: `Order ${orderId} successfully cancelled by user`, ...loggerContext }));
     return NextResponse.json({ success: true, order: updatedOrder });

@@ -2,17 +2,14 @@ import { NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { requireAdmin } from '@/lib/api-auth';
 
 export async function POST(request: Request) {
   const loggerContext = { route: '/api/admin/shipping/book-pallet', method: 'POST' };
 
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session || session.user.user_metadata?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if ('error' in auth) return auth.error;
 
     const { campaignId, warehouseAddress, deliveryAddress, totalWeight } = await request.json();
 
@@ -51,6 +48,9 @@ export async function POST(request: Request) {
     });
 
     const shippingData = await shippingResponse.json();
+    if (!shippingResponse.ok) {
+      return NextResponse.json({ error: 'Shipping provider rejected the shipment', details: shippingData }, { status: 502 });
+    }
 
     await supabaseAdmin.from('bulk_shipments').insert({
       campaign_id: campaignId,
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     });
 
     await supabaseAdmin.from('audit_logs').insert({
-      actor_id: session.user.id,
+      actor_id: auth.user.id,
       action: 'SHIPPING_BOOKED',
       entity_type: 'bulk_shipments',
       entity_id: campaignId,

@@ -1,12 +1,28 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getAuthUser, getUserRole } from '@/lib/api-auth';
 
 export async function POST(request: Request) {
   try {
-    const { bulkShipmentId, action, sku, quantityPicked, pickerId } = await request.json();
+    const authUser = await getAuthUser(request as any);
+    if (!authUser) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    const { bulkShipmentId, action, sku, quantityPicked } = await request.json();
 
     if (!bulkShipmentId || !action) {
       return NextResponse.json({ success: false, error: 'Saknar parametrar' }, { status: 400 });
+    }
+
+    const { data: shipment } = await supabaseAdmin
+      .from('bulk_shipments')
+      .select('warehouse_id')
+      .eq('id', bulkShipmentId)
+      .maybeSingle();
+    const role = await getUserRole(authUser.id);
+    const { data: warehouse } = shipment?.warehouse_id
+      ? await supabaseAdmin.from('warehouse_partners').select('user_id').eq('id', shipment.warehouse_id).maybeSingle()
+      : { data: null };
+    if (warehouse?.user_id !== authUser.id && !['gs_admin', 'admin'].includes(role || '')) {
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     // 1. Reservera plockuppdrag för en specifik medarbetare
@@ -15,7 +31,7 @@ export async function POST(request: Request) {
         .from('bulk_shipments')
         .update({ 
           status: 'picking',
-          metadata: { picker_id: pickerId, started_picking_at: new Date().toISOString() }
+          metadata: { picker_id: authUser.id, started_picking_at: new Date().toISOString() }
         })
         .eq('id', bulkShipmentId)
         .eq('status', 'pending');
@@ -31,7 +47,7 @@ export async function POST(request: Request) {
       }
 
       await supabaseAdmin.from('audit_logs').insert({
-        actor_id: pickerId,
+        actor_id: authUser.id,
         action: 'WAREHOUSE_ITEM_PICKED',
         entity_type: 'bulk_shipments',
         entity_id: bulkShipmentId,

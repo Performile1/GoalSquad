@@ -84,7 +84,7 @@ export default function WarehousePickingTerminal() {
       return;
     }
 
-    const res = await fetch('/api/warehouse/terminal/pick', {
+    const res = await apiFetch('/api/warehouse/terminal/pick', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -92,7 +92,6 @@ export default function WarehousePickingTerminal() {
         action: 'confirm_item',
         sku,
         quantityPicked: qty,
-        pickerId: 'MANUELL-TRUCK-01'
       })
     });
 
@@ -105,7 +104,7 @@ export default function WarehousePickingTerminal() {
   const finalizePicklist = async () => {
     setIsFinalizing(true);
     try {
-      const res = await fetch('/api/warehouse/terminal/pick', {
+      const res = await apiFetch('/api/warehouse/terminal/pick', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

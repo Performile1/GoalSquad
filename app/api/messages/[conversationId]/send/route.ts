@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAuthUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(
   req: NextRequest,
@@ -15,6 +16,8 @@ export async function POST(
   let conversationId = params.conversationId;
   let userId = '';
   try {
+    const limit = rateLimit(req, 'message-send', 60);
+    if (!limit.allowed) return NextResponse.json({ error: 'Too many messages' }, { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } });
     const authUser = await getAuthUser(req);
     if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -64,7 +67,21 @@ export async function POST(
       .update({ updated_at: new Date().toISOString() })
       .eq('id', conversationId);
 
-    // TODO: Send push notification to other participants
+    const { data: recipients } = await supabaseAdmin
+      .from('conversation_participants')
+      .select('user_id')
+      .eq('conversation_id', conversationId)
+      .neq('user_id', userId);
+    if (recipients?.length) {
+      await supabaseAdmin.from('notifications').insert(recipients.map((recipient) => ({
+        recipient_id: recipient.user_id,
+        recipient_type: 'user',
+        type: 'message',
+        title: 'Nytt meddelande',
+        message: content.trim().slice(0, 160),
+        data: { conversation_id: conversationId, message_id: message.id },
+      })));
+    }
 
     return NextResponse.json({ success: true, message });
   } catch (error) {

@@ -8,6 +8,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+import { getAuthUser, getUserRole } from '@/lib/api-auth';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function GET(
   req: NextRequest,
@@ -16,7 +18,8 @@ export async function GET(
   let entityType = params.entityType;
   let entityId = params.entityId;
   try {
-
+    const limit = rateLimit(req, 'contact-update', 20);
+    if (!limit.allowed) return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } });
     // Validate entity type
     const validTypes = ['merchant', 'community', 'seller', 'user'];
     if (!validTypes.includes(entityType)) {
@@ -60,6 +63,9 @@ export async function PUT(
   let entityType = params.entityType;
   let entityId = params.entityId;
   try {
+    const user = await getAuthUser(req);
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await req.json();
 
     // Validate entity type
@@ -71,8 +77,20 @@ export async function PUT(
       );
     }
 
-    // TODO: Add permission check based on entity type
-    // For now, assuming authenticated user has permission
+    const role = await getUserRole(user.id);
+    const isAdmin = ['gs_admin', 'admin'].includes(role || '');
+    let ownsEntity = entityType === 'user' && entityId === user.id;
+    if (entityType === 'merchant') {
+      const { data } = await supabaseAdmin.from('merchants').select('user_id').eq('id', entityId).maybeSingle();
+      ownsEntity = data?.user_id === user.id;
+    } else if (entityType === 'seller') {
+      const { data } = await supabaseAdmin.from('seller_profiles').select('user_id').eq('id', entityId).maybeSingle();
+      ownsEntity = data?.user_id === user.id;
+    } else if (entityType === 'community') {
+      const { data } = await supabaseAdmin.from('communities').select('owner_id').eq('id', entityId).maybeSingle();
+      ownsEntity = data?.owner_id === user.id;
+    }
+    if (!ownsEntity && !isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
     // Check if contact exists
     const { data: existing } = await supabaseAdmin
