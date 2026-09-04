@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import { TrophyIcon, UserIcon, CommunityIcon, SearchIcon, DashboardIcon, JerseyIcon, HandmadeIcon, EquipmentIcon, FoodIcon } from '@/app/components/BrandIcons';
 
 const PLATFORM_FEE = 12;
@@ -33,8 +34,7 @@ export default function NewMarketplaceListingPage() {
   const [success, setSuccess] = useState(false);
   const [step, setStep] = useState(1);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
+  const { user, loading: authLoading } = useAuth();
 
   const [form, setForm] = useState({
     title: '',
@@ -54,35 +54,13 @@ export default function NewMarketplaceListingPage() {
   });
 
   useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = async () => {
-      try {
-        const res = await fetch('/api/auth/session');
-        if (res.ok) {
-          const data = await res.json();
-          setIsAuthenticated(!!data.user);
-          // Pre-fill email if available
-          if (data.user?.email) {
-            setForm(prev => ({ ...prev, contactEmail: data.user.email }));
-          }
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setAuthChecked(true);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (authChecked && !isAuthenticated) {
+    if (!authLoading && !user) {
       router.push('/login?redirect=/marketplace/new');
     }
-  }, [authChecked, isAuthenticated, router]);
+    if (user?.email) setForm(prev => ({ ...prev, contactEmail: user.email || prev.contactEmail }));
+  }, [authLoading, user, router]);
 
-  if (!authChecked) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -93,7 +71,7 @@ export default function NewMarketplaceListingPage() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!user) {
     return null;
   }
 

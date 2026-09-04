@@ -5,9 +5,12 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { MerchantIcon, ShopIcon } from '@/app/components/BrandIcons'
+import { apiFetch } from '@/lib/api-client'
+import { useAuth } from '@/lib/auth-context'
 
 export default function MerchantOnboarding() {
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
   const [step, setStep] = useState<'info' | 'verify'>('info')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -39,16 +42,14 @@ export default function MerchantOnboarding() {
     setError('')
 
     try {
-      // Mock user ID (in production, get from auth)
-      const userId = '00000000-0000-0000-0000-000000000002'
+      if (authLoading || !user) throw new Error('Du måste vara inloggad för att registrera ett företag.')
 
-      const response = await fetch('/api/merchants/onboard', {
+      const response = await apiFetch('/api/merchants/onboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          userId,
-          ipAddress: '127.0.0.1', // In production, get from request
+          userId: user.id,
           userAgent: navigator.userAgent,
         }),
       })

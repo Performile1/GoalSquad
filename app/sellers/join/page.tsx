@@ -181,7 +181,7 @@ function SellerJoinContent() {
                   </button>
                   <p className="text-center text-sm text-gray-500">
                     Har du konto?{' '}
-                    <Link href={`/auth/login?next=/sellers/join${communityId ? `?community=${communityId}` : ''}`} className="text-primary-900 font-semibold hover:underline">
+                    <Link href={`/auth/login?redirect=/sellers/join${communityId ? `&community=${communityId}` : ''}`} className="text-primary-900 font-semibold hover:underline">
                       Logga in
                     </Link>
                   </p>
