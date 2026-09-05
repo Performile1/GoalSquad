@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase';
 
-export type DeliveryMethod = 'home' | 'club_distribution' | 'single_distributor';
+export type DeliveryMethod = 'home' | 'club_distribution' | 'single_distributor' | 'pickup';
 
 export interface ShippingItem {
   productId: string;

@@ -42,7 +42,7 @@ export default function MerchantSettingsPage() {
     iban: '',
     bic: '',
     verification_status: '',
-    settings: { shipping_method: 'warehouse', shipping_fee: 0, free_shipping_threshold: 0, return_shipping_paid_by: 'customer', delivery_countries: 'SE' },
+    settings: { shipping_method: 'warehouse', delivery_methods: ['warehouse'], shipping_fee: 0, free_shipping_threshold: 0, return_shipping_paid_by: 'customer', delivery_countries: 'SE' },
   });
 
   useEffect(() => {
@@ -64,6 +64,11 @@ export default function MerchantSettingsPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const toggleDeliveryMethod = (method: string) => {
+    const methods = form.settings.delivery_methods || [];
+    setForm({ ...form, settings: { ...form.settings, delivery_methods: methods.includes(method) ? methods.filter((item: string) => item !== method) : [...methods, method] } });
   };
 
   const handleSave = async () => {
@@ -276,7 +281,20 @@ export default function MerchantSettingsPage() {
               <h2 className="text-xl font-bold text-gray-900">Frakt & Returer</h2>
               <p className="text-sm text-gray-500">Bestäm hur dina produkter levereras. Carrier-hemligheter hanteras av GoalSquad.</p>
               <div className="grid md:grid-cols-2 gap-4">
-                <label className="text-sm font-semibold text-gray-600">Fraktmodell<select value={form.settings.shipping_method} onChange={(e) => setForm({ ...form, settings: { ...form.settings, shipping_method: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="warehouse">GoalSquad lager</option><option value="merchant">Merchant skickar</option><option value="pickup">Upphämtning</option></select></label>
+                <label className="text-sm font-semibold text-gray-600">Primär fraktmodell<select value={form.settings.shipping_method} onChange={(e) => setForm({ ...form, settings: { ...form.settings, shipping_method: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="warehouse">GoalSquad lager</option><option value="merchant">Merchant skickar</option><option value="pickup">Upphämtning</option></select></label>
+                <div className="md:col-span-2 grid md:grid-cols-2 gap-3">
+                  {[
+                    ['warehouse', 'Via GoalSquad lager'],
+                    ['home', 'Hemleverans'],
+                    ['pickup', 'Upphämtning'],
+                    ['club_distribution', 'Leverans till förening/klubb'],
+                  ].map(([value, label]) => (
+                    <label key={value} className="flex items-center gap-3 rounded-xl border-2 border-gray-200 p-4 text-sm font-semibold text-gray-700">
+                      <input type="checkbox" checked={(form.settings.delivery_methods || []).includes(value)} onChange={() => toggleDeliveryMethod(value)} className="h-4 w-4 accent-primary-900" />
+                      {label}
+                    </label>
+                  ))}
+                </div>
                 <label className="text-sm font-semibold text-gray-600">Fraktkostnad (kr)<input type="number" min="0" step="0.01" value={form.settings.shipping_fee} onChange={(e) => setForm({ ...form, settings: { ...form.settings, shipping_fee: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
                 <label className="text-sm font-semibold text-gray-600">Fri frakt över (kr)<input type="number" min="0" step="0.01" value={form.settings.free_shipping_threshold} onChange={(e) => setForm({ ...form, settings: { ...form.settings, free_shipping_threshold: Number(e.target.value) } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
                 <label className="text-sm font-semibold text-gray-600">Returfrakt betalas av<select value={form.settings.return_shipping_paid_by} onChange={(e) => setForm({ ...form, settings: { ...form.settings, return_shipping_paid_by: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="customer">Kund</option><option value="merchant">Merchant</option><option value="goalsquad">GoalSquad</option></select></label>

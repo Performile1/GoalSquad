@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
           slug
         ),
         merchant:merchants (
+          id,
           name
         )
       `)
@@ -89,7 +90,7 @@ export async function GET(req: NextRequest) {
       price: parseFloat(product.price),
       imageUrl: product.image_url,
       merchantName: product.merchant?.name || 'Unknown',
-      sellerId: product.merchant_id,
+      sellerId: product.merchant?.id || product.merchant_id || '',
       categoryName: product.category?.name || 'Okategoriserad',
       categorySlug: product.category?.slug || '',
       stock: product.stock_quantity || 0,

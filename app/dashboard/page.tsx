@@ -41,8 +41,7 @@ export default function DashboardPage() {
       }
 
       if (!loading && user && profile) {
-        // Special handling for admin email
-        if (user.email === 'admin@goalsquad.se' || profile.role === 'gs_admin') {
+        if (profile.role === 'gs_admin') {
           router.replace('/admin/dashboard');
           return;
         }

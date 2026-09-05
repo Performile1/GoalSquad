@@ -30,7 +30,7 @@ export default function AdminCreateUser() {
     );
   }
 
-  if (!user || !profile || (profile.role !== 'gs_admin' && user.email !== 'admin@goalsquad.se')) {
+  if (!user || !profile || profile.role !== 'gs_admin') {
     router.push('/dashboard');
     return null;
   }

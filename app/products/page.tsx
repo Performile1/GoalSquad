@@ -319,7 +319,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       </div>
 
       {/* Content */}
-      <div className="p-6 flex flex-col flex-1">
+      <Link href={`/products/${product.id}`} className="block p-6 flex flex-col flex-1 hover:bg-primary-50/30 transition">
         {/* Category Badge */}
         <div className="mb-3 flex flex-wrap gap-2">
           <span className="bg-primary-50 text-primary-900 px-3 py-1 rounded-full text-xs font-semibold">
@@ -377,10 +377,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         </div>
 
         {/* CTA */}
-        <button onClick={addToCart} disabled={product.stock <= 0} className="w-full mt-5 bg-primary-900 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-600 transition disabled:cursor-not-allowed disabled:opacity-50">
-          {product.stock > 0 ? 'Lägg i varukorg →' : 'Slut i lager'}
-        </button>
-      </div>
+        <span className="w-full mt-5 text-center bg-primary-50 text-primary-900 py-3.5 rounded-xl font-semibold">Visa produkt →</span>
+      </Link>
+      <button onClick={addToCart} disabled={product.stock <= 0 || !product.sellerId} className="mx-6 mb-6 bg-primary-900 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-600 transition disabled:cursor-not-allowed disabled:opacity-50">
+        {product.stock > 0 ? 'Lägg i varukorg' : 'Slut i lager'}
+      </button>
     </motion.div>
   );
 }

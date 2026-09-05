@@ -28,7 +28,7 @@ export default function SellerSettingsPage() {
     bank_clearing: '',
     bank_account: '',
     bank_account_verified: false,
-    metadata: { shipping_preference: 'warehouse', delivery_note: '', payout_schedule: 'monthly' },
+    metadata: { shipping_preference: 'warehouse', delivery_methods: ['warehouse'], delivery_note: '', payout_schedule: 'monthly' },
   });
 
   const [profileForm, setProfileForm] = useState({
@@ -59,6 +59,17 @@ export default function SellerSettingsPage() {
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfileForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const toggleDeliveryMethod = (method: string) => {
+    const methods = form.metadata.delivery_methods || [];
+    setForm({
+      ...form,
+      metadata: {
+        ...form.metadata,
+        delivery_methods: methods.includes(method) ? methods.filter((item: string) => item !== method) : [...methods, method],
+      },
+    });
   };
 
   const handleSave = async () => {
@@ -213,9 +224,19 @@ export default function SellerSettingsPage() {
           {activeSection === 3 && (
             <>
               <h2 className="text-xl font-bold text-gray-900">Leverans</h2>
-              <p className="text-sm text-gray-500">Välj hur beställningar från din shop ska lämnas vidare till kunden.</p>
+              <p className="text-sm text-gray-500">Välj vilka leveranssätt du kan tänka dig att använda. Kunden ser bara tillgängliga alternativ.</p>
               <div className="grid md:grid-cols-2 gap-4">
-                <label className="text-sm font-semibold text-gray-600">Leveranssätt<select value={form.metadata.shipping_preference} onChange={(e) => setForm({ ...form, metadata: { ...form.metadata, shipping_preference: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="warehouse">Via GoalSquad lager</option><option value="pickup">Upphämtning</option><option value="seller">Jag lämnar över</option></select></label>
+                {[
+                  ['warehouse', 'Via GoalSquad lager'],
+                  ['home', 'Hemleverans'],
+                  ['pickup', 'Upphämtning'],
+                  ['club_distribution', 'Leverans till förening/klubb'],
+                ].map(([value, label]) => (
+                  <label key={value} className="flex items-center gap-3 rounded-xl border-2 border-gray-200 p-4 text-sm font-semibold text-gray-700">
+                    <input type="checkbox" checked={(form.metadata.delivery_methods || []).includes(value)} onChange={() => toggleDeliveryMethod(value)} className="h-4 w-4 accent-primary-900" />
+                    {label}
+                  </label>
+                ))}
                 <label className="text-sm font-semibold text-gray-600">Utbetalningsintervall<select value={form.metadata.payout_schedule} onChange={(e) => setForm({ ...form, metadata: { ...form.metadata, payout_schedule: e.target.value } })} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl"><option value="monthly">Månadsvis</option><option value="weekly">Veckovis</option></select></label>
                 <label className="md:col-span-2 text-sm font-semibold text-gray-600">Leveransinformation<textarea value={form.metadata.delivery_note} onChange={(e) => setForm({ ...form, metadata: { ...form.metadata, delivery_note: e.target.value } })} rows={3} className="mt-1 w-full px-4 py-3 border-2 border-gray-200 rounded-xl" /></label>
               </div>

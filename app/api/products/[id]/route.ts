@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
         attributes: product.attributes || product.metadata || {},
         stock: Number(product.stock_quantity ?? product.stock ?? 0),
         merchantName: product.merchant?.name || product.merchant?.business_name || product.merchant?.merchant_name || 'GoalSquad',
-        sellerId: product.seller_id || product.merchant_id,
+        sellerId: product.merchant?.id || product.seller_id || product.merchant_id || '',
         canConsolidate: product.can_consolidate ?? true,
         shippingRestrictions: product.shipping_restrictions || [],
         reviews: { items: reviewRows, average: Number(rating.toFixed(1)), count: reviewRows.length },

@@ -43,8 +43,20 @@ const checkoutSchema = z.object({
   // The seller_profile.id (UUID) that should be credited for this order.
   sellerId: z.string().uuid('Invalid seller ID format').optional().nullable(),
   campaignId: z.string().uuid('Invalid campaign ID format').optional().nullable(),
-  deliveryMethod: z.enum(['home', 'club_distribution', 'single_distributor']).default('home'),
+  deliveryMethod: z.enum(['home', 'club_distribution', 'single_distributor', 'pickup']).default('home'),
 });
+
+function normalizeDeliveryMethods(value: unknown): DeliveryMethod[] {
+  if (!Array.isArray(value)) return [];
+  const normalized = value.map((method) => {
+    if (method === 'warehouse') return 'single_distributor';
+    if (method === 'merchant' || method === 'seller') return 'home';
+    return method;
+  });
+  return normalized.filter((method): method is DeliveryMethod =>
+    ['home', 'club_distribution', 'single_distributor', 'pickup'].includes(method)
+  );
+}
 
 export async function POST(req: NextRequest) {
   let userId: string | null = null;
@@ -79,6 +91,27 @@ export async function POST(req: NextRequest) {
 
     if (productError || !products?.length) {
       return NextResponse.json({ error: 'Products not found' }, { status: 404 });
+    }
+
+    const merchantIds = [...new Set(products.map((product) => product.merchant_id).filter(Boolean))];
+    const [{ data: merchants }, { data: seller }] = await Promise.all([
+      merchantIds.length
+        ? supabaseAdmin.from('merchants').select('id, settings').in('id', merchantIds)
+        : Promise.resolve({ data: [] }),
+      sellerId
+        ? supabaseAdmin.from('seller_profiles').select('id, metadata').eq('id', sellerId).maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+
+    const configuredMethods = [
+      ...(merchants || []).flatMap((merchant: any) => normalizeDeliveryMethods(merchant.settings?.delivery_methods)),
+      ...normalizeDeliveryMethods(seller?.metadata?.delivery_methods),
+    ];
+    if (configuredMethods.length && !configuredMethods.includes(deliveryMethod)) {
+      return NextResponse.json(
+        { error: 'Det valda leveranssättet är inte tillgängligt för dessa produkter.' },
+        { status: 400 }
+      );
     }
 
     const productMap = new Map(products.map((p) => [p.id, p]));

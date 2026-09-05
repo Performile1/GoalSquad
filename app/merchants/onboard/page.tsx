@@ -2,14 +2,20 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { MerchantIcon, ShopIcon } from '@/app/components/BrandIcons'
 import { apiFetch } from '@/lib/api-client'
 import { useAuth } from '@/lib/auth-context'
 
+export const dynamic = 'force-dynamic'
+
 export default function MerchantOnboarding() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextPath = searchParams.get('redirect')?.startsWith('/') && !searchParams.get('redirect')?.startsWith('//')
+    ? searchParams.get('redirect')!
+    : `/merchants/onboard`
   const { user, loading: authLoading } = useAuth()
   const [step, setStep] = useState<'info' | 'verify'>('info')
   const [loading, setLoading] = useState(false)
@@ -76,7 +82,7 @@ export default function MerchantOnboarding() {
     setError('')
 
     try {
-      const userId = '00000000-0000-0000-0000-000000000002'
+      if (authLoading || !user) throw new Error('Din session har gått ut. Logga in igen.')
 
       const response = await fetch('/api/merchants/verify', {
         method: 'POST',
@@ -85,7 +91,7 @@ export default function MerchantOnboarding() {
           merchantId,
           otp,
           otpHash,
-          userId,
+          userId: user.id,
           email: formData.email,
           phone: formData.phone,
           verificationMethod: formData.verificationMethod,
@@ -101,7 +107,7 @@ export default function MerchantOnboarding() {
       }
 
       // Success! Redirect to merchant dashboard
-      router.push(`/merchants/${merchantId}/dashboard`)
+      router.push(nextPath === '/merchants/onboard' ? `/merchants/${merchantId}/dashboard` : nextPath)
     } catch (err: any) {
       setError(err.message)
     } finally {
